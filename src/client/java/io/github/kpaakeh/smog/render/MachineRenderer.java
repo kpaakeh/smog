@@ -21,6 +21,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         public MultiblockDefinition.Bounds bounds;
         public float angle;
         public boolean formed;
+        public java.util.List<io.github.kpaakeh.smog.energy.WireLink> wires=java.util.List.of();
     }
     private final BlockModelResolver models;
     private static final BlockDisplayContext DISPLAY = BlockDisplayContext.create();
@@ -28,6 +29,8 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
     @Override public State createRenderState() { return new State(); }
     @Override public void extractRenderState(MachineEntity machine, State state, float tick, Vec3 camera, ModelFeatureRenderer.CrumblingOverlay overlay) {
         BlockEntityRenderer.super.extractRenderState(machine, state, tick, camera, overlay);
+        state.wires=machine.spec().kind()==MachineSpec.Kind.CONNECTOR?ClientWires.from(machine.getBlockPos()):java.util.List.of();
+        if(!state.wires.isEmpty())state.lightCoords=net.minecraft.util.LightCoordsUtil.pack(machine.getLevel().getBrightness(net.minecraft.world.level.LightLayer.BLOCK,machine.getBlockPos().above()),machine.getLevel().getBrightness(net.minecraft.world.level.LightLayer.SKY,machine.getBlockPos().above()));
         state.formed = machine.structure() != null && machine.assembled() && ClientFormations.controller(machine.getBlockPos());
         if (!state.formed) return;
         state.bounds = machine.structure().bounds();
@@ -40,8 +43,10 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             case EAST -> -90; case SOUTH -> -180; case WEST -> -270; default -> 0;
         };
         models.update(state.model, machine.getBlockState().setValue(MachineBlock.FACING, Direction.NORTH), DISPLAY);
+        ModelRendering.enableDepth(state.model);
     }
     @Override public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
+        if(!state.wires.isEmpty())WireRendering.submit(state.wires,state.blockPos,pose,collector,state.lightCoords);
         if (!state.formed) return;
         var b = state.bounds;
         pose.pushPose(); pose.translate(.5, 0, .5); pose.rotate(Axis.YP.rotationDegrees(state.angle)); pose.translate(-.5, 0, -.5);

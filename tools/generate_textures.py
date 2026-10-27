@@ -1,6 +1,7 @@
 """Original 16px pixel art for Smog. Rebuild with Python + Pillow; no downloaded art."""
 from pathlib import Path
-import hashlib, json, random
+import hashlib, json, random, sys
+FORCE = "--force" in sys.argv
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,21 +12,14 @@ def shade(color, factor):
     return tuple(max(0, min(255, round(x * factor))) for x in color) + (255,)
 
 def save(image, name):
-    path = OUT / (name + '.png'); path.parent.mkdir(parents=True, exist_ok=True); image.save(path)
+    path = OUT / (name + '.png'); path.parent.mkdir(parents=True, exist_ok=True)
+    if FORCE or not path.exists(): image.save(path)
 
 def rng(name):
     return random.Random(int.from_bytes(hashlib.sha256(name.encode()).digest()[:8], 'big'))
 
 def stone(name, base):
-    r = rng(name); im = Image.new('RGBA', (16,16))
-    for y in range(16):
-        for x in range(16):
-            factor = r.choice([.82,.9,.96,1,1.04,1.1,1.15])
-            im.putpixel((x,y), shade(base,factor))
-    d=ImageDraw.Draw(im)
-    for _ in range(15):
-        x,y=r.randrange(16),r.randrange(16)
-        d.line((x,y,min(15,x+r.randrange(1,4)),y),fill=shade(base,r.choice([.78,1.17])))
+    im=Image.new('RGBA',(16,16),shade(base,1))
     return im
 
 def ore(name, color, deep=False):
@@ -74,11 +68,9 @@ for material in CATALOG['ores']:
     save(raw,'block/raw_'+n+'_block')
     metal=stone(n+'metal',c);d=ImageDraw.Draw(metal)
     d.rectangle((0,0,15,15),outline=shade(c,.45));d.line((1,1,14,1),fill=shade(c,1.45));d.line((1,1,1,14),fill=shade(c,1.25));d.line((2,13,13,13),fill=shade(c,.72))
-    if n=='bismuth':
-        for off,col in [(3,(80,175,163)),(5,(190,143,80)),(7,(128,111,184))]:d.rectangle((off,off,15-off,15-off),outline=col+(255,))
     save(metal,'block/'+n+'_block')
     product=material.get('product','ingot')
-    for filename,kind in [('raw_'+n,'raw'),(n+'_'+product,product),(n+'_dust','dust'),('crushed_'+n+'_ore','crushed'),(n+('_shard' if product=='gem' else '_nugget'),'small')]: save(item(n+kind,c,kind),'item/'+filename)
+    for filename,kind in [('raw_'+n,'raw'),(n+'_'+product,product),(n+'_dust','dust'),('crushed_'+n+'_ore','crushed'),(n+'_shard','crushed'),(n+'_nugget','small'),(n+'_plate','ingot')]: save(item(n+kind,c,kind),'item/'+filename)
 
 def machine(name, active=False, panel=False):
     c=(67,80,91);im=stone(name,c);d=ImageDraw.Draw(im)
@@ -111,7 +103,8 @@ def cuboid(a,b,texture):
     return {'from':a,'to':b,'faces':{face:{'texture':'#'+texture,'uv':[0,0,16,16]} for face in ['north','south','west','east','up','down']}}
 model={'textures':{'shell':'smog:block/multiblock_shell','panel':'smog:block/multiblock_panel','particle':'smog:block/multiblock_shell'},'elements':[
  cuboid([.35,1,.35],[15.65,14.5,15.65],'shell'),cuboid([0,0,0],[16,1.5,16],'shell'),cuboid([0,14,0],[16,16,16],'shell'),cuboid([5,4,0],[11,12,.4],'panel')]}
-(models/'assembled_machine.json').write_text(json.dumps(model,indent=2)+'\n')
+if FORCE or not (models/'assembled_machine.json').exists():
+    (models/'assembled_machine.json').write_text(json.dumps(model,indent=2)+'\n')
 
 # Contact sheet for visual inspection; not bundled into the mod.
 files=sorted(OUT.rglob('*.png'));sheet=Image.new('RGB',(9*112,((len(files)+8)//9)*100),(24,29,37));draw=ImageDraw.Draw(sheet)

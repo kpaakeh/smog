@@ -27,8 +27,8 @@ public final class ClientFoundationTests implements FabricClientGameTest {
                 var casing = BuiltInRegistries.BLOCK.getValue(ModBlocks.id("machine_casing"));
                 Multiblocks.get(ModBlocks.id("test_structure")).parts().forEach((p, ingredient) ->
                     level.setBlockAndUpdate(origin.offset(p), ingredient.value().equals("minecraft:air") ? Blocks.AIR.defaultBlockState() : casing.defaultBlockState()));
-                level.setBlockAndUpdate(new BlockPos(-3,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("apatite_ore")).defaultBlockState());
-                level.setBlockAndUpdate(new BlockPos(-4,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("deepslate_apatite_ore")).defaultBlockState());
+                level.setBlockAndUpdate(new BlockPos(-3,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("beryllium_ore")).defaultBlockState());
+                level.setBlockAndUpdate(new BlockPos(-4,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("deepslate_beryllium_ore")).defaultBlockState());
                 level.setBlockAndUpdate(new BlockPos(3,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("test_machine")).defaultBlockState());
                 int column=-6;
                 for(var ore:io.github.kpaakeh.smog.registry.ModOres.all()) {
@@ -97,6 +97,7 @@ public final class ClientFoundationTests implements FabricClientGameTest {
             context.waitFor(mc -> !io.github.kpaakeh.smog.render.ClientFormations.hidden(new BlockPos(-1,100,0)));
             world.getServer().runCommand("tp @a 0.5 100 -6.5 0 15");
             context.waitTicks(20);context.takeScreenshot("multiblock-dismantled");
+            IndustryClientScene.run(context,world);
         }
     }
 }

@@ -15,11 +15,11 @@ public final class ModCreativeTabs {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("machines"), FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smog.machines"))
             .icon(() -> Machines.all().iterator().next().block().asItem().getDefaultInstance())
-            .displayItems((parameters, output) -> Machines.all().forEach(e -> output.accept(e.block()))).build());
+            .displayItems((parameters, output) -> {Machines.all().forEach(e -> output.accept(e.block()));ModItems.all().stream().filter(e->e.tab().equals("machines")).forEach(e->output.accept(e.item()));}).build());
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("ores"), FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smog.ores"))
             .icon(() -> ModOres.all().getFirst().stone().asItem().getDefaultInstance())
-            .displayItems((parameters, output) -> ModOres.all().forEach(ore -> ore.contents().forEach(output::accept))).build());
+            .displayItems((parameters, output) -> {ModOres.all().forEach(ore -> ore.contents().forEach(output::accept));ModItems.all().stream().filter(e->e.tab().equals("ores")).forEach(e->output.accept(e.item()));}).build());
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("blocks"), FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smog.blocks"))
             .icon(() -> BuiltInRegistries.ITEM.getValue(ModBlocks.id("machine_casing")).getDefaultInstance())

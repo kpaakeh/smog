@@ -21,7 +21,7 @@ public final class ContentCatalog {
             if (stream == null) throw new IllegalStateException("Missing content catalog");
             JsonObject root = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
             for (var value : root.getAsJsonArray("blocks")) {
-                var o = value.getAsJsonObject(); ModBlocks.register(o.get("name").getAsString(), BlockBehaviour.Properties.of().strength(hardness(o)).requiresCorrectToolForDrops());
+                var o = value.getAsJsonObject(); ModBlocks.register(o.get("name").getAsString(), BlockBehaviour.Properties.of().strength(hardness(o)).noOcclusion().requiresCorrectToolForDrops());
             }
             for (var value : root.getAsJsonArray("ores")) {
                 var o = value.getAsJsonObject(); String name = o.get("name").getAsString();
@@ -42,11 +42,18 @@ public final class ContentCatalog {
                 }
                 Multiblocks.register(new MultiblockDefinition(ModBlocks.id(o.get("name").getAsString()), parts));
             }
+            if(root.has("items"))for(var value:root.getAsJsonArray("items")){
+                var o=value.getAsJsonObject();ModItems.register(o.get("name").getAsString(),o.has("kind")?o.get("kind").getAsString():"item",
+                    o.has("voltage")?o.get("voltage").getAsString():"LV",o.has("tab")?o.get("tab").getAsString():"ores");
+            }
             for (var value : root.getAsJsonArray("machines")) {
                 var o = value.getAsJsonObject(); Identifier structure = o.has("multiblock") ? Identifier.parse(o.get("multiblock").getAsString()) : null;
                 if (structure != null && Multiblocks.get(structure) == null) throw new IllegalArgumentException("Unknown multiblock " + structure);
-                Machines.register(o.get("name").getAsString(), BlockBehaviour.Properties.of().strength(hardness(o)).requiresCorrectToolForDrops(),
-                    new MachineDefinition(structure, 20, (level, machine) -> machine.progress(machine.progress() == Integer.MAX_VALUE ? 0 : machine.progress() + 1)));
+                var kind=o.has("kind")?MachineSpec.Kind.valueOf(o.get("kind").getAsString()):MachineSpec.Kind.DECORATIVE;
+                var spec=new MachineSpec(kind,io.github.kpaakeh.smog.energy.Voltage.valueOf(o.has("voltage")?o.get("voltage").getAsString():"LV"),
+                    o.has("capacity")?o.get("capacity").getAsInt():64000,o.has("work_ticks")?o.get("work_ticks").getAsInt():100,o.has("cost")?o.get("cost").getAsInt():4);
+                Machines.register(o.get("name").getAsString(), BlockBehaviour.Properties.of().strength(hardness(o)).noOcclusion().requiresCorrectToolForDrops(),
+                    new MachineDefinition(structure, 20, (level, machine) -> machine.progress(machine.progress() == Integer.MAX_VALUE ? 0 : machine.progress() + 1)),spec);
             }
             for (var value : root.getAsJsonArray("fluids")) {
                 var o = value.getAsJsonObject(); ModFluids.register(o.get("name").getAsString(), Integer.parseInt(o.get("color").getAsString(), 16),

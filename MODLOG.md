@@ -47,3 +47,13 @@
 - Local 26.3 sources and Fabric/JEI artifacts confirmed renderer extraction/submission, GuiRenderState PIP submission, client block-entity lifecycle, creative inventory pagination, and current recipe/loot formats.
 - Final Smog validation: clean compilation/assembly passed, all 5 required server GameTests passed, then runClientGameTest -PwithJei passed after correcting the test's interpretation of setSelectedTab. All three Smog tabs were visually inspected with their actual contents, as were ore gallery, united model, JEI preview, fluid and dismantled rendering.
 - Final release audit: smog-0.2.0.jar contains 130 recipes, 73 PNGs and 7 placed ore features, with no old namespace, test classes or Minecraft/decompiled files. Working tree and generated output remain in the existing workspace folder; GitHub project and all mod identifiers are Smog.
+
+## Smog 0.3.0 — industry foundations and editable models
+
+- Removed apatite. Six material families now expose 11 forms each: distinct shards, nuggets and plates. Removed crafting-table crushed/shard recipes; powered crusher and press have matching JEI categories.
+- Added persistent single-block furnace/crusher/press, safe front-facing block/fluid actions, solid fuel generation, reusable GUI layouts/menu synchronization, LV/MV/HV connector networks, catenary wire geometry and selectable transformer output.
+- Seven environmental multiblock generators share one controller and automatically select their pattern and formed model. Solar/lightning/thermal/flow/wind/steam/geothermal generation depends on world conditions. Heat and fluid consumption/balance are future work.
+- Every technical block/component uses a separate editable JSON geometry model; formed generators have normalized whole-structure models. Ore/storage cubes remain cubes. Placeholder asset scripts preserve existing user PNGs and model JSONs by default; no paid services used.
+- Fixed 26.3 SDL mouse mapping using InputConstants (left=1, middle=2, right=3). Fixed preview/formed-model depth writes by selecting an entity cutout render type instead of the default block-item sheet. User will verify mouse rotation manually.
+- Validation: nine required server GameTests passed; JEI client GameTest passed, including wire snapshot arrival, real furnace output and GUI energy synchronization. Visually inspected JEI geometry overlap, catenary wire, machine GUI and assembled generator gallery.
+- Editing paths and current foundation limits documented in docs/INDUSTRY.md. Models are static Java block JSON, editable with Blockbench. Original per-block collision remains after visual assembly; compatibility outside vanilla/Indigo is unverified.

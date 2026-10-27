@@ -9,15 +9,18 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public final class Machines {
-    public record Entry(MachineBlock block, BlockEntityType<MachineEntity> entityType, MachineDefinition definition) {}
+    public record Entry(MachineBlock block, BlockEntityType<MachineEntity> entityType, MachineDefinition definition, MachineSpec spec) {}
     private static final Map<Identifier, Entry> ENTRIES = new LinkedHashMap<>();
     private Machines() {}
     public static MachineBlock register(String name, BlockBehaviour.Properties properties, MachineDefinition definition) {
+        return register(name,properties,definition,MachineSpec.decorative());
+    }
+    public static MachineBlock register(String name, BlockBehaviour.Properties properties, MachineDefinition definition, MachineSpec spec) {
         Identifier id = ModBlocks.id(name);
         MachineBlock block = ModBlocks.register(name, p -> new MachineBlock(p, id), properties, true);
         BlockEntityType<MachineEntity> type = new BlockEntityType<>((pos, state) -> new MachineEntity(id, pos, state), Set.of(block));
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, type);
-        ENTRIES.put(id, new Entry(block, type, definition));
+        ENTRIES.put(id, new Entry(block, type, definition, spec));
         return block;
     }
     public static Entry get(Identifier id) { return Objects.requireNonNull(ENTRIES.get(id), "Unknown machine " + id); }

@@ -20,6 +20,7 @@ public final class StructurePreviewRenderer extends PictureInPictureRenderer<Str
         pose.rotate(Axis.XP.rotationDegrees(state.pitch())); pose.rotate(Axis.YP.rotationDegrees(state.yaw()));
         pose.translate(-(b.minX()+b.maxX()+1)/2f, -(b.minY()+b.maxY()+1)/2f, -(b.minZ()+b.maxZ()+1)/2f);
         for (var part : state.parts()) {
+            ModelRendering.enableDepth(part.model());
             pose.pushPose();
             if (state.formed()) { pose.translate(b.minX(),b.minY(),b.minZ()); pose.scale(b.width(),b.height(),b.depth()); }
             else pose.translate(part.pos().getX(),part.pos().getY(),part.pos().getZ());

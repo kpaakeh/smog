@@ -20,19 +20,31 @@ import net.minecraft.world.level.block.Block;
 /** Optional JEI integration: full depth-tested 3D structure and its bill of materials. */
 @JeiPlugin
 public final class SmogJeiPlugin implements IModPlugin {
-    public record Page(MultiblockDefinition structure, Block controller) {}
+    public record Page(MultiblockDefinition structure, Block controller) {
+        public net.minecraft.world.level.block.state.BlockState previewState(boolean formed){
+            var kind=io.github.kpaakeh.smog.machine.GeneratorKind.NONE;
+            if(structure.id().getPath().startsWith("generator_"))kind=io.github.kpaakeh.smog.machine.GeneratorKind.valueOf(structure.id().getPath().substring(10).toUpperCase(java.util.Locale.ROOT));
+            return controller.defaultBlockState().setValue(io.github.kpaakeh.smog.machine.MachineBlock.ASSEMBLED,formed).setValue(io.github.kpaakeh.smog.machine.MachineBlock.GENERATOR,kind);
+        }
+    }
     public static final IRecipeType<Page> TYPE = IRecipeType.create("smog", "multiblocks", Page.class);
     @Override public Identifier getPluginUid() { return ModBlocks.id("jei"); }
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER),
+            new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS));
     }
     @Override public void registerRecipes(IRecipeRegistration registration) {
         List<Page> pages = new ArrayList<>();
         for (var entry : Machines.all()) {
+            if(entry.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.GENERATOR_CONTROLLER)
+                for(var kind:io.github.kpaakeh.smog.machine.GeneratorKind.values())if(kind!=io.github.kpaakeh.smog.machine.GeneratorKind.NONE)pages.add(new Page(Multiblocks.get(kind.structureId()),entry.block()));
             var id = entry.definition().multiblock();
             if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
         }
         registration.addRecipes(TYPE, pages);
+        registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
+        registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
     }
     private static final class Category implements IRecipeCategory<Page> {
         private final IDrawable icon;

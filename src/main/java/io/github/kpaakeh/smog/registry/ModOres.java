@@ -16,8 +16,8 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 /** Worldgen JSON is generated from the matching content catalog entry during build. */
 public final class ModOres {
     public record Ore(String name, Block stone, Block deepslate, Item raw, Block rawBlock,
-                      Item product, Block storageBlock, Item dust, Item crushed, Item small) {
-        public List<ItemLike> contents() { return List.of(stone, deepslate, raw, rawBlock, product, storageBlock, dust, crushed, small); }
+                      Item product, Block storageBlock, Item dust, Item crushed, Item shard, Item nugget, Item plate) {
+        public List<ItemLike> contents() { return List.of(stone, deepslate, raw, rawBlock, product, storageBlock, dust, crushed, shard, nugget, plate); }
     }
     private static final List<Ore> VALUES = new ArrayList<>();
     private ModOres() {}
@@ -33,7 +33,7 @@ public final class ModOres {
         var ore = new Ore(name, stone, deep, item("raw_" + name),
             ModBlocks.register("raw_" + name + "_block", BlockBehaviour.Properties.of().strength(5, 6).requiresCorrectToolForDrops()),
             item(name + "_" + product), ModBlocks.register(name + "_block", BlockBehaviour.Properties.of().strength(5, 6).requiresCorrectToolForDrops()),
-            item(name + "_dust"), item("crushed_" + name + "_ore"), item(name + (product.equals("gem") ? "_shard" : "_nugget")));
+            item(name + "_dust"), item("crushed_" + name + "_ore"), item(name + "_shard"), item(name + "_nugget"), item(name + "_plate"));
         VALUES.add(ore); return ore;
     }
     public static void generation(String name, Predicate<BiomeSelectionContext> biomes) {

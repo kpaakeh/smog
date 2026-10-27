@@ -9,27 +9,92 @@
       "hardness": 4,
       "tags": [
         "smog:machine_casings"
-      ]
+      ],
+      "model": "smog:block/machine_casing"
+    },
+    {
+      "name": "generator_frame",
+      "display": "Generator Frame",
+      "display_ru": "Каркас генератора",
+      "texture": "smog:block/generator_frame",
+      "model": "smog:block/generator_frame",
+      "hardness": 4,
+      "recipe_core": "minecraft:iron_ingot"
+    },
+    {
+      "name": "solar_cell",
+      "display": "Solar Cell",
+      "display_ru": "Солнечная ячейка",
+      "texture": "smog:block/solar_cell",
+      "model": "smog:block/solar_cell",
+      "hardness": 4,
+      "recipe_core": "minecraft:daylight_detector"
+    },
+    {
+      "name": "copper_coil",
+      "display": "Copper Coil",
+      "display_ru": "Медная обмотка",
+      "texture": "smog:block/copper_coil",
+      "model": "smog:block/copper_coil",
+      "hardness": 4,
+      "recipe_core": "minecraft:copper_ingot"
+    },
+    {
+      "name": "rotor_blade",
+      "display": "Rotor Blade",
+      "display_ru": "Лопасть ротора",
+      "texture": "smog:block/rotor_blade",
+      "model": "smog:block/rotor_blade",
+      "hardness": 4,
+      "recipe_core": "minecraft:iron_ingot"
+    },
+    {
+      "name": "turbine_housing",
+      "display": "Turbine Housing",
+      "display_ru": "Корпус турбины",
+      "texture": "smog:block/turbine_housing",
+      "model": "smog:block/turbine_housing",
+      "hardness": 4,
+      "recipe_core": "minecraft:piston"
+    },
+    {
+      "name": "heat_exchanger",
+      "display": "Heat Exchanger",
+      "display_ru": "Теплообменник",
+      "texture": "smog:block/heat_exchanger",
+      "model": "smog:block/heat_exchanger",
+      "hardness": 4,
+      "recipe_core": "minecraft:magma_block"
+    },
+    {
+      "name": "lightning_tip",
+      "display": "Lightning Collector",
+      "display_ru": "Молниеприёмник",
+      "texture": "smog:block/lightning_tip",
+      "model": "smog:block/lightning_tip",
+      "hardness": 4,
+      "recipe_core": "minecraft:lightning_rod"
+    },
+    {
+      "name": "steam_boiler",
+      "display": "Steam Boiler",
+      "display_ru": "Паровой котёл",
+      "texture": "smog:block/steam_boiler",
+      "model": "smog:block/steam_boiler",
+      "hardness": 4,
+      "recipe_core": "minecraft:cauldron"
+    },
+    {
+      "name": "geothermal_core",
+      "display": "Geothermal Core",
+      "display_ru": "Геотермальный модуль",
+      "texture": "smog:block/geothermal_core",
+      "model": "smog:block/geothermal_core",
+      "hardness": 4,
+      "recipe_core": "minecraft:obsidian"
     }
   ],
   "ores": [
-    {
-      "name": "apatite",
-      "display": "Apatite Ore",
-      "display_ru": "Апатитовая руда",
-      "material": "Apatite",
-      "material_ru": "апатита",
-      "color": "55BEC2",
-      "product": "gem",
-      "texture": "smog:block/apatite_ore",
-      "deepslate_texture": "smog:block/deepslate_apatite_ore",
-      "hardness": 3,
-      "vein_size": 9,
-      "veins_per_chunk": 10,
-      "min_y": -16,
-      "max_y": 112,
-      "biomes": "overworld"
-    },
     {
       "name": "beryllium",
       "display": "Beryllium Ore",
@@ -140,7 +205,9 @@
       "display_ru": "Базовый механизм",
       "texture": "smog:block/machine_idle",
       "assembled_texture": "smog:block/machine_active",
-      "hardness": 4
+      "hardness": 4,
+      "model": "smog:block/test_machine",
+      "assembled_model": "smog:block/test_machine"
     },
     {
       "name": "test_controller",
@@ -150,7 +217,203 @@
       "assembled_texture": "minecraft:block/redstone_block",
       "hardness": 4,
       "multiblock": "smog:test_structure",
-      "assembled_model": "smog:block/assembled_machine"
+      "assembled_model": "smog:block/assembled_machine",
+      "model": "smog:block/test_controller"
+    },
+    {
+      "name": "electric_furnace",
+      "display": "Electric Furnace",
+      "display_ru": "Электрическая печь",
+      "kind": "ELECTRIC_FURNACE",
+      "voltage": "LV",
+      "work_ticks": 100,
+      "cost": 4,
+      "capacity": 64000,
+      "model": "smog:block/electric_furnace",
+      "assembled_model": "smog:block/electric_furnace",
+      "texture": "smog:block/electric_furnace",
+      "hardness": 4,
+      "recipe_core": "minecraft:furnace"
+    },
+    {
+      "name": "crusher",
+      "display": "Crusher",
+      "display_ru": "Дробитель",
+      "kind": "CRUSHER",
+      "voltage": "LV",
+      "work_ticks": 60,
+      "cost": 8,
+      "capacity": 64000,
+      "model": "smog:block/crusher",
+      "assembled_model": "smog:block/crusher",
+      "texture": "smog:block/crusher",
+      "hardness": 4,
+      "recipe_core": "minecraft:piston"
+    },
+    {
+      "name": "press",
+      "display": "Press",
+      "display_ru": "Пресс",
+      "kind": "PRESS",
+      "voltage": "MV",
+      "work_ticks": 80,
+      "cost": 16,
+      "capacity": 64000,
+      "model": "smog:block/press",
+      "assembled_model": "smog:block/press",
+      "texture": "smog:block/press",
+      "hardness": 4,
+      "recipe_core": "minecraft:anvil"
+    },
+    {
+      "name": "block_breaker",
+      "display": "Block Breaker",
+      "display_ru": "Разрушитель блоков",
+      "kind": "BLOCK_BREAKER",
+      "voltage": "LV",
+      "work_ticks": 20,
+      "cost": 64,
+      "capacity": 64000,
+      "model": "smog:block/block_breaker",
+      "assembled_model": "smog:block/block_breaker",
+      "texture": "smog:block/block_breaker",
+      "hardness": 4,
+      "recipe_core": "minecraft:iron_pickaxe"
+    },
+    {
+      "name": "block_placer",
+      "display": "Block Placer",
+      "display_ru": "Ставщик блоков",
+      "kind": "BLOCK_PLACER",
+      "voltage": "LV",
+      "work_ticks": 20,
+      "cost": 32,
+      "capacity": 64000,
+      "model": "smog:block/block_placer",
+      "assembled_model": "smog:block/block_placer",
+      "texture": "smog:block/block_placer",
+      "hardness": 4,
+      "recipe_core": "minecraft:dispenser"
+    },
+    {
+      "name": "fluid_pump",
+      "display": "Fluid Pump",
+      "display_ru": "Заборщик жидкостей",
+      "kind": "FLUID_PUMP",
+      "voltage": "LV",
+      "work_ticks": 20,
+      "cost": 32,
+      "capacity": 64000,
+      "model": "smog:block/fluid_pump",
+      "assembled_model": "smog:block/fluid_pump",
+      "texture": "smog:block/fluid_pump",
+      "hardness": 4,
+      "recipe_core": "minecraft:bucket"
+    },
+    {
+      "name": "fluid_placer",
+      "display": "Fluid Placer",
+      "display_ru": "Ставщик жидкостей",
+      "kind": "FLUID_PLACER",
+      "voltage": "LV",
+      "work_ticks": 20,
+      "cost": 32,
+      "capacity": 64000,
+      "model": "smog:block/fluid_placer",
+      "assembled_model": "smog:block/fluid_placer",
+      "texture": "smog:block/fluid_placer",
+      "hardness": 4,
+      "recipe_core": "minecraft:dropper"
+    },
+    {
+      "name": "solid_generator",
+      "display": "Solid Fuel Generator",
+      "display_ru": "Твердотопливный генератор",
+      "kind": "SOLID_GENERATOR",
+      "voltage": "LV",
+      "work_ticks": 20,
+      "cost": 0,
+      "capacity": 200000,
+      "model": "smog:block/solid_generator",
+      "assembled_model": "smog:block/solid_generator",
+      "texture": "smog:block/solid_generator",
+      "hardness": 4,
+      "recipe_core": "minecraft:blast_furnace"
+    },
+    {
+      "name": "generator_controller",
+      "display": "Generator Controller",
+      "display_ru": "Контроллер генераторов",
+      "kind": "GENERATOR_CONTROLLER",
+      "voltage": "HV",
+      "work_ticks": 20,
+      "cost": 0,
+      "capacity": 200000,
+      "model": "smog:block/generator_controller",
+      "assembled_model": "smog:block/generator_controller",
+      "texture": "smog:block/generator_controller",
+      "hardness": 4,
+      "recipe_core": "minecraft:comparator"
+    },
+    {
+      "name": "transformer",
+      "display": "Transformer",
+      "display_ru": "Трансформатор",
+      "kind": "TRANSFORMER",
+      "voltage": "HV",
+      "work_ticks": 20,
+      "cost": 0,
+      "capacity": 64000,
+      "model": "smog:block/transformer",
+      "assembled_model": "smog:block/transformer",
+      "texture": "smog:block/transformer",
+      "hardness": 4,
+      "recipe_core": "minecraft:redstone_block"
+    },
+    {
+      "name": "connector_lv",
+      "display": "LV Connector",
+      "display_ru": "Коннектор НН",
+      "kind": "CONNECTOR",
+      "voltage": "LV",
+      "capacity": 1,
+      "work_ticks": 20,
+      "cost": 0,
+      "texture": "smog:block/connector_lv",
+      "model": "smog:block/connector_lv",
+      "assembled_model": "smog:block/connector_lv",
+      "hardness": 2,
+      "recipe_core": "minecraft:copper_ingot"
+    },
+    {
+      "name": "connector_mv",
+      "display": "MV Connector",
+      "display_ru": "Коннектор СН",
+      "kind": "CONNECTOR",
+      "voltage": "MV",
+      "capacity": 1,
+      "work_ticks": 20,
+      "cost": 0,
+      "texture": "smog:block/connector_mv",
+      "model": "smog:block/connector_mv",
+      "assembled_model": "smog:block/connector_mv",
+      "hardness": 2,
+      "recipe_core": "minecraft:copper_ingot"
+    },
+    {
+      "name": "connector_hv",
+      "display": "HV Connector",
+      "display_ru": "Коннектор ВН",
+      "kind": "CONNECTOR",
+      "voltage": "HV",
+      "capacity": 1,
+      "work_ticks": 20,
+      "cost": 0,
+      "texture": "smog:block/connector_hv",
+      "model": "smog:block/connector_hv",
+      "assembled_model": "smog:block/connector_hv",
+      "hardness": 2,
+      "recipe_core": "minecraft:copper_ingot"
     }
   ],
   "multiblocks": [
@@ -206,6 +469,317 @@
           "block": "#smog:machine_casings"
         }
       ]
+    },
+    {
+      "name": "generator_solar",
+      "parts": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 0,
+          "block": "smog:solar_cell"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:solar_cell"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "block": "smog:solar_cell"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:solar_cell"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 0,
+          "block": "smog:solar_cell"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:solar_cell"
+        }
+      ]
+    },
+    {
+      "name": "generator_lightning",
+      "parts": [
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:copper_coil"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:copper_coil"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:copper_coil"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 0,
+          "y": 3,
+          "z": 1,
+          "block": "smog:lightning_tip"
+        }
+      ]
+    },
+    {
+      "name": "generator_thermal",
+      "parts": [
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:heat_exchanger"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:heat_exchanger"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:heat_exchanger"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:copper_coil"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        }
+      ]
+    },
+    {
+      "name": "generator_flow",
+      "parts": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:turbine_housing"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:turbine_housing"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:rotor_blade"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:rotor_blade"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 2,
+          "block": "smog:generator_frame"
+        }
+      ]
+    },
+    {
+      "name": "generator_wind",
+      "parts": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 0,
+          "y": 3,
+          "z": 1,
+          "block": "smog:turbine_housing"
+        },
+        {
+          "x": -1,
+          "y": 3,
+          "z": 0,
+          "block": "smog:rotor_blade"
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "z": 0,
+          "block": "smog:rotor_blade"
+        },
+        {
+          "x": 0,
+          "y": 4,
+          "z": 0,
+          "block": "smog:rotor_blade"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "z": 0,
+          "block": "smog:rotor_blade"
+        }
+      ]
+    },
+    {
+      "name": "generator_steam",
+      "parts": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:steam_boiler"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:steam_boiler"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:copper_coil"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:copper_coil"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 2,
+          "block": "smog:turbine_housing"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        }
+      ]
+    },
+    {
+      "name": "generator_geothermal",
+      "parts": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:geothermal_core"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:heat_exchanger"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:heat_exchanger"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 2,
+          "block": "smog:heat_exchanger"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:generator_frame"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:copper_coil"
+        }
+      ]
     }
   ],
   "fluids": [
@@ -220,6 +794,51 @@
         "smog:coolants"
       ],
       "bucket_texture": "smog:item/coolant_bucket"
+    }
+  ],
+  "items": [
+    {
+      "name": "iron_plate",
+      "display": "Iron Plate",
+      "display_ru": "Железная пластина",
+      "tab": "ores"
+    },
+    {
+      "name": "copper_plate",
+      "display": "Copper Plate",
+      "display_ru": "Медная пластина",
+      "tab": "ores"
+    },
+    {
+      "name": "wrench",
+      "display": "Wrench",
+      "display_ru": "Гаечный ключ",
+      "kind": "wrench",
+      "tab": "machines"
+    },
+    {
+      "name": "wire_coil_lv",
+      "display": "LV Wire Coil",
+      "display_ru": "Катушка провода НН",
+      "kind": "wire",
+      "voltage": "LV",
+      "tab": "machines"
+    },
+    {
+      "name": "wire_coil_mv",
+      "display": "MV Wire Coil",
+      "display_ru": "Катушка провода СН",
+      "kind": "wire",
+      "voltage": "MV",
+      "tab": "machines"
+    },
+    {
+      "name": "wire_coil_hv",
+      "display": "HV Wire Coil",
+      "display_ru": "Катушка провода ВН",
+      "kind": "wire",
+      "voltage": "HV",
+      "tab": "machines"
     }
   ]
 }

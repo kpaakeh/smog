@@ -26,7 +26,7 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
     @Override public ScreenRectangle getScreenRectangle() { return area; }
     @Override public ScreenRectangle getArea() { return area; }
     @Override public boolean handleMouseDragged(double x,double y,InputConstants.Key key,double dx,double dy) {
-        if (!area.containsPoint((int)x,(int)y) || !key.equals(InputConstants.Type.MOUSE.getOrCreate(0))) return false;
+        if (!area.containsPoint((int)x,(int)y) || !key.equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT))) return false;
         yaw=(yaw+(float)dx*1.2f)%360; pitch=Math.clamp(pitch+(float)dy, -80, 80); return true;
     }
     @Override public boolean handleMouseScrolled(double x,double y,double dx,double dy) {
@@ -35,13 +35,13 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
     }
     @Override public boolean handleInput(double x,double y,IJeiUserInput input) {
         if (!area.containsPoint((int)x,(int)y)) return false;
-        if (input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(1))) {
+        if (input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT))) {
             if (!input.isSimulate()) formed=!formed;return true;
         }
-        if (input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(2))) {
+        if (input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_MIDDLE))) {
             if (!input.isSimulate()) { yaw=135;pitch=25;zoom=1; }return true;
         }
-        return input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(0));
+        return input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT));
     }
     @Override public void drawWidget(GuiGraphicsExtractor graphics,double mouseX,double mouseY) {
         graphics.fill(4,18,166,104,0xFF202A35);
@@ -49,7 +49,7 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         List<StructurePreviewState.Part> parts=new ArrayList<>();
         var display=BlockDisplayContext.create();
         if (formed) {
-            var model=new BlockModelRenderState();resolver.update(model,page.controller().defaultBlockState().setValue(MachineBlock.ASSEMBLED,true),display);
+            var model=new BlockModelRenderState();resolver.update(model,page.previewState(true),display);
             parts.add(new StructurePreviewState.Part(BlockPos.ZERO,model));
         } else {
             var model=new BlockModelRenderState();resolver.update(model,page.controller().defaultBlockState(),display);

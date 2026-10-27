@@ -19,9 +19,9 @@ import net.minecraft.world.phys.Vec3;
 public class FoundationTests {
     @GameTest public void materialFamiliesRecipesAndWorldgen(GameTestHelper h) {
         var level=h.getLevel();
-        h.assertValueEqual(ModOres.all().size(),7,"Seven material families");
+        h.assertValueEqual(ModOres.all().size(),6,"Seven material families");
         for (var ore:ModOres.all()) {
-            h.assertValueEqual(ore.contents().size(),9,"Complete material family");
+            h.assertValueEqual(ore.contents().size(),11,"Complete material family");
             for (var item:ore.contents()) h.assertTrue(item.asItem()!=net.minecraft.world.item.Items.AIR,"Material form has an item");
             var recipe=level.recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,
                 net.minecraft.world.item.crafting.CraftingInput.of(3,3,java.util.stream.IntStream.range(0,9).mapToObj(i->ore.raw().getDefaultInstance()).toList()),level).orElseThrow();
@@ -44,7 +44,7 @@ public class FoundationTests {
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(),true,level.registryAccess());
         for(String tab:List.of("machines","ores","blocks"))h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab)).hasAnyItems(),"Creative tab has contents: "+tab);
-        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),63,"All forms are in ore tab");
+        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),68,"All forms are in ore tab");
         h.succeed();
     }
     @GameTest public void zoneGeometryMovementAndPersistence(GameTestHelper h) {
@@ -73,13 +73,13 @@ public class FoundationTests {
     @GameTest public void registryTagsAndFluids(GameTestHelper h) {
         var casing = BuiltInRegistries.BLOCK.getValue(ModBlocks.id("machine_casing"));
         h.assertTrue(casing.defaultBlockState().is(ModTags.MACHINE_CASINGS), "Generated block tag loaded");
-        h.assertTrue(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("apatite_ore")).defaultBlockState().is(ModTags.ORES), "Ore registered and tagged");
-        h.assertTrue(BuiltInRegistries.ITEM.getValue(ModBlocks.id("apatite_ore")).getDefaultInstance().is(ModTags.ORE_ITEMS), "Item tag loaded");
+        h.assertTrue(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("beryllium_ore")).defaultBlockState().is(ModTags.ORES), "Ore registered and tagged");
+        h.assertTrue(BuiltInRegistries.ITEM.getValue(ModBlocks.id("beryllium_ore")).getDefaultInstance().is(ModTags.ORE_ITEMS), "Item tag loaded");
         h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.PLACED_FEATURE)
-            .getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.PLACED_FEATURE, ModBlocks.id("apatite_ore")));
-        var ore = BuiltInRegistries.BLOCK.getValue(ModBlocks.id("apatite_ore"));
+            .getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.PLACED_FEATURE, ModBlocks.id("beryllium_ore")));
+        var ore = BuiltInRegistries.BLOCK.getValue(ModBlocks.id("beryllium_ore"));
         h.assertTrue(Block.getDrops(ore.defaultBlockState(), h.getLevel(), h.absolutePos(new BlockPos(0,1,0)), null)
-            .stream().anyMatch(stack -> stack.is(BuiltInRegistries.ITEM.getValue(ModBlocks.id("raw_apatite")))), "Generated ore loot table drops the ore");
+            .stream().anyMatch(stack -> stack.is(BuiltInRegistries.ITEM.getValue(ModBlocks.id("raw_beryllium")))), "Generated ore loot table drops the ore");
         var fluid = ModFluids.all().getFirst();
         h.assertTrue(fluid.source.isSame(fluid.flowing), "Fluid variants share identity");
         h.assertFalse(fluid.source.isSame(net.minecraft.world.level.material.Fluids.WATER), "Fluid identity remains distinct");
