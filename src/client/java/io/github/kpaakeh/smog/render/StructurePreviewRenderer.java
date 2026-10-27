@@ -16,7 +16,9 @@ public final class StructurePreviewRenderer extends PictureInPictureRenderer<Str
     @Override protected void renderToTexture(StructurePreviewState state, PoseStack pose, SubmitNodeCollector collector) {
         Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         var b = state.size();
-        pose.scale(1,-1,1);
+        // PIP already mirrors Z. Cancel it as well as GUI Y so camera depth
+        // agrees with the displayed orbit (positive pitch views the top).
+        pose.scale(1,-1,-1);
         pose.rotate(Axis.XP.rotationDegrees(state.pitch())); pose.rotate(Axis.YP.rotationDegrees(state.yaw()));
         pose.translate(-(b.minX()+b.maxX()+1)/2f, -(b.minY()+b.maxY()+1)/2f, -(b.minZ()+b.maxZ()+1)/2f);
         for (var part : state.parts()) {

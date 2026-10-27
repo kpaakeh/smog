@@ -20,6 +20,22 @@ public class IndustryTests {
         return (MachineEntity)h.getLevel().getBlockEntity(pos);
     }
     private static void ticks(MachineEntity machine,int ticks){for(int i=0;i<ticks;i++)machine.serverTick();}
+    @GameTest public void usedWireStacksMatchNewWire(GameTestHelper h) {
+        var item=BuiltInRegistries.ITEM.getValue(ModBlocks.id("wire_coil_lv"));
+        var fresh=new ItemStack(item);var used=new ItemStack(item,12);
+        var tag=new net.minecraft.nbt.CompoundTag();
+        tag.putString("smog_wire_dimension","minecraft:overworld");tag.putInt("smog_wire_x",10);tag.putInt("smog_wire_y",20);tag.putInt("smog_wire_z",30);
+        used.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(tag));
+        WireCoilItem.clearSelection(used);
+        h.assertTrue(ItemStack.isSameItemSameComponents(fresh,used),"Placed wire stacks with unused wire");
+        tag.remove("smog_wire_dimension");used.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(tag));
+        ((WireCoilItem)item).inventoryTick(used,h.getLevel(),null,null);
+        h.assertTrue(ItemStack.isSameItemSameComponents(fresh,used),"Legacy coordinate residue cleaned automatically");
+        tag.putString("other_mod_data","preserved");used.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(tag));
+        WireCoilItem.clearSelection(used);
+        h.assertValueEqual(used.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getStringOr("other_mod_data",""),"preserved","Unrelated custom data preserved");
+        h.succeed();
+    }
     @GameTest public void materialsAndPoweredProcessing(GameTestHelper h){
         h.assertFalse(BuiltInRegistries.BLOCK.containsKey(ModBlocks.id("apatite_ore")),"Apatite removed");
         var family=ModOres.all().getFirst();

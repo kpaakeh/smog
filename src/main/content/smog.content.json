@@ -468,7 +468,9 @@
           "z": 2,
           "block": "#smog:machine_casings"
         }
-      ]
+      ],
+      "display": "Test structure",
+      "display_ru": "Тестовая структура"
     },
     {
       "name": "generator_solar",
@@ -515,7 +517,9 @@
           "z": 1,
           "block": "smog:solar_cell"
         }
-      ]
+      ],
+      "display": "Solar generator",
+      "display_ru": "Солнечный генератор"
     },
     {
       "name": "generator_lightning",
@@ -556,7 +560,9 @@
           "z": 1,
           "block": "smog:lightning_tip"
         }
-      ]
+      ],
+      "display": "Lightning generator",
+      "display_ru": "Молниевой генератор"
     },
     {
       "name": "generator_thermal",
@@ -597,7 +603,9 @@
           "z": 1,
           "block": "smog:generator_frame"
         }
-      ]
+      ],
+      "display": "Thermal generator",
+      "display_ru": "Тепловой генератор"
     },
     {
       "name": "generator_flow",
@@ -632,7 +640,9 @@
           "z": 2,
           "block": "smog:generator_frame"
         }
-      ]
+      ],
+      "display": "Flow generator",
+      "display_ru": "Потоковый генератор"
     },
     {
       "name": "generator_wind",
@@ -685,7 +695,9 @@
           "z": 0,
           "block": "smog:rotor_blade"
         }
-      ]
+      ],
+      "display": "Wind generator",
+      "display_ru": "Ветряной генератор"
     },
     {
       "name": "generator_steam",
@@ -732,7 +744,9 @@
           "z": 1,
           "block": "smog:generator_frame"
         }
-      ]
+      ],
+      "display": "Steam generator",
+      "display_ru": "Паровой генератор"
     },
     {
       "name": "generator_geothermal",
@@ -779,7 +793,9 @@
           "z": 1,
           "block": "smog:copper_coil"
         }
-      ]
+      ],
+      "display": "Geothermal generator",
+      "display_ru": "Геотермальный генератор"
     }
   ],
   "fluids": [

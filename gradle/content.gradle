@@ -191,6 +191,10 @@ abstract class GenerateSmogContent extends DefaultTask {
         [none:['Incomplete','Не собран'],solar:['Solar','Солнечный'],lightning:['Lightning','Молниевой'],thermal:['Thermal','Тепловой'],flow:['Flow turbine','Потоковый'],wind:['Wind','Ветряной'],steam:['Steam','Паровой'],geothermal:['Geothermal','Геотермальный']].each { key,text ->
             en["generator.smog.$key"]=text[0];ru["generator.smog.$key"]=text[1]
         }
+        root.multiblocks.each { entry ->
+            en["multiblock.smog.${entry.name}"] = entry.display ?: entry.name
+            ru["multiblock.smog.${entry.name}"] = entry.display_ru ?: entry.display ?: entry.name
+        }
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
     }

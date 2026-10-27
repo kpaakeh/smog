@@ -13,6 +13,17 @@ import net.minecraft.world.item.context.UseOnContext;
 public final class WireCoilItem extends Item {
     private final Voltage voltage;
     public WireCoilItem(Properties properties,Voltage voltage){super(properties);this.voltage=voltage;}
+    /** Remove all temporary keys, including residue written by 0.3.0, without touching other custom data. */
+    public static void clearSelection(ItemStack stack) {
+        var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();
+        for(String key:java.util.List.of("smog_wire_dimension","smog_wire_x","smog_wire_y","smog_wire_z"))data.remove(key);
+        if(data.isEmpty())stack.remove(DataComponents.CUSTOM_DATA);
+        else stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
+    }
+    @Override public void inventoryTick(ItemStack stack,ServerLevel level,net.minecraft.world.entity.Entity owner,net.minecraft.world.entity.EquipmentSlot slot) {
+        var data=stack.get(DataComponents.CUSTOM_DATA);
+        if(data!=null && !data.copyTag().contains("smog_wire_dimension"))clearSelection(stack);
+    }
     @Override public InteractionResult useOn(UseOnContext context){
         if(!(context.getLevel() instanceof ServerLevel level))return InteractionResult.SUCCESS;
         var player=context.getPlayer();if(player==null)return InteractionResult.PASS;
@@ -21,7 +32,7 @@ public final class WireCoilItem extends Item {
         var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();
         if(player.isShiftKeyDown()){
             WireData.get(level).disconnect(pos).forEach(link->EnergyNetwork.refund(level,pos,link.voltage()));
-            data.remove("smog_wire_dimension");stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));return InteractionResult.SUCCESS;
+            clearSelection(stack);return InteractionResult.SUCCESS;
         }
         String dimension=level.dimension().identifier().toString();
         if(!data.getStringOr("smog_wire_dimension","").equals(dimension)){
@@ -38,7 +49,7 @@ public final class WireCoilItem extends Item {
             }
         }
         if(!WireData.get(level).add(link))return InteractionResult.FAIL;
-        data.remove("smog_wire_dimension");stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
+        clearSelection(stack);
         if(!player.getAbilities().instabuild)stack.shrink(1);return InteractionResult.SUCCESS;
     }
 }

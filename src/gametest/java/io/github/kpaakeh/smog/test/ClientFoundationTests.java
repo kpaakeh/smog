@@ -79,6 +79,10 @@ public final class ClientFoundationTests implements FabricClientGameTest {
                 context.runOnClient(mc -> TestJeiProbe.showMultiblocks());
                 context.waitTicks(10);
                 context.takeScreenshot("foundation-jei-multiblock");
+                context.runOnClient(mc -> TestJeiProbe.showSolar());context.waitTicks(10);
+                context.takeScreenshot("jei-solar-depth");
+                context.runOnClient(mc -> TestJeiProbe.showDepthFixture());context.waitTicks(10);
+                context.takeScreenshot("jei-grass-depth-fixture");
                 context.setScreen(() -> null);
                 context.waitTicks(5);
             }

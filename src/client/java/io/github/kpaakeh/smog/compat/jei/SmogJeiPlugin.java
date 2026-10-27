@@ -71,7 +71,8 @@ public final class SmogJeiPlugin implements IModPlugin {
             var preview=new StructurePreviewWidget(page);
             builder.addWidget(preview);builder.addInputHandler(preview);
             var b=page.structure().bounds();
-            builder.addText(Component.literal(b.width()+" x "+b.height()+" x "+b.depth()),140,10);
+            builder.addText(Component.translatable("multiblock."+page.structure().id().getNamespace()+"."+page.structure().id().getPath()),146,12).setPosition(2,0);
+            builder.addText(Component.literal(b.width()+" x "+b.height()+" x "+b.depth()),140,10).setPosition(2,14);
             builder.addScrollGridWidget(builder.getRecipeSlots().getSlots(RecipeIngredientRole.INPUT),9,1).setPosition(2,110);
             builder.addText(List.of(Component.translatable("jei.smog.controls"),Component.translatable("jei.smog.controls_more")),166,20).setPosition(2,130);
         }

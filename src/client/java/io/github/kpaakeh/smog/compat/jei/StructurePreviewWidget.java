@@ -18,7 +18,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHandler {
     private final SmogJeiPlugin.Page page;
-    private final ScreenRectangle area = new ScreenRectangle(4,18,162,86);
+    private final ScreenRectangle area = new ScreenRectangle(4,28,162,76);
     private float yaw=135, pitch=25, zoom=1;
     private boolean formed;
     public StructurePreviewWidget(SmogJeiPlugin.Page page) { this.page=page; }
@@ -44,7 +44,7 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         return input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT));
     }
     @Override public void drawWidget(GuiGraphicsExtractor graphics,double mouseX,double mouseY) {
-        graphics.fill(4,18,166,104,0xFF202A35);
+        graphics.fill(4,28,166,104,0xFF202A35);
         var minecraft=Minecraft.getInstance();var resolver=new BlockModelResolver(minecraft.getModelManager());
         List<StructurePreviewState.Part> parts=new ArrayList<>();
         var display=BlockDisplayContext.create();
@@ -67,8 +67,8 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         }
         var b=page.structure().bounds();float size=Math.max(b.width(),Math.max(b.height(),b.depth()));
         var pose=new Matrix3x2f(graphics.pose());var scissor=graphics.scissorStack.peek();
-        graphics.guiRenderState.addPicturesInPictureState(new StructurePreviewState(List.copyOf(parts),b,formed,yaw,pitch,4,18,166,104,
-            54f/size*zoom,pose,scissor,PictureInPictureRenderState.getBounds(4,18,166,104,pose,scissor)));
-        graphics.text(minecraft.font,net.minecraft.network.chat.Component.translatable(formed?"jei.smog.formed":"jei.smog.blueprint"),8,22,0xFFBDD9E5,false);
+        graphics.guiRenderState.addPicturesInPictureState(new StructurePreviewState(List.copyOf(parts),b,formed,yaw,pitch,4,28,166,104,
+            54f/size*zoom,pose,scissor,PictureInPictureRenderState.getBounds(4,28,166,104,pose,scissor)));
+        graphics.text(minecraft.font,net.minecraft.network.chat.Component.translatable(formed?"jei.smog.formed":"jei.smog.blueprint"),8,32,0xFFBDD9E5,false);
     }
 }

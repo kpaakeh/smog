@@ -57,3 +57,12 @@
 - Fixed 26.3 SDL mouse mapping using InputConstants (left=1, middle=2, right=3). Fixed preview/formed-model depth writes by selecting an entity cutout render type instead of the default block-item sheet. User will verify mouse rotation manually.
 - Validation: nine required server GameTests passed; JEI client GameTest passed, including wire snapshot arrival, real furnace output and GUI energy synchronization. Visually inspected JEI geometry overlap, catenary wire, machine GUI and assembled generator gallery.
 - Editing paths and current foundation limits documented in docs/INDUSTRY.md. Models are static Java block JSON, editable with Blockbench. Original per-block collision remains after visual assembly; compatibility outside vanilla/Indigo is unverified.
+
+
+## Smog 0.3.1 — preview depth, JEI names and coil stacking
+
+- Corrected the preview coordinate system: native PictureInPictureRenderer applies a negative Z scale. The extra GUI Y inversion now also cancels that Z reflection, so displayed orbit angles and front/back depth agree. The earlier render-type change alone did not correct this. Verified roof panels occlude the frame correctly and a grass/gold diagnostic shows grass tops and solid side faces.
+- Multiblock catalog entries now have display/display_ru names generated into multiblock.smog.* translations. JEI displays each structure name separately above its dimensions; the card keeps its original height for small windows.
+- Completed/cancelled wire connections remove all four temporary selection keys and remove empty CUSTOM_DATA components. inventoryTick also cleans coordinate residue from 0.3.0 used coils, preserving unrelated custom data. Regression covers matching fresh-stack components and legacy cleanup.
+- Client GameTest with JEI passed with solar and grass/gold depth screenshots. Final release validation recorded below.
+- Final 0.3.1 validation: build and runClientGameTest -PwithJei succeeded; all 10 required server tests passed. Inspected the final solar JEI screenshot: named header, solid roof occlusion and both mouse-control lines fit within the card.
