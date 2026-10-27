@@ -1,5 +1,20 @@
 {
-  "tags": [],
+  "tags": [
+    {
+      "registry": "item",
+      "id": "smog:sulfur_sources",
+      "values": [
+        "minecraft:sulfur"
+      ]
+    },
+    {
+      "registry": "block",
+      "id": "smog:sulfur_sources",
+      "values": [
+        "minecraft:sulfur"
+      ]
+    }
+  ],
   "blocks": [],
   "ores": [
     {
@@ -10,10 +25,14 @@
       "color": "9FBFC9",
       "product": "ingot",
       "vein_size": 8,
-      "veins_per_chunk": 7,
+      "veins_per_chunk": 3,
       "min_y": -32,
       "max_y": 64,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
+      "mineral": "cassiterite",
+      "potential_byproducts": []
     },
     {
       "name": "zinc",
@@ -23,10 +42,16 @@
       "color": "B4B99D",
       "product": "ingot",
       "vein_size": 7,
-      "veins_per_chunk": 6,
+      "veins_per_chunk": 3,
       "min_y": -16,
       "max_y": 72,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
+      "mineral": "sphalerite",
+      "potential_byproducts": [
+        "germanium"
+      ]
     },
     {
       "name": "lead",
@@ -35,11 +60,18 @@
       "display_ru": "Свинцовая руда",
       "color": "77748F",
       "product": "ingot",
-      "vein_size": 7,
-      "veins_per_chunk": 5,
+      "veins_per_chunk": 1,
       "min_y": -48,
       "max_y": 32,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "ore_body",
+      "rarity": 12,
+      "radius": 10,
+      "thickness": 5,
+      "mineral": "galena",
+      "potential_byproducts": [
+        "silver"
+      ]
     },
     {
       "name": "nickel",
@@ -48,11 +80,19 @@
       "display_ru": "Никелевая руда",
       "color": "A8AA83",
       "product": "ingot",
-      "vein_size": 6,
-      "veins_per_chunk": 5,
+      "veins_per_chunk": 1,
       "min_y": -48,
       "max_y": 24,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "ore_body",
+      "rarity": 16,
+      "radius": 11,
+      "thickness": 6,
+      "mineral": "nickel_sulfide",
+      "potential_byproducts": [
+        "cobalt",
+        "platinum_group"
+      ]
     },
     {
       "name": "bauxite",
@@ -61,11 +101,16 @@
       "display_ru": "Бокситовая руда",
       "color": "B07854",
       "product": "none",
-      "vein_size": 10,
-      "veins_per_chunk": 6,
-      "min_y": 0,
-      "max_y": 96,
-      "biomes": "overworld"
+      "veins_per_chunk": 1,
+      "biomes": "overworld",
+      "generation_profile": "shallow",
+      "rarity": 8,
+      "radius": 10,
+      "thickness": 3,
+      "surface_depth": 6,
+      "potential_byproducts": [
+        "gallium"
+      ]
     },
     {
       "name": "manganese",
@@ -74,11 +119,16 @@
       "display_ru": "Марганцевая руда",
       "color": "78808C",
       "product": "ingot",
-      "vein_size": 7,
-      "veins_per_chunk": 5,
+      "veins_per_chunk": 1,
       "min_y": -48,
       "max_y": 40,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "ore_body",
+      "rarity": 12,
+      "radius": 10,
+      "thickness": 5,
+      "mineral": "pyrolusite",
+      "potential_byproducts": []
     },
     {
       "name": "chromium",
@@ -87,11 +137,16 @@
       "display_ru": "Хромовая руда",
       "color": "8DAAA7",
       "product": "ingot",
-      "vein_size": 6,
-      "veins_per_chunk": 4,
+      "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": 16,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "ore_body",
+      "rarity": 18,
+      "radius": 10,
+      "thickness": 5,
+      "mineral": "chromite",
+      "potential_byproducts": []
     },
     {
       "name": "titanium",
@@ -100,11 +155,18 @@
       "display_ru": "Титановая руда",
       "color": "8F9FB3",
       "product": "ingot",
-      "vein_size": 5,
-      "veins_per_chunk": 4,
-      "min_y": -64,
-      "max_y": 0,
-      "biomes": "overworld"
+      "veins_per_chunk": 1,
+      "biomes": "overworld",
+      "generation_profile": "placer",
+      "rarity": 14,
+      "radius": 12,
+      "thickness": 2,
+      "surface_depth": 3,
+      "mineral": "ilmenite",
+      "potential_byproducts": [
+        "iron",
+        "vanadium"
+      ]
     },
     {
       "name": "tungsten",
@@ -113,11 +175,15 @@
       "display_ru": "Вольфрамовая руда",
       "color": "6D7886",
       "product": "ingot",
-      "vein_size": 4,
-      "veins_per_chunk": 3,
+      "vein_size": 18,
+      "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": -24,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "special_vein",
+      "rarity": 22,
+      "mineral": "scheelite",
+      "potential_byproducts": []
     },
     {
       "name": "molybdenum",
@@ -126,11 +192,17 @@
       "display_ru": "Молибденовая руда",
       "color": "8E9FAB",
       "product": "ingot",
-      "vein_size": 5,
-      "veins_per_chunk": 3,
+      "vein_size": 18,
+      "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": 0,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "special_vein",
+      "rarity": 20,
+      "mineral": "molybdenite",
+      "potential_byproducts": [
+        "rhenium"
+      ]
     },
     {
       "name": "uranium",
@@ -139,11 +211,14 @@
       "display_ru": "Урановая руда",
       "color": "7F964D",
       "product": "ingot",
-      "vein_size": 4,
-      "veins_per_chunk": 3,
+      "vein_size": 14,
+      "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": -16,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "special_vein",
+      "rarity": 24,
+      "potential_byproducts": []
     },
     {
       "name": "lithium",
@@ -152,11 +227,15 @@
       "display_ru": "Литиевая руда",
       "color": "C3BED4",
       "product": "ingot",
-      "vein_size": 6,
-      "veins_per_chunk": 4,
+      "vein_size": 16,
+      "veins_per_chunk": 1,
       "min_y": -32,
       "max_y": 48,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "special_vein",
+      "rarity": 18,
+      "mineral": "spodumene",
+      "potential_byproducts": []
     },
     {
       "name": "rare_earth",
@@ -165,11 +244,17 @@
       "display_ru": "Редкоземельная руда",
       "color": "96A481",
       "product": "none",
-      "vein_size": 5,
-      "veins_per_chunk": 3,
-      "min_y": -64,
-      "max_y": -16,
-      "biomes": "overworld"
+      "veins_per_chunk": 1,
+      "biomes": "overworld",
+      "generation_profile": "placer",
+      "rarity": 24,
+      "radius": 10,
+      "thickness": 2,
+      "surface_depth": 3,
+      "mineral": "monazite",
+      "potential_byproducts": [
+        "rare_earth_elements"
+      ]
     }
   ],
   "machines": [],
@@ -273,12 +358,15 @@
       "material_ru": "известняка",
       "display_ru": "Известняк",
       "color": "B6B5A2",
-      "vein_size": 48,
-      "veins_per_chunk": 3,
+      "veins_per_chunk": 1,
       "min_y": -16,
       "max_y": 112,
       "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "stratum",
+      "rarity": 6,
+      "radius": 14,
+      "thickness": 3
     },
     {
       "name": "dolomite",
@@ -286,12 +374,15 @@
       "material_ru": "доломита",
       "display_ru": "Доломит",
       "color": "B4A795",
-      "vein_size": 40,
-      "veins_per_chunk": 3,
+      "veins_per_chunk": 1,
       "min_y": -32,
       "max_y": 96,
       "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "stratum",
+      "rarity": 6,
+      "radius": 14,
+      "thickness": 3
     },
     {
       "name": "kaolin",
@@ -299,12 +390,14 @@
       "material_ru": "каолина",
       "display_ru": "Каолин",
       "color": "D6D3C4",
-      "vein_size": 28,
-      "veins_per_chunk": 3,
-      "min_y": 16,
-      "max_y": 96,
+      "veins_per_chunk": 1,
       "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "shallow",
+      "rarity": 10,
+      "radius": 9,
+      "thickness": 4,
+      "surface_depth": 5
     },
     {
       "name": "rock_salt",
@@ -312,25 +405,15 @@
       "material_ru": "каменной соли",
       "display_ru": "Каменная соль",
       "color": "D5C7C6",
-      "vein_size": 32,
-      "veins_per_chunk": 3,
+      "veins_per_chunk": 1,
       "min_y": -32,
       "max_y": 64,
       "hardness": 2,
-      "biomes": "overworld"
-    },
-    {
-      "name": "sulfur",
-      "material": "Sulfur",
-      "material_ru": "серы",
-      "display_ru": "Сера",
-      "color": "D4BE45",
-      "vein_size": 14,
-      "veins_per_chunk": 4,
-      "min_y": -64,
-      "max_y": 16,
-      "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "stratum",
+      "rarity": 6,
+      "radius": 14,
+      "thickness": 3
     },
     {
       "name": "fluorite",
@@ -338,12 +421,15 @@
       "material_ru": "флюорита",
       "display_ru": "Флюорит",
       "color": "A48EBE",
-      "vein_size": 12,
-      "veins_per_chunk": 4,
+      "veins_per_chunk": 1,
       "min_y": -48,
       "max_y": 32,
       "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "mineral_body",
+      "rarity": 10,
+      "radius": 9,
+      "thickness": 4
     },
     {
       "name": "phosphorite",
@@ -351,12 +437,15 @@
       "material_ru": "фосфорита",
       "display_ru": "Фосфорит",
       "color": "8E9579",
-      "vein_size": 24,
-      "veins_per_chunk": 3,
+      "veins_per_chunk": 1,
       "min_y": -16,
       "max_y": 64,
       "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "mineral_body",
+      "rarity": 10,
+      "radius": 9,
+      "thickness": 4
     },
     {
       "name": "graphite",
@@ -364,30 +453,45 @@
       "material_ru": "графита",
       "display_ru": "Графит",
       "color": "4C545C",
-      "vein_size": 16,
-      "veins_per_chunk": 4,
+      "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": 16,
       "hardness": 2,
-      "biomes": "overworld"
+      "biomes": "overworld",
+      "generation_profile": "mineral_body",
+      "rarity": 10,
+      "radius": 9,
+      "thickness": 4
     }
   ],
   "underground_resources": [
     {
       "name": "crude_oil_reservoir",
       "fluid": "crude_oil",
-      "vein_size": 48,
       "veins_per_chunk": 1,
       "min_y": -56,
-      "max_y": -8
+      "max_y": -8,
+      "generation_profile": "reservoir",
+      "rarity": 28,
+      "radius": 12,
+      "thickness": 4
     },
     {
       "name": "mineral_brine_reservoir",
       "fluid": "mineral_brine",
-      "vein_size": 48,
       "veins_per_chunk": 1,
       "min_y": -48,
-      "max_y": 16
+      "max_y": 16,
+      "generation_profile": "reservoir",
+      "rarity": 28,
+      "radius": 12,
+      "thickness": 4
     }
-  ]
+  ],
+  "resource_policy": {
+    "nuclear_power_planned": true,
+    "uranium_required": true,
+    "sulfur_source": "minecraft:sulfur",
+    "stable_raw_materials": true
+  }
 }

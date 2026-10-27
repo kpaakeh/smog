@@ -1,7 +1,10 @@
 """Editable pixel GUI assets. Create missing files only; never replace user PNGs."""
 from pathlib import Path
 from PIL import Image,ImageDraw
-ROOT=Path(__file__).resolve().parents[1]/'src/main/resources/assets/smog/textures/gui'
+import json
+PROJECT=Path(__file__).resolve().parents[1]
+CATALOG=json.loads((PROJECT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
+ROOT=PROJECT/('src/main/resources' if CATALOG.get('machines') else 'src/gametest/resources')/'assets/smog/textures/gui'
 ROOT.mkdir(parents=True,exist_ok=True)
 def save(name,im):
     p=ROOT/(name+'.png')

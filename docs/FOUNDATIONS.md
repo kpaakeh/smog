@@ -19,7 +19,7 @@
 
 `Machines.register` создаёт тип блока/BlockEntity и автоматически публикует sided EnergyStorage. Сохранены `MachineSpec`, callbacks, инвентари, прогресс, сохранение и типы обработки. Их прежние игровые экземпляры сейчас зарегистрированы только в `src/gametest`.
 
-`GuiLayouts.register` регистрирует раскладку и MenuType. `MachineMenu` обрабатывает слоты, shift-click, кнопки и синхронизацию. `MachineScreen`, `GuiTextures`, `TextureButton` рисуют интерфейс из PNG. Энергию передают в двух половинах, чтобы не терять старшие биты. Основные PNG систем остаются в `assets/smog/textures/gui`.
+`GuiLayouts.register` регистрирует раскладку и MenuType. `MachineMenu` обрабатывает слоты, shift-click, кнопки и синхронизацию. `MachineScreen`, `GuiTextures`, `TextureButton` рисуют интерфейс из PNG. Энергию передают в двух половинах, чтобы не терять старшие биты. PNG неактивных GUI перенесены в `src/gametest/resources/assets/smog/textures/gui`; сейчас их рисовать не нужно.
 
 `ProcessingRecipes` хранит рецепты обработки отдельно от конкретной машины. JEI-категории производственных рецептов включаются при наличии зарегистрированных устройств.
 

@@ -92,11 +92,28 @@ abstract class GenerateSmogContent extends DefaultTask {
             ru["block.smog.$name"] = entry.display_ru ?: entry.display ?: name
         }
         root.blocks.each { block(it, it.name, it.texture, false) }
+        def resourcePlacement={ Map entry ->
+            def modifiers=[]
+            if((entry.rarity ?: 1)>1)modifiers.add([type:'minecraft:rarity_filter',chance:entry.rarity])
+            modifiers.add([type:'minecraft:count',count:entry.veins_per_chunk ?: 1]);modifiers.add([type:'minecraft:in_square'])
+            if(entry.generation_profile in ['shallow','placer']) {
+                modifiers.add([type:'minecraft:heightmap',heightmap:'OCEAN_FLOOR_WG'])
+                int depth=entry.surface_depth ?: 5
+                modifiers.add([type:'minecraft:offset',x:0,y:[type:'minecraft:uniform',min_inclusive:-depth-2,max_inclusive:-depth],z:0])
+            } else modifiers.add([type:'minecraft:height_range',height:[type:'minecraft:uniform',min_inclusive:[absolute:entry.min_y],max_inclusive:[absolute:entry.max_y]]])
+            modifiers.add([type:'minecraft:biome']);return modifiers
+        };
+        def naturalMass={ String id,String stoneState,String deepState,Map entry ->
+            write("data/smog/worldgen/feature/${id}.json",[type:'smog:resource_deposit',stone_state:stoneState,deep_state:deepState,radius:entry.radius,thickness:entry.thickness,shape:entry.generation_profile,contained:entry.generation_profile=='reservoir'])
+            write("data/smog/worldgen/placed_feature/${id}.json",[feature:"smog:$id",placement:resourcePlacement(entry)])
+        };
         root.ores.each { ore ->
-            [vein_size:8,veins_per_chunk:6,min_y:-64,max_y:64,biomes:'overworld',product:'ingot'].each { key, value ->
-                if (!ore.containsKey(key)) ore[key]=value
-            }
-            if (ore.vein_size < 1 || ore.vein_size > 64 || ore.veins_per_chunk < 1 || ore.min_y > ore.max_y) throw new GradleException("Invalid ore generation: ${ore.name}")
+            def profile=ore.generation_profile ?: 'accessible_vein'
+            def defaults=[veins_per_chunk:1,biomes:'overworld',product:'ingot',generation_profile:profile]
+            if(profile in ['accessible_vein','special_vein'])defaults.vein_size=8
+            if(!(profile in ['shallow','placer'])){defaults.min_y=-64;defaults.max_y=64}
+            defaults.each { key,value -> if(!ore.containsKey(key))ore[key]=value }
+            if((profile in ['accessible_vein','special_vein'] && (ore.vein_size<1 || ore.vein_size>64)) || ore.veins_per_chunk<1 || (!(profile in ['shallow','placer']) && ore.min_y>ore.max_y))throw new GradleException("Invalid ore generation: ${ore.name}")
             def name = "${ore.name}_ore"
             def material = ore.name
             def english = ore.material ?: material.capitalize()
@@ -139,15 +156,13 @@ abstract class GenerateSmogContent extends DefaultTask {
                 ore.biomes == 'nether' ? [predicate_type:'minecraft:tag_match',tag:'minecraft:base_stone_nether'] :
                 ore.biomes == 'end' ? [predicate_type:'minecraft:block_match',block:'minecraft:end_stone'] :
                 [predicate_type:'minecraft:tag_match',tag:'minecraft:stone_ore_replaceables']
-            write("data/smog/worldgen/feature/${name}.json", [type:'minecraft:ore', size:ore.vein_size, discard_chance_on_air_exposure:0.0, targets:[
+            if(!(ore.generation_profile in ['accessible_vein','special_vein']))naturalMass(name,"smog:$name","smog:deepslate_$name",ore)
+            else write("data/smog/worldgen/feature/${name}.json", [type:'minecraft:ore', size:ore.vein_size, discard_chance_on_air_exposure:0.0, targets:[
                 [target:stoneTarget,state:"smog:$name"],
                 [target:[predicate_type:'minecraft:tag_match',tag:ore.deepslate_replaceables ?: 'minecraft:deepslate_ore_replaceables'],state:"smog:deepslate_$name"]
             ]])
-            write("data/smog/worldgen/placed_feature/${name}.json", [feature:"smog:$name", placement:[
-                [type:'minecraft:count',count:ore.veins_per_chunk], [type:'minecraft:in_square'],
-                [type:'minecraft:height_range',height:[type:'minecraft:uniform',min_inclusive:[absolute:ore.min_y],max_inclusive:[absolute:ore.max_y]]],
-                [type:'minecraft:biome']
-            ]])
+            write("data/smog/worldgen/placed_feature/${name}.json",[feature:"smog:$name",placement:resourcePlacement(ore)])
+
         }
         def processedMetals=(root.alloys ?: []) + (root.metals ?: [])
         processedMetals.each { alloy ->
@@ -164,16 +179,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             if(alloy.ingredients)shapeless(n+'_dust',alloy.ingredients,"smog:${n}_dust",1)
             [smelting:200,blasting:100].each { type,time -> recipe(n+'_ingot_from_'+type,[type:"minecraft:$type",ingredient:"smog:${n}_dust",result:[id:"smog:${n}_ingot"],experience:0.7,cookingtime:time],"smog:${n}_dust") }
         }
-        def undergroundFeature={ resourceName,blockState,parameters,exposureChance ->
-            if(parameters.vein_size<1 || parameters.vein_size>64 || parameters.veins_per_chunk<1 || parameters.min_y>parameters.max_y)throw new GradleException("Invalid resource generation $resourceName")
-            write("data/smog/worldgen/feature/${resourceName}.json",[type:'minecraft:ore',size:parameters.vein_size,discard_chance_on_air_exposure:exposureChance,targets:[
-                [target:[predicate_type:'minecraft:tag_match',tag:'minecraft:stone_ore_replaceables'],state:blockState],
-                [target:[predicate_type:'minecraft:tag_match',tag:'minecraft:deepslate_ore_replaceables'],state:blockState]]])
-            write("data/smog/worldgen/placed_feature/${resourceName}.json",[feature:"smog:$resourceName",placement:[
-                [type:'minecraft:count',count:parameters.veins_per_chunk],[type:'minecraft:in_square'],
-                [type:'minecraft:height_range',height:[type:'minecraft:uniform',min_inclusive:[absolute:parameters.min_y],max_inclusive:[absolute:parameters.max_y]]],
-                [type:'minecraft:biome']]])
-        };
+        def undergroundFeature={ resourceName,blockState,parameters,exposureChance -> naturalMass(resourceName,blockState,blockState,parameters) };
         (root.deposits ?: []).each { entry ->
             def n=entry.name;def material=entry.material;def russianName=entry.material_ru
             block([display:material,display_ru:entry.display_ru,tags:['smog:nonmetal_deposits',"c:stones/$n"]],n,"smog:block/$n",false)

@@ -10,6 +10,7 @@ public class Smog implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        io.github.kpaakeh.smog.worldgen.ResourceDepositFeature.initialize();
         io.github.kpaakeh.smog.gui.GuiLayouts.initialize();
         io.github.kpaakeh.smog.registry.ContentCatalog.initialize();
         io.github.kpaakeh.smog.machine.ProcessingRecipes.initialize();
