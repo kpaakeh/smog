@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-    archivesName = 'tech-mod'
+    archivesName = 'smog'
 }
 
 repositories {
@@ -15,7 +15,7 @@ repositories {
 loom {
     splitEnvironmentSourceSets()
     mods {
-        'tech_mod' {
+        'smog' {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }
@@ -58,7 +58,7 @@ apply from: 'gradle/content.gradle'
 fabricApi {
     configureTests {
         createSourceSet = true
-        modId = 'tech_mod_tests'
+        modId = 'smog_tests'
         enableGameTests = true
         enableClientGameTests = true
     }
@@ -70,7 +70,7 @@ dependencies {
 
 jar {
     from('LICENSE') {
-        rename { "${it}_tech-mod" }
+        rename { "${it}_smog" }
     }
 }
 

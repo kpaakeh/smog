@@ -1,57 +1,45 @@
-# Tech Mod
+# Smog
 
-Шаблон Fabric-мода для Minecraft **26.3** с Fabric API **0.161.0+26.3**.
+Технологический Fabric-мод для Minecraft **26.3**, Fabric API **0.161.0+26.3**, Java **25**.
 
-Добавлены базовые системы зон, блоков, руд, механизмов, мультиблоков, тегов и жидкостей.
-Примеры регистрации и команды: [docs/FOUNDATIONS.md](docs/FOUNDATIONS.md).
-Контент задаётся в `src/main/content/tech-mod.content.json`; ресурсы генерируются при сборке.
+- Динамические зоны с сохранением, звуками, частицами, статусами и постэффектами.
+- Апатит, бериллий, ванадий, висмут, кобальт, титан и уран: 63 формы материалов и генерация мира.
+- Собственные пиксельные текстуры и 130 рецептов.
+- Творческие вкладки механизмов, руд/материалов и блоков/жидкостей.
+- Регистрация блоков, механизмов, тегов и жидкостей из единого каталога.
+- Мультиблоки с общей моделью по размеру структуры и интерактивным 3D-превью в JEI.
 
-## Требования
+Работаем по порядку: сначала основы, затем расширение и полировка.
 
-- JDK 25 (также выберите её как Gradle JVM в IDE).
-- Подключение к интернету для первой сборки.
+## Запуск
 
-## Сборка и запуск
-
-Откройте папку как Gradle-проект в IntelliJ IDEA либо используйте PowerShell:
-
-```powershell
-.\gradlew.bat build
-.\gradlew.bat runClient
-.\gradlew.bat runServer
-```
-
-Если `JAVA_HOME` указывает на старую Java, выберите установленную JDK 25 перед сборкой:
+Откройте папку как Gradle-проект в IDE. Выберите JDK 25 как Gradle JVM.
+Если JAVA_HOME указывает на старую Java, в PowerShell выберите установленную JDK:
 
 ```powershell
 $env:JAVA_HOME = 'C:\Program Files\Java\jdk-25.0.4'
 .\gradlew.bat build
+.\gradlew.bat runClient -PwithJei
 ```
 
-При другой установке замените путь на свой каталог JDK 25.
+Путь к JDK замените на свой, если она установлена в другом месте.
+`-PwithJei` включает JEI для разработки; без него мод тоже работает.
+На Linux/macOS используйте `sh ./gradlew build`.
+Первая сборка требует интернета. Готовый файл: `build/libs/smog-0.2.0.jar`.
 
-На Linux/macOS: `sh ./gradlew build` или `sh ./gradlew runClient`.
-Готовый мод: `build/libs/tech-mod-0.1.0.jar`.
-Для тестового сервера после первого запуска прочитайте EULA и примите её в `run/eula.txt`, если согласны.
+## Разработка
 
-## Структура
+Каталог: `src/main/content/smog.content.json`.
+Java-пакет: `io.github.kpaakeh.smog`. Mod ID и namespace: `smog`.
+Документация систем, рецептов, worldgen и примеры API: [FOUNDATIONS.md](docs/FOUNDATIONS.md).
 
-- `src/main/java/io/github/kpaakeh/techmod/TechMod.java` — общий код и регистрация содержимого.
-- `src/client/java/io/github/kpaakeh/techmod/TechModClient.java` — клиентский код.
-- `src/main/resources/fabric.mod.json` — метаданные и точки входа.
-- Ресурсы добавляйте в `src/main/resources/assets/tech_mod/`, данные — в `src/main/resources/data/tech_mod/`.
-- `gradle.properties` — версии Minecraft, Fabric, мода и Maven group.
+Текстуры — собственная пиксельная графика, созданная локальным воспроизводимым скриптом
+`tools/generate_textures.py` (Python + Pillow). Готовые PNG включены в исходники;
+обычная сборка не требует Python и платных сервисов. Модель собранного мультиблока:
+`src/main/resources/assets/smog/models/block/assembled_machine.json`.
 
-Mod ID: `tech_mod`. Java package: `io.github.kpaakeh.techmod`.
-Minecraft 26.3 использует необфусцированные имена; отдельная зависимость Yarn не нужна.
+`build` запускает серверные GameTests в отдельном мире.
+`runClientGameTest -PwithJei` проверяет загрузку клиента, вкладки, модели, JEI и эффекты зон.
+Тестовый мод и игровые файлы в основной JAR не включаются.
 
-## Git
-
-Origin: https://github.com/kpaakeh/tech-mod.git, ветка `main`.
-Чтобы сохранить и отправить шаблон:
-
-```powershell
-git add .
-git commit -m "Initialize Fabric mod template for Minecraft 26.3"
-git push origin main
-```
+Репозиторий: https://github.com/kpaakeh/smog . Лицензия MIT.

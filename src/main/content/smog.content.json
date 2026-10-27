@@ -1,0 +1,225 @@
+{
+  "tags": [],
+  "blocks": [
+    {
+      "name": "machine_casing",
+      "display": "Machine Casing",
+      "display_ru": "Корпус механизма",
+      "texture": "smog:block/machine_casing",
+      "hardness": 4,
+      "tags": [
+        "smog:machine_casings"
+      ]
+    }
+  ],
+  "ores": [
+    {
+      "name": "apatite",
+      "display": "Apatite Ore",
+      "display_ru": "Апатитовая руда",
+      "material": "Apatite",
+      "material_ru": "апатита",
+      "color": "55BEC2",
+      "product": "gem",
+      "texture": "smog:block/apatite_ore",
+      "deepslate_texture": "smog:block/deepslate_apatite_ore",
+      "hardness": 3,
+      "vein_size": 9,
+      "veins_per_chunk": 10,
+      "min_y": -16,
+      "max_y": 112,
+      "biomes": "overworld"
+    },
+    {
+      "name": "beryllium",
+      "display": "Beryllium Ore",
+      "display_ru": "Бериллиевая руда",
+      "material": "Beryllium",
+      "material_ru": "бериллия",
+      "color": "75C894",
+      "product": "ingot",
+      "texture": "smog:block/beryllium_ore",
+      "deepslate_texture": "smog:block/deepslate_beryllium_ore",
+      "hardness": 3,
+      "vein_size": 6,
+      "veins_per_chunk": 5,
+      "min_y": -32,
+      "max_y": 64,
+      "biomes": "overworld"
+    },
+    {
+      "name": "vanadium",
+      "display": "Vanadium Ore",
+      "display_ru": "Ванадиевая руда",
+      "material": "Vanadium",
+      "material_ru": "ванадия",
+      "color": "7D82B6",
+      "product": "ingot",
+      "texture": "smog:block/vanadium_ore",
+      "deepslate_texture": "smog:block/deepslate_vanadium_ore",
+      "hardness": 3,
+      "vein_size": 7,
+      "veins_per_chunk": 6,
+      "min_y": -48,
+      "max_y": 48,
+      "biomes": "overworld"
+    },
+    {
+      "name": "bismuth",
+      "display": "Bismuth Ore",
+      "display_ru": "Висмутовая руда",
+      "material": "Bismuth",
+      "material_ru": "висмута",
+      "color": "CF85A8",
+      "product": "ingot",
+      "texture": "smog:block/bismuth_ore",
+      "deepslate_texture": "smog:block/deepslate_bismuth_ore",
+      "hardness": 3,
+      "vein_size": 6,
+      "veins_per_chunk": 5,
+      "min_y": -48,
+      "max_y": 32,
+      "biomes": "overworld"
+    },
+    {
+      "name": "cobalt",
+      "display": "Cobalt Ore",
+      "display_ru": "Кобальтовая руда",
+      "material": "Cobalt",
+      "material_ru": "кобальта",
+      "color": "387CCD",
+      "product": "ingot",
+      "texture": "smog:block/cobalt_ore",
+      "deepslate_texture": "smog:block/deepslate_cobalt_ore",
+      "hardness": 3,
+      "vein_size": 7,
+      "veins_per_chunk": 6,
+      "min_y": -64,
+      "max_y": 24,
+      "biomes": "overworld"
+    },
+    {
+      "name": "titanium",
+      "display": "Titanium Ore",
+      "display_ru": "Титановая руда",
+      "material": "Titanium",
+      "material_ru": "титана",
+      "color": "B2BED1",
+      "product": "ingot",
+      "texture": "smog:block/titanium_ore",
+      "deepslate_texture": "smog:block/deepslate_titanium_ore",
+      "hardness": 4,
+      "vein_size": 5,
+      "veins_per_chunk": 4,
+      "min_y": -64,
+      "max_y": 0,
+      "biomes": "overworld"
+    },
+    {
+      "name": "uranium",
+      "display": "Uranium Ore",
+      "display_ru": "Урановая руда",
+      "material": "Uranium",
+      "material_ru": "урана",
+      "color": "9CBF43",
+      "product": "ingot",
+      "texture": "smog:block/uranium_ore",
+      "deepslate_texture": "smog:block/deepslate_uranium_ore",
+      "hardness": 4,
+      "vein_size": 4,
+      "veins_per_chunk": 3,
+      "min_y": -64,
+      "max_y": -16,
+      "biomes": "overworld"
+    }
+  ],
+  "machines": [
+    {
+      "name": "test_machine",
+      "display": "Basic Machine",
+      "display_ru": "Базовый механизм",
+      "texture": "smog:block/machine_idle",
+      "assembled_texture": "smog:block/machine_active",
+      "hardness": 4
+    },
+    {
+      "name": "test_controller",
+      "display": "Multiblock Controller",
+      "display_ru": "Контроллер мультиблока",
+      "texture": "smog:block/controller",
+      "assembled_texture": "minecraft:block/redstone_block",
+      "hardness": 4,
+      "multiblock": "smog:test_structure",
+      "assembled_model": "smog:block/assembled_machine"
+    }
+  ],
+  "multiblocks": [
+    {
+      "name": "test_structure",
+      "parts": [
+        {
+          "x": -1,
+          "y": 0,
+          "z": 0,
+          "block": "#smog:machine_casings"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "#smog:machine_casings"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "#smog:machine_casings"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "minecraft:air"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "#smog:machine_casings"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 2,
+          "block": "#smog:machine_casings"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 2,
+          "block": "#smog:machine_casings"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 2,
+          "block": "#smog:machine_casings"
+        }
+      ]
+    }
+  ],
+  "fluids": [
+    {
+      "name": "coolant",
+      "display": "Coolant",
+      "display_ru": "Хладагент",
+      "color": "44BBDD",
+      "tick_delay": 10,
+      "infinite": false,
+      "tags": [
+        "smog:coolants"
+      ],
+      "bucket_texture": "smog:item/coolant_bucket"
+    }
+  ]
+}

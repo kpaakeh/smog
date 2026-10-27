@@ -1,0 +1,67 @@
+package io.github.kpaakeh.smog.compat.jei;
+
+import java.util.*;
+import io.github.kpaakeh.smog.machine.Machines;
+import io.github.kpaakeh.smog.multiblock.*;
+import io.github.kpaakeh.smog.registry.ModBlocks;
+import mezz.jei.api.*;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.*;
+import mezz.jei.api.recipe.types.IRecipeType;
+import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.registration.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
+
+/** Optional JEI integration: full depth-tested 3D structure and its bill of materials. */
+@JeiPlugin
+public final class SmogJeiPlugin implements IModPlugin {
+    public record Page(MultiblockDefinition structure, Block controller) {}
+    public static final IRecipeType<Page> TYPE = IRecipeType.create("smog", "multiblocks", Page.class);
+    @Override public Identifier getPluginUid() { return ModBlocks.id("jei"); }
+    @Override public void registerCategories(IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
+    }
+    @Override public void registerRecipes(IRecipeRegistration registration) {
+        List<Page> pages = new ArrayList<>();
+        for (var entry : Machines.all()) {
+            var id = entry.definition().multiblock();
+            if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
+        }
+        registration.addRecipes(TYPE, pages);
+    }
+    private static final class Category implements IRecipeCategory<Page> {
+        private final IDrawable icon;
+        private Category(IGuiHelper gui) { icon=gui.createDrawableItemLike(net.minecraft.world.level.block.Blocks.IRON_BLOCK); }
+        @Override public IRecipeType<Page> getRecipeType() { return TYPE; }
+        @Override public Component getTitle() { return Component.translatable("jei.smog.multiblocks"); }
+        @Override public int getWidth() { return 170; }
+        @Override public int getHeight() { return 150; }
+        @Override public IDrawable getIcon() { return icon; }
+        @Override public void setRecipe(IRecipeLayoutBuilder builder, Page page, IFocusGroup focuses) {
+            builder.addOutputSlot(150,0).add(page.controller());
+            Map<String,Integer> materials=new LinkedHashMap<>();
+            page.structure().parts().values().forEach(part -> {
+                if (!part.value().equals("minecraft:air")) materials.merge(part.value(),1,Integer::sum);
+            });
+            for (var entry : materials.entrySet()) {
+                var items=new BlockIngredient(entry.getKey()).displayItems().stream().map(stack -> {
+                    var copy=stack.copy();copy.setCount(entry.getValue());return copy;
+                }).toList();
+                builder.addInputSlot().setStandardSlotBackground().addItemStacks(items);
+            }
+        }
+        @Override public void createRecipeExtras(IRecipeExtrasBuilder builder, Page page, IFocusGroup focuses) {
+            var preview=new StructurePreviewWidget(page);
+            builder.addWidget(preview);builder.addInputHandler(preview);
+            var b=page.structure().bounds();
+            builder.addText(Component.literal(b.width()+" x "+b.height()+" x "+b.depth()),140,10);
+            builder.addScrollGridWidget(builder.getRecipeSlots().getSlots(RecipeIngredientRole.INPUT),9,1).setPosition(2,110);
+            builder.addText(List.of(Component.translatable("jei.smog.controls"),Component.translatable("jei.smog.controls_more")),166,20).setPosition(2,130);
+        }
+    }
+}

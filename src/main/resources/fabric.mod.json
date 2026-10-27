@@ -1,20 +1,21 @@
 {
   "schemaVersion": 1,
-  "id": "tech_mod",
+  "id": "smog",
   "version": "${version}",
-  "name": "Tech Mod",
+  "name": "Smog",
   "description": "A Fabric mod for Minecraft 26.3.",
   "authors": ["kpaakeh"],
   "contact": {
-    "sources": "https://github.com/kpaakeh/tech-mod",
-    "issues": "https://github.com/kpaakeh/tech-mod/issues"
+    "sources": "https://github.com/kpaakeh/smog",
+    "issues": "https://github.com/kpaakeh/smog/issues"
   },
   "license": "MIT",
   "environment": "*",
+  "mixins": [{"config":"smog.client.mixins.json","environment":"client"}],
   "entrypoints": {
-    "main": ["io.github.kpaakeh.techmod.TechMod"],
-    "client": ["io.github.kpaakeh.techmod.TechModClient"],
-    "jei_mod_plugin": ["io.github.kpaakeh.techmod.compat.jei.TechJeiPlugin"]
+    "main": ["io.github.kpaakeh.smog.Smog"],
+    "client": ["io.github.kpaakeh.smog.SmogClient"],
+    "jei_mod_plugin": ["io.github.kpaakeh.smog.compat.jei.SmogJeiPlugin"]
   },
   "depends": {
     "fabricloader": ">=0.20.1",
