@@ -8,6 +8,7 @@ base {
 }
 
 repositories {
+    maven { url = "https://maven.fabricmc.net/" }
     maven { url = 'https://maven.blamejared.com/' }
     maven { url = 'https://api.modrinth.com/maven' }
 }
@@ -26,6 +27,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "teamreborn:energy:5.0.0"
+    include "teamreborn:energy:5.0.0"
     compileOnly "mezz.jei:jei-26.3-common-api:31.17.0.94"
     clientCompileOnly "mezz.jei:jei-26.3-common-api:31.17.0.94"
     if (providers.gradleProperty('withJei').isPresent()) {

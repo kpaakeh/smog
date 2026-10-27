@@ -36,6 +36,25 @@ public class IndustryTests {
         h.assertValueEqual(used.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getStringOr("other_mod_data",""),"preserved","Unrelated custom data preserved");
         h.succeed();
     }
+    @GameTest public void alloyAndConductorRecipes(GameTestHelper h) {
+        var steel=ModAlloys.all().getFirst();
+        var blend=net.minecraft.world.item.crafting.CraftingInput.of(2,1,List.of(Items.IRON_INGOT.getDefaultInstance(),Items.COAL.getDefaultInstance()));
+        var dust=h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,blend,h.getLevel()).orElseThrow().value().assemble(blend);
+        h.assertTrue(dust.is(steel.dust()),"Steel mixture has a survival recipe");
+        var input=new net.minecraft.world.item.crafting.SingleRecipeInput(dust);
+        var ingot=h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.SMELTING,input,h.getLevel()).orElseThrow().value().assemble(input);
+        h.assertTrue(ingot.is(steel.ingot()),"Steel is smelted, not mined as an invented ore");
+        var press=place(h,"press",new BlockPos(1,1,1));press.energy(10000);press.setItem(0,ingot);ticks(press,80);
+        h.assertTrue(press.getItem(3).is(steel.plate()),"Steel plate uses the powered press");
+        for(var material:ConductorMaterial.values()) {
+            var metal=material==ConductorMaterial.COPPER?Items.COPPER_INGOT:material==ConductorMaterial.GOLD?Items.GOLD_INGOT:BuiltInRegistries.ITEM.getValue(ModBlocks.id(material.serializedName()+"_ingot"));
+            h.assertFalse(metal==Items.AIR,"Own conductor material is registered "+material);
+            var coilInput=net.minecraft.world.item.crafting.CraftingInput.of(3,1,List.of(metal.getDefaultInstance(),metal.getDefaultInstance(),Items.STRING.getDefaultInstance()));
+            var result=h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,coilInput,h.getLevel()).orElseThrow().value().assemble(coilInput);
+            h.assertTrue(result.is(BuiltInRegistries.ITEM.getValue(ModBlocks.id(material.coilId())))&&result.getCount()==4,"Matching material crafts four wire coils "+material);
+        }
+        h.succeed();
+    }
     @GameTest public void materialsAndPoweredProcessing(GameTestHelper h){
         h.assertFalse(BuiltInRegistries.BLOCK.containsKey(ModBlocks.id("apatite_ore")),"Apatite removed");
         var family=ModOres.all().getFirst();
@@ -73,19 +92,44 @@ public class IndustryTests {
         generator.energy(generator.capacity());ticks(generator,10);h.assertValueEqual(generator.getItem(2).getCount(),1,"Full generator does not consume extra fuel");
         h.succeed();
     }
-    @GameTest public void wiresRoutingAndVoltage(GameTestHelper h){
+    @GameTest public void wiresRoutingAndMaterials(GameTestHelper h){
         var source=place(h,"solid_generator",new BlockPos(0,1,1));var a=place(h,"connector_lv",new BlockPos(1,1,1));
         var b=place(h,"connector_lv",new BlockPos(6,1,1));var sink=place(h,"electric_furnace",new BlockPos(7,1,1));
         for(var node:List.of(source,a,b,sink))node.serverTick();source.energy(1000);
-        var link=new WireLink(a.getBlockPos(),b.getBlockPos(),Voltage.LV);var wires=WireData.get(h.getLevel());h.assertTrue(wires.add(link),"Wire added");
-        h.assertFalse(wires.add(new WireLink(b.getBlockPos(),a.getBlockPos(),Voltage.LV)),"Reverse duplicate rejected");
-        EnergyNetwork.tick(h.getLevel());h.assertValueEqual(sink.energy(),32,"LV wire rate");h.assertValueEqual(source.energy(),968,"Energy conserved");
+        var link=new WireLink(a.getBlockPos(),b.getBlockPos(),ConductorMaterial.COPPER);var wires=WireData.get(h.getLevel());h.assertTrue(wires.add(link),"Wire added");
+        h.assertFalse(wires.add(new WireLink(b.getBlockPos(),a.getBlockPos(),ConductorMaterial.COPPER)),"Reverse duplicate rejected");
+        EnergyNetwork.tick(h.getLevel());h.assertValueEqual(sink.energy(),32,"Source rate limits a copper wire");h.assertValueEqual(source.energy(),968,"Energy conserved");
         var encoded=WireLink.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE,link).getOrThrow();h.assertValueEqual(WireLink.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE,encoded).getOrThrow(),link,"Wire persistence codec");
         var p=link.point(.5);h.assertTrue(p.y<(a.getBlockPos().getY()+1.02),"Wire sags smoothly");
         h.getLevel().destroyBlock(b.getBlockPos(),false);EnergyNetwork.tick(h.getLevel());h.assertFalse(wires.all().contains(link),"Broken endpoint disconnects wire");
         var low=place(h,"solid_generator",new BlockPos(1,1,5));var transformer=place(h,"transformer",new BlockPos(2,1,5));var high=place(h,"press",new BlockPos(3,1,5));
-        for(var node:List.of(low,transformer,high))node.serverTick();low.energy(1000);EnergyNetwork.tick(h.getLevel());h.assertValueEqual(high.energy(),0,"Wrong voltage cannot power press");
-        transformer.cycleVoltage();EnergyNetwork.tick(h.getLevel());h.assertValueEqual(high.energy(),32,"Transformer routes converted voltage without multiplying EU");
+        for(var node:List.of(low,transformer,high))node.serverTick();low.energy(1000);EnergyNetwork.tick(h.getLevel());h.assertValueEqual(high.energy(),32,"Consumers accept FE independently of conductor material");
+        transformer.cycleTransferRate();h.assertValueEqual(transformer.outputRate(),64,"Distributor cycles its FE/t output limit");
+        h.succeed();
+    }
+    @GameTest public void configuratorAssemblyAndRepair(GameTestHelper h) {
+        var machine=place(h,"generator_controller",new BlockPos(3,1,3));var level=h.getLevel();var pos=machine.getBlockPos();
+        var player=h.makeMockServerPlayerInLevel();var tool=new ItemStack(BuiltInRegistries.ITEM.getValue(ModBlocks.id("wrench")));
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tool);
+        var hit=new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(pos),Direction.UP,pos,false);
+        player.gameMode.useItemOn(player,level,tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        h.assertFalse(machine.assembled(),"Incomplete pattern rejected by tool");
+        var definition=io.github.kpaakeh.smog.multiblock.Multiblocks.get(GeneratorKind.SOLAR.structureId());
+        definition.parts().forEach((offset,part)->level.setBlockAndUpdate(pos.offset(offset),part.block().defaultBlockState()));
+        ticks(machine,10);h.assertFalse(machine.assembled(),"Pattern does not auto-assemble");
+        player.gameMode.useItemOn(player,level,tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        h.assertTrue(machine.assembled(),"Tool use reaches item instead of opening controller GUI");
+        h.assertTrue(player.containerMenu==player.inventoryMenu,"Configurator does not open a GUI");
+        var offset=definition.parts().keySet().iterator().next();var part=definition.parts().get(offset);
+        level.setBlockAndUpdate(pos.offset(offset),Blocks.AIR.defaultBlockState());machine.serverTick();
+        h.assertFalse(machine.assembled(),"Breaking a part dismantles structure");
+        level.setBlockAndUpdate(pos.offset(offset),part.block().defaultBlockState());ticks(machine,10);
+        h.assertFalse(machine.assembled(),"Repair waits for tool again");
+        player.gameMode.useItemOn(player,level,tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        h.assertTrue(machine.assembled(),"Tool reassembles repaired structure");
+        player.setShiftKeyDown(true);player.gameMode.useItemOn(player,level,tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        h.assertFalse(machine.assembled(),"Shift-tool dismantles before rotation");
+        h.assertValueEqual(machine.getBlockState().getValue(MachineBlock.FACING),Direction.EAST,"Shift-tool rotates controller");
         h.succeed();
     }
     @GameTest public void sharedGeneratorController(GameTestHelper h){
@@ -96,6 +140,8 @@ public class IndustryTests {
             level.setBlockAndUpdate(origin,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("generator_controller")).defaultBlockState());
             var machine=(MachineEntity)level.getBlockEntity(origin);var definition=io.github.kpaakeh.smog.multiblock.Multiblocks.get(kind.structureId());
             definition.parts().forEach((p,ingredient)->level.setBlockAndUpdate(origin.offset(p),ingredient.block().defaultBlockState()));machine.serverTick();
+            h.assertFalse(machine.assembled(),"Generator waits for configurator "+kind);
+            h.assertTrue(machine.tryAssemble(),"Explicit generator assembly "+kind);
             h.assertTrue(machine.assembled()&&machine.generator()==kind,"Shared controller detects "+kind);
             machine.energy(0);
             if(kind==GeneratorKind.THERMAL || kind==GeneratorKind.STEAM)level.setBlockAndUpdate(origin.below(),Blocks.MAGMA_BLOCK.defaultBlockState());

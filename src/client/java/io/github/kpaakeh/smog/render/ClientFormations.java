@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.block.Rotation;
 
 /** Immutable snapshots are safe to read from chunk meshing workers. Only visuals are changed. */
@@ -49,7 +50,10 @@ public final class ClientFormations {
         if (!next.equals(hidden)) {
             Set<BlockPos> dirty = new HashSet<>(hidden); dirty.addAll(next);
             hidden = Set.copyOf(next); controllers = Set.copyOf(centers);
-            for (BlockPos pos : dirty) level.setBlocksDirty(pos, level.getBlockState(pos), level.getBlockState(pos));
+            // Equal BlockStates do not request a rebuild: visibility changed outside the state.
+            Set<SectionPos> sections=new HashSet<>();
+            for(BlockPos pos:dirty)sections.add(SectionPos.of(pos));
+            for(SectionPos section:sections)level.setSectionDirtyWithNeighbors(section.x(),section.y(),section.z());
         } else controllers = Set.copyOf(centers);
     }
 }

@@ -2,6 +2,6 @@
   "required": true,
   "package": "io.github.kpaakeh.smog.mixin",
   "compatibilityLevel": "JAVA_25",
-  "client": ["ModelBlockRendererMixin", "BlockEntityRenderDispatcherMixin", "BlockModelRenderStateAccessor"],
+  "client": ["SectionCompilerMixin", "BlockEntityRenderDispatcherMixin", "BlockModelRenderStateAccessor"],
   "injectors": {"defaultRequire": 1}
 }

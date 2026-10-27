@@ -62,7 +62,11 @@ abstract class GenerateSmogContent extends DefaultTask {
                 validId(assembled)
                 if (!entry.assembled_model) write("assets/smog/models/block/${name}_assembled.json", [parent:'minecraft:block/cube_all', textures:[all:entry.assembled_texture ?: texture]])
                 variants = [:]
-                [north:0, east:90, south:180, west:270].each { facing, rotation ->
+                if(entry.kind == 'CONNECTOR') {
+                    [up:[0,0],down:[180,0],north:[90,0],east:[90,90],south:[90,180],west:[90,270]].each { attachment,angles ->
+                        variants["attachment=$attachment"]=[model:baseModel,x:angles[0],y:angles[1]]
+                    }
+                } else [north:0, east:90, south:180, west:270].each { facing, rotation ->
                     [false,true].each { built ->
                         if(entry.kind == 'GENERATOR_CONTROLLER') ['none','solar','lightning','thermal','flow','wind','steam','geothermal'].each { kind ->
                             variants["assembled=$built,facing=$facing,generator=$kind"] = [model:built && kind != 'none' ? "smog:block/generator_$kind" : baseModel,y:rotation]
@@ -143,7 +147,24 @@ abstract class GenerateSmogContent extends DefaultTask {
                 [type:'minecraft:biome']
             ]])
         }
-        (root.items ?: []).each { entry -> item(entry.name,entry.display ?: entry.name,entry.display_ru ?: entry.name,entry.tags ?: []) }
+        (root.alloys ?: []).each { alloy ->
+            def n=alloy.name;def enName=alloy.material;def ruName=alloy.material_ru
+            item(n+'_ingot',enName+' Ingot','Слиток '+ruName,['c:ingots',"c:ingots/$n"])
+            item(n+'_dust',enName+' Dust','Пыль '+ruName,['c:dusts',"c:dusts/$n"])
+            item(n+'_nugget',enName+' Nugget','Самородок '+ruName,['c:nuggets',"c:nuggets/$n"])
+            item(n+'_plate',enName+' Plate','Пластина '+ruName,['c:plates',"c:plates/$n"])
+            block([display:enName+' Block',display_ru:'Блок '+ruName,tags:['c:storage_blocks',"c:storage_blocks/$n"]],n+'_block',"smog:block/${n}_block",false)
+            compact(n+'_block',"smog:${n}_ingot","smog:${n}_block")
+            shapeless(n+'_ingot_from_block',["smog:${n}_block"],"smog:${n}_ingot",9)
+            compact(n+'_ingot_from_nuggets',"smog:${n}_nugget","smog:${n}_ingot")
+            shapeless(n+'_nugget',["smog:${n}_ingot"],"smog:${n}_nugget",9)
+            shapeless(n+'_dust',alloy.ingredients,"smog:${n}_dust",1)
+            [smelting:200,blasting:100].each { type,time -> recipe(n+'_ingot_from_'+type,[type:"minecraft:$type",ingredient:"smog:${n}_dust",result:[id:"smog:${n}_ingot"],experience:0.7,cookingtime:time],"smog:${n}_dust") }
+        }
+        (root.items ?: []).each { entry ->
+            item(entry.name,entry.display ?: entry.name,entry.display_ru ?: entry.name,entry.tags ?: [])
+            if(entry.model)write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:entry.model]])
+        }
         root.machines.each { block(it, it.name, it.texture, true) }
         root.blocks.findAll { it.recipe_core }.each { entry ->
             recipe(entry.name,[type:'minecraft:crafting_shaped',pattern:['III','ICI','III'],key:[I:'minecraft:iron_ingot',C:entry.recipe_core],result:[id:"smog:${entry.name}",count:entry.recipe_count ?: 1]],entry.recipe_core)
@@ -151,9 +172,9 @@ abstract class GenerateSmogContent extends DefaultTask {
         root.machines.findAll { it.recipe_core }.each { entry ->
             recipe(entry.name,[type:'minecraft:crafting_shaped',pattern:['CCC','RIR','CCC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',I:entry.recipe_core],result:[id:"smog:${entry.name}"]],entry.recipe_core)
         }
-        shapeless('wire_coil_lv',['minecraft:copper_ingot','minecraft:copper_ingot','minecraft:string'],'smog:wire_coil_lv',4)
-        shapeless('wire_coil_mv',['minecraft:gold_ingot','minecraft:gold_ingot','minecraft:string'],'smog:wire_coil_mv',4)
-        shapeless('wire_coil_hv',['smog:titanium_ingot','smog:titanium_ingot','minecraft:string'],'smog:wire_coil_hv',4)
+        (root.items ?: []).findAll { it.kind == 'wire' }.each { coil ->
+            shapeless(coil.name,[coil.ingredient,coil.ingredient,'minecraft:string'],"smog:${coil.name}",4)
+        }
         recipe('wrench',[type:'minecraft:crafting_shaped',pattern:['I I',' I ',' I '],key:[I:'minecraft:iron_ingot'],result:[id:'smog:wrench']],'minecraft:iron_ingot')
         recipe('machine_casing', [type:'minecraft:crafting_shaped',category:'building',pattern:['I I',' C ','I I'],key:[I:'minecraft:iron_ingot',C:'minecraft:copper_ingot'],result:[id:'smog:machine_casing',count:4]], 'minecraft:iron_ingot')
         recipe('test_machine', [type:'minecraft:crafting_shaped',pattern:['CCC','RFR','CCC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',F:'minecraft:furnace'],result:[id:'smog:test_machine']], 'smog:machine_casing')
@@ -184,7 +205,15 @@ abstract class GenerateSmogContent extends DefaultTask {
         en['jei.smog.formed'] = 'Assembled'; ru['jei.smog.formed'] = 'Собрано'
         en['jei.smog.controls'] = 'Drag: rotate | Wheel: zoom'; ru['jei.smog.controls'] = 'ЛКМ: поворот | Колесо: зум'
         en['jei.smog.controls_more'] = 'RMB: form | MMB: reset'; ru['jei.smog.controls_more'] = 'ПКМ: сборка | СКМ: сброс'
-        en['message.smog.connector_required'] = 'Use a %s connector';ru['message.smog.connector_required'] = 'Нужен коннектор уровня %s'
+        en['gui.smog.on']='On';ru['gui.smog.on']='Вкл.'
+        en['gui.smog.off']='Off';ru['gui.smog.off']='Выкл.'
+        en['gui.smog.toggle_power']='Toggle machine';ru['gui.smog.toggle_power']='Включить / выключить'
+        en['gui.smog.change_rate']='Change output limit (FE/t)';ru['gui.smog.change_rate']='Изменить предел передачи (FE/т)'
+        [copper:['Copper','Медь'],aluminum:['Aluminum','Алюминий'],silver:['Silver','Серебро'],steel:['Steel','Сталь'],gold:['Gold','Золото'],tin:['Tin','Олово']].each { key,text -> en["conductor.smog.$key"]=text[0];ru["conductor.smog.$key"]=text[1] }
+        en['message.smog.multiblock_formed']='Multiblock assembled';ru['message.smog.multiblock_formed']='Мультиблок собран'
+        en['message.smog.multiblock_incomplete']='Structure incomplete or obstructed. Check the JEI blueprint.';ru['message.smog.multiblock_incomplete']='Структура неполная или занята. Проверьте схему в JEI.'
+        en['message.smog.configurator_rotated']='Rotated; configure again to assemble';ru['message.smog.configurator_rotated']='Повернуто; для сборки нажмите настройщиком снова'
+        en['message.smog.connector_required'] = 'Use a connector made from %s';ru['message.smog.connector_required'] = 'Нужен коннектор из материала: %s'
         en['message.smog.wire_start'] = 'First connector selected. Click the second connector.';ru['message.smog.wire_start'] = 'Первый коннектор выбран. Нажмите на второй.'
         en['message.smog.wire_invalid'] = 'Invalid connection. Maximum distance: %s blocks.';ru['message.smog.wire_invalid'] = 'Неверное соединение. Максимум: %s блоков.'
         en['message.smog.wire_obstructed'] = 'The wire path is obstructed or unloaded.';ru['message.smog.wire_obstructed'] = 'На пути провода препятствие или незагруженный чанк.'

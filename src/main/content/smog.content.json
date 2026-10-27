@@ -196,6 +196,45 @@
       "min_y": -64,
       "max_y": -16,
       "biomes": "overworld"
+    },
+    {
+      "name": "aluminum",
+      "material": "Aluminum",
+      "material_ru": "алюминия",
+      "display_ru": "Алюминиевая руда",
+      "color": "C5CDD3",
+      "product": "ingot",
+      "vein_size": 8,
+      "veins_per_chunk": 7,
+      "min_y": -16,
+      "max_y": 96,
+      "biomes": "overworld"
+    },
+    {
+      "name": "silver",
+      "material": "Silver",
+      "material_ru": "серебра",
+      "display_ru": "Серебряная руда",
+      "color": "D4DDE8",
+      "product": "ingot",
+      "vein_size": 6,
+      "veins_per_chunk": 5,
+      "min_y": -48,
+      "max_y": 32,
+      "biomes": "overworld"
+    },
+    {
+      "name": "tin",
+      "material": "Tin",
+      "material_ru": "олова",
+      "display_ru": "Оловянная руда",
+      "color": "9FBFC9",
+      "product": "ingot",
+      "vein_size": 8,
+      "veins_per_chunk": 7,
+      "min_y": -32,
+      "max_y": 64,
+      "biomes": "overworld"
     }
   ],
   "machines": [
@@ -207,7 +246,8 @@
       "assembled_texture": "smog:block/machine_active",
       "hardness": 4,
       "model": "smog:block/test_machine",
-      "assembled_model": "smog:block/test_machine"
+      "assembled_model": "smog:block/test_machine",
+      "transfer_rate": 32
     },
     {
       "name": "test_controller",
@@ -218,14 +258,14 @@
       "hardness": 4,
       "multiblock": "smog:test_structure",
       "assembled_model": "smog:block/assembled_machine",
-      "model": "smog:block/test_controller"
+      "model": "smog:block/test_controller",
+      "transfer_rate": 32
     },
     {
       "name": "electric_furnace",
       "display": "Electric Furnace",
       "display_ru": "Электрическая печь",
       "kind": "ELECTRIC_FURNACE",
-      "voltage": "LV",
       "work_ticks": 100,
       "cost": 4,
       "capacity": 64000,
@@ -233,14 +273,14 @@
       "assembled_model": "smog:block/electric_furnace",
       "texture": "smog:block/electric_furnace",
       "hardness": 4,
-      "recipe_core": "minecraft:furnace"
+      "recipe_core": "minecraft:furnace",
+      "transfer_rate": 32
     },
     {
       "name": "crusher",
       "display": "Crusher",
       "display_ru": "Дробитель",
       "kind": "CRUSHER",
-      "voltage": "LV",
       "work_ticks": 60,
       "cost": 8,
       "capacity": 64000,
@@ -248,14 +288,14 @@
       "assembled_model": "smog:block/crusher",
       "texture": "smog:block/crusher",
       "hardness": 4,
-      "recipe_core": "minecraft:piston"
+      "recipe_core": "minecraft:piston",
+      "transfer_rate": 32
     },
     {
       "name": "press",
       "display": "Press",
       "display_ru": "Пресс",
       "kind": "PRESS",
-      "voltage": "MV",
       "work_ticks": 80,
       "cost": 16,
       "capacity": 64000,
@@ -263,14 +303,14 @@
       "assembled_model": "smog:block/press",
       "texture": "smog:block/press",
       "hardness": 4,
-      "recipe_core": "minecraft:anvil"
+      "recipe_core": "minecraft:anvil",
+      "transfer_rate": 128
     },
     {
       "name": "block_breaker",
       "display": "Block Breaker",
       "display_ru": "Разрушитель блоков",
       "kind": "BLOCK_BREAKER",
-      "voltage": "LV",
       "work_ticks": 20,
       "cost": 64,
       "capacity": 64000,
@@ -278,14 +318,14 @@
       "assembled_model": "smog:block/block_breaker",
       "texture": "smog:block/block_breaker",
       "hardness": 4,
-      "recipe_core": "minecraft:iron_pickaxe"
+      "recipe_core": "minecraft:iron_pickaxe",
+      "transfer_rate": 32
     },
     {
       "name": "block_placer",
       "display": "Block Placer",
       "display_ru": "Ставщик блоков",
       "kind": "BLOCK_PLACER",
-      "voltage": "LV",
       "work_ticks": 20,
       "cost": 32,
       "capacity": 64000,
@@ -293,14 +333,14 @@
       "assembled_model": "smog:block/block_placer",
       "texture": "smog:block/block_placer",
       "hardness": 4,
-      "recipe_core": "minecraft:dispenser"
+      "recipe_core": "minecraft:dispenser",
+      "transfer_rate": 32
     },
     {
       "name": "fluid_pump",
       "display": "Fluid Pump",
       "display_ru": "Заборщик жидкостей",
       "kind": "FLUID_PUMP",
-      "voltage": "LV",
       "work_ticks": 20,
       "cost": 32,
       "capacity": 64000,
@@ -308,14 +348,14 @@
       "assembled_model": "smog:block/fluid_pump",
       "texture": "smog:block/fluid_pump",
       "hardness": 4,
-      "recipe_core": "minecraft:bucket"
+      "recipe_core": "minecraft:bucket",
+      "transfer_rate": 32
     },
     {
       "name": "fluid_placer",
       "display": "Fluid Placer",
       "display_ru": "Ставщик жидкостей",
       "kind": "FLUID_PLACER",
-      "voltage": "LV",
       "work_ticks": 20,
       "cost": 32,
       "capacity": 64000,
@@ -323,14 +363,14 @@
       "assembled_model": "smog:block/fluid_placer",
       "texture": "smog:block/fluid_placer",
       "hardness": 4,
-      "recipe_core": "minecraft:dropper"
+      "recipe_core": "minecraft:dropper",
+      "transfer_rate": 32
     },
     {
       "name": "solid_generator",
       "display": "Solid Fuel Generator",
       "display_ru": "Твердотопливный генератор",
       "kind": "SOLID_GENERATOR",
-      "voltage": "LV",
       "work_ticks": 20,
       "cost": 0,
       "capacity": 200000,
@@ -338,14 +378,14 @@
       "assembled_model": "smog:block/solid_generator",
       "texture": "smog:block/solid_generator",
       "hardness": 4,
-      "recipe_core": "minecraft:blast_furnace"
+      "recipe_core": "minecraft:blast_furnace",
+      "transfer_rate": 32
     },
     {
       "name": "generator_controller",
       "display": "Generator Controller",
       "display_ru": "Контроллер генераторов",
       "kind": "GENERATOR_CONTROLLER",
-      "voltage": "HV",
       "work_ticks": 20,
       "cost": 0,
       "capacity": 200000,
@@ -353,14 +393,14 @@
       "assembled_model": "smog:block/generator_controller",
       "texture": "smog:block/generator_controller",
       "hardness": 4,
-      "recipe_core": "minecraft:comparator"
+      "recipe_core": "minecraft:comparator",
+      "transfer_rate": 512
     },
     {
       "name": "transformer",
-      "display": "Transformer",
-      "display_ru": "Трансформатор",
+      "display": "Energy Distributor",
+      "display_ru": "Распределитель энергии",
       "kind": "TRANSFORMER",
-      "voltage": "HV",
       "work_ticks": 20,
       "cost": 0,
       "capacity": 64000,
@@ -368,52 +408,110 @@
       "assembled_model": "smog:block/transformer",
       "texture": "smog:block/transformer",
       "hardness": 4,
-      "recipe_core": "minecraft:redstone_block"
+      "recipe_core": "minecraft:redstone_block",
+      "transfer_rate": 512
     },
     {
       "name": "connector_lv",
-      "display": "LV Connector",
-      "display_ru": "Коннектор НН",
+      "display": "Copper Connector",
+      "display_ru": "Медный коннектор",
       "kind": "CONNECTOR",
-      "voltage": "LV",
-      "capacity": 1,
+      "capacity": 1024,
       "work_ticks": 20,
       "cost": 0,
       "texture": "smog:block/connector_lv",
       "model": "smog:block/connector_lv",
       "assembled_model": "smog:block/connector_lv",
       "hardness": 2,
-      "recipe_core": "minecraft:copper_ingot"
+      "recipe_core": "minecraft:copper_ingot",
+      "transfer_rate": 128,
+      "conductor": "copper",
+      "color": "C77B42"
     },
     {
       "name": "connector_mv",
-      "display": "MV Connector",
-      "display_ru": "Коннектор СН",
+      "display": "Gold Connector",
+      "display_ru": "Золотой коннектор",
       "kind": "CONNECTOR",
-      "voltage": "MV",
-      "capacity": 1,
+      "capacity": 2048,
       "work_ticks": 20,
       "cost": 0,
       "texture": "smog:block/connector_mv",
       "model": "smog:block/connector_mv",
       "assembled_model": "smog:block/connector_mv",
       "hardness": 2,
-      "recipe_core": "minecraft:copper_ingot"
+      "recipe_core": "minecraft:gold_ingot",
+      "transfer_rate": 256,
+      "conductor": "gold",
+      "color": "D6BB61"
     },
     {
       "name": "connector_hv",
-      "display": "HV Connector",
-      "display_ru": "Коннектор ВН",
+      "display": "Silver Connector",
+      "display_ru": "Серебряный коннектор",
       "kind": "CONNECTOR",
-      "voltage": "HV",
-      "capacity": 1,
+      "capacity": 4096,
       "work_ticks": 20,
       "cost": 0,
       "texture": "smog:block/connector_hv",
       "model": "smog:block/connector_hv",
       "assembled_model": "smog:block/connector_hv",
       "hardness": 2,
-      "recipe_core": "minecraft:copper_ingot"
+      "recipe_core": "smog:silver_ingot",
+      "transfer_rate": 512,
+      "conductor": "silver",
+      "color": "D4DDE8"
+    },
+    {
+      "name": "connector_aluminum",
+      "display": "Aluminum Connector",
+      "display_ru": "Алюминиевый коннектор",
+      "kind": "CONNECTOR",
+      "capacity": 512,
+      "work_ticks": 20,
+      "cost": 0,
+      "texture": "smog:block/connector_aluminum",
+      "model": "smog:block/connector_aluminum",
+      "assembled_model": "smog:block/connector_aluminum",
+      "hardness": 2,
+      "recipe_core": "smog:aluminum_ingot",
+      "transfer_rate": 64,
+      "conductor": "aluminum",
+      "color": "C5CDD3"
+    },
+    {
+      "name": "connector_steel",
+      "display": "Steel Connector",
+      "display_ru": "Стальной коннектор",
+      "kind": "CONNECTOR",
+      "capacity": 256,
+      "work_ticks": 20,
+      "cost": 0,
+      "texture": "smog:block/connector_steel",
+      "model": "smog:block/connector_steel",
+      "assembled_model": "smog:block/connector_steel",
+      "hardness": 2,
+      "recipe_core": "smog:steel_ingot",
+      "transfer_rate": 32,
+      "conductor": "steel",
+      "color": "66717B"
+    },
+    {
+      "name": "connector_tin",
+      "display": "Tin Connector",
+      "display_ru": "Оловянный коннектор",
+      "kind": "CONNECTOR",
+      "capacity": 256,
+      "work_ticks": 20,
+      "cost": 0,
+      "texture": "smog:block/connector_tin",
+      "model": "smog:block/connector_tin",
+      "assembled_model": "smog:block/connector_tin",
+      "hardness": 2,
+      "recipe_core": "smog:tin_ingot",
+      "transfer_rate": 32,
+      "conductor": "tin",
+      "color": "9FBFC9"
     }
   ],
   "multiblocks": [
@@ -827,34 +925,82 @@
     },
     {
       "name": "wrench",
-      "display": "Wrench",
-      "display_ru": "Гаечный ключ",
-      "kind": "wrench",
+      "display": "Configurator",
+      "display_ru": "Настройщик",
+      "kind": "configurator",
       "tab": "machines"
     },
     {
       "name": "wire_coil_lv",
-      "display": "LV Wire Coil",
-      "display_ru": "Катушка провода НН",
+      "display": "Copper Wire Coil",
+      "display_ru": "Катушка медного провода",
       "kind": "wire",
-      "voltage": "LV",
-      "tab": "machines"
+      "tab": "machines",
+      "conductor": "copper",
+      "ingredient": "minecraft:copper_ingot",
+      "color": "C77B42"
     },
     {
       "name": "wire_coil_mv",
-      "display": "MV Wire Coil",
-      "display_ru": "Катушка провода СН",
+      "display": "Gold Wire Coil",
+      "display_ru": "Катушка золотого провода",
       "kind": "wire",
-      "voltage": "MV",
-      "tab": "machines"
+      "tab": "machines",
+      "conductor": "gold",
+      "ingredient": "minecraft:gold_ingot",
+      "color": "D6BB61"
     },
     {
       "name": "wire_coil_hv",
-      "display": "HV Wire Coil",
-      "display_ru": "Катушка провода ВН",
+      "display": "Silver Wire Coil",
+      "display_ru": "Катушка серебряного провода",
       "kind": "wire",
-      "voltage": "HV",
-      "tab": "machines"
+      "tab": "machines",
+      "conductor": "silver",
+      "ingredient": "smog:silver_ingot",
+      "color": "D4DDE8"
+    },
+    {
+      "name": "wire_coil_aluminum",
+      "kind": "wire",
+      "tab": "machines",
+      "conductor": "aluminum",
+      "ingredient": "smog:aluminum_ingot",
+      "color": "C5CDD3",
+      "display": "Aluminum Wire Coil",
+      "display_ru": "Катушка алюминиевого провода"
+    },
+    {
+      "name": "wire_coil_steel",
+      "kind": "wire",
+      "tab": "machines",
+      "conductor": "steel",
+      "ingredient": "smog:steel_ingot",
+      "color": "66717B",
+      "display": "Steel Wire Coil",
+      "display_ru": "Катушка стального провода"
+    },
+    {
+      "name": "wire_coil_tin",
+      "kind": "wire",
+      "tab": "machines",
+      "conductor": "tin",
+      "ingredient": "smog:tin_ingot",
+      "color": "9FBFC9",
+      "display": "Tin Wire Coil",
+      "display_ru": "Катушка оловянного провода"
+    }
+  ],
+  "alloys": [
+    {
+      "name": "steel",
+      "material": "Steel",
+      "material_ru": "стали",
+      "color": "66717B",
+      "ingredients": [
+        "minecraft:iron_ingot",
+        "minecraft:coal"
+      ]
     }
   ]
 }

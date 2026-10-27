@@ -4,8 +4,16 @@
   "version": "1.0.0",
   "environment": "*",
   "entrypoints": {
-    "fabric-gametest": ["io.github.kpaakeh.smog.test.FoundationTests","io.github.kpaakeh.smog.test.IndustryTests"],
-    "fabric-client-gametest": ["io.github.kpaakeh.smog.test.ClientFoundationTests"],
-    "jei_mod_plugin": ["io.github.kpaakeh.smog.test.TestJeiProbe"]
+    "fabric-gametest": [
+      "io.github.kpaakeh.smog.test.FoundationTests",
+      "io.github.kpaakeh.smog.test.IndustryTests",
+      "io.github.kpaakeh.smog.test.EnergyInteropTests"
+    ],
+    "fabric-client-gametest": [
+      "io.github.kpaakeh.smog.test.ClientFoundationTests"
+    ],
+    "jei_mod_plugin": [
+      "io.github.kpaakeh.smog.test.TestJeiProbe"
+    ]
   }
 }

@@ -14,19 +14,23 @@ public final class GuiLayouts {
     public static final class Layout {
         public final String id;
         public final int width,height;
+        public final net.minecraft.resources.Identifier texture;
         public final List<SlotPosition> slots;
         public final int inventorySize;
         public MenuType<MachineMenu> type;
-        private Layout(String id,int width,int height,List<SlotPosition> slots) {
-            this.id=id;this.width=width;this.height=height;this.slots=List.copyOf(slots);
+        private Layout(String id,int width,int height,List<SlotPosition> slots,net.minecraft.resources.Identifier texture) {
+            this.id=id;this.width=width;this.height=height;this.slots=List.copyOf(slots);this.texture=texture;
             inventorySize=slots.stream().mapToInt(SlotPosition::index).max().orElse(-1)+1;
         }
     }
     private static final Map<String,Layout> VALUES=new LinkedHashMap<>();
     private GuiLayouts() {}
     public static Layout register(String id,int width,int height,List<SlotPosition> slots) {
+        return register(id,width,height,slots,ModBlocks.id("textures/gui/"+id+".png"));
+    }
+    public static Layout register(String id,int width,int height,List<SlotPosition> slots,net.minecraft.resources.Identifier texture) {
         if(VALUES.containsKey(id))throw new IllegalArgumentException("Duplicate GUI "+id);
-        Layout layout=new Layout(id,width,height,slots);
+        Layout layout=new Layout(id,width,height,slots,texture);
         layout.type=Registry.register(BuiltInRegistries.MENU,ModBlocks.id(id),new MenuType<>((window,inventory)->
             new MachineMenu(layout,window,inventory,new SimpleContainer(layout.inventorySize),new SimpleContainerData(MachineMenu.DATA_SIZE)),FeatureFlags.DEFAULT_FLAGS));
         VALUES.put(id,layout);return layout;

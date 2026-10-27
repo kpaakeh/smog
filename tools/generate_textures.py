@@ -72,6 +72,11 @@ for material in CATALOG['ores']:
     product=material.get('product','ingot')
     for filename,kind in [('raw_'+n,'raw'),(n+'_'+product,product),(n+'_dust','dust'),('crushed_'+n+'_ore','crushed'),(n+'_shard','crushed'),(n+'_nugget','small'),(n+'_plate','ingot')]: save(item(n+kind,c,kind),'item/'+filename)
 
+for material in CATALOG.get('alloys',[]):
+    n=material['name'];c=tuple(bytes.fromhex(material['color']))
+    for kind in ['ingot','dust','nugget','plate']:save(item(n+kind,c,kind if kind!='plate' else 'ingot'),'item/'+n+'_'+kind)
+    save(stone(n,c),'block/'+n+'_block')
+
 def machine(name, active=False, panel=False):
     c=(67,80,91);im=stone(name,c);d=ImageDraw.Draw(im)
     d.rectangle((0,0,15,15),outline=(22,30,37,255));d.rectangle((1,1,14,14),outline=(106,124,134,255));d.line((2,13,13,13),fill=(30,39,49,255))

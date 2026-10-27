@@ -11,9 +11,9 @@ public final class ModItems {
     public record Entry(Item item,String tab){}
     private static final List<Entry> VALUES=new ArrayList<>();
     private ModItems(){}
-    public static Item register(String name,String kind,String voltage,String tab){
+    public static Item register(String name,String kind,String conductor,String tab){
         var id=ModBlocks.id(name);var properties=new Item.Properties().setId(ResourceKey.create(Registries.ITEM,id));
-        Item item=switch(kind){case "wire"->new WireCoilItem(properties,Voltage.valueOf(voltage));case "wrench"->new WrenchItem(properties.stacksTo(1));default->new Item(properties);};
+        Item item=switch(kind){case "wire"->new WireCoilItem(properties,ConductorMaterial.valueOf(conductor.toUpperCase(Locale.ROOT)));case "wrench","configurator"->new ConfiguratorItem(properties.stacksTo(1));default->new Item(properties);};
         Registry.register(BuiltInRegistries.ITEM,id,item);VALUES.add(new Entry(item,tab));return item;
     }
     public static List<Entry> all(){return List.copyOf(VALUES);}

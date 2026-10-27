@@ -48,7 +48,7 @@ for entry in data['blocks']+data['machines']:
     elif name in ['fluid_pump','fluid_placer']:elements=[cube([2,0,2],[14,9,14]),cube([6,9,6],[10,16,10]),cube([6,3,-2],[10,7,4])];color=(82,138,157)
     elif name.startswith('connector_'):
         elements=[cube([4,0,4],[12,3,12]),cube([6,3,6],[10,10,10]),cube([5,10,5],[11,13,11]),cube([7,13,7],[9,16,9])]
-        color={'connector_lv':(180,113,66),'connector_mv':(196,165,76),'connector_hv':(117,125,144)}[name]
+        color=tuple(bytes.fromhex(entry.get('color','9FB0B8')))
     texture(name,color);model(name,elements)
 
 generators={
@@ -62,5 +62,5 @@ generators={
 }
 for kind,elements in generators.items():
     name='generator_'+kind;texture(name,(61,100,154) if kind=='solar' else (128,138,143));model(name,elements)
-for item in data.get('items',[]):texture(item['name'],{'wire_coil_lv':(190,119,66),'wire_coil_mv':(210,178,83),'wire_coil_hv':(123,133,150),'copper_plate':(187,119,77)}.get(item['name'],(154,164,172)),True)
+for item in data.get('items',[]):texture(item['name'],tuple(bytes.fromhex(item['color'])) if item.get('color') else {'wire_coil_lv':(190,119,66),'wire_coil_mv':(210,178,83),'wire_coil_hv':(123,133,150),'copper_plate':(187,119,77)}.get(item['name'],(154,164,172)),True)
 print('Created missing industry placeholder JSON models and textures; existing artwork preserved.')

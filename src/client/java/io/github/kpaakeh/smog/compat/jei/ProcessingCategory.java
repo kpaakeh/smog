@@ -31,6 +31,6 @@ public final class ProcessingCategory implements IRecipeCategory<ProcessingRecip
     @Override public void createRecipeExtras(IRecipeExtrasBuilder builder,ProcessingRecipes.Recipe recipe,IFocusGroup focuses){
         builder.addRecipeArrow().setPosition(62,18);
         var spec=Machines.all().stream().filter(m->m.spec().kind()==kind).findFirst().orElseThrow().spec();
-        builder.addText(Component.literal(spec.workTicks()+" ticks | "+(spec.workTicks()*spec.cost())+" EU"),145,10).setPosition(3,43);
+        builder.addText(Component.literal(spec.workTicks()+" ticks | "+(spec.workTicks()*spec.cost())+" FE"),145,10).setPosition(3,43);
     }
 }

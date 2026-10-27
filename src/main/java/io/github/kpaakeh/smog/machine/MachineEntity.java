@@ -22,11 +22,13 @@ import net.minecraft.world.level.storage.*;
 /** Common persistent machine: inventory, energy, processing, menu and multiblock validation. */
 public final class MachineEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     private final Identifier machineId;
+    private final MachineEnergyStorage energyStorage=new MachineEnergyStorage(this);
+    public MachineEnergyStorage energyStorage(){return energyStorage;}
     private NonNullList<ItemStack> items=NonNullList.withSize(4,ItemStack.EMPTY);
     private int progress,energy,burnTicks,burnTotal;
     private boolean enabled=true;
-    private Voltage transformedVoltage=Voltage.LV;
-    public void cycleVoltage(){if(spec().kind()==MachineSpec.Kind.TRANSFORMER){transformedVoltage=Voltage.values()[(transformedVoltage.ordinal()+1)%Voltage.values().length];setChanged();}}
+    private int outputLimit=32;
+    public void cycleTransferRate(){if(spec().kind()==MachineSpec.Kind.TRANSFORMER){outputLimit=outputLimit>=spec().transferRate()?32:Math.min(spec().transferRate(),outputLimit*2);setChanged();}}
     private Item processingItem=Items.AIR;
     private final LinkedHashSet<String> strikes=new LinkedHashSet<>();
     public boolean recordStrike(String id) {
@@ -47,8 +49,8 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     public void enabled(boolean value) { enabled=value;setChanged(); }
     public boolean assembled() { return getBlockState().getValue(MachineBlock.ASSEMBLED); }
     public GeneratorKind generator() { return getBlockState().getValue(MachineBlock.GENERATOR); }
-    public Voltage inputVoltage() { return spec().voltage(); }
-    public Voltage outputVoltage() { return spec().kind()==MachineSpec.Kind.TRANSFORMER?transformedVoltage:spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER?generator().voltage:spec().voltage(); }
+    public int inputRate() { return spec().transferRate(); }
+    public int outputRate() { return spec().kind()==MachineSpec.Kind.TRANSFORMER?outputLimit:spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER?generator().transferRate:spec().transferRate(); }
     public MultiblockDefinition structure() {
         Identifier id=spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER && generator()!=GeneratorKind.NONE?generator().structureId():Machines.get(machineId).definition().multiblock();
         return id==null?null:Multiblocks.get(id);
@@ -58,20 +60,41 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
             case EAST->Rotation.CLOCKWISE_90;case SOUTH->Rotation.CLOCKWISE_180;case WEST->Rotation.COUNTERCLOCKWISE_90;default->Rotation.NONE;
         };
     }
-    private boolean validate(ServerLevel server) {
+    public boolean multiblockController() {
+        return spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER || Machines.get(machineId).definition().multiblock()!=null;
+    }
+    /** Assembly is an explicit player action; ticks only validate the selected structure. */
+    public boolean tryAssemble() {
+        if(!(level instanceof ServerLevel server) || !multiblockController())return false;
+        if(assembled())return validate(server);
         GeneratorKind chosen=GeneratorKind.NONE;
-        boolean complete;
         if(spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER) {
             for(var candidate:GeneratorKind.values()) {
-                var structure=Multiblocks.get(candidate.structureId());
-                if(candidate!=GeneratorKind.NONE && structure!=null && structure.check(server,worldPosition,rotation())==MultiblockDefinition.Result.COMPLETE) {chosen=candidate;break;}
+                if(candidate==GeneratorKind.NONE)continue;
+                var definition=Multiblocks.get(candidate.structureId());
+                if(definition!=null && definition.check(server,worldPosition,rotation())==MultiblockDefinition.Result.COMPLETE){chosen=candidate;break;}
             }
-            complete=chosen!=GeneratorKind.NONE;
-        } else {
-            var structure=structure();complete=structure==null || structure.check(server,worldPosition,rotation())==MultiblockDefinition.Result.COMPLETE;
+            if(chosen==GeneratorKind.NONE)return false;
+        } else if(structure().check(server,worldPosition,rotation())!=MultiblockDefinition.Result.COMPLETE)return false;
+        server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,true).setValue(MachineBlock.GENERATOR,chosen),Block.UPDATE_ALL);
+        setChanged();return true;
+    }
+    public void disassemble() {
+        if(!(level instanceof ServerLevel server) || !multiblockController())return;
+        server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,false).setValue(MachineBlock.GENERATOR,GeneratorKind.NONE),Block.UPDATE_ALL);
+        progress(0);
+    }
+    private boolean validate(ServerLevel server) {
+        if(!multiblockController()) {
+            if(!assembled())server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,true),Block.UPDATE_CLIENTS);
+            return true;
         }
-        if(assembled()!=complete || generator()!=chosen)server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,complete).setValue(MachineBlock.GENERATOR,chosen),Block.UPDATE_CLIENTS);
-        return complete;
+        if(!assembled())return false;
+        var definition=structure();
+        // An unloaded structure pauses; a missing part dismantles it until configured again.
+        var result=definition==null?MultiblockDefinition.Result.INCOMPLETE:definition.check(server,worldPosition,rotation());
+        if(result==MultiblockDefinition.Result.INCOMPLETE)disassemble();
+        return result==MultiblockDefinition.Result.COMPLETE;
     }
     public void serverTick() {
         if(!(level instanceof ServerLevel server))return;
@@ -184,7 +207,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         @Override public int get(int index) {return switch(index) {
             case 0->progress;case 1->spec().workTicks();case 2->energy&65535;case 3->energy>>>16;
             case 4->capacity()&65535;case 5->capacity()>>>16;case 6->burnTicks;case 7->burnTotal;
-            case 8->enabled?1:0;case 9->outputVoltage().ordinal();case 10->generator().ordinal();case 11->spec().kind().ordinal();default->0;
+            case 8->enabled?1:0;case 9->outputRate();case 10->generator().ordinal();case 11->spec().kind().ordinal();default->0;
         };}
         @Override public void set(int index,int value) {}
     };
@@ -199,7 +222,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         super.saveAdditional(output);ContainerHelper.saveAllItems(output,items);
         output.putInt("progress",progress);output.putInt("energy",energy);output.putInt("burn_ticks",burnTicks);output.putInt("burn_total",burnTotal);output.putBoolean("enabled",enabled);
         output.store("strikes",com.mojang.serialization.Codec.STRING.listOf(),List.copyOf(strikes));
-        output.putInt("voltage",transformedVoltage.ordinal());
+        output.putInt("output_limit",outputLimit);
     }
     @Override protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);items=NonNullList.withSize(4,ItemStack.EMPTY);ContainerHelper.loadAllItems(input,items);
@@ -207,6 +230,6 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         burnTicks=Math.max(0,input.getIntOr("burn_ticks",0));burnTotal=Math.max(burnTicks,input.getIntOr("burn_total",0));enabled=input.getBooleanOr("enabled",true);
         processingItem=items.get(0).getItem();
         strikes.clear();input.read("strikes",com.mojang.serialization.Codec.STRING.listOf()).ifPresent(strikes::addAll);
-        transformedVoltage=Voltage.values()[Math.clamp(input.getIntOr("voltage",0),0,Voltage.values().length-1)];
+        outputLimit=Math.clamp(input.getIntOr("output_limit",new int[]{32,128,512}[Math.clamp(input.getIntOr("voltage",0),0,2)]),1,spec().transferRate());
     }
 }

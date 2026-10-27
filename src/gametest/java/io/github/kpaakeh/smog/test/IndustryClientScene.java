@@ -24,11 +24,12 @@ public final class IndustryClientScene {
             level.setBlockAndUpdate(FURNACE,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("electric_furnace")).defaultBlockState());
             ((MachineEntity)level.getBlockEntity(GENERATOR)).setItem(2,new ItemStack(Items.COAL,3));
             ((MachineEntity)level.getBlockEntity(FURNACE)).setItem(0,new ItemStack(ModOres.all().getFirst().raw(),10));
-            WireData.get(level).add(new WireLink(A,B,Voltage.LV));
+            WireData.get(level).add(new WireLink(A,B,ConductorMaterial.COPPER));
             for(var kind:GeneratorKind.values())if(kind!=GeneratorKind.NONE){
                 var origin=new BlockPos(-14+(kind.ordinal()-1)*6,100,18);
                 level.setBlockAndUpdate(origin,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("generator_controller")).defaultBlockState());
                 io.github.kpaakeh.smog.multiblock.Multiblocks.get(kind.structureId()).parts().forEach((offset,ingredient)->level.setBlockAndUpdate(origin.offset(offset),ingredient.block().defaultBlockState()));
+                if(!((MachineEntity)level.getBlockEntity(origin)).tryAssemble())throw new IllegalStateException("Generator fixture assembly failed");
             }
         });
         world.getServer().runCommand("tp @a -5.5 100 -12.5 0 12");

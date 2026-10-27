@@ -44,7 +44,7 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         return input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT));
     }
     @Override public void drawWidget(GuiGraphicsExtractor graphics,double mouseX,double mouseY) {
-        graphics.fill(4,28,166,104,0xFF202A35);
+        io.github.kpaakeh.smog.gui.GuiTextures.draw(graphics,"structure_preview",4,28,162,76);
         var minecraft=Minecraft.getInstance();var resolver=new BlockModelResolver(minecraft.getModelManager());
         List<StructurePreviewState.Part> parts=new ArrayList<>();
         var display=BlockDisplayContext.create();

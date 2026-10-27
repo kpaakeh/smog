@@ -16,10 +16,10 @@ public final class WireRendering {
                 Vec3 a=wire.point(segment/32.0).subtract(origin.getX(),origin.getY(),origin.getZ());
                 Vec3 b=wire.point((segment+1)/32.0).subtract(origin.getX(),origin.getY(),origin.getZ());
                 Vec3 along=b.subtract(a).normalize(),side=along.cross(new Vec3(0,1,0));if(side.lengthSqr()<.001)side=new Vec3(1,0,0);
-                side=side.normalize().scale(.018+.008*wire.voltage().ordinal());Vec3 up=along.cross(side).normalize().scale(.018+.008*wire.voltage().ordinal());
+                side=side.normalize().scale(wire.material().radius);Vec3 up=along.cross(side).normalize().scale(wire.material().radius);
                 Vec3[] offsets={side.add(up),side.subtract(up),side.scale(-1).subtract(up),up.subtract(side)};
                 for(int face=0;face<4;face++){
-                    int color=wire.voltage().color|0xFF000000;
+                    int color=wire.material().color|0xFF000000;
                     vertex(vertices,matrix,a.add(offsets[face]),color,light);vertex(vertices,matrix,b.add(offsets[face]),color,light);
                     vertex(vertices,matrix,b.add(offsets[(face+1)%4]),color,light);vertex(vertices,matrix,a.add(offsets[(face+1)%4]),color,light);
                 }

@@ -34,6 +34,7 @@ public final class ContentCatalog {
                 };
                 ModOres.generation(name, biomes);
             }
+            if(root.has("alloys"))for(var value:root.getAsJsonArray("alloys"))ModAlloys.register(value.getAsJsonObject().get("name").getAsString());
             for (var value : root.getAsJsonArray("multiblocks")) {
                 var o = value.getAsJsonObject(); Map<BlockPos, BlockIngredient> parts = new LinkedHashMap<>();
                 for (var partValue : o.getAsJsonArray("parts")) {
@@ -44,14 +45,14 @@ public final class ContentCatalog {
             }
             if(root.has("items"))for(var value:root.getAsJsonArray("items")){
                 var o=value.getAsJsonObject();ModItems.register(o.get("name").getAsString(),o.has("kind")?o.get("kind").getAsString():"item",
-                    o.has("voltage")?o.get("voltage").getAsString():"LV",o.has("tab")?o.get("tab").getAsString():"ores");
+                    o.has("conductor")?o.get("conductor").getAsString():"copper",o.has("tab")?o.get("tab").getAsString():"ores");
             }
             for (var value : root.getAsJsonArray("machines")) {
                 var o = value.getAsJsonObject(); Identifier structure = o.has("multiblock") ? Identifier.parse(o.get("multiblock").getAsString()) : null;
                 if (structure != null && Multiblocks.get(structure) == null) throw new IllegalArgumentException("Unknown multiblock " + structure);
                 var kind=o.has("kind")?MachineSpec.Kind.valueOf(o.get("kind").getAsString()):MachineSpec.Kind.DECORATIVE;
-                var spec=new MachineSpec(kind,io.github.kpaakeh.smog.energy.Voltage.valueOf(o.has("voltage")?o.get("voltage").getAsString():"LV"),
-                    o.has("capacity")?o.get("capacity").getAsInt():64000,o.has("work_ticks")?o.get("work_ticks").getAsInt():100,o.has("cost")?o.get("cost").getAsInt():4);
+                var spec=new MachineSpec(kind,o.has("transfer_rate")?o.get("transfer_rate").getAsInt():32,
+                    o.has("capacity")?o.get("capacity").getAsInt():64000,o.has("work_ticks")?o.get("work_ticks").getAsInt():100,o.has("cost")?o.get("cost").getAsInt():4,o.has("conductor")?io.github.kpaakeh.smog.energy.ConductorMaterial.valueOf(o.get("conductor").getAsString().toUpperCase(java.util.Locale.ROOT)):null);
                 Machines.register(o.get("name").getAsString(), BlockBehaviour.Properties.of().strength(hardness(o)).noOcclusion().requiresCorrectToolForDrops(),
                     new MachineDefinition(structure, 20, (level, machine) -> machine.progress(machine.progress() == Integer.MAX_VALUE ? 0 : machine.progress() + 1)),spec);
             }

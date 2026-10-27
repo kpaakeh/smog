@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 public class FoundationTests {
     @GameTest public void materialFamiliesRecipesAndWorldgen(GameTestHelper h) {
         var level=h.getLevel();
-        h.assertValueEqual(ModOres.all().size(),6,"Seven material families");
+        h.assertValueEqual(ModOres.all().size(),9,"Nine ore families");
         for (var ore:ModOres.all()) {
             h.assertValueEqual(ore.contents().size(),11,"Complete material family");
             for (var item:ore.contents()) h.assertTrue(item.asItem()!=net.minecraft.world.item.Items.AIR,"Material form has an item");
@@ -44,7 +44,7 @@ public class FoundationTests {
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(),true,level.registryAccess());
         for(String tab:List.of("machines","ores","blocks"))h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab)).hasAnyItems(),"Creative tab has contents: "+tab);
-        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),68,"All forms are in ore tab");
+        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),106,"All forms are in ore tab");
         h.succeed();
     }
     @GameTest public void zoneGeometryMovementAndPersistence(GameTestHelper h) {
@@ -103,6 +103,8 @@ public class FoundationTests {
             h.assertValueEqual(definition.check(level, origin, rotation), MultiblockDefinition.Result.COMPLETE, "Rotation matches " + rotation);
             MachineEntity entity = (MachineEntity) level.getBlockEntity(origin);
             entity.serverTick();
+            h.assertFalse(entity.assembled(), "Complete pattern waits for the configurator");
+            h.assertTrue(entity.tryAssemble(), "Explicit assembly succeeds");
             h.assertTrue(level.getBlockState(origin).getValue(MachineBlock.ASSEMBLED), "Controller switches model state");
             BlockPos broken = origin.offset(new BlockPos(1,0,0).rotate(rotation));
             level.setBlockAndUpdate(broken, Blocks.AIR.defaultBlockState());

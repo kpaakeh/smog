@@ -16,7 +16,7 @@ public final class WireData extends SavedData {
     public static WireData get(ServerLevel level){return level.getDataStorage().computeIfAbsent(TYPE);}
     public List<WireLink> all(){return List.copyOf(links);}
     public long revision(){return revision;}
-    public boolean add(WireLink link){if(links.size()>=512 || !links.add(link))return false;revision++;setDirty();return true;}
+    public boolean add(WireLink link){if(links.size()>=512 || links.stream().anyMatch(l->l.a().equals(link.a())&&l.b().equals(link.b())) || !links.add(link))return false;revision++;setDirty();return true;}
     public boolean remove(WireLink link){if(!links.remove(link))return false;revision++;setDirty();return true;}
     public List<WireLink> disconnect(BlockPos pos){var removed=links.stream().filter(l->l.touches(pos)).toList();removed.forEach(this::remove);return removed;}
 }

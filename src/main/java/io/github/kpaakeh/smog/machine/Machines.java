@@ -17,7 +17,7 @@ public final class Machines {
     }
     public static MachineBlock register(String name, BlockBehaviour.Properties properties, MachineDefinition definition, MachineSpec spec) {
         Identifier id = ModBlocks.id(name);
-        MachineBlock block = ModBlocks.register(name, p -> new MachineBlock(p, id), properties, true);
+        MachineBlock block = ModBlocks.register(name, p -> spec.kind()==MachineSpec.Kind.CONNECTOR?new ConnectorBlock(p,id):new MachineBlock(p,id), properties, true);
         BlockEntityType<MachineEntity> type = new BlockEntityType<>((pos, state) -> new MachineEntity(id, pos, state), Set.of(block));
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, type);
         ENTRIES.put(id, new Entry(block, type, definition, spec));

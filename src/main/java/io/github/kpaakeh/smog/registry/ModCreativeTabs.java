@@ -19,7 +19,7 @@ public final class ModCreativeTabs {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("ores"), FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smog.ores"))
             .icon(() -> ModOres.all().getFirst().stone().asItem().getDefaultInstance())
-            .displayItems((parameters, output) -> {ModOres.all().forEach(ore -> ore.contents().forEach(output::accept));ModItems.all().stream().filter(e->e.tab().equals("ores")).forEach(e->output.accept(e.item()));}).build());
+            .displayItems((parameters, output) -> {ModOres.all().forEach(ore -> ore.contents().forEach(output::accept));ModAlloys.all().forEach(alloy->alloy.contents().forEach(output::accept));ModItems.all().stream().filter(e->e.tab().equals("ores")).forEach(e->output.accept(e.item()));}).build());
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("blocks"), FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smog.blocks"))
             .icon(() -> BuiltInRegistries.ITEM.getValue(ModBlocks.id("machine_casing")).getDefaultInstance())
@@ -27,6 +27,7 @@ public final class ModCreativeTabs {
                 Set<Item> excluded = new HashSet<>();
                 Machines.all().forEach(e -> excluded.add(e.block().asItem()));
                 ModOres.all().forEach(ore -> ore.contents().forEach(value -> excluded.add(value.asItem())));
+                ModAlloys.all().forEach(alloy->alloy.contents().forEach(value->excluded.add(value.asItem())));
                 for (var block : BuiltInRegistries.BLOCK)
                     if (BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals("smog") && !excluded.contains(block.asItem()) && block.asItem() != Items.AIR)
                         output.accept(block);

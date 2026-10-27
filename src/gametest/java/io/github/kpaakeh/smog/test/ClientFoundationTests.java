@@ -42,6 +42,12 @@ public final class ClientFoundationTests implements FabricClientGameTest {
                     if (x == 4 && z == 3) level.setBlockAndUpdate(new BlockPos(x,100,z), ModFluids.all().getFirst().block.defaultBlockState());
                     else level.setBlockAndUpdate(new BlockPos(x,100,z), Blocks.STONE.defaultBlockState());
             });
+            context.waitTicks(20);
+            world.getServer().runOnServer(server -> {
+                var machine=(io.github.kpaakeh.smog.machine.MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,0));
+                if(machine.assembled())throw new IllegalStateException("Unexpected automatic assembly");
+                if(!machine.tryAssemble())throw new IllegalStateException("Explicit fixture assembly failed");
+            });
             context.waitFor(mc -> mc.level != null && mc.level.getBlockState(new BlockPos(0,100,0)).hasProperty(MachineBlock.ASSEMBLED)
                 && mc.level.getBlockState(new BlockPos(0,100,0)).getValue(MachineBlock.ASSEMBLED));
             context.waitTicks(40);
@@ -102,6 +108,8 @@ public final class ClientFoundationTests implements FabricClientGameTest {
             world.getServer().runCommand("tp @a 0.5 100 -6.5 0 15");
             context.waitTicks(20);context.takeScreenshot("multiblock-dismantled");
             IndustryClientScene.run(context,world);
+            FormationRenderingTest.run(context,world);
+            ConnectorRenderingTest.run(context,world);
         }
     }
 }

@@ -24,7 +24,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     @Override public boolean stillValid(Player player) { return container.stillValid(player); }
     @Override public boolean clickMenuButton(Player player,int id) {
         if(!stillValid(player) || !(container instanceof MachineEntity machine))return false;
-        if(id==0)machine.enabled(!machine.enabled());else if(id==1)machine.cycleVoltage();else return false;
+        if(id==0)machine.enabled(!machine.enabled());else if(id==1)machine.cycleTransferRate();else return false;
         broadcastChanges();return true;
     }
     @Override public ItemStack quickMoveStack(Player player,int index) {
