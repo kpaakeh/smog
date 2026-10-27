@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "tech_mod_tests",
+  "version": "1.0.0",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": ["io.github.kpaakeh.techmod.test.FoundationTests"],
+    "fabric-client-gametest": ["io.github.kpaakeh.techmod.test.ClientFoundationTests"],
+    "jei_mod_plugin": ["io.github.kpaakeh.techmod.test.TestJeiProbe"]
+  }
+}

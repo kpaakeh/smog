@@ -13,7 +13,8 @@
   "environment": "*",
   "entrypoints": {
     "main": ["io.github.kpaakeh.techmod.TechMod"],
-    "client": ["io.github.kpaakeh.techmod.TechModClient"]
+    "client": ["io.github.kpaakeh.techmod.TechModClient"],
+    "jei_mod_plugin": ["io.github.kpaakeh.techmod.compat.jei.TechJeiPlugin"]
   },
   "depends": {
     "fabricloader": ">=0.20.1",

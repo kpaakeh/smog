@@ -10,6 +10,10 @@ public class TechMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        io.github.kpaakeh.techmod.registry.ContentCatalog.initialize();
+        io.github.kpaakeh.techmod.zone.BuiltinZones.initialize();
+        io.github.kpaakeh.techmod.zone.ZoneSystem.initialize();
+        io.github.kpaakeh.techmod.zone.ZoneCommands.initialize();
         LOGGER.info("Tech Mod initialized");
     }
 }

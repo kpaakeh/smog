@@ -1,0 +1,115 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+// The catalog is the single source for registration and generated resources.
+abstract class GenerateTechContent extends DefaultTask {
+    @InputFile abstract RegularFileProperty getCatalogFile()
+    @OutputDirectory abstract DirectoryProperty getTargetDirectory()
+    @javax.inject.Inject abstract FileSystemOperations getFileSystem()
+    @TaskAction void generate() {
+        def root = new JsonSlurper().parse(catalogFile.get().asFile)
+        def directory = targetDirectory.get().asFile
+        fileSystem.delete { delete(directory) }
+        def write = { String path, Object value ->
+            def target = new File(directory, path)
+            target.parentFile.mkdirs()
+            target.setText(JsonOutput.prettyPrint(JsonOutput.toJson(value)) + '\n', 'UTF-8')
+        }
+        def validId = { String id ->
+            if (!(id ==~ /[a-z0-9_.-]+:[a-z0-9_\/-]+/) || id.contains('..')) throw new GradleException("Invalid identifier: $id")
+            id
+        }
+        def names = [] as Set
+        def claim = { String name ->
+            validId("tech_mod:$name")
+            if (!names.add(name)) throw new GradleException("Duplicate content: $name")
+        }
+        def tags = [:].withDefault { [] as Set }
+        def tag = { String registry, String id, String value ->
+            validId(id); validId(value.startsWith('#') ? value.substring(1) : value)
+            def pieces = id.split(':', 2)
+            tags["data/${pieces[0]}/tags/$registry/${pieces[1]}.json"].add(value)
+        }
+        def en = [:]; def ru = [:]
+        def block = { Map entry, String name, String texture, boolean machine ->
+            claim(name); validId(texture)
+            def id = "tech_mod:$name"
+            write("assets/tech_mod/models/block/${name}.json", [parent:'minecraft:block/cube_all', textures:[all:texture]])
+            def variants = ['':[model:"tech_mod:block/$name"]]
+            if (machine) {
+                def assembled = entry.assembled_model ?: "tech_mod:block/${name}_assembled"
+                validId(assembled)
+                if (!entry.assembled_model) write("assets/tech_mod/models/block/${name}_assembled.json", [parent:'minecraft:block/cube_all', textures:[all:entry.assembled_texture ?: texture]])
+                variants = [:]
+                [north:0, east:90, south:180, west:270].each { facing, rotation ->
+                    [false,true].each { built -> variants["assembled=$built,facing=$facing"] = [model:built ? assembled : "tech_mod:block/$name", y:rotation] }
+                }
+            }
+            write("assets/tech_mod/blockstates/${name}.json", [variants:variants])
+            write("assets/tech_mod/items/${name}.json", [model:[type:'minecraft:model', model:"tech_mod:block/$name"]])
+            def drop = entry.drop ?: id
+            validId(drop)
+            def lootEntry = [type:'minecraft:item', name:drop]
+            if (drop != id) lootEntry = [type:'minecraft:alternatives', children:[
+                [type:'minecraft:item', name:id, condition:'minecraft:tool/can_silk_touch'],
+                [type:'minecraft:item', name:drop, modifier:[[type:'minecraft:apply_bonus', enchantment:'minecraft:fortune', formula:'minecraft:ore_drops'],[type:'minecraft:explosion_decay']]]
+            ]]
+            write("data/tech_mod/loot_table/blocks/${name}.json", [type:'minecraft:block', pools:[[rolls:1, entries:[lootEntry], condition:[type:'minecraft:survives_explosion']]]])
+            tag('block', 'minecraft:mineable/pickaxe', id)
+            tag('block', entry.tool_tag ?: 'minecraft:needs_stone_tool', id)
+            (entry.tags ?: []).each { t -> tag('block', t, id); tag('item', t, id) }
+            en["block.tech_mod.$name"] = entry.display ?: name
+            ru["block.tech_mod.$name"] = entry.display_ru ?: entry.display ?: name
+        }
+        root.blocks.each { block(it, it.name, it.texture, false) }
+        root.ores.each { ore ->
+            if (ore.vein_size < 1 || ore.vein_size > 64 || ore.veins_per_chunk < 1 || ore.min_y > ore.max_y) throw new GradleException("Invalid ore generation: ${ore.name}")
+            def name = "${ore.name}_ore"
+            block(ore + [tags:(ore.tags ?: []) + ['tech_mod:ores','c:ores']], name, ore.texture, false)
+            block(ore + [display:"Deepslate ${ore.display}", display_ru:"Глубинная ${ore.display_ru}", tags:(ore.tags ?: []) + ['tech_mod:ores','c:ores']], "deepslate_$name", ore.deepslate_texture, false)
+            def stoneTarget = ore.stone_replaceables ? [predicate_type:'minecraft:tag_match',tag:ore.stone_replaceables] :
+                ore.biomes == 'nether' ? [predicate_type:'minecraft:tag_match',tag:'minecraft:base_stone_nether'] :
+                ore.biomes == 'end' ? [predicate_type:'minecraft:block_match',block:'minecraft:end_stone'] :
+                [predicate_type:'minecraft:tag_match',tag:'minecraft:stone_ore_replaceables']
+            write("data/tech_mod/worldgen/feature/${name}.json", [type:'minecraft:ore', size:ore.vein_size, discard_chance_on_air_exposure:0.0, targets:[
+                [target:stoneTarget,state:"tech_mod:$name"],
+                [target:[predicate_type:'minecraft:tag_match',tag:ore.deepslate_replaceables ?: 'minecraft:deepslate_ore_replaceables'],state:"tech_mod:deepslate_$name"]
+            ]])
+            write("data/tech_mod/worldgen/placed_feature/${name}.json", [feature:"tech_mod:$name", placement:[
+                [type:'minecraft:count',count:ore.veins_per_chunk], [type:'minecraft:in_square'],
+                [type:'minecraft:height_range',height:[type:'minecraft:uniform',min_inclusive:[absolute:ore.min_y],max_inclusive:[absolute:ore.max_y]]],
+                [type:'minecraft:biome']
+            ]])
+        }
+        root.machines.each { block(it, it.name, it.texture, true) }
+        root.fluids.each { fluid ->
+            claim(fluid.name); claim("flowing_${fluid.name}"); claim("${fluid.name}_bucket")
+            def name = fluid.name
+            write("assets/tech_mod/blockstates/${name}.json", [variants:['':[model:'minecraft:block/water']]])
+            write("assets/tech_mod/models/item/${name}_bucket.json", [parent:'minecraft:item/generated',textures:[layer0:fluid.bucket_texture ?: 'minecraft:item/water_bucket']])
+            write("assets/tech_mod/items/${name}_bucket.json", [model:[type:'minecraft:model',model:"tech_mod:item/${name}_bucket"]])
+            en["item.tech_mod.${name}_bucket"] = "${fluid.display} Bucket"
+            ru["item.tech_mod.${name}_bucket"] = "Ведро: ${fluid.display_ru}"
+            (['minecraft:water'] + (fluid.tags ?: [])).each { t -> tag('fluid',t,"tech_mod:$name"); tag('fluid',t,"tech_mod:flowing_$name") }
+        }
+        (root.tags ?: []).each { entry ->
+            if (!(entry.registry ==~ /[a-z0-9_\/]+/)) throw new GradleException("Invalid tag registry ${entry.registry}")
+            entry.values.each { value -> tag(entry.registry, entry.id, value) }
+        }
+        tags.each { path, values -> write(path,[replace:false,values:values.toList()]) }
+        en['tag.item.tech_mod.machine_casings'] = 'Machine Casings'; ru['tag.item.tech_mod.machine_casings'] = 'Корпуса механизмов'
+        en['tag.item.tech_mod.ores'] = 'Tech Mod Ores'; ru['tag.item.tech_mod.ores'] = 'Руды Tech Mod'
+        en['jei.tech_mod.multiblocks'] = 'Multiblock Structures'; ru['jei.tech_mod.multiblocks'] = 'Мультиблочные структуры'
+        write('assets/tech_mod/lang/en_us.json',en); write('assets/tech_mod/lang/ru_ru.json',ru)
+        write('tech-mod.content.json',root)
+    }
+}
+def catalogFile = layout.projectDirectory.file('src/main/content/tech-mod.content.json')
+def generatedContent = layout.buildDirectory.dir('generated/tech-content')
+tasks.register('generateContent', GenerateTechContent) {
+    it.catalogFile.set(catalogFile)
+    it.targetDirectory.set(generatedContent)
+}
+sourceSets.main.resources.srcDir(generatedContent)
+tasks.named('processResources') { dependsOn('generateContent') }
+tasks.named('sourcesJar') { dependsOn('generateContent'); from(catalogFile) { into('content') } }

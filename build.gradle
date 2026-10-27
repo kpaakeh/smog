@@ -7,6 +7,11 @@ base {
     archivesName = 'tech-mod'
 }
 
+repositories {
+    maven { url = 'https://maven.blamejared.com/' }
+    maven { url = 'https://api.modrinth.com/maven' }
+}
+
 loom {
     splitEnvironmentSourceSets()
     mods {
@@ -21,7 +26,14 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    compileOnly "mezz.jei:jei-26.3-common-api:31.17.0.94"
+    clientCompileOnly "mezz.jei:jei-26.3-common-api:31.17.0.94"
+    if (providers.gradleProperty('withJei').isPresent()) {
+        runtimeOnly 'maven.modrinth:jei:31.17.0.94'
+        runtimeOnly 'maven.modrinth:mezzconfig:0.6.9'
+    }
 }
+
 
 processResources {
     def modVersion = project.version.toString()
@@ -39,6 +51,21 @@ tasks.withType(JavaCompile).configureEach {
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(25)
     withSourcesJar()
+}
+
+apply from: 'gradle/content.gradle'
+
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'tech_mod_tests'
+        enableGameTests = true
+        enableClientGameTests = true
+    }
+}
+
+dependencies {
+    gametestCompileOnly "mezz.jei:jei-26.3-common-api:31.17.0.94"
 }
 
 jar {
