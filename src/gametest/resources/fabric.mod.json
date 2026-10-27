@@ -7,13 +7,20 @@
     "fabric-gametest": [
       "io.github.kpaakeh.smog.test.FoundationTests",
       "io.github.kpaakeh.smog.test.IndustryTests",
-      "io.github.kpaakeh.smog.test.EnergyInteropTests"
+      "io.github.kpaakeh.smog.test.EnergyInteropTests",
+      "io.github.kpaakeh.smog.test.ResourceGenerationTests"
     ],
     "fabric-client-gametest": [
       "io.github.kpaakeh.smog.test.ClientFoundationTests"
     ],
     "jei_mod_plugin": [
       "io.github.kpaakeh.smog.test.TestJeiProbe"
+    ],
+    "main": [
+      "io.github.kpaakeh.smog.test.TestIndustryContent"
     ]
+  },
+  "depends": {
+    "smog": "*"
   }
 }

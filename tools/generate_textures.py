@@ -60,22 +60,39 @@ def item(name, color, kind):
     return im
 
 for material in CATALOG['ores']:
-    n=material['name'];c=tuple(bytes.fromhex(material['color']))
+    n=material['name'];c=tuple(bytes.fromhex(material['color']));product=material.get('product','ingot')
     save(ore(n,c),'block/'+n+'_ore');save(ore(n,c,True),'block/deepslate_'+n+'_ore')
-    raw=stone(n+'raw',tuple(int(v*.55) for v in c));d=ImageDraw.Draw(raw)
+    raw=stone(n+'raw',tuple(int(v*.55) for v in c))
     for x,y in [(0,0),(7,1),(2,8),(10,9)]:
         piece=item(n,c,'raw').crop((1,2,14,14)).resize((8,8),Image.Resampling.NEAREST);raw.alpha_composite(piece,(x,y))
     save(raw,'block/raw_'+n+'_block')
-    metal=stone(n+'metal',c);d=ImageDraw.Draw(metal)
-    d.rectangle((0,0,15,15),outline=shade(c,.45));d.line((1,1,14,1),fill=shade(c,1.45));d.line((1,1,1,14),fill=shade(c,1.25));d.line((2,13,13,13),fill=shade(c,.72))
-    save(metal,'block/'+n+'_block')
-    product=material.get('product','ingot')
-    for filename,kind in [('raw_'+n,'raw'),(n+'_'+product,product),(n+'_dust','dust'),('crushed_'+n+'_ore','crushed'),(n+'_shard','crushed'),(n+'_nugget','small'),(n+'_plate','ingot')]: save(item(n+kind,c,kind),'item/'+filename)
-
-for material in CATALOG.get('alloys',[]):
+    forms=[('raw_'+n,'raw'),(n+'_dust','dust'),('crushed_'+n+'_ore','crushed'),(n+'_shard','crushed')]
+    if product!='none':
+        metal=stone(n+'metal',c);d=ImageDraw.Draw(metal);d.rectangle((0,0,15,15),outline=shade(c,.45));d.line((1,1,14,1),fill=shade(c,1.45));d.line((1,1,1,14),fill=shade(c,1.25))
+        save(metal,'block/'+n+'_block');forms += [(n+'_'+product,product),(n+'_nugget','small'),(n+'_plate','ingot')]
+    for filename,kind in forms:save(item(n+kind,c,kind),'item/'+filename)
+for material in CATALOG.get('alloys',[])+CATALOG.get('metals',[]):
     n=material['name'];c=tuple(bytes.fromhex(material['color']))
-    for kind in ['ingot','dust','nugget','plate']:save(item(n+kind,c,kind if kind!='plate' else 'ingot'),'item/'+n+'_'+kind)
+    for kind in ['ingot','dust','nugget','plate']:save(item(n+kind,c,'small' if kind=='nugget' else 'ingot' if kind=='plate' else kind),'item/'+n+'_'+kind)
     save(stone(n,c),'block/'+n+'_block')
+for material in CATALOG.get('deposits',[]):
+    n=material['name'];c=tuple(bytes.fromhex(material['color']));im=stone(n,c);d=ImageDraw.Draw(im)
+    for x,y in [(1,3),(8,1),(5,9),(12,12)]:d.rectangle((x,y,min(15,x+3),min(15,y+2)),fill=shade(c,.86))
+    save(im,'block/'+n);save(item(n,c,'raw'),'item/'+n+'_chunk');save(item(n,c,'dust'),'item/'+n+'_dust')
+for fluid in CATALOG.get('fluids',[]):
+    if fluid['name']=='coolant':continue
+    n=fluid['name'];c=tuple(bytes.fromhex(fluid['color']))
+    bucket=Image.new('RGBA',(16,16));d=ImageDraw.Draw(bucket);d.polygon([(2,3),(13,3),(12,13),(4,14),(2,5)],fill=(38,43,49,255));d.polygon([(3,5),(12,5),(11,12),(5,13)],fill=(159,170,179,255));d.rectangle((4,4,11,8),fill=shade(c,1));d.line((3,2,12,2),fill=(205,212,220,255));save(bucket,'item/'+n+'_bucket')
+    for kind,side in [('still',16),('flow',32)]:
+        strip=Image.new('RGBA',(side,side*4))
+        for frame in range(4):
+            for y in range(side):
+                for x in range(side):
+                    v=225 if ((x+frame*2)//4+(y+frame)//4)%4 else 200;strip.putpixel((x,y+frame*side),(v,v,v,230))
+        save(strip,'block/'+n+'_'+kind)
+        meta=OUT/('block/'+n+'_'+kind+'.png.mcmeta')
+        if not meta.exists():meta.write_text(json.dumps({'animation':{'frametime':5}})+'\n')
+    save(Image.new('RGBA',(16,16),(220,220,220,130)),'block/'+n+'_overlay')
 
 def machine(name, active=False, panel=False):
     c=(67,80,91);im=stone(name,c);d=ImageDraw.Draw(im)
@@ -87,8 +104,9 @@ def machine(name, active=False, panel=False):
     else:
         for y in [5,7,9]:d.line((4,y,11,y),fill=(28,39,48,255))
     return im
-save(machine('casing'),'block/machine_casing');save(machine('idle',False,True),'block/machine_idle');save(machine('active',True,True),'block/machine_active');save(machine('controller',True,True),'block/controller')
-save(machine('shell'),'block/multiblock_shell');save(machine('multiblock_panel',True,True),'block/multiblock_panel')
+if CATALOG.get('machines'):
+    save(machine('casing'),'block/machine_casing');save(machine('idle',False,True),'block/machine_idle');save(machine('active',True,True),'block/machine_active');save(machine('controller',True,True),'block/controller')
+    save(machine('shell'),'block/multiblock_shell');save(machine('multiblock_panel',True,True),'block/multiblock_panel')
 im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
 d.polygon([(2,3),(13,3),(12,13),(4,14),(2,5)],fill=(35,49,62,255));d.polygon([(3,5),(12,5),(11,12),(5,13)],fill=(142,166,182,255));d.rectangle((4,4,11,8),fill=(58,175,206,255));d.line((4,4,10,4),fill=(158,246,255,255));d.line((4,9,5,12),fill=(203,220,230,255));d.line((3,2,12,2),fill=(181,198,211,255));save(im,'item/coolant_bucket')
 for kind,side in [('still',16),('flow',32)]:
@@ -108,7 +126,7 @@ def cuboid(a,b,texture):
     return {'from':a,'to':b,'faces':{face:{'texture':'#'+texture,'uv':[0,0,16,16]} for face in ['north','south','west','east','up','down']}}
 model={'textures':{'shell':'smog:block/multiblock_shell','panel':'smog:block/multiblock_panel','particle':'smog:block/multiblock_shell'},'elements':[
  cuboid([.35,1,.35],[15.65,14.5,15.65],'shell'),cuboid([0,0,0],[16,1.5,16],'shell'),cuboid([0,14,0],[16,16,16],'shell'),cuboid([5,4,0],[11,12,.4],'panel')]}
-if FORCE or not (models/'assembled_machine.json').exists():
+if CATALOG.get('multiblocks') and (FORCE or not (models/'assembled_machine.json').exists()):
     (models/'assembled_machine.json').write_text(json.dumps(model,indent=2)+'\n')
 
 # Contact sheet for visual inspection; not bundled into the mod.

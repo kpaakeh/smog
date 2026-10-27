@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:block",
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "smog:solar_cell"
+                }
+            ],
+            "condition": {
+                "type": "minecraft:survives_explosion"
+            }
+        }
+    ]
+}

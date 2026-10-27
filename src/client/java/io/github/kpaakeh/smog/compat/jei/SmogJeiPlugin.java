@@ -31,8 +31,8 @@ public final class SmogJeiPlugin implements IModPlugin {
     @Override public Identifier getPluginUid() { return ModBlocks.id("jei"); }
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
-        registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER),
-            new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS));
+        for(var kind:List.of(io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER,io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))
+            if(Machines.all().stream().anyMatch(machine->machine.spec().kind()==kind))registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),kind));
     }
     @Override public void registerRecipes(IRecipeRegistration registration) {
         List<Page> pages = new ArrayList<>();
@@ -43,8 +43,8 @@ public final class SmogJeiPlugin implements IModPlugin {
             if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
         }
         registration.addRecipes(TYPE, pages);
-        registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
-        registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER))registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
     }
     private static final class Category implements IRecipeCategory<Page> {
         private final IDrawable icon;

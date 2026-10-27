@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        "smog:steel_ingot",
+        "smog:steel_ingot",
+        "minecraft:string"
+    ],
+    "result": {
+        "id": "smog:wire_coil_steel",
+        "count": 4
+    }
+}

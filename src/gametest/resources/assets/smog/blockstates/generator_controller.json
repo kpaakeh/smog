@@ -1,0 +1,260 @@
+{
+    "variants": {
+        "assembled=false,facing=north,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=solar": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=lightning": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=thermal": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=flow": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=wind": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=steam": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=false,facing=north,generator=geothermal": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=solar": {
+            "model": "smog:block/generator_solar",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=lightning": {
+            "model": "smog:block/generator_lightning",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=thermal": {
+            "model": "smog:block/generator_thermal",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=flow": {
+            "model": "smog:block/generator_flow",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=wind": {
+            "model": "smog:block/generator_wind",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=steam": {
+            "model": "smog:block/generator_steam",
+            "y": 0
+        },
+        "assembled=true,facing=north,generator=geothermal": {
+            "model": "smog:block/generator_geothermal",
+            "y": 0
+        },
+        "assembled=false,facing=east,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=solar": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=lightning": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=thermal": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=flow": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=wind": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=steam": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=false,facing=east,generator=geothermal": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=solar": {
+            "model": "smog:block/generator_solar",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=lightning": {
+            "model": "smog:block/generator_lightning",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=thermal": {
+            "model": "smog:block/generator_thermal",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=flow": {
+            "model": "smog:block/generator_flow",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=wind": {
+            "model": "smog:block/generator_wind",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=steam": {
+            "model": "smog:block/generator_steam",
+            "y": 90
+        },
+        "assembled=true,facing=east,generator=geothermal": {
+            "model": "smog:block/generator_geothermal",
+            "y": 90
+        },
+        "assembled=false,facing=south,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=solar": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=lightning": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=thermal": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=flow": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=wind": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=steam": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=false,facing=south,generator=geothermal": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=solar": {
+            "model": "smog:block/generator_solar",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=lightning": {
+            "model": "smog:block/generator_lightning",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=thermal": {
+            "model": "smog:block/generator_thermal",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=flow": {
+            "model": "smog:block/generator_flow",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=wind": {
+            "model": "smog:block/generator_wind",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=steam": {
+            "model": "smog:block/generator_steam",
+            "y": 180
+        },
+        "assembled=true,facing=south,generator=geothermal": {
+            "model": "smog:block/generator_geothermal",
+            "y": 180
+        },
+        "assembled=false,facing=west,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=solar": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=lightning": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=thermal": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=flow": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=wind": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=steam": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=false,facing=west,generator=geothermal": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=none": {
+            "model": "smog:block/generator_controller",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=solar": {
+            "model": "smog:block/generator_solar",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=lightning": {
+            "model": "smog:block/generator_lightning",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=thermal": {
+            "model": "smog:block/generator_thermal",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=flow": {
+            "model": "smog:block/generator_flow",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=wind": {
+            "model": "smog:block/generator_wind",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=steam": {
+            "model": "smog:block/generator_steam",
+            "y": 270
+        },
+        "assembled=true,facing=west,generator=geothermal": {
+            "model": "smog:block/generator_geothermal",
+            "y": 270
+        }
+    }
+}

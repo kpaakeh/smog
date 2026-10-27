@@ -106,7 +106,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             ore.display_ru = ore.display_ru ?: "Руда $russian"
             ore.texture = ore.texture ?: "smog:block/${material}_ore"
             ore.deepslate_texture = ore.deepslate_texture ?: "smog:block/deepslate_${material}_ore"
-            if (!(product in ['ingot','gem'])) throw new GradleException("Unknown material product: $product")
+            if (!(product in ['ingot','gem','none'])) throw new GradleException("Unknown material product: $product")
             def raw = "raw_$material", rawBlock = "raw_${material}_block", result = "${material}_$product"
             def metalBlock = "${material}_block", dust = "${material}_dust", crushed = "crushed_${material}_ore"
             def small = "${material}_nugget", shard = "${material}_shard", plate = "${material}_plate"
@@ -114,16 +114,17 @@ abstract class GenerateSmogContent extends DefaultTask {
             block(ore + [drop:"smog:$raw",tags:oreTags], name, ore.texture, false)
             block(ore + [drop:"smog:$raw",display:"Deepslate ${ore.display}", display_ru:"Глубинная ${ore.display_ru.toLowerCase()}", tags:oreTags], "deepslate_$name", ore.deepslate_texture, false)
             block([display:"Raw $english Block",display_ru:"Блок необработанного $russian",tags:['c:storage_blocks',"c:storage_blocks/raw_$material"]], rawBlock, "smog:block/$rawBlock", false)
-            block([display:"$english Block",display_ru:"Блок $russian",tags:['c:storage_blocks',"c:storage_blocks/$material"]], metalBlock, "smog:block/$metalBlock", false)
+            if(product != 'none')block([display:"$english Block",display_ru:"Блок $russian",tags:['c:storage_blocks',"c:storage_blocks/$material"]], metalBlock, "smog:block/$metalBlock", false)
             item(raw, "Raw $english", "Необработанная руда $russian", ['c:raw_materials',"c:raw_materials/$material"])
-            item(result, "$english ${product == 'gem' ? 'Crystal' : 'Ingot'}", "${product == 'gem' ? 'Кристалл' : 'Слиток'} $russian", ["c:${product}s","c:${product}s/$material"])
+            if(product != 'none')item(result, "$english ${product == 'gem' ? 'Crystal' : 'Ingot'}", "${product == 'gem' ? 'Кристалл' : 'Слиток'} $russian", ["c:${product}s","c:${product}s/$material"])
             item(dust, "$english Dust", "Пыль $russian", ['c:dusts',"c:dusts/$material"])
             item(crushed, "Crushed $english Ore", "Дроблёная руда $russian", ['c:crushed_ores',"c:crushed_ores/$material"])
-            item(small, "$english Nugget", "Самородок $russian", ['c:nuggets',"c:nuggets/$material"])
+            if(product != 'none')item(small, "$english Nugget", "Самородок $russian", ['c:nuggets',"c:nuggets/$material"])
             item(shard, "$english Ore Shard", "Осколок руды $russian", ['c:ore_shards',"c:ore_shards/$material"])
-            item(plate, "$english Plate", "Пластина $russian", ['c:plates',"c:plates/$material"])
+            if(product != 'none')item(plate, "$english Plate", "Пластина $russian", ['c:plates',"c:plates/$material"])
             compact(rawBlock, "smog:$raw", "smog:$rawBlock")
             shapeless("${raw}_from_block", ["smog:$rawBlock"], "smog:$raw", 9)
+            if(product != 'none') {
             compact(metalBlock, "smog:$result", "smog:$metalBlock")
             shapeless("${result}_from_block", ["smog:$metalBlock"], "smog:$result", 9)
             compact("${result}_from_small", "smog:$small", "smog:$result")
@@ -132,6 +133,7 @@ abstract class GenerateSmogContent extends DefaultTask {
                 ['smelting':200,'blasting':100].each { type, time ->
                     recipe("${result}_from_${type}_$input", [type:"minecraft:$type",group:result,ingredient:"smog:$input",result:[id:"smog:$result"],experience:0.7,cookingtime:time], "smog:$input")
                 }
+            }
             }
             def stoneTarget = ore.stone_replaceables ? [predicate_type:'minecraft:tag_match',tag:ore.stone_replaceables] :
                 ore.biomes == 'nether' ? [predicate_type:'minecraft:tag_match',tag:'minecraft:base_stone_nether'] :
@@ -147,7 +149,8 @@ abstract class GenerateSmogContent extends DefaultTask {
                 [type:'minecraft:biome']
             ]])
         }
-        (root.alloys ?: []).each { alloy ->
+        def processedMetals=(root.alloys ?: []) + (root.metals ?: [])
+        processedMetals.each { alloy ->
             def n=alloy.name;def enName=alloy.material;def ruName=alloy.material_ru
             item(n+'_ingot',enName+' Ingot','Слиток '+ruName,['c:ingots',"c:ingots/$n"])
             item(n+'_dust',enName+' Dust','Пыль '+ruName,['c:dusts',"c:dusts/$n"])
@@ -158,9 +161,27 @@ abstract class GenerateSmogContent extends DefaultTask {
             shapeless(n+'_ingot_from_block',["smog:${n}_block"],"smog:${n}_ingot",9)
             compact(n+'_ingot_from_nuggets',"smog:${n}_nugget","smog:${n}_ingot")
             shapeless(n+'_nugget',["smog:${n}_ingot"],"smog:${n}_nugget",9)
-            shapeless(n+'_dust',alloy.ingredients,"smog:${n}_dust",1)
+            if(alloy.ingredients)shapeless(n+'_dust',alloy.ingredients,"smog:${n}_dust",1)
             [smelting:200,blasting:100].each { type,time -> recipe(n+'_ingot_from_'+type,[type:"minecraft:$type",ingredient:"smog:${n}_dust",result:[id:"smog:${n}_ingot"],experience:0.7,cookingtime:time],"smog:${n}_dust") }
         }
+        def undergroundFeature={ resourceName,blockState,parameters,exposureChance ->
+            if(parameters.vein_size<1 || parameters.vein_size>64 || parameters.veins_per_chunk<1 || parameters.min_y>parameters.max_y)throw new GradleException("Invalid resource generation $resourceName")
+            write("data/smog/worldgen/feature/${resourceName}.json",[type:'minecraft:ore',size:parameters.vein_size,discard_chance_on_air_exposure:exposureChance,targets:[
+                [target:[predicate_type:'minecraft:tag_match',tag:'minecraft:stone_ore_replaceables'],state:blockState],
+                [target:[predicate_type:'minecraft:tag_match',tag:'minecraft:deepslate_ore_replaceables'],state:blockState]]])
+            write("data/smog/worldgen/placed_feature/${resourceName}.json",[feature:"smog:$resourceName",placement:[
+                [type:'minecraft:count',count:parameters.veins_per_chunk],[type:'minecraft:in_square'],
+                [type:'minecraft:height_range',height:[type:'minecraft:uniform',min_inclusive:[absolute:parameters.min_y],max_inclusive:[absolute:parameters.max_y]]],
+                [type:'minecraft:biome']]])
+        };
+        (root.deposits ?: []).each { entry ->
+            def n=entry.name;def material=entry.material;def russianName=entry.material_ru
+            block([display:material,display_ru:entry.display_ru,tags:['smog:nonmetal_deposits',"c:stones/$n"]],n,"smog:block/$n",false)
+            item(n+'_chunk',material+' Chunk','Кусок '+russianName,['smog:nonmetal_materials',"c:raw_materials/$n"])
+            item(n+'_dust',material+' Dust','Пыль '+russianName,['c:dusts',"c:dusts/$n"])
+            undergroundFeature(n+'_deposit',"smog:$n",entry,0d)
+        }
+        (root.underground_resources ?: []).each { entry -> undergroundFeature(entry.name,"smog:${entry.fluid}",entry,1d) }
         (root.items ?: []).each { entry ->
             item(entry.name,entry.display ?: entry.name,entry.display_ru ?: entry.name,entry.tags ?: [])
             if(entry.model)write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:entry.model]])
@@ -170,15 +191,15 @@ abstract class GenerateSmogContent extends DefaultTask {
             recipe(entry.name,[type:'minecraft:crafting_shaped',pattern:['III','ICI','III'],key:[I:'minecraft:iron_ingot',C:entry.recipe_core],result:[id:"smog:${entry.name}",count:entry.recipe_count ?: 1]],entry.recipe_core)
         }
         root.machines.findAll { it.recipe_core }.each { entry ->
-            recipe(entry.name,[type:'minecraft:crafting_shaped',pattern:['CCC','RIR','CCC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',I:entry.recipe_core],result:[id:"smog:${entry.name}"]],entry.recipe_core)
+            recipe(entry.name,[type:'minecraft:crafting_shaped',pattern:['CCC','RIR','CCC'],key:[C:entry.casing_item ?: 'smog:machine_casing',R:'minecraft:redstone',I:entry.recipe_core],result:[id:"smog:${entry.name}"]],entry.recipe_core)
         }
         (root.items ?: []).findAll { it.kind == 'wire' }.each { coil ->
             shapeless(coil.name,[coil.ingredient,coil.ingredient,'minecraft:string'],"smog:${coil.name}",4)
         }
-        recipe('wrench',[type:'minecraft:crafting_shaped',pattern:['I I',' I ',' I '],key:[I:'minecraft:iron_ingot'],result:[id:'smog:wrench']],'minecraft:iron_ingot')
-        recipe('machine_casing', [type:'minecraft:crafting_shaped',category:'building',pattern:['I I',' C ','I I'],key:[I:'minecraft:iron_ingot',C:'minecraft:copper_ingot'],result:[id:'smog:machine_casing',count:4]], 'minecraft:iron_ingot')
-        recipe('test_machine', [type:'minecraft:crafting_shaped',pattern:['CCC','RFR','CCC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',F:'minecraft:furnace'],result:[id:'smog:test_machine']], 'smog:machine_casing')
-        recipe('test_controller', [type:'minecraft:crafting_shaped',pattern:['CRC','RMR','CRC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',M:'smog:test_machine'],result:[id:'smog:test_controller']], 'smog:test_machine')
+        if((root.items ?: []).any { it.name == 'wrench' }){ recipe('wrench',[type:'minecraft:crafting_shaped',pattern:['I I',' I ',' I '],key:[I:'minecraft:iron_ingot'],result:[id:'smog:wrench']],'minecraft:iron_ingot') }
+        if(root.blocks.any { it.name == 'machine_casing' }){ recipe('machine_casing', [type:'minecraft:crafting_shaped',category:'building',pattern:['I I',' C ','I I'],key:[I:'minecraft:iron_ingot',C:'minecraft:copper_ingot'],result:[id:'smog:machine_casing',count:4]], 'minecraft:iron_ingot') }
+        if(root.machines.any { it.name == 'test_machine' }){ recipe('test_machine', [type:'minecraft:crafting_shaped',pattern:['CCC','RFR','CCC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',F:'minecraft:furnace'],result:[id:'smog:test_machine']], 'smog:machine_casing') }
+        if(root.machines.any { it.name == 'test_controller' }){ recipe('test_controller', [type:'minecraft:crafting_shaped',pattern:['CRC','RMR','CRC'],key:[C:'smog:machine_casing',R:'minecraft:redstone',M:'smog:test_machine'],result:[id:'smog:test_controller']], 'smog:test_machine') }
         root.fluids.each { fluid ->
             claim(fluid.name); claim("flowing_${fluid.name}"); claim("${fluid.name}_bucket")
             def name = fluid.name
@@ -188,7 +209,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             en["item.smog.${name}_bucket"] = "${fluid.display} Bucket"
             ru["item.smog.${name}_bucket"] = "Ведро: ${fluid.display_ru}"
             if (name == 'coolant') shapeless('coolant_bucket', ['minecraft:bucket','minecraft:snowball','minecraft:lapis_lazuli'], 'smog:coolant_bucket', 1)
-            (['minecraft:water'] + (fluid.tags ?: [])).each { t -> tag('fluid',t,"smog:$name"); tag('fluid',t,"smog:flowing_$name") }
+            ((fluid.water_like == false ? [] : ['minecraft:water']) + (fluid.tags ?: [])).each { t -> tag('fluid',t,"smog:$name"); tag('fluid',t,"smog:flowing_$name") }
         }
         (root.tags ?: []).each { entry ->
             if (!(entry.registry ==~ /[a-z0-9_\/]+/)) throw new GradleException("Invalid tag registry ${entry.registry}")

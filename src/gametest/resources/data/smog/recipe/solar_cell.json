@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "III",
+        "ICI",
+        "III"
+    ],
+    "key": {
+        "I": "minecraft:iron_ingot",
+        "C": "minecraft:daylight_detector"
+    },
+    "result": {
+        "id": "smog:solar_cell",
+        "count": 1
+    }
+}

@@ -60,7 +60,7 @@ generators={
 'steam':[cube([1,0,1],[11,12,14]),cube([2,12,2],[10,14,13]),cube([12,0,2],[16,10,14]),cube([7,10,9],[9,16,11])],
 'geothermal':[cube([0,0,0],[16,3,16]),cube([2,3,2],[14,13,14]),cube([4,13,4],[12,16,12])],
 }
-for kind,elements in generators.items():
+for kind,elements in (generators.items() if any(e.get("kind")=="GENERATOR_CONTROLLER" for e in data.get("machines",[])) else []):
     name='generator_'+kind;texture(name,(61,100,154) if kind=='solar' else (128,138,143));model(name,elements)
 for item in data.get('items',[]):texture(item['name'],tuple(bytes.fromhex(item['color'])) if item.get('color') else {'wire_coil_lv':(190,119,66),'wire_coil_mv':(210,178,83),'wire_coil_hv':(123,133,150),'copper_plate':(187,119,77)}.get(item['name'],(154,164,172)),True)
 print('Created missing industry placeholder JSON models and textures; existing artwork preserved.')

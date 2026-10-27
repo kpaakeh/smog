@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "CCC",
+        "RFR",
+        "CCC"
+    ],
+    "key": {
+        "C": "smog:machine_casing",
+        "R": "minecraft:redstone",
+        "F": "minecraft:furnace"
+    },
+    "result": {
+        "id": "smog:test_machine"
+    }
+}

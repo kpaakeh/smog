@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "smog:block/geothermal_core"
+        }
+    }
+}

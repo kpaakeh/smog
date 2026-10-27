@@ -1,228 +1,7 @@
 {
   "tags": [],
-  "blocks": [
-    {
-      "name": "machine_casing",
-      "display": "Machine Casing",
-      "display_ru": "Корпус механизма",
-      "texture": "smog:block/machine_casing",
-      "hardness": 4,
-      "tags": [
-        "smog:machine_casings"
-      ],
-      "model": "smog:block/machine_casing"
-    },
-    {
-      "name": "generator_frame",
-      "display": "Generator Frame",
-      "display_ru": "Каркас генератора",
-      "texture": "smog:block/generator_frame",
-      "model": "smog:block/generator_frame",
-      "hardness": 4,
-      "recipe_core": "minecraft:iron_ingot"
-    },
-    {
-      "name": "solar_cell",
-      "display": "Solar Cell",
-      "display_ru": "Солнечная ячейка",
-      "texture": "smog:block/solar_cell",
-      "model": "smog:block/solar_cell",
-      "hardness": 4,
-      "recipe_core": "minecraft:daylight_detector"
-    },
-    {
-      "name": "copper_coil",
-      "display": "Copper Coil",
-      "display_ru": "Медная обмотка",
-      "texture": "smog:block/copper_coil",
-      "model": "smog:block/copper_coil",
-      "hardness": 4,
-      "recipe_core": "minecraft:copper_ingot"
-    },
-    {
-      "name": "rotor_blade",
-      "display": "Rotor Blade",
-      "display_ru": "Лопасть ротора",
-      "texture": "smog:block/rotor_blade",
-      "model": "smog:block/rotor_blade",
-      "hardness": 4,
-      "recipe_core": "minecraft:iron_ingot"
-    },
-    {
-      "name": "turbine_housing",
-      "display": "Turbine Housing",
-      "display_ru": "Корпус турбины",
-      "texture": "smog:block/turbine_housing",
-      "model": "smog:block/turbine_housing",
-      "hardness": 4,
-      "recipe_core": "minecraft:piston"
-    },
-    {
-      "name": "heat_exchanger",
-      "display": "Heat Exchanger",
-      "display_ru": "Теплообменник",
-      "texture": "smog:block/heat_exchanger",
-      "model": "smog:block/heat_exchanger",
-      "hardness": 4,
-      "recipe_core": "minecraft:magma_block"
-    },
-    {
-      "name": "lightning_tip",
-      "display": "Lightning Collector",
-      "display_ru": "Молниеприёмник",
-      "texture": "smog:block/lightning_tip",
-      "model": "smog:block/lightning_tip",
-      "hardness": 4,
-      "recipe_core": "minecraft:lightning_rod"
-    },
-    {
-      "name": "steam_boiler",
-      "display": "Steam Boiler",
-      "display_ru": "Паровой котёл",
-      "texture": "smog:block/steam_boiler",
-      "model": "smog:block/steam_boiler",
-      "hardness": 4,
-      "recipe_core": "minecraft:cauldron"
-    },
-    {
-      "name": "geothermal_core",
-      "display": "Geothermal Core",
-      "display_ru": "Геотермальный модуль",
-      "texture": "smog:block/geothermal_core",
-      "model": "smog:block/geothermal_core",
-      "hardness": 4,
-      "recipe_core": "minecraft:obsidian"
-    }
-  ],
+  "blocks": [],
   "ores": [
-    {
-      "name": "beryllium",
-      "display": "Beryllium Ore",
-      "display_ru": "Бериллиевая руда",
-      "material": "Beryllium",
-      "material_ru": "бериллия",
-      "color": "75C894",
-      "product": "ingot",
-      "texture": "smog:block/beryllium_ore",
-      "deepslate_texture": "smog:block/deepslate_beryllium_ore",
-      "hardness": 3,
-      "vein_size": 6,
-      "veins_per_chunk": 5,
-      "min_y": -32,
-      "max_y": 64,
-      "biomes": "overworld"
-    },
-    {
-      "name": "vanadium",
-      "display": "Vanadium Ore",
-      "display_ru": "Ванадиевая руда",
-      "material": "Vanadium",
-      "material_ru": "ванадия",
-      "color": "7D82B6",
-      "product": "ingot",
-      "texture": "smog:block/vanadium_ore",
-      "deepslate_texture": "smog:block/deepslate_vanadium_ore",
-      "hardness": 3,
-      "vein_size": 7,
-      "veins_per_chunk": 6,
-      "min_y": -48,
-      "max_y": 48,
-      "biomes": "overworld"
-    },
-    {
-      "name": "bismuth",
-      "display": "Bismuth Ore",
-      "display_ru": "Висмутовая руда",
-      "material": "Bismuth",
-      "material_ru": "висмута",
-      "color": "CF85A8",
-      "product": "ingot",
-      "texture": "smog:block/bismuth_ore",
-      "deepslate_texture": "smog:block/deepslate_bismuth_ore",
-      "hardness": 3,
-      "vein_size": 6,
-      "veins_per_chunk": 5,
-      "min_y": -48,
-      "max_y": 32,
-      "biomes": "overworld"
-    },
-    {
-      "name": "cobalt",
-      "display": "Cobalt Ore",
-      "display_ru": "Кобальтовая руда",
-      "material": "Cobalt",
-      "material_ru": "кобальта",
-      "color": "387CCD",
-      "product": "ingot",
-      "texture": "smog:block/cobalt_ore",
-      "deepslate_texture": "smog:block/deepslate_cobalt_ore",
-      "hardness": 3,
-      "vein_size": 7,
-      "veins_per_chunk": 6,
-      "min_y": -64,
-      "max_y": 24,
-      "biomes": "overworld"
-    },
-    {
-      "name": "titanium",
-      "display": "Titanium Ore",
-      "display_ru": "Титановая руда",
-      "material": "Titanium",
-      "material_ru": "титана",
-      "color": "B2BED1",
-      "product": "ingot",
-      "texture": "smog:block/titanium_ore",
-      "deepslate_texture": "smog:block/deepslate_titanium_ore",
-      "hardness": 4,
-      "vein_size": 5,
-      "veins_per_chunk": 4,
-      "min_y": -64,
-      "max_y": 0,
-      "biomes": "overworld"
-    },
-    {
-      "name": "uranium",
-      "display": "Uranium Ore",
-      "display_ru": "Урановая руда",
-      "material": "Uranium",
-      "material_ru": "урана",
-      "color": "9CBF43",
-      "product": "ingot",
-      "texture": "smog:block/uranium_ore",
-      "deepslate_texture": "smog:block/deepslate_uranium_ore",
-      "hardness": 4,
-      "vein_size": 4,
-      "veins_per_chunk": 3,
-      "min_y": -64,
-      "max_y": -16,
-      "biomes": "overworld"
-    },
-    {
-      "name": "aluminum",
-      "material": "Aluminum",
-      "material_ru": "алюминия",
-      "display_ru": "Алюминиевая руда",
-      "color": "C5CDD3",
-      "product": "ingot",
-      "vein_size": 8,
-      "veins_per_chunk": 7,
-      "min_y": -16,
-      "max_y": 96,
-      "biomes": "overworld"
-    },
-    {
-      "name": "silver",
-      "material": "Silver",
-      "material_ru": "серебра",
-      "display_ru": "Серебряная руда",
-      "color": "D4DDE8",
-      "product": "ingot",
-      "vein_size": 6,
-      "veins_per_chunk": 5,
-      "min_y": -48,
-      "max_y": 32,
-      "biomes": "overworld"
-    },
     {
       "name": "tin",
       "material": "Tin",
@@ -235,667 +14,166 @@
       "min_y": -32,
       "max_y": 64,
       "biomes": "overworld"
+    },
+    {
+      "name": "zinc",
+      "material": "Zinc",
+      "material_ru": "цинка",
+      "display_ru": "Цинковая руда",
+      "color": "B4B99D",
+      "product": "ingot",
+      "vein_size": 7,
+      "veins_per_chunk": 6,
+      "min_y": -16,
+      "max_y": 72,
+      "biomes": "overworld"
+    },
+    {
+      "name": "lead",
+      "material": "Lead",
+      "material_ru": "свинца",
+      "display_ru": "Свинцовая руда",
+      "color": "77748F",
+      "product": "ingot",
+      "vein_size": 7,
+      "veins_per_chunk": 5,
+      "min_y": -48,
+      "max_y": 32,
+      "biomes": "overworld"
+    },
+    {
+      "name": "nickel",
+      "material": "Nickel",
+      "material_ru": "никеля",
+      "display_ru": "Никелевая руда",
+      "color": "A8AA83",
+      "product": "ingot",
+      "vein_size": 6,
+      "veins_per_chunk": 5,
+      "min_y": -48,
+      "max_y": 24,
+      "biomes": "overworld"
+    },
+    {
+      "name": "bauxite",
+      "material": "Bauxite",
+      "material_ru": "боксита",
+      "display_ru": "Бокситовая руда",
+      "color": "B07854",
+      "product": "none",
+      "vein_size": 10,
+      "veins_per_chunk": 6,
+      "min_y": 0,
+      "max_y": 96,
+      "biomes": "overworld"
+    },
+    {
+      "name": "manganese",
+      "material": "Manganese",
+      "material_ru": "марганца",
+      "display_ru": "Марганцевая руда",
+      "color": "78808C",
+      "product": "ingot",
+      "vein_size": 7,
+      "veins_per_chunk": 5,
+      "min_y": -48,
+      "max_y": 40,
+      "biomes": "overworld"
+    },
+    {
+      "name": "chromium",
+      "material": "Chromium",
+      "material_ru": "хрома",
+      "display_ru": "Хромовая руда",
+      "color": "8DAAA7",
+      "product": "ingot",
+      "vein_size": 6,
+      "veins_per_chunk": 4,
+      "min_y": -64,
+      "max_y": 16,
+      "biomes": "overworld"
+    },
+    {
+      "name": "titanium",
+      "material": "Titanium",
+      "material_ru": "титана",
+      "display_ru": "Титановая руда",
+      "color": "8F9FB3",
+      "product": "ingot",
+      "vein_size": 5,
+      "veins_per_chunk": 4,
+      "min_y": -64,
+      "max_y": 0,
+      "biomes": "overworld"
+    },
+    {
+      "name": "tungsten",
+      "material": "Tungsten",
+      "material_ru": "вольфрама",
+      "display_ru": "Вольфрамовая руда",
+      "color": "6D7886",
+      "product": "ingot",
+      "vein_size": 4,
+      "veins_per_chunk": 3,
+      "min_y": -64,
+      "max_y": -24,
+      "biomes": "overworld"
+    },
+    {
+      "name": "molybdenum",
+      "material": "Molybdenum",
+      "material_ru": "молибдена",
+      "display_ru": "Молибденовая руда",
+      "color": "8E9FAB",
+      "product": "ingot",
+      "vein_size": 5,
+      "veins_per_chunk": 3,
+      "min_y": -64,
+      "max_y": 0,
+      "biomes": "overworld"
+    },
+    {
+      "name": "uranium",
+      "material": "Uranium",
+      "material_ru": "урана",
+      "display_ru": "Урановая руда",
+      "color": "7F964D",
+      "product": "ingot",
+      "vein_size": 4,
+      "veins_per_chunk": 3,
+      "min_y": -64,
+      "max_y": -16,
+      "biomes": "overworld"
+    },
+    {
+      "name": "lithium",
+      "material": "Lithium",
+      "material_ru": "лития",
+      "display_ru": "Литиевая руда",
+      "color": "C3BED4",
+      "product": "ingot",
+      "vein_size": 6,
+      "veins_per_chunk": 4,
+      "min_y": -32,
+      "max_y": 48,
+      "biomes": "overworld"
+    },
+    {
+      "name": "rare_earth",
+      "material": "Rare Earth",
+      "material_ru": "редкоземельных элементов",
+      "display_ru": "Редкоземельная руда",
+      "color": "96A481",
+      "product": "none",
+      "vein_size": 5,
+      "veins_per_chunk": 3,
+      "min_y": -64,
+      "max_y": -16,
+      "biomes": "overworld"
     }
   ],
-  "machines": [
-    {
-      "name": "test_machine",
-      "display": "Basic Machine",
-      "display_ru": "Базовый механизм",
-      "texture": "smog:block/machine_idle",
-      "assembled_texture": "smog:block/machine_active",
-      "hardness": 4,
-      "model": "smog:block/test_machine",
-      "assembled_model": "smog:block/test_machine",
-      "transfer_rate": 32
-    },
-    {
-      "name": "test_controller",
-      "display": "Multiblock Controller",
-      "display_ru": "Контроллер мультиблока",
-      "texture": "smog:block/controller",
-      "assembled_texture": "minecraft:block/redstone_block",
-      "hardness": 4,
-      "multiblock": "smog:test_structure",
-      "assembled_model": "smog:block/assembled_machine",
-      "model": "smog:block/test_controller",
-      "transfer_rate": 32
-    },
-    {
-      "name": "electric_furnace",
-      "display": "Electric Furnace",
-      "display_ru": "Электрическая печь",
-      "kind": "ELECTRIC_FURNACE",
-      "work_ticks": 100,
-      "cost": 4,
-      "capacity": 64000,
-      "model": "smog:block/electric_furnace",
-      "assembled_model": "smog:block/electric_furnace",
-      "texture": "smog:block/electric_furnace",
-      "hardness": 4,
-      "recipe_core": "minecraft:furnace",
-      "transfer_rate": 32
-    },
-    {
-      "name": "crusher",
-      "display": "Crusher",
-      "display_ru": "Дробитель",
-      "kind": "CRUSHER",
-      "work_ticks": 60,
-      "cost": 8,
-      "capacity": 64000,
-      "model": "smog:block/crusher",
-      "assembled_model": "smog:block/crusher",
-      "texture": "smog:block/crusher",
-      "hardness": 4,
-      "recipe_core": "minecraft:piston",
-      "transfer_rate": 32
-    },
-    {
-      "name": "press",
-      "display": "Press",
-      "display_ru": "Пресс",
-      "kind": "PRESS",
-      "work_ticks": 80,
-      "cost": 16,
-      "capacity": 64000,
-      "model": "smog:block/press",
-      "assembled_model": "smog:block/press",
-      "texture": "smog:block/press",
-      "hardness": 4,
-      "recipe_core": "minecraft:anvil",
-      "transfer_rate": 128
-    },
-    {
-      "name": "block_breaker",
-      "display": "Block Breaker",
-      "display_ru": "Разрушитель блоков",
-      "kind": "BLOCK_BREAKER",
-      "work_ticks": 20,
-      "cost": 64,
-      "capacity": 64000,
-      "model": "smog:block/block_breaker",
-      "assembled_model": "smog:block/block_breaker",
-      "texture": "smog:block/block_breaker",
-      "hardness": 4,
-      "recipe_core": "minecraft:iron_pickaxe",
-      "transfer_rate": 32
-    },
-    {
-      "name": "block_placer",
-      "display": "Block Placer",
-      "display_ru": "Ставщик блоков",
-      "kind": "BLOCK_PLACER",
-      "work_ticks": 20,
-      "cost": 32,
-      "capacity": 64000,
-      "model": "smog:block/block_placer",
-      "assembled_model": "smog:block/block_placer",
-      "texture": "smog:block/block_placer",
-      "hardness": 4,
-      "recipe_core": "minecraft:dispenser",
-      "transfer_rate": 32
-    },
-    {
-      "name": "fluid_pump",
-      "display": "Fluid Pump",
-      "display_ru": "Заборщик жидкостей",
-      "kind": "FLUID_PUMP",
-      "work_ticks": 20,
-      "cost": 32,
-      "capacity": 64000,
-      "model": "smog:block/fluid_pump",
-      "assembled_model": "smog:block/fluid_pump",
-      "texture": "smog:block/fluid_pump",
-      "hardness": 4,
-      "recipe_core": "minecraft:bucket",
-      "transfer_rate": 32
-    },
-    {
-      "name": "fluid_placer",
-      "display": "Fluid Placer",
-      "display_ru": "Ставщик жидкостей",
-      "kind": "FLUID_PLACER",
-      "work_ticks": 20,
-      "cost": 32,
-      "capacity": 64000,
-      "model": "smog:block/fluid_placer",
-      "assembled_model": "smog:block/fluid_placer",
-      "texture": "smog:block/fluid_placer",
-      "hardness": 4,
-      "recipe_core": "minecraft:dropper",
-      "transfer_rate": 32
-    },
-    {
-      "name": "solid_generator",
-      "display": "Solid Fuel Generator",
-      "display_ru": "Твердотопливный генератор",
-      "kind": "SOLID_GENERATOR",
-      "work_ticks": 20,
-      "cost": 0,
-      "capacity": 200000,
-      "model": "smog:block/solid_generator",
-      "assembled_model": "smog:block/solid_generator",
-      "texture": "smog:block/solid_generator",
-      "hardness": 4,
-      "recipe_core": "minecraft:blast_furnace",
-      "transfer_rate": 32
-    },
-    {
-      "name": "generator_controller",
-      "display": "Generator Controller",
-      "display_ru": "Контроллер генераторов",
-      "kind": "GENERATOR_CONTROLLER",
-      "work_ticks": 20,
-      "cost": 0,
-      "capacity": 200000,
-      "model": "smog:block/generator_controller",
-      "assembled_model": "smog:block/generator_controller",
-      "texture": "smog:block/generator_controller",
-      "hardness": 4,
-      "recipe_core": "minecraft:comparator",
-      "transfer_rate": 512
-    },
-    {
-      "name": "transformer",
-      "display": "Energy Distributor",
-      "display_ru": "Распределитель энергии",
-      "kind": "TRANSFORMER",
-      "work_ticks": 20,
-      "cost": 0,
-      "capacity": 64000,
-      "model": "smog:block/transformer",
-      "assembled_model": "smog:block/transformer",
-      "texture": "smog:block/transformer",
-      "hardness": 4,
-      "recipe_core": "minecraft:redstone_block",
-      "transfer_rate": 512
-    },
-    {
-      "name": "connector_lv",
-      "display": "Copper Connector",
-      "display_ru": "Медный коннектор",
-      "kind": "CONNECTOR",
-      "capacity": 1024,
-      "work_ticks": 20,
-      "cost": 0,
-      "texture": "smog:block/connector_lv",
-      "model": "smog:block/connector_lv",
-      "assembled_model": "smog:block/connector_lv",
-      "hardness": 2,
-      "recipe_core": "minecraft:copper_ingot",
-      "transfer_rate": 128,
-      "conductor": "copper",
-      "color": "C77B42"
-    },
-    {
-      "name": "connector_mv",
-      "display": "Gold Connector",
-      "display_ru": "Золотой коннектор",
-      "kind": "CONNECTOR",
-      "capacity": 2048,
-      "work_ticks": 20,
-      "cost": 0,
-      "texture": "smog:block/connector_mv",
-      "model": "smog:block/connector_mv",
-      "assembled_model": "smog:block/connector_mv",
-      "hardness": 2,
-      "recipe_core": "minecraft:gold_ingot",
-      "transfer_rate": 256,
-      "conductor": "gold",
-      "color": "D6BB61"
-    },
-    {
-      "name": "connector_hv",
-      "display": "Silver Connector",
-      "display_ru": "Серебряный коннектор",
-      "kind": "CONNECTOR",
-      "capacity": 4096,
-      "work_ticks": 20,
-      "cost": 0,
-      "texture": "smog:block/connector_hv",
-      "model": "smog:block/connector_hv",
-      "assembled_model": "smog:block/connector_hv",
-      "hardness": 2,
-      "recipe_core": "smog:silver_ingot",
-      "transfer_rate": 512,
-      "conductor": "silver",
-      "color": "D4DDE8"
-    },
-    {
-      "name": "connector_aluminum",
-      "display": "Aluminum Connector",
-      "display_ru": "Алюминиевый коннектор",
-      "kind": "CONNECTOR",
-      "capacity": 512,
-      "work_ticks": 20,
-      "cost": 0,
-      "texture": "smog:block/connector_aluminum",
-      "model": "smog:block/connector_aluminum",
-      "assembled_model": "smog:block/connector_aluminum",
-      "hardness": 2,
-      "recipe_core": "smog:aluminum_ingot",
-      "transfer_rate": 64,
-      "conductor": "aluminum",
-      "color": "C5CDD3"
-    },
-    {
-      "name": "connector_steel",
-      "display": "Steel Connector",
-      "display_ru": "Стальной коннектор",
-      "kind": "CONNECTOR",
-      "capacity": 256,
-      "work_ticks": 20,
-      "cost": 0,
-      "texture": "smog:block/connector_steel",
-      "model": "smog:block/connector_steel",
-      "assembled_model": "smog:block/connector_steel",
-      "hardness": 2,
-      "recipe_core": "smog:steel_ingot",
-      "transfer_rate": 32,
-      "conductor": "steel",
-      "color": "66717B"
-    },
-    {
-      "name": "connector_tin",
-      "display": "Tin Connector",
-      "display_ru": "Оловянный коннектор",
-      "kind": "CONNECTOR",
-      "capacity": 256,
-      "work_ticks": 20,
-      "cost": 0,
-      "texture": "smog:block/connector_tin",
-      "model": "smog:block/connector_tin",
-      "assembled_model": "smog:block/connector_tin",
-      "hardness": 2,
-      "recipe_core": "smog:tin_ingot",
-      "transfer_rate": 32,
-      "conductor": "tin",
-      "color": "9FBFC9"
-    }
-  ],
-  "multiblocks": [
-    {
-      "name": "test_structure",
-      "parts": [
-        {
-          "x": -1,
-          "y": 0,
-          "z": 0,
-          "block": "#smog:machine_casings"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 0,
-          "block": "#smog:machine_casings"
-        },
-        {
-          "x": -1,
-          "y": 0,
-          "z": 1,
-          "block": "#smog:machine_casings"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "minecraft:air"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 1,
-          "block": "#smog:machine_casings"
-        },
-        {
-          "x": -1,
-          "y": 0,
-          "z": 2,
-          "block": "#smog:machine_casings"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 2,
-          "block": "#smog:machine_casings"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 2,
-          "block": "#smog:machine_casings"
-        }
-      ],
-      "display": "Test structure",
-      "display_ru": "Тестовая структура"
-    },
-    {
-      "name": "generator_solar",
-      "parts": [
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": -1,
-          "y": 1,
-          "z": 0,
-          "block": "smog:solar_cell"
-        },
-        {
-          "x": -1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:solar_cell"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 0,
-          "block": "smog:solar_cell"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:solar_cell"
-        },
-        {
-          "x": 1,
-          "y": 1,
-          "z": 0,
-          "block": "smog:solar_cell"
-        },
-        {
-          "x": 1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:solar_cell"
-        }
-      ],
-      "display": "Solar generator",
-      "display_ru": "Солнечный генератор"
-    },
-    {
-      "name": "generator_lightning",
-      "parts": [
-        {
-          "x": -1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:copper_coil"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:copper_coil"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:copper_coil"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 0,
-          "y": 2,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 0,
-          "y": 3,
-          "z": 1,
-          "block": "smog:lightning_tip"
-        }
-      ],
-      "display": "Lightning generator",
-      "display_ru": "Молниевой генератор"
-    },
-    {
-      "name": "generator_thermal",
-      "parts": [
-        {
-          "x": -1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:heat_exchanger"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:heat_exchanger"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:heat_exchanger"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:copper_coil"
-        },
-        {
-          "x": -1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        }
-      ],
-      "display": "Thermal generator",
-      "display_ru": "Тепловой генератор"
-    },
-    {
-      "name": "generator_flow",
-      "parts": [
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:turbine_housing"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:turbine_housing"
-        },
-        {
-          "x": -1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:rotor_blade"
-        },
-        {
-          "x": 1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:rotor_blade"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 2,
-          "block": "smog:generator_frame"
-        }
-      ],
-      "display": "Flow generator",
-      "display_ru": "Потоковый генератор"
-    },
-    {
-      "name": "generator_wind",
-      "parts": [
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 0,
-          "y": 2,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 0,
-          "y": 3,
-          "z": 1,
-          "block": "smog:turbine_housing"
-        },
-        {
-          "x": -1,
-          "y": 3,
-          "z": 0,
-          "block": "smog:rotor_blade"
-        },
-        {
-          "x": 1,
-          "y": 3,
-          "z": 0,
-          "block": "smog:rotor_blade"
-        },
-        {
-          "x": 0,
-          "y": 4,
-          "z": 0,
-          "block": "smog:rotor_blade"
-        },
-        {
-          "x": 0,
-          "y": 2,
-          "z": 0,
-          "block": "smog:rotor_blade"
-        }
-      ],
-      "display": "Wind generator",
-      "display_ru": "Ветряной генератор"
-    },
-    {
-      "name": "generator_steam",
-      "parts": [
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:steam_boiler"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:steam_boiler"
-        },
-        {
-          "x": -1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:copper_coil"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:copper_coil"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 2,
-          "block": "smog:turbine_housing"
-        },
-        {
-          "x": -1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        }
-      ],
-      "display": "Steam generator",
-      "display_ru": "Паровой генератор"
-    },
-    {
-      "name": "generator_geothermal",
-      "parts": [
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "block": "smog:geothermal_core"
-        },
-        {
-          "x": -1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:heat_exchanger"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 1,
-          "block": "smog:heat_exchanger"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 2,
-          "block": "smog:heat_exchanger"
-        },
-        {
-          "x": -1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 1,
-          "y": 1,
-          "z": 1,
-          "block": "smog:generator_frame"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "block": "smog:copper_coil"
-        }
-      ],
-      "display": "Geothermal generator",
-      "display_ru": "Геотермальный генератор"
-    }
-  ],
+  "machines": [],
+  "multiblocks": [],
   "fluids": [
     {
       "name": "coolant",
@@ -908,6 +186,32 @@
         "smog:coolants"
       ],
       "bucket_texture": "smog:item/coolant_bucket"
+    },
+    {
+      "name": "crude_oil",
+      "display": "Crude Oil",
+      "display_ru": "Нефть",
+      "color": "32271E",
+      "tick_delay": 20,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/crude_oil_bucket",
+      "tags": [
+        "smog:underground_fluids"
+      ]
+    },
+    {
+      "name": "mineral_brine",
+      "display": "Mineralized Brine",
+      "display_ru": "Минерализованный рассол",
+      "color": "91B6AC",
+      "tick_delay": 5,
+      "infinite": false,
+      "water_like": true,
+      "bucket_texture": "smog:item/mineral_brine_bucket",
+      "tags": [
+        "smog:underground_fluids"
+      ]
     }
   ],
   "items": [
@@ -922,73 +226,6 @@
       "display": "Copper Plate",
       "display_ru": "Медная пластина",
       "tab": "ores"
-    },
-    {
-      "name": "wrench",
-      "display": "Configurator",
-      "display_ru": "Настройщик",
-      "kind": "configurator",
-      "tab": "machines"
-    },
-    {
-      "name": "wire_coil_lv",
-      "display": "Copper Wire Coil",
-      "display_ru": "Катушка медного провода",
-      "kind": "wire",
-      "tab": "machines",
-      "conductor": "copper",
-      "ingredient": "minecraft:copper_ingot",
-      "color": "C77B42"
-    },
-    {
-      "name": "wire_coil_mv",
-      "display": "Gold Wire Coil",
-      "display_ru": "Катушка золотого провода",
-      "kind": "wire",
-      "tab": "machines",
-      "conductor": "gold",
-      "ingredient": "minecraft:gold_ingot",
-      "color": "D6BB61"
-    },
-    {
-      "name": "wire_coil_hv",
-      "display": "Silver Wire Coil",
-      "display_ru": "Катушка серебряного провода",
-      "kind": "wire",
-      "tab": "machines",
-      "conductor": "silver",
-      "ingredient": "smog:silver_ingot",
-      "color": "D4DDE8"
-    },
-    {
-      "name": "wire_coil_aluminum",
-      "kind": "wire",
-      "tab": "machines",
-      "conductor": "aluminum",
-      "ingredient": "smog:aluminum_ingot",
-      "color": "C5CDD3",
-      "display": "Aluminum Wire Coil",
-      "display_ru": "Катушка алюминиевого провода"
-    },
-    {
-      "name": "wire_coil_steel",
-      "kind": "wire",
-      "tab": "machines",
-      "conductor": "steel",
-      "ingredient": "smog:steel_ingot",
-      "color": "66717B",
-      "display": "Steel Wire Coil",
-      "display_ru": "Катушка стального провода"
-    },
-    {
-      "name": "wire_coil_tin",
-      "kind": "wire",
-      "tab": "machines",
-      "conductor": "tin",
-      "ingredient": "smog:tin_ingot",
-      "color": "9FBFC9",
-      "display": "Tin Wire Coil",
-      "display_ru": "Катушка оловянного провода"
     }
   ],
   "alloys": [
@@ -1001,6 +238,156 @@
         "minecraft:iron_ingot",
         "minecraft:coal"
       ]
+    }
+  ],
+  "metals": [
+    {
+      "name": "aluminum",
+      "material": "Aluminum",
+      "material_ru": "алюминия",
+      "color": "C5CDD3"
+    },
+    {
+      "name": "silver",
+      "material": "Silver",
+      "material_ru": "серебра",
+      "color": "D4DDE8"
+    },
+    {
+      "name": "cobalt",
+      "material": "Cobalt",
+      "material_ru": "кобальта",
+      "color": "3E7CA9"
+    },
+    {
+      "name": "bismuth",
+      "material": "Bismuth",
+      "material_ru": "висмута",
+      "color": "BC8EA9"
+    }
+  ],
+  "deposits": [
+    {
+      "name": "limestone",
+      "material": "Limestone",
+      "material_ru": "известняка",
+      "display_ru": "Известняк",
+      "color": "B6B5A2",
+      "vein_size": 48,
+      "veins_per_chunk": 3,
+      "min_y": -16,
+      "max_y": 112,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "dolomite",
+      "material": "Dolomite",
+      "material_ru": "доломита",
+      "display_ru": "Доломит",
+      "color": "B4A795",
+      "vein_size": 40,
+      "veins_per_chunk": 3,
+      "min_y": -32,
+      "max_y": 96,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "kaolin",
+      "material": "Kaolin",
+      "material_ru": "каолина",
+      "display_ru": "Каолин",
+      "color": "D6D3C4",
+      "vein_size": 28,
+      "veins_per_chunk": 3,
+      "min_y": 16,
+      "max_y": 96,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "rock_salt",
+      "material": "Rock Salt",
+      "material_ru": "каменной соли",
+      "display_ru": "Каменная соль",
+      "color": "D5C7C6",
+      "vein_size": 32,
+      "veins_per_chunk": 3,
+      "min_y": -32,
+      "max_y": 64,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "sulfur",
+      "material": "Sulfur",
+      "material_ru": "серы",
+      "display_ru": "Сера",
+      "color": "D4BE45",
+      "vein_size": 14,
+      "veins_per_chunk": 4,
+      "min_y": -64,
+      "max_y": 16,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "fluorite",
+      "material": "Fluorite",
+      "material_ru": "флюорита",
+      "display_ru": "Флюорит",
+      "color": "A48EBE",
+      "vein_size": 12,
+      "veins_per_chunk": 4,
+      "min_y": -48,
+      "max_y": 32,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "phosphorite",
+      "material": "Phosphorite",
+      "material_ru": "фосфорита",
+      "display_ru": "Фосфорит",
+      "color": "8E9579",
+      "vein_size": 24,
+      "veins_per_chunk": 3,
+      "min_y": -16,
+      "max_y": 64,
+      "hardness": 2,
+      "biomes": "overworld"
+    },
+    {
+      "name": "graphite",
+      "material": "Graphite",
+      "material_ru": "графита",
+      "display_ru": "Графит",
+      "color": "4C545C",
+      "vein_size": 16,
+      "veins_per_chunk": 4,
+      "min_y": -64,
+      "max_y": 16,
+      "hardness": 2,
+      "biomes": "overworld"
+    }
+  ],
+  "underground_resources": [
+    {
+      "name": "crude_oil_reservoir",
+      "fluid": "crude_oil",
+      "vein_size": 48,
+      "veins_per_chunk": 1,
+      "min_y": -56,
+      "max_y": -8
+    },
+    {
+      "name": "mineral_brine_reservoir",
+      "fluid": "mineral_brine",
+      "vein_size": 48,
+      "veins_per_chunk": 1,
+      "min_y": -48,
+      "max_y": 16
     }
   ]
 }

@@ -17,7 +17,8 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 public final class ModOres {
     public record Ore(String name, Block stone, Block deepslate, Item raw, Block rawBlock,
                       Item product, Block storageBlock, Item dust, Item crushed, Item shard, Item nugget, Item plate) {
-        public List<ItemLike> contents() { return List.of(stone, deepslate, raw, rawBlock, product, storageBlock, dust, crushed, shard, nugget, plate); }
+        public boolean metallic(){return product!=null;}
+        public List<ItemLike> contents() { return java.util.stream.Stream.<ItemLike>of(stone,deepslate,raw,rawBlock,product,storageBlock,dust,crushed,shard,nugget,plate).filter(Objects::nonNull).toList(); }
     }
     private static final List<Ore> VALUES = new ArrayList<>();
     private ModOres() {}
@@ -27,13 +28,13 @@ public final class ModOres {
         return Registry.register(BuiltInRegistries.ITEM, id, new Item(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
     }
     public static Ore register(String name, String product, float hardness, float resistance) {
-        if (!Set.of("ingot", "gem").contains(product)) throw new IllegalArgumentException("Material product must be ingot or gem");
+        if (!Set.of("ingot", "gem", "none").contains(product)) throw new IllegalArgumentException("Material product must be ingot or gem");
         Block stone = ModBlocks.register(name + "_ore", BlockBehaviour.Properties.of().strength(hardness, resistance).requiresCorrectToolForDrops());
         Block deep = ModBlocks.register("deepslate_" + name + "_ore", BlockBehaviour.Properties.of().strength(hardness * 1.5f, resistance).requiresCorrectToolForDrops());
         var ore = new Ore(name, stone, deep, item("raw_" + name),
             ModBlocks.register("raw_" + name + "_block", BlockBehaviour.Properties.of().strength(5, 6).requiresCorrectToolForDrops()),
-            item(name + "_" + product), ModBlocks.register(name + "_block", BlockBehaviour.Properties.of().strength(5, 6).requiresCorrectToolForDrops()),
-            item(name + "_dust"), item("crushed_" + name + "_ore"), item(name + "_shard"), item(name + "_nugget"), item(name + "_plate"));
+            product.equals("none")?null:item(name + "_" + product), product.equals("none")?null:ModBlocks.register(name + "_block", BlockBehaviour.Properties.of().strength(5, 6).requiresCorrectToolForDrops()),
+            item(name + "_dust"), item("crushed_" + name + "_ore"), item(name + "_shard"), product.equals("none")?null:item(name + "_nugget"), product.equals("none")?null:item(name + "_plate"));
         VALUES.add(ore); return ore;
     }
     public static void generation(String name, Predicate<BiomeSelectionContext> biomes) {

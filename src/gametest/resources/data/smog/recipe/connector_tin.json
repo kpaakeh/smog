@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "CCC",
+        "RIR",
+        "CCC"
+    ],
+    "key": {
+        "C": "smog:machine_casing",
+        "R": "minecraft:redstone",
+        "I": "smog:tin_ingot"
+    },
+    "result": {
+        "id": "smog:connector_tin"
+    }
+}

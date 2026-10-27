@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "III",
+        "ICI",
+        "III"
+    ],
+    "key": {
+        "I": "minecraft:iron_ingot",
+        "C": "minecraft:magma_block"
+    },
+    "result": {
+        "id": "smog:heat_exchanger",
+        "count": 1
+    }
+}

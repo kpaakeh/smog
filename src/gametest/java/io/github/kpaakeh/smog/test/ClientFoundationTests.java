@@ -27,15 +27,15 @@ public final class ClientFoundationTests implements FabricClientGameTest {
                 var casing = BuiltInRegistries.BLOCK.getValue(ModBlocks.id("machine_casing"));
                 Multiblocks.get(ModBlocks.id("test_structure")).parts().forEach((p, ingredient) ->
                     level.setBlockAndUpdate(origin.offset(p), ingredient.value().equals("minecraft:air") ? Blocks.AIR.defaultBlockState() : casing.defaultBlockState()));
-                level.setBlockAndUpdate(new BlockPos(-3,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("beryllium_ore")).defaultBlockState());
-                level.setBlockAndUpdate(new BlockPos(-4,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("deepslate_beryllium_ore")).defaultBlockState());
+                level.setBlockAndUpdate(new BlockPos(-3,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("nickel_ore")).defaultBlockState());
+                level.setBlockAndUpdate(new BlockPos(-4,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("deepslate_nickel_ore")).defaultBlockState());
                 level.setBlockAndUpdate(new BlockPos(3,100,0), BuiltInRegistries.BLOCK.getValue(ModBlocks.id("test_machine")).defaultBlockState());
                 int column=-6;
                 for(var ore:io.github.kpaakeh.smog.registry.ModOres.all()) {
                     level.setBlockAndUpdate(new BlockPos(column,100,6),ore.stone().defaultBlockState());
                     level.setBlockAndUpdate(new BlockPos(column,101,6),ore.deepslate().defaultBlockState());
                     level.setBlockAndUpdate(new BlockPos(column,102,6),ore.rawBlock().defaultBlockState());
-                    level.setBlockAndUpdate(new BlockPos(column,103,6),ore.storageBlock().defaultBlockState());
+                    if(ore.storageBlock()!=null)level.setBlockAndUpdate(new BlockPos(column,103,6),ore.storageBlock().defaultBlockState());
                     column+=2;
                 }
                 for (int x = 3; x <= 5; x++) for (int z = 2; z <= 4; z++)
@@ -65,7 +65,7 @@ public final class ClientFoundationTests implements FabricClientGameTest {
                 var mc=net.minecraft.client.Minecraft.getInstance();
                 return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);
             });
-            for(String tab:java.util.List.of("machines","ores","blocks")) {
+            for(String tab:java.util.List.of("ores","blocks")) {
                 context.runOnClient(mc -> {
                     var screen=(net.fabricmc.fabric.api.client.creativetab.v1.FabricCreativeModeInventoryScreen)mc.gui.screen();
                     var target=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab));
@@ -110,6 +110,7 @@ public final class ClientFoundationTests implements FabricClientGameTest {
             IndustryClientScene.run(context,world);
             FormationRenderingTest.run(context,world);
             ConnectorRenderingTest.run(context,world);
+            ResourceClientScene.run(context,world);
         }
     }
 }

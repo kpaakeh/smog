@@ -35,6 +35,8 @@ public final class ContentCatalog {
                 ModOres.generation(name, biomes);
             }
             if(root.has("alloys"))for(var value:root.getAsJsonArray("alloys"))ModAlloys.register(value.getAsJsonObject().get("name").getAsString());
+            if(root.has("metals"))for(var value:root.getAsJsonArray("metals"))ModAlloys.register(value.getAsJsonObject().get("name").getAsString());
+            if(root.has("deposits"))for(var value:root.getAsJsonArray("deposits")){var entry=value.getAsJsonObject();ModDeposits.register(entry.get("name").getAsString(),hardness(entry));}
             for (var value : root.getAsJsonArray("multiblocks")) {
                 var o = value.getAsJsonObject(); Map<BlockPos, BlockIngredient> parts = new LinkedHashMap<>();
                 for (var partValue : o.getAsJsonArray("parts")) {
@@ -60,11 +62,12 @@ public final class ContentCatalog {
                 var o = value.getAsJsonObject(); ModFluids.register(o.get("name").getAsString(), Integer.parseInt(o.get("color").getAsString(), 16),
                     o.get("tick_delay").getAsInt(), o.get("infinite").getAsBoolean());
             }
+            if(root.has("underground_resources"))for(var value:root.getAsJsonArray("underground_resources"))ModDeposits.undergroundFluid(value.getAsJsonObject().get("name").getAsString());
             for (var structure : Multiblocks.all()) for (var ingredient : structure.parts().values()) {
                 if (!ingredient.value().startsWith("#") && !net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(Identifier.parse(ingredient.value())))
                     throw new IllegalArgumentException("Unknown multiblock block: " + ingredient.value());
             }
-            ModCreativeTabs.initialize();
+            ModCreativeTabs.initialize(root);
         } catch (IOException e) { throw new IllegalStateException("Unable to read content catalog", e); }
     }
 }

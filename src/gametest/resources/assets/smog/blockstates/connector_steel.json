@@ -1,0 +1,34 @@
+{
+    "variants": {
+        "attachment=up": {
+            "model": "smog:block/connector_steel",
+            "x": 0,
+            "y": 0
+        },
+        "attachment=down": {
+            "model": "smog:block/connector_steel",
+            "x": 180,
+            "y": 0
+        },
+        "attachment=north": {
+            "model": "smog:block/connector_steel",
+            "x": 90,
+            "y": 0
+        },
+        "attachment=east": {
+            "model": "smog:block/connector_steel",
+            "x": 90,
+            "y": 90
+        },
+        "attachment=south": {
+            "model": "smog:block/connector_steel",
+            "x": 90,
+            "y": 180
+        },
+        "attachment=west": {
+            "model": "smog:block/connector_steel",
+            "x": 90,
+            "y": 270
+        }
+    }
+}

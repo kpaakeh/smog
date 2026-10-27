@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "III",
+        "ICI",
+        "III"
+    ],
+    "key": {
+        "I": "minecraft:iron_ingot",
+        "C": "minecraft:obsidian"
+    },
+    "result": {
+        "id": "smog:geothermal_core",
+        "count": 1
+    }
+}

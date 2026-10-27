@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "CRC",
+        "RMR",
+        "CRC"
+    ],
+    "key": {
+        "C": "smog:machine_casing",
+        "R": "minecraft:redstone",
+        "M": "smog:test_machine"
+    },
+    "result": {
+        "id": "smog:test_controller"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        "minecraft:copper_ingot",
+        "minecraft:copper_ingot",
+        "minecraft:string"
+    ],
+    "result": {
+        "id": "smog:wire_coil_lv",
+        "count": 4
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "III",
+        "ICI",
+        "III"
+    ],
+    "key": {
+        "I": "minecraft:iron_ingot",
+        "C": "minecraft:lightning_rod"
+    },
+    "result": {
+        "id": "smog:lightning_tip",
+        "count": 1
+    }
+}

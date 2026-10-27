@@ -22,7 +22,6 @@ public final class EnergyNetwork {
     private EnergyNetwork(){}
     public static void track(MachineEntity machine){if(machine.getLevel() instanceof ServerLevel level)LOADED.computeIfAbsent(level,l->new HashSet<>()).add(machine);}
     public static void initialize(){
-        for(var entry:Machines.all())team.reborn.energy.api.EnergyStorage.SIDED.registerForBlockEntity((machine,side)->machine.energyStorage(),entry.entityType());
         PayloadTypeRegistry.clientboundPlay().register(WireSnapshot.TYPE,WireSnapshot.CODEC);
         ServerLifecycleEvents.SERVER_STOPPED.register(server->{LOADED.clear();SENT.clear();});
         ServerTickEvents.END_SERVER_TICK.register(server->{for(var level:server.getAllLevels())tick(level);SENT.keySet().retainAll(server.getPlayerList().getPlayers().stream().map(ServerPlayer::getUUID).toList());});
