@@ -113,3 +113,7 @@
 - Surface resources use OCEAN_FLOOR_WG plus current 26.3 offset-placement providers. Profile-specific catalog fields avoid unused vein-size/radius/height settings. Frequencies/dimensions remain editable starter balance. Raw material IDs and old item stacks remain stable; potential byproducts/mineral names are metadata, never hidden per-block random components or rare extra drops.
 - Artist cleanup: main textures contains exactly 195 active resource PNGs; no unused or missing PNGs according to the new read-only reachable-model/fluid audit. Inactive GUI textures moved to test resources, preserving system tests and avoiding clutter in the artist folder. GUI generation targets test resources while no machines are registered. docs/TEXTURES.md identifies precisely what to paint.
 - Validation: build passed all 18 required server GameTests; client test passed. Tests check larger coherent deposits, sand-vs-rock host behavior, all resource placements, mandatory uranium, native sulfur and no duplicate Smog sulfur, plus all retained systems. No active machine or era content was restored.
+
+## 2026-10-28 — Ore distribution balance
+
+Reduced solid ore bodies from radii 10–12 to 2–4, with resource-specific placement rarity. Tin/zinc remain accessible; advanced ores and titanium/rare-earth placers are scarce. Reduced mineral masses while keeping limestone/dolomite larger than ores. Existing chunks and textures unchanged. Generation tests now bound deposit sizes and specifically prevent massive titanium placers.

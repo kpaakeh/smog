@@ -35,7 +35,8 @@ public final class ResourceGenerationTests {
         placed.feature().value().place(level,level.getChunkSource().getGenerator(),RandomSource.create(42),h.absolutePos(new BlockPos(6,6,6)));
         int found=0;
         for(int x=0;x<12;x++)for(int y=0;y<12;y++)for(int z=0;z<12;z++)if(level.getBlockState(h.absolutePos(new BlockPos(x,y,z))).is(expected))found++;
-        h.assertTrue(found>64,"Coherent deposit contains more than a small ore sprinkle: "+name+" blocks="+found);
+        h.assertTrue(found<= (name.endsWith("reservoir")?1728:600),"Natural deposit stays bounded: "+name+" blocks="+found);
+        h.assertTrue(found>16,"Deposit generates a usable amount: "+name+" blocks="+found);
     }
     @GameTest public void placersUseSedimentsAndBodiesUseRock(GameTestHelper h) {
         var level=h.getLevel();var pos=h.absolutePos(new BlockPos(4,4,4));
@@ -45,6 +46,9 @@ public final class ResourceGenerationTests {
         for(int x=0;x<9;x++)for(int y=0;y<9;y++)for(int z=0;z<9;z++)level.setBlock(h.absolutePos(new BlockPos(x,y,z)),Blocks.SAND.defaultBlockState(),Block.UPDATE_CLIENTS);
         h.assertFalse(body.place(level,level.getChunkSource().getGenerator(),RandomSource.create(7),pos),"Deep ore body does not replace sand");
         h.assertTrue(placer.place(level,level.getChunkSource().getGenerator(),RandomSource.create(7),pos),"Heavy-mineral placer forms in sediments");
+        int titanium=0;
+        for(int x=0;x<9;x++)for(int y=0;y<9;y++)for(int z=0;z<9;z++)if(level.getBlockState(h.absolutePos(new BlockPos(x,y,z))).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("titanium_ore"))))titanium++;
+        h.assertTrue(titanium>0&&titanium<=25,"Titanium placer is a small find, not a massive ore slab: "+titanium);
         h.succeed();
     }
     @GameTest public void activeCatalogContainsNoIndustry(GameTestHelper h) throws IOException {

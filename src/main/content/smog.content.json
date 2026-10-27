@@ -42,7 +42,7 @@
       "color": "B4B99D",
       "product": "ingot",
       "vein_size": 7,
-      "veins_per_chunk": 3,
+      "veins_per_chunk": 2,
       "min_y": -16,
       "max_y": 72,
       "biomes": "overworld",
@@ -65,9 +65,9 @@
       "max_y": 32,
       "biomes": "overworld",
       "generation_profile": "ore_body",
-      "rarity": 12,
-      "radius": 10,
-      "thickness": 5,
+      "rarity": 6,
+      "radius": 3,
+      "thickness": 2,
       "mineral": "galena",
       "potential_byproducts": [
         "silver"
@@ -85,9 +85,9 @@
       "max_y": 24,
       "biomes": "overworld",
       "generation_profile": "ore_body",
-      "rarity": 16,
-      "radius": 11,
-      "thickness": 6,
+      "rarity": 10,
+      "radius": 3,
+      "thickness": 2,
       "mineral": "nickel_sulfide",
       "potential_byproducts": [
         "cobalt",
@@ -104,9 +104,9 @@
       "veins_per_chunk": 1,
       "biomes": "overworld",
       "generation_profile": "shallow",
-      "rarity": 8,
-      "radius": 10,
-      "thickness": 3,
+      "rarity": 10,
+      "radius": 4,
+      "thickness": 2,
       "surface_depth": 6,
       "potential_byproducts": [
         "gallium"
@@ -124,9 +124,9 @@
       "max_y": 40,
       "biomes": "overworld",
       "generation_profile": "ore_body",
-      "rarity": 12,
-      "radius": 10,
-      "thickness": 5,
+      "rarity": 8,
+      "radius": 3,
+      "thickness": 2,
       "mineral": "pyrolusite",
       "potential_byproducts": []
     },
@@ -142,9 +142,9 @@
       "max_y": 16,
       "biomes": "overworld",
       "generation_profile": "ore_body",
-      "rarity": 18,
-      "radius": 10,
-      "thickness": 5,
+      "rarity": 14,
+      "radius": 3,
+      "thickness": 2,
       "mineral": "chromite",
       "potential_byproducts": []
     },
@@ -158,9 +158,9 @@
       "veins_per_chunk": 1,
       "biomes": "overworld",
       "generation_profile": "placer",
-      "rarity": 14,
-      "radius": 12,
-      "thickness": 2,
+      "rarity": 24,
+      "radius": 2,
+      "thickness": 1,
       "surface_depth": 3,
       "mineral": "ilmenite",
       "potential_byproducts": [
@@ -175,13 +175,13 @@
       "display_ru": "Вольфрамовая руда",
       "color": "6D7886",
       "product": "ingot",
-      "vein_size": 18,
+      "vein_size": 10,
       "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": -24,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 22,
+      "rarity": 24,
       "mineral": "scheelite",
       "potential_byproducts": []
     },
@@ -192,7 +192,7 @@
       "display_ru": "Молибденовая руда",
       "color": "8E9FAB",
       "product": "ingot",
-      "vein_size": 18,
+      "vein_size": 10,
       "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": 0,
@@ -211,13 +211,13 @@
       "display_ru": "Урановая руда",
       "color": "7F964D",
       "product": "ingot",
-      "vein_size": 14,
+      "vein_size": 9,
       "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": -16,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 24,
+      "rarity": 28,
       "potential_byproducts": []
     },
     {
@@ -227,13 +227,13 @@
       "display_ru": "Литиевая руда",
       "color": "C3BED4",
       "product": "ingot",
-      "vein_size": 16,
+      "vein_size": 10,
       "veins_per_chunk": 1,
       "min_y": -32,
       "max_y": 48,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 18,
+      "rarity": 16,
       "mineral": "spodumene",
       "potential_byproducts": []
     },
@@ -247,9 +247,9 @@
       "veins_per_chunk": 1,
       "biomes": "overworld",
       "generation_profile": "placer",
-      "rarity": 24,
-      "radius": 10,
-      "thickness": 2,
+      "rarity": 40,
+      "radius": 2,
+      "thickness": 1,
       "surface_depth": 3,
       "mineral": "monazite",
       "potential_byproducts": [
@@ -365,8 +365,8 @@
       "biomes": "overworld",
       "generation_profile": "stratum",
       "rarity": 6,
-      "radius": 14,
-      "thickness": 3
+      "radius": 6,
+      "thickness": 2
     },
     {
       "name": "dolomite",
@@ -380,9 +380,9 @@
       "hardness": 2,
       "biomes": "overworld",
       "generation_profile": "stratum",
-      "rarity": 6,
-      "radius": 14,
-      "thickness": 3
+      "rarity": 8,
+      "radius": 5,
+      "thickness": 2
     },
     {
       "name": "kaolin",
@@ -394,9 +394,9 @@
       "hardness": 2,
       "biomes": "overworld",
       "generation_profile": "shallow",
-      "rarity": 10,
-      "radius": 9,
-      "thickness": 4,
+      "rarity": 12,
+      "radius": 4,
+      "thickness": 2,
       "surface_depth": 5
     },
     {
@@ -411,9 +411,9 @@
       "hardness": 2,
       "biomes": "overworld",
       "generation_profile": "stratum",
-      "rarity": 6,
-      "radius": 14,
-      "thickness": 3
+      "rarity": 12,
+      "radius": 4,
+      "thickness": 2
     },
     {
       "name": "fluorite",
@@ -427,9 +427,9 @@
       "hardness": 2,
       "biomes": "overworld",
       "generation_profile": "mineral_body",
-      "rarity": 10,
-      "radius": 9,
-      "thickness": 4
+      "rarity": 16,
+      "radius": 3,
+      "thickness": 2
     },
     {
       "name": "phosphorite",
@@ -443,9 +443,9 @@
       "hardness": 2,
       "biomes": "overworld",
       "generation_profile": "mineral_body",
-      "rarity": 10,
-      "radius": 9,
-      "thickness": 4
+      "rarity": 12,
+      "radius": 3,
+      "thickness": 2
     },
     {
       "name": "graphite",
@@ -459,9 +459,9 @@
       "hardness": 2,
       "biomes": "overworld",
       "generation_profile": "mineral_body",
-      "rarity": 10,
-      "radius": 9,
-      "thickness": 4
+      "rarity": 14,
+      "radius": 3,
+      "thickness": 2
     }
   ],
   "underground_resources": [
