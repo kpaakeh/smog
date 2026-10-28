@@ -159,3 +159,11 @@ Audited all active static block/item sizes, native animation strips, hard item a
 ## 2026-10-28 — Distinct copper workshop silhouettes, 0.7.4
 
 Replaced literal spyglass pipe icon with a short hollow cylinder. Replaced brick-sprite molds with inclined shallow ceramic trays and separately shaped cavities. Refractory masonry now uses original larger staggered fireclay blocks in an ash/sand ramp rather than recolored vanilla red brickwork. Device faces no longer sample native furnace apertures: hearth control insert, kiln ceramic door/hinges and narrow firebox grate have independent designs and different 3D handles. Native pixel scale retained. Visual-only changes, UV/face/PNG audits and assemble validation; no gameplay changes or game launch.
+
+## 2026-10-28 — Shift-only configurator rotation, 0.7.5
+
+Normal right-click never rotates a machine or loose workshop part. It only attempts controller assembly; loose parts consume the configurator click without turning. Shift-right-click is the sole rotation gesture. Existing assembled-part routing still resolves to controller. Updated JEI hints and docs. Assemble-only verification.
+
+## 2026-10-28 — Separate wall ports and attachable outlets, 0.7.5
+
+Renamed existing casting_spout/air_intake displays to fluid/air ports, preserving registry IDs. Added separate casting_faucet and air_nozzle blocks with support-aware horizontal placement, closed/open valve states and different handle models. A port alone never pours: casting resolves an open attached faucet directly above table/channel; renderer shows a vertical stream. Air bellows require an open nozzle connected to a formed hearth air port. Native Fluid Storage port access retained. Normal configurator right-click never rotates; Shift rotation also handles the sneaking item-use path that skips normal block interactions. Updated recipes, JEI information and human-readable size ranges (“от 3 до 11”). All 25 server GameTests passed, including bare/closed faucet rejection, downward casting, air nozzle gating and actual Shift-click part rotation. No new age branches implemented. Client not launched.

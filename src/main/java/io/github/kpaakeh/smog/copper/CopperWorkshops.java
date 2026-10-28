@@ -120,8 +120,9 @@ public final class CopperWorkshops {
         record Node(BlockPos pos,int distance){}var queue=new ArrayDeque<Node>();Set<BlockPos> visited=new HashSet<>();queue.add(new Node(table,0));
         while(!queue.isEmpty()&&visited.size()<128){var node=queue.removeFirst();if(node.distance>8)continue;
             for(var side:Direction.values()){if(side==Direction.DOWN)continue;var pos=node.pos.relative(side);if(!visited.add(pos)||!level.hasChunkAt(pos))continue;var state=level.getBlockState(pos);
-                if(state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_spout")))){
-                    var owner=ComplexFormationData.get(level).owner(pos);
+                if(side==Direction.UP&&state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_faucet")))&&state.getValue(WorkshopPartBlock.OPEN)){
+                    var port=pos.relative(state.getValue(WorkshopPartBlock.FACING).getOpposite());if(!level.hasChunkAt(port)||!level.getBlockState(port).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_spout"))))continue;
+                    var owner=ComplexFormationData.get(level).owner(port);
                     if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&workshop(m,"copper_hearth")&&m.assembled())return m;
                 }else if(state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_channel"))))queue.add(new Node(pos,node.distance+1));
             }
@@ -160,9 +161,11 @@ public final class CopperWorkshops {
     }
     public static boolean pump(ServerLevel level,MachineEntity bellows){
         for(var side:Direction.values()){
-            var pos=bellows.getBlockPos().relative(side);if(!level.hasChunkAt(pos)||!level.getBlockState(pos).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("air_intake"))))continue;
-            var owner=ComplexFormationData.get(level).owner(pos);
-            if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&m.assembled()){m.copper.air=8;m.sync();return true;}
+            var nozzle=bellows.getBlockPos().relative(side);if(!level.hasChunkAt(nozzle))continue;var state=level.getBlockState(nozzle);
+            if(!state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("air_nozzle")))||!state.getValue(WorkshopPartBlock.OPEN))continue;
+            var port=nozzle.relative(state.getValue(WorkshopPartBlock.FACING).getOpposite());if(!level.hasChunkAt(port)||!level.getBlockState(port).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("air_intake"))))continue;
+            var owner=ComplexFormationData.get(level).owner(port);
+            if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&m.assembled()){m.copper.air=8;m.sync();level.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD,nozzle.getX()+.5,nozzle.getY()+.5,nozzle.getZ()+.5,3,.1,.1,.1,.02);return true;}
         }return false;
     }
     public static void dropMetal(ServerLevel level,MachineEntity m){if(!workshop(m,"copper_hearth"))return;

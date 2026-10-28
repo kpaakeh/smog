@@ -45,7 +45,7 @@ public final class SmogJeiPlugin implements IModPlugin {
         }
         registration.addRecipes(TYPE, pages);
         java.util.Map<String,String> guides=java.util.Map.ofEntries(
-            java.util.Map.entry("copper_hearth","hearth"),java.util.Map.entry("ceramic_kiln","kiln"),java.util.Map.entry("casting_table","casting"),java.util.Map.entry("potter_table","pottery"),java.util.Map.entry("hand_bellows","bellows"),java.util.Map.entry("ceramic_crucible","crucible"),java.util.Map.entry("large_ceramic_crucible","crucible"),java.util.Map.entry("solid_firebox","firebox"),java.util.Map.entry("casting_spout","spout"),java.util.Map.entry("casting_channel","spout"),java.util.Map.entry("air_intake","bellows"),java.util.Map.entry("kiln_vent","kiln"),java.util.Map.entry("firebrick_casing","lining"));
+            java.util.Map.entry("copper_hearth","hearth"),java.util.Map.entry("ceramic_kiln","kiln"),java.util.Map.entry("casting_table","casting"),java.util.Map.entry("potter_table","pottery"),java.util.Map.entry("hand_bellows","bellows"),java.util.Map.entry("ceramic_crucible","crucible"),java.util.Map.entry("large_ceramic_crucible","crucible"),java.util.Map.entry("solid_firebox","firebox"),java.util.Map.entry("casting_faucet","spout"),java.util.Map.entry("air_nozzle","bellows"),java.util.Map.entry("casting_spout","spout"),java.util.Map.entry("casting_channel","spout"),java.util.Map.entry("air_intake","bellows"),java.util.Map.entry("kiln_vent","kiln"),java.util.Map.entry("firebrick_casing","lining"));
         guides.forEach((id,guide)->registration.addIngredientInfo(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(ModBlocks.id(id)),Component.translatable("jei.smog.guide."+guide)));
         for(var entry:io.github.kpaakeh.smog.registry.ModItems.all())if(entry.tab().equals("copper_age")){
             String name=net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(entry.item()).getPath();String guide=name.contains("mold")?"molds":name.equals("configurator")?"configurator":name.equals("metal_residue")?"residue":name.startsWith("unfired")||name.contains("clay")||name.contains("firebrick")?"pottery":"parts";
@@ -88,7 +88,7 @@ public final class SmogJeiPlugin implements IModPlugin {
             var preview=new StructurePreviewWidget(page);
             builder.addWidget(preview);builder.addInputHandler(preview);
             var complex=io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(page.controller()));
-            if(complex!=null)builder.addText(Component.literal(complex.minWidth()+".."+complex.maxWidth()+" x "+complex.minHeight()+".."+complex.maxHeight()+" x "+complex.minDepth()+".."+complex.maxDepth()),166,12).setPosition(2,154);
+            if(complex!=null)builder.addText(Component.translatable("jei.smog.size_range",complex.minWidth(),complex.maxWidth()),166,12).setPosition(2,154);
             if(complex!=null)builder.addText(Component.translatable("jei.smog.structure."+complex.controller().getPath()),166,54).setPosition(2,169);
             var b=page.structure().bounds();
             builder.addText(Component.translatable("multiblock."+page.structure().id().getNamespace()+"."+page.structure().id().getPath()),146,12).setPosition(2,0);

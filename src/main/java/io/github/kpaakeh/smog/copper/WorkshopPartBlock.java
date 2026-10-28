@@ -12,10 +12,26 @@ import net.minecraft.world.level.block.state.properties.*;
 
 /** Movable ports and channels have an editable direction, independent of controller location. */
 public final class WorkshopPartBlock extends Block {
+    public static final BooleanProperty OPEN=BlockStateProperties.OPEN;
     public static final EnumProperty<Direction> FACING=BlockStateProperties.HORIZONTAL_FACING;
-    public WorkshopPartBlock(Properties properties){super(properties);registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH));}
-    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){builder.add(FACING);}
-    @Override public BlockState getStateForPlacement(BlockPlaceContext context){return defaultBlockState().setValue(FACING,context.getHorizontalDirection().getOpposite());}
+    public WorkshopPartBlock(Properties properties){super(properties);registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH).setValue(OPEN,false));}
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){builder.add(FACING,OPEN);}
+    private String partName(){return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath();}
+    private boolean attachment(){return partName().equals("casting_faucet")||partName().equals("air_nozzle");}
+    @Override public BlockState getStateForPlacement(BlockPlaceContext context){
+        if(attachment()){
+            var side=context.getClickedFace();if(side.getAxis()==Direction.Axis.Y)return null;
+            var behind=context.getClickedPos().relative(side.getOpposite());String expected=partName().equals("casting_faucet")?"casting_spout":"air_intake";
+            if(!context.getLevel().getBlockState(behind).is(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id(expected))))return null;
+            return defaultBlockState().setValue(FACING,side);
+        }
+        return defaultBlockState().setValue(FACING,context.getHorizontalDirection().getOpposite());
+    }
+    @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,net.minecraft.world.phys.BlockHitResult hit){
+        if(!attachment())return InteractionResult.PASS;
+        if(!level.isClientSide()){boolean open=!state.getValue(OPEN);level.setBlock(pos,state.setValue(OPEN,open),Block.UPDATE_ALL);player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(open?"message.smog.valve_open":"message.smog.valve_closed"));}
+        return InteractionResult.SUCCESS;
+    }
     @Override protected BlockState rotate(BlockState state,Rotation rotation){return state.setValue(FACING,rotation.rotate(state.getValue(FACING)));}
     @Override protected BlockState mirror(BlockState state,Mirror mirror){return rotate(state,mirror.getRotation(state.getValue(FACING)));}
     @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state,net.minecraft.world.level.BlockGetter level,BlockPos pos,net.minecraft.world.phys.shapes.CollisionContext context){
@@ -24,7 +40,7 @@ public final class WorkshopPartBlock extends Block {
         return super.getShape(state,level,pos,context);
     }
     @Override protected InteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,InteractionHand hand,net.minecraft.world.phys.BlockHitResult hit){
-        if(stack.getItem() instanceof ConfiguratorItem){if(!level.isClientSide())level.setBlock(pos,state.setValue(FACING,state.getValue(FACING).getClockWise()),Block.UPDATE_ALL);return InteractionResult.SUCCESS;}
+        if(stack.getItem() instanceof ConfiguratorItem){if(player.isShiftKeyDown()&&!level.isClientSide())level.setBlock(pos,state.setValue(FACING,state.getValue(FACING).getClockWise()),Block.UPDATE_ALL);return InteractionResult.SUCCESS;}
         return super.useItemOn(stack,state,level,pos,player,hand,hit);
     }
 }

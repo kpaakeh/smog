@@ -144,9 +144,18 @@ brick='smog:block/refractory_bricks';clay='smog:block/refractory_bricks';wood='m
 for n,size in [('ceramic_crucible',12),('large_ceramic_crucible',16)]:
  lo=(16-size)/2;hi=16-lo;model(n,[box([lo,0,lo],[hi,3,hi],'clay'),box([lo,3,lo],[lo+2,14,hi],'clay'),box([hi-2,3,lo],[hi,14,hi],'clay'),box([lo+2,3,lo],[hi-2,14,lo+2],'clay'),box([lo+2,3,hi-2],[hi-2,14,hi],'clay')],dict(clay=clay))
 model('firebrick_casing',[box([0,0,0],[16,16,16],'brick')],dict(brick=brick))
-model('casting_spout',[box([0,0,4],[16,16,16],'brick'),box([3,12,0],[13,14,16],'clay'),box([3,14,0],[5,16,16],'clay'),box([11,14,0],[13,16,16],'clay')],dict(brick=brick,clay=clay))
+# Wall ports are flat sockets; detachable fittings provide the external geometry.
+model('casting_spout',[box([0,0,0],[16,16,16],'brick'),box([4,4,0],[12,12,1],'copper'),box([6,6,0],[10,10,2],'dark')],dict(brick=brick,copper=copper,dark='minecraft:block/black_terracotta'))
 model('casting_channel',[box([0,12,0],[16,14,16],'clay'),box([0,14,0],[3,16,16],'clay'),box([13,14,0],[16,16,16],'clay')],dict(clay=clay))
-model('air_intake',[box([0,0,4],[16,16,16],'brick'),box([4,4,0],[12,12,6],'dark')],dict(brick=brick,dark='minecraft:block/coal_block'))
+model('air_intake',[box([0,0,0],[16,16,16],'brick'),box([3,5,0],[13,11,1],'copper'),box([5,6,0],[11,10,2],'dark')],dict(brick=brick,copper=copper,dark='minecraft:block/black_terracotta'))
+for name in ['casting_faucet','air_nozzle']:
+ for opened in [False,True]:
+  handle=box([7,13,3],[9,15,13],'copper') if opened else box([3,13,7],[13,15,9],'copper')
+  if name=='casting_faucet':
+   body=[box([4,6,12],[12,12,16],'copper'),box([6,7,7],[10,11,16],'copper'),box([6,3,6],[10,9,10],'copper'),box([4,0,4],[6,3,12],'copper'),box([10,0,4],[12,3,12],'copper'),box([6,0,4],[10,3,6],'copper'),box([6,0,10],[10,3,12],'copper'),box([6,2,6],[10,3,10],'dark'),box([7,11,7],[9,13,9],'copper')]
+  else:
+   body=[box([4,4,11],[12,12,16],'copper'),box([5,5,3],[11,11,12],'copper'),box([4,4,0],[6,12,4],'copper'),box([10,4,0],[12,12,4],'copper'),box([6,4,0],[10,6,4],'copper'),box([6,10,0],[10,12,4],'copper'),box([6,6,3],[10,10,4],'dark'),box([7,11,7],[9,13,9],'copper')]
+  model(name+('_open' if opened else ''),body+[handle],dict(copper=copper,dark='minecraft:block/black_terracotta'))
 model('kiln_vent',[box([0,0,0],[16,5,16],'brick'),box([3,5,3],[6,16,13],'brick'),box([10,5,3],[13,16,13],'brick'),box([6,5,3],[10,16,6],'brick'),box([6,5,10],[10,16,13],'brick')],dict(brick=brick))
 legs=[box([x,0,z],[x+3,12,z+3],{'all':'leg','up':'end','down':'end'}) for x,z in [(1,1),(12,1),(1,12),(12,12)]]
 model('potter_table',legs+[box([0,11,0],[16,14,16],'wood'),box([3,14,3],[13,16,13],'clay')],dict(wood=wood,clay=clay,leg='minecraft:block/stripped_oak_log',end='minecraft:block/stripped_oak_log_top'))

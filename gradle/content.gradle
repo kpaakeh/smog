@@ -57,7 +57,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             validId(baseModel)
             if (!entry.model) write("assets/smog/models/block/${name}.json", [parent:'minecraft:block/cube_all', textures:[all:texture]])
             def variants = ['':[model:baseModel]]
-            if(entry.horizontal){variants=[:];[north:0,east:90,south:180,west:270].each { facing,rotation -> variants["facing=$facing"]=[model:baseModel,y:rotation] }}
+            if(entry.horizontal){variants=[:];[north:0,east:90,south:180,west:270].each { facing,rotation -> if(entry.valve){variants["facing=$facing,open=false"]=[model:baseModel,y:rotation];variants["facing=$facing,open=true"]=[model:"smog:block/${name}_open",y:rotation]}else variants["facing=$facing"]=[model:baseModel,y:rotation] }}
             if (machine) {
                 def assembled = entry.assembled_model ?: "smog:block/${name}_assembled"
                 validId(assembled)

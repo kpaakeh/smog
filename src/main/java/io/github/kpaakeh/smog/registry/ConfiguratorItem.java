@@ -14,7 +14,12 @@ public final class ConfiguratorItem extends Item {
         var level=context.getLevel();var pos=context.getClickedPos();var player=context.getPlayer();
         if(player==null)return InteractionResult.PASS;
         MachineEntity machine=level.getBlockEntity(pos) instanceof MachineEntity value?value:level instanceof net.minecraft.server.level.ServerLevel server?io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.owner(server,pos):null;
-        if(machine==null)return InteractionResult.PASS;
+        if(machine==null){
+            var state=level.getBlockState(pos);
+            if(!(state.getBlock() instanceof io.github.kpaakeh.smog.copper.WorkshopPartBlock))return InteractionResult.PASS;
+            if(player.isShiftKeyDown()&&!level.isClientSide()){level.setBlock(pos,state.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,state.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getClockWise()),Block.UPDATE_ALL);player.sendOverlayMessage(Component.translatable("message.smog.configurator_rotated"));}
+            return InteractionResult.SUCCESS;
+        }
         pos=machine.getBlockPos();
         if(level.isClientSide())return InteractionResult.SUCCESS;
         if(player.isShiftKeyDown()) {
@@ -25,9 +30,6 @@ public final class ConfiguratorItem extends Item {
         } else if(machine.multiblockController()) {
             boolean formed=machine.tryAssemble();
             player.sendOverlayMessage(Component.translatable(formed?"message.smog.multiblock_formed":"message.smog.multiblock_incomplete").append(!formed&&!machine.assemblyDetail().isEmpty()?" "+machine.assemblyDetail():""));
-        } else {
-            var state=level.getBlockState(pos);
-            level.setBlock(pos,state.setValue(MachineBlock.FACING,state.getValue(MachineBlock.FACING).getClockWise()),Block.UPDATE_ALL);
         }
         return InteractionResult.SUCCESS;
     }

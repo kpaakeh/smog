@@ -60,8 +60,30 @@ public final class CopperTests {
     @GameTest public void bronzeAndCastingConserveMetalAndKeepMolds(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Working hearth");m.copper.heat=1000;m.copper.copper=12*U;m.copper.tin=4*U;
         CopperWorkshops.tick(h.getLevel(),m);h.assertValueEqual(m.copper.bronze,16*U,"3 copper + 1 tin = 4 bronze");h.assertValueEqual(m.copper.total(),16*U,"No alloy multiplication");
-        var tablePos=origin.offset(-2,0,1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;m.copper.lastPour=h.getLevel().getGameTime()-10;table.setItem(1,new ItemStack(item("ingot_mold")));
+        var tablePos=origin.offset(-2,-1,1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;m.copper.lastPour=h.getLevel().getGameTime()-10;table.setItem(1,new ItemStack(item("ingot_mold")));
+        for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
+        h.assertTrue(table.getItem(3).isEmpty(),"Bare wall port does not pour");
+        var faucet=tablePos.above();var closed=block("casting_faucet").defaultBlockState().setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,Direction.WEST);
+        h.getLevel().setBlock(faucet,closed,Block.UPDATE_ALL);
+        for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
+        h.assertTrue(table.getItem(3).isEmpty(),"Closed faucet does not pour");
+        h.getLevel().setBlock(faucet,closed.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.OPEN,true),Block.UPDATE_ALL);
         for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
         h.assertTrue(table.getItem(3).is(item("bronze_ingot")),"Connected table casts bronze");h.assertTrue(table.getItem(1).is(item("ingot_mold")),"Mold is reusable");h.assertValueEqual(m.copper.total()+table.getItem(3).getCount()*4*U,16*U,"Casting conserves quarter-ingot units");h.succeed();
     }
+    @GameTest public void airPortNeedsOpenNozzle(GameTestHelper h){
+        var origin=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Formed hearth");
+        var bellowsPos=origin.offset(3,0,1);set(h,bellowsPos,block("hand_bellows"));var bellows=(MachineEntity)h.getLevel().getBlockEntity(bellowsPos);
+        h.assertFalse(CopperWorkshops.pump(h.getLevel(),bellows),"Port without a nozzle has no air connection");
+        var pos=origin.offset(2,0,1);var nozzle=block("air_nozzle").defaultBlockState().setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,Direction.EAST);
+        h.getLevel().setBlock(pos,nozzle,Block.UPDATE_ALL);h.assertFalse(CopperWorkshops.pump(h.getLevel(),bellows),"Closed nozzle blocks air");
+        h.getLevel().setBlock(pos,nozzle.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.OPEN,true),Block.UPDATE_ALL);h.assertTrue(CopperWorkshops.pump(h.getLevel(),bellows),"Open nozzle supplies air through wall port");h.assertValueEqual(m.copper.air,8,"Air budget preserved");h.succeed();
+    }
+    @GameTest public void loosePartsRotateOnlyWithShift(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,1,3));set(h,pos,block("casting_spout"));var player=h.makeMockServerPlayerInLevel();var tool=new ItemStack(item("configurator"));player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tool);
+        var hit=new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos),Direction.UP,pos,false);
+        player.gameMode.useItemOn(player,h.getLevel(),tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);h.assertTrue(h.getLevel().getBlockState(pos).getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING)==Direction.NORTH,"Normal click never turns part");
+        player.setShiftKeyDown(true);player.gameMode.useItemOn(player,h.getLevel(),tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);h.assertTrue(h.getLevel().getBlockState(pos).getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING)==Direction.EAST,"Sneak item path rotates exactly once");h.succeed();
+    }
+
 }

@@ -99,8 +99,8 @@
     },
     {
       "name": "casting_spout",
-      "display": "Casting Spout",
-      "display_ru": "Литейный носик",
+      "display": "Molten Metal Port",
+      "display_ru": "Жидкостный порт",
       "hardness": 2,
       "mining_level": "wood",
       "model": "smog:block/casting_spout",
@@ -110,8 +110,8 @@
     },
     {
       "name": "air_intake",
-      "display": "Air Intake",
-      "display_ru": "Воздушный ввод",
+      "display": "Air Port",
+      "display_ru": "Воздушный порт",
       "hardness": 2,
       "mining_level": "stone",
       "model": "smog:block/air_intake",
@@ -150,6 +150,30 @@
       "texture": "minecraft:block/furnace_front",
       "tab": "copper_age",
       "horizontal": true
+    },
+    {
+      "name": "casting_faucet",
+      "display": "Casting Faucet",
+      "display_ru": "Литейный краник",
+      "hardness": 2,
+      "mining_level": "stone",
+      "model": "smog:block/casting_faucet",
+      "texture": "minecraft:block/copper_block",
+      "horizontal": true,
+      "valve": true,
+      "tab": "copper_age"
+    },
+    {
+      "name": "air_nozzle",
+      "display": "Air Nozzle",
+      "display_ru": "Воздушная насадка",
+      "hardness": 2,
+      "mining_level": "stone",
+      "model": "smog:block/air_nozzle",
+      "texture": "minecraft:block/copper_block",
+      "horizontal": true,
+      "valve": true,
+      "tab": "copper_age"
     }
   ],
   "ores": [
@@ -1669,6 +1693,42 @@
           "id": "smog:solid_firebox"
         }
       }
+    },
+    {
+      "name": "casting_faucet",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " F ",
+          "PFP"
+        ],
+        "key": {
+          "F": "smog:copper_fitting",
+          "P": "smog:copper_pipe_part"
+        },
+        "result": {
+          "id": "smog:casting_faucet"
+        }
+      }
+    },
+    {
+      "name": "air_nozzle",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " F ",
+          "PFP"
+        ],
+        "key": {
+          "F": "smog:copper_fitting",
+          "P": "smog:copper_pipe_part"
+        },
+        "result": {
+          "id": "smog:air_nozzle"
+        }
+      }
     }
   ],
   "firing": [
@@ -1729,15 +1789,15 @@
       "message.smog.mold_selected": "Selected: %s",
       "jei.smog.guide.hearth": "Open hearth from 3x3x3 to 11x11x11. Interior must be empty: no crucibles or other blocks. Continuous floor and walls form a bowl. One Smog firebox on floor face, one to four wall spouts and optional air intakes. Functional components cannot occupy edges/corners. Controller anchors the front wall above floor. Molten metal remains visible in the chamber after assembly. Each interior cell stores eight ingots. Configure to assemble; sneak-click controller for optional GUI.",
       "jei.smog.guide.kiln": "Closed shell 3–5 wide/deep, 3–5 high. Empty chamber, one floor firebox and one or two roof vents. Configure to assemble. Load fuel and unfired ceramics by hand; empty-hand click collects output. Batch size 8–64 depends on chamber.",
-      "jei.smog.guide.casting": "Connect to spout directly or through up to eight channels, level or downhill. Click with mold to install; sneak empty-hand click removes it. Hot metal is selected automatically. Mold and finished casting are visible in world. Empty-hand click collects output.",
+      "jei.smog.guide.casting": "Attach a faucet outside a wall fluid port and open it. Place table directly below faucet, or route channels downhill beneath it. Click with mold to install; sneak empty-hand click removes mold. Empty-hand click collects output. Bare wall port never pours.",
       "jei.smog.guide.pottery": "Sneak empty-hand click selects a visible product. Click with clay or tempered clay to make up to eight. Empty-hand click collects output. Fire raw ceramics in a furnace or ceramic kiln. Sneak-click with an item opens the optional detailed GUI.",
-      "jei.smog.guide.bellows": "Place bellows beside an air intake on an assembled hearth. Right-click once to assist a batch of up to eight ingots. Increases heating/melting speed without changing metal yield.",
+      "jei.smog.guide.bellows": "Fit an air nozzle outside a formed hearth air port, open it and place hand bellows beside it. Right-click bellows to assist up to eight ingots. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.crucible": "Separate ceramic vessel. Do not install it inside the casting hearth: its chamber must be completely empty. Hearth capacity now comes from chamber dimensions, not crucibles.",
       "jei.smog.guide.firebox": "Exactly one Smog firebox in the floor. It shares the controller inventory rather than acting as a separate vanilla furnace. Click the assembled structure with fuel or feed the controller side with a hopper.",
-      "jei.smog.guide.spout": "Place one to four spouts in hearth walls. Connect tables using up to eight channel sections, horizontal or downhill. Compatible external fluid pipes connect to spout or controller. Right-click with fluid containers to fill/drain. Configure a loose part to rotate it.",
+      "jei.smog.guide.spout": "Wall fluid port does not pour by itself. Attach a casting faucet outside and open with right-click. It pours downward onto a table or channel below. Pipes and compatible containers may still connect directly to the port. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.lining": "Fire refractory bricks from tempered clay; four bricks make refractory masonry. Replace ordinary masonry or floor blocks to reduce heat loss. More lining gives better retention. All models use 16 pixels per block.",
       "jei.smog.guide.molds": "Reusable molds install with right-click on casting table. Ingot: one ingot. Plate: one plate per ingot. Fittings: four per ingot. Pipe blanks: four per two ingots. Tin supports ingots/plates; copper and bronze use all four molds.",
-      "jei.smog.guide.configurator": "Right-click controller to assemble. Sneak-right-click dismantles and rotates it. Formed parts route to their controller. Configure loose spouts, channels and intakes to rotate them. Feedback appears above the hotbar.",
+      "jei.smog.guide.configurator": "Right-click controller to assemble. Sneak-right-click dismantles and rotates it. Formed parts route to their controller. Sneak-right-click loose spouts, channels and intakes with the configurator to rotate them. Feedback appears above the hotbar.",
       "jei.smog.guide.residue": "Preserves an exact fractional fluid amount recovered when a tank is broken. Remelt it to recover all metal without rounding or duplication.",
       "jei.smog.guide.parts": "Cast copper and bronze parts. A plate contains one ingot, fitting a quarter, pipe blank a half. Remelting returns exactly the same amount. Parts remain available for upcoming copper-age devices.",
       "jei.smog.guide.bronze": "Three parts molten copper plus one part molten tin automatically become four parts molten bronze in a hot hearth. No mixing button. Excess metal stays in the tank. Reuse the same molds.",
@@ -1747,7 +1807,10 @@
       "jei.smog.copper.firing": "Batch firing: chamber size allows 8–64 items.",
       "jei.smog.copper.melting": "Heat the hearth; molten metal drains through a spout.",
       "message.smog.bellows": "Bellows operated: assists up to 8 ingots.",
-      "message.smog.bellows_disconnected": "Place beside an air intake of an assembled hearth."
+      "message.smog.bellows_disconnected": "Requires an open air nozzle and a formed hearth air port.",
+      "message.smog.valve_open": "Valve open",
+      "message.smog.valve_closed": "Valve closed",
+      "jei.smog.size_range": "Size: from %s to %s blocks"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -1775,26 +1838,29 @@
       "message.smog.molten_status": "Cu %s | Sn %s | Бронза %s слитков | Нагрев %s",
       "message.smog.mold_selected": "Выбрано: %s",
       "jei.smog.guide.hearth": "Открытый очаг от 3×3×3 до 11×11×11. Внутри только воздух: тигли и другие блоки не нужны и мешают сборке. Пол и стены образуют цельную чашу. Одна топка Smog внутри грани пола (не на рёбрах), один-четыре слива и необязательные воздушные вводы в стенах. Компоненты нельзя ставить на рёбрах и в углах; там только кладка. Контроллер на передней стене над полом. Металл виден в свободной камере после сборки, уровень зависит от заполнения. На каждый внутренний блок пространства приходится 8 слитков ёмкости. Настройщик собирает очаг; Shift+ПКМ контроллера открывает подробный интерфейс.",
-      "jei.smog.guide.kiln": "Закрытая оболочка 3–5 × 3–5, высота 3–5. Внутренняя камера пустая. Контроллер на передней стене над полом, одна топка Smog в полу и одна-две вытяжки в крыше. Стены кирпичные или огнеупорные. Соберите настройщиком. Загрузите сырую керамику и топливо рукой; ПКМ пустой рукой забирает результат. Камера определяет партию от 8 до 64 изделий. Обычный обжиг в ванильной печи также доступен.",
-      "jei.smog.guide.casting": "Поставьте стол вплотную к сливу или соедините короткими желобами. ПКМ формой устанавливает её; Shift+ПКМ пустой рукой снимает. Достаточный горячий расплав выбирается автоматически, форма остаётся целой. Металл, форма и отливка видны в мире. ПКМ пустой рукой забирает результат. По умолчанию предпочтение текущему металлу, затем бронзе, меди и олову.",
+      "jei.smog.guide.kiln": "Закрытая оболочка от 3 до 5 × от 3 до 5, высота от 3 до 5. Внутренняя камера пустая. Контроллер на передней стене над полом, одна топка Smog в полу и одна-две вытяжки в крыше. Стены кирпичные или огнеупорные. Соберите настройщиком. Загрузите сырую керамику и топливо рукой; ПКМ пустой рукой забирает результат. Камера определяет партию от 8 до 64 изделий. Обычный обжиг в ванильной печи также доступен.",
+      "jei.smog.guide.casting": "К стеновому жидкостному порту прикрепите краник снаружи. Откройте его ПКМ, стол поставьте непосредственно под краником либо подведите желоб вниз от него. ПКМ формой ставит форму, Shift+ПКМ пустой рукой снимает. Обычный ПКМ забирает отливку. Голый порт сам не льёт металл.",
       "jei.smog.guide.pottery": "Shift+ПКМ пустой рукой выбирает изделие: оно видно на столе, название над хотбаром. ПКМ глиной или печной массой загружает материал и делает партию до восьми штук. ПКМ пустой рукой забирает результат. Сырые формы и тигли обжигаются в обычной печи или печи обжига. Печная масса: четыре глиняных шарика и песок. Shift+ПКМ с предметом открывает дополнительный интерфейс.",
-      "jei.smog.guide.bellows": "Поставьте меха рядом с воздушным вводом собранного очага. ПКМ запускает помощь для партии до восьми слитков. Ускоряет нагрев и плавку, не увеличивая выход. Воздушные вводы можно располагать в разных частях стен.",
+      "jei.smog.guide.bellows": "Воздушный порт ставится в стенке. Снаружи прикрепите к нему воздушную насадку, откройте её ПКМ и поставьте рядом меха. ПКМ по мехам даёт нагнетание для партии до восьми слитков. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.crucible": "Отдельное керамическое изделие. В литейный очаг больше не устанавливается: камера очага должна быть полностью пустой. Вместимость очага определяется размерами свободного пространства, а не тиглями.",
       "jei.smog.guide.firebox": "Функциональная топка Smog в полу комплекса, одна на установку. Это не ванильная печь с отдельным инвентарём. ПКМ топливом по собранной установке загружает общее топливо. Воронка сбоку контроллера также подаёт топливо.",
-      "jei.smog.guide.spout": "Слив ставится в стене очага; допускается до четырёх. Желоба соединяют слив со столом на расстоянии до восьми секций по горизонтали или вниз. Трубы других модов могут подключаться к сливу и контроллеру. ПКМ совместимым жидкостным контейнером наполняет или опорожняет бак. До сборки настройщик поворачивает отдельную часть.",
+      "jei.smog.guide.spout": "Жидкостный порт — блок стенки, он сам не разливает металл. Прикрепите снаружи литейный краник и откройте его ПКМ. Расплав из краника льётся вниз: под ним нужен стол или желоб. Насадка не является частью стенки. Порт сохраняет подключение внешних труб и контейнеров. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.lining": "Огнеупорные кирпичи делаются из печной массы и обжигаются, четыре кирпича дают блок кладки. Кладка заменяет обычные кирпичи и части пола. Чем больше футеровки, тем медленнее остывает установка. Единая кирпичная текстура сохраняет 16 пикселей на блок.",
       "jei.smog.guide.molds": "Многоразовые формы устанавливаются ПКМ по литейному столу. Слитковая: 1 слиток. Плоская: 1 пластина за слиток. Мелких деталей: 4 фитинга за слиток. Трубная: 4 трубных элемента за 2 слитка. Олово используется для слитков и пластин. Геометрически одинаковая форма подходит для меди и бронзы.",
-      "jei.smog.guide.configurator": "ПКМ по контроллеру собирает комплекс по его правилам. Shift+ПКМ разбирает и поворачивает контроллер. По части собранной установки работает тот же контроллер. До сборки ПКМ по сливу, вводу или желобу поворачивает отдельную деталь. Сообщения отображаются над хотбаром.",
+      "jei.smog.guide.configurator": "ПКМ по контроллеру собирает комплекс по его правилам. Shift+ПКМ разбирает и поворачивает контроллер. По части собранной установки работает тот же контроллер. До сборки Shift+ПКМ по сливу, вводу или желобу поворачивает отдельную деталь. Сообщения отображаются над хотбаром.",
       "jei.smog.guide.residue": "Сохраняет точное количество металла, оставшееся после работы труб или разрушения бака. Переплавьте остаток обратно в очаге: материал не округляется и не теряется.",
       "jei.smog.guide.parts": "Медные и бронзовые детали получаются литьём. Пластина содержит один слиток, фитинг — четверть, трубный элемент — половину. Переплавка возвращает ровно исходное количество металла. Эти детали сохраняются для следующих устройств медной эпохи.",
       "jei.smog.guide.bronze": "В нагретом очаге 3 части расплавленной меди и 1 часть олова автоматически дают 4 части расплавленной бронзы. Кнопка смешивания не нужна. Излишки исходного металла остаются в баке. Для отливки используются те же многоразовые формы.",
       "jei.smog.guide.molten": "В баке только расплавленные медь, олово и бронза. Поддерживаются совместимые жидкостные контейнеры и трубы через Fabric Fluid Storage. Один слиток — 9000 единиц Fabric, ведро — 81000, то есть 9 слитков. Посторонние жидкости не принимаются. Совместимость металлов задаётся общими тегами c:molten_*. Добытый металл других модов принимается через c:ingots/* и родственные теги.",
-      "jei.smog.structure.copper_hearth": "Открытый корпус 3–11 по каждой оси. Центр пустой. Топка в полу, слив и ввод в гранях; рёбра/углы — только кладка. Настройщиком по контроллеру.",
+      "jei.smog.structure.copper_hearth": "Открытый корпус от 3 до 11 по каждой оси. Центр пустой. Топка в полу, слив и ввод в гранях; рёбра/углы — только кладка. Настройщиком по контроллеру.",
       "jei.smog.structure.ceramic_kiln": "Закрытая оболочка, пустая камера. Топка в полу, вытяжка в крыше. ПКМ настройщиком. Подробности — страница информации контроллера.",
       "jei.smog.copper.firing": "Обжиг партии: от 8 до 64 изделий по камере.",
       "jei.smog.copper.melting": "Нагрейте очаг; расплав сливается через носик.",
       "message.smog.bellows": "Меха запущены: помощь для партии до 8 слитков.",
-      "message.smog.bellows_disconnected": "Рядом нужен воздушный ввод собранного очага."
+      "message.smog.bellows_disconnected": "Нужны открытая воздушная насадка и порт собранного очага.",
+      "message.smog.valve_open": "Кран открыт",
+      "message.smog.valve_closed": "Кран закрыт",
+      "jei.smog.size_range": "Размеры: от %s до %s блоков"
     }
   }
 }
