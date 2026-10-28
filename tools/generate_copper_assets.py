@@ -28,17 +28,44 @@ COPPER=palette(image('item/copper_ingot'));RAW_CLAY=palette(image('item/clay_bal
 BRONZE=[]
 for c in COPPER:
  h,sat,val=colorsys.rgb_to_hsv(*(v/255 for v in c));BRONZE.append(tuple(round(v*255) for v in colorsys.hsv_to_rgb(h+.035,sat*.9,val*.9)))
-FIRED=palette(ImageEnhance.Brightness(ImageEnhance.Color(image('item/brick')).enhance(1.2)).enhance(.72))
+FIRED=[(46,38,31),(70,57,45),(99,80,61),(128,105,80),(155,132,103),(184,160,126),(209,186,151)]
 def sprite(n,im):
  p=A/'textures/item'/(n+'.png');p.parent.mkdir(parents=True,exist_ok=True)
  if REFRESH_ICONS or not p.exists():im.save(p)
 def plate(colors):
  raw=remap(image('item/iron_ingot'),colors);im=Image.new('RGBA',(16,16));part=raw.crop(raw.getbbox()).resize((14,5),Image.Resampling.NEAREST);im.alpha_composite(part,(1,6));return im
+def pipe(colors):
+ im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
+ # Short diagonal cylinder with an open bore; no lenses, glass or telescope bands.
+ d.polygon([(2,8),(8,2),(12,3),(14,7),(8,14),(4,13)],fill=colors[1]+(255,))
+ d.polygon([(3,8),(9,3),(12,4),(13,7),(7,13),(4,12)],fill=colors[4]+(255,))
+ d.line([(4,8),(9,3),(11,4)],fill=colors[-1]+(255,));d.line([(8,12),(13,7)],fill=colors[2]+(255,))
+ d.polygon([(2,8),(5,7),(8,9),(9,12),(7,14),(4,13),(2,11)],fill=colors[3]+(255,))
+ d.polygon([(3,9),(5,8),(7,10),(8,12),(6,13),(4,12)],fill=tuple(max(12,round(v*.28)) for v in colors[0])+(255,))
+ d.line([(3,9),(5,8),(7,10)],fill=colors[-2]+(255,));d.line([(4,12),(6,13),(8,12)],fill=colors[1]+(255,))
+ return im
+
+def mold_icon(kind,colors):
+ im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
+ # Shallow rhomboid tray in three-quarter view, with a visible thick front rim.
+ d.polygon([(1,6),(10,2),(14,6),(14,10),(5,14),(1,10)],fill=colors[1]+(255,))
+ d.polygon([(1,6),(10,2),(14,6),(5,10)],fill=colors[4]+(255,))
+ d.polygon([(1,7),(5,11),(14,7),(14,10),(5,14),(1,10)],fill=colors[2]+(255,))
+ d.line([(1,6),(10,2),(14,6)],fill=colors[-1]+(255,));d.line([(1,7),(5,11),(14,7)],fill=colors[3]+(255,))
+ # Project cavity outlines in the same inclined top plane, never across side faces.
+ shapes={'ingot':[[(4,6),(9,4),(11,6),(6,8)]],
+ 'plate':[[(3,6),(9,3),(12,6),(6,9)]],
+ 'fitting':[[(4,6),(5,5),(6,6),(5,7)],[(7,5),(8,4),(9,5),(8,6)],[(7,7),(8,6),(9,7),(8,8)],[(10,6),(11,5),(12,6),(11,7)]],
+ 'pipe':[[(3,6),(9,3),(10,4),(4,7)],[(6,8),(12,5),(13,6),(7,9)]]}[kind]
+ for points in shapes:
+  d.polygon(points,fill=colors[0]+(255,));d.line(points[:2],fill=colors[1]+(255,));d.line(points[2:]+[points[0]],fill=colors[-2]+(255,))
+ return im
+
 for e in C['items']:
  n=e['name']
  if n=='copper_plate':im=plate(COPPER)
  elif n.endswith('_fitting'):im=remap(image('item/iron_chain'),COPPER if n.startswith('copper') else BRONZE)
- elif n.endswith('_pipe_part'):im=remap(image('item/spyglass'),COPPER if n.startswith('copper') else BRONZE)
+ elif n.endswith('_pipe_part'):im=pipe(COPPER if n.startswith('copper') else BRONZE)
  elif n=='metal_residue':im=image('item/iron_nugget')
  elif n=='tempered_clay':
   im=image('item/clay_ball');d=ImageDraw.Draw(im)
@@ -47,15 +74,7 @@ for e in C['items']:
  elif n=='configurator':im=remap(image('item/stick'),COPPER)
  else:
   colors=RAW_CLAY if n.startswith('unfired_') else FIRED;im=remap(image('item/brick'),colors)
-  if 'mold' in n:
-   kind=n.removeprefix('unfired_').removesuffix('_mold')
-   grooves={'ingot':[(5,7,10,9)],'plate':[(4,6,11,10)],'fitting':[(5,6,6,7),(8,6,9,7),(5,9,6,10),(8,9,9,10)],'pipe':[(4,7,11,7),(5,9,12,9)]}[kind]
-   for x0,y0,x1,y1 in grooves:
-    for y in range(y0,y1+1):
-     for x in range(x0,x1+1):
-      if im.getpixel((x,y))[3]:im.putpixel((x,y),colors[0 if y==y0 else 1]+(255,))
-    for x in range(x0,x1+1):
-     if y1+1<16 and im.getpixel((x,y1+1))[3]:im.putpixel((x,y1+1),colors[-3]+(255,))
+  if 'mold' in n:im=mold_icon(n.removeprefix('unfired_').removesuffix('_mold'),colors)
  sprite(n,im)
 # The bronze family uses the same small ramp and vanilla silhouettes as copper parts.
 for kind,base in [('ingot','iron_ingot'),('nugget','iron_nugget'),('dust','redstone')]:sprite('bronze_'+kind,remap(image('item/'+base),BRONZE))
@@ -90,13 +109,32 @@ def model(n,elements,textures):
  textures=dict(textures);textures['particle']=next(iter(textures.values()))
  p.write_text(json.dumps(dict(parent='minecraft:block/block',textures=textures,elements=surface(elements),display=dict(gui=dict(rotation=[30,225,0],translation=[0,0,0],scale=[.6,.6,.6]),fixed=dict(rotation=[0,180,0],scale=[.5,.5,.5]))),indent=2)+'\n',encoding='utf-8')
 
-refractory=ImageEnhance.Brightness(ImageEnhance.Color(image('block/bricks')).enhance(1.2)).enhance(.72)
+# Large staggered refractory blocks in an ash/sand palette, not red vanilla brickwork.
+refractory=Image.new('RGBA',(16,16),FIRED[1]+(255,));d=ImageDraw.Draw(refractory)
+for row,(y0,y1) in enumerate([(0,6),(8,14)]):
+ for x0,x1 in ([(-4,5),(7,16)] if row else [(0,9),(11,20)]):
+  d.rectangle((x0,y0,x1,y1),fill=FIRED[3]+(255,))
+  d.line((x0,y0,x1,y0),fill=FIRED[4]+(255,));d.line((x0,y0,x0,y1),fill=FIRED[4]+(255,))
+  d.line((x0,y1,x1,y1),fill=FIRED[2]+(255,))
+for x,y in [(2,3),(7,5),(13,2),(2,11),(10,10),(14,13)]:d.point((x,y),fill=FIRED[2]+(255,))
 refractory.save(A/'textures/block/refractory_bricks.png')
-firebrick=ImageEnhance.Brightness(ImageEnhance.Color(image('item/brick')).enhance(1.2)).enhance(.72)
-firebrick.save(A/'textures/item/firebrick.png')
-# Native furnace apertures, copied at 1:1 scale onto the shared brick face.
-for name,rect in [('hearth',(3,7,13,14)),('kiln',(3,4,13,14)),('firebox',(3,7,13,14))]:
- front=refractory.copy();furnace=image('block/furnace_front');front.alpha_composite(furnace.crop(rect),(rect[0],rect[1]));front.save(A/('textures/block/refractory_'+name+'_front.png'))
+remap(image('item/brick'),FIRED).save(A/'textures/item/firebrick.png')
+# Hand-built device panels, avoiding the recognizable furnace mouth.
+for name in ['hearth','kiln','firebox']:
+ front=refractory.copy();d=ImageDraw.Draw(front)
+ if name=='hearth':
+  d.rectangle((3,3,12,12),fill=FIRED[1]+(255,));d.rectangle((4,4,11,11),fill=FIRED[4]+(255,))
+  d.rectangle((5,5,10,10),fill=FIRED[2]+(255,));d.line((5,5,10,5),fill=FIRED[1]+(255,))
+  d.rectangle((6,7,9,9),fill=COPPER[3]+(255,));d.line((6,7,9,7),fill=COPPER[-1]+(255,))
+ elif name=='kiln':
+  d.polygon([(3,12),(3,5),(5,3),(10,3),(12,5),(12,12)],fill=FIRED[1]+(255,))
+  d.polygon([(4,11),(4,5),(6,4),(9,4),(11,5),(11,11)],fill=FIRED[3]+(255,))
+  d.line((4,6,11,6),fill=FIRED[2]+(255,));d.line((4,10,11,10),fill=FIRED[2]+(255,))
+  for y in [6,9]:d.rectangle((5,y,6,y+1),fill=COPPER[2]+(255,))
+ else:
+  d.rectangle((3,4,12,12),fill=FIRED[2]+(255,))
+  for x in [4,7,10]:d.rectangle((x,5,x+1,11),fill=FIRED[0]+(255,));d.line((x,5,x,10),fill=FIRED[4]+(255,))
+ front.save(A/('textures/block/refractory_'+name+'_front.png'))
 leather=image('block/brown_terracotta')
 for y in [6,10,13]:
  for x in range(16):
@@ -115,7 +153,8 @@ model('potter_table',legs+[box([0,11,0],[16,14,16],'wood'),box([3,14,3],[13,16,1
 model('casting_table',[box([0,0,0],[3,10,16],'brick'),box([13,0,0],[16,10,16],'brick'),box([0,9,0],[16,11,16],'brick'),box([2,11,2],[14,12,14],'clay')],dict(brick=brick,clay=clay))
 model('hand_bellows',[box([1,0,1],[15,3,15],'wood'),box([2,3,2],[14,10,14],'leather'),box([1,10,1],[15,13,15],'wood'),box([0,4,5],[3,9,11],'dark')],dict(wood=wood,leather='smog:block/bellows_leather',dark='minecraft:block/coal_block'))
 for n,face in [('copper_hearth','hearth'),('ceramic_kiln','kiln'),('solid_firebox','firebox')]:
- model(n,[box([0,0,1],[16,16,16],{'all':'brick','north':'front'}),box([5,6,0],[11,8,2],'handle')],dict(brick=brick,front='smog:block/refractory_'+face+'_front',handle='minecraft:block/copper_block'))
+ details={'hearth':[box([6,6,0],[10,10,2],'handle')],'kiln':[box([10,6,0],[12,10,2],'handle')],'firebox':[box([4,3,0],[12,5,2],'handle')]}[face]
+ model(n,[box([0,0,1],[16,16,16],{'all':'brick','north':'front'})]+details,dict(brick=brick,front='smog:block/refractory_'+face+'_front',handle='minecraft:block/copper_block'))
 # Only currently needed GUI images are installed in main resources.
 gui=A/'textures/gui';gui.mkdir(parents=True,exist_ok=True)
 for n in ['slot','structure_preview']:
