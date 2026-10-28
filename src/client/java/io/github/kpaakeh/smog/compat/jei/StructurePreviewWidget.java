@@ -48,7 +48,8 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         var minecraft=Minecraft.getInstance();var resolver=new BlockModelResolver(minecraft.getModelManager());
         List<StructurePreviewState.Part> parts=new ArrayList<>();
         var display=BlockDisplayContext.create();
-        if (formed) {
+        boolean normalized=formed&&io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(page.controller()))==null;
+        if (normalized) {
             var model=new BlockModelRenderState();resolver.update(model,page.previewState(true),display);
             parts.add(new StructurePreviewState.Part(BlockPos.ZERO,model));
         } else {
@@ -67,7 +68,7 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         }
         var b=page.structure().bounds();float size=Math.max(b.width(),Math.max(b.height(),b.depth()));
         var pose=new Matrix3x2f(graphics.pose());var scissor=graphics.scissorStack.peek();
-        graphics.guiRenderState.addPicturesInPictureState(new StructurePreviewState(List.copyOf(parts),b,formed,yaw,pitch,4,28,166,104,
+        graphics.guiRenderState.addPicturesInPictureState(new StructurePreviewState(List.copyOf(parts),b,normalized,yaw,pitch,4,28,166,104,
             54f/size*zoom,pose,scissor,PictureInPictureRenderState.getBounds(4,28,166,104,pose,scissor)));
         graphics.text(minecraft.font,net.minecraft.network.chat.Component.translatable(formed?"jei.smog.formed":"jei.smog.blueprint"),8,32,0xFFBDD9E5,false);
     }

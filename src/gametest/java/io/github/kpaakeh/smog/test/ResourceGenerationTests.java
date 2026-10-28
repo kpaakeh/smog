@@ -52,16 +52,16 @@ public final class ResourceGenerationTests {
         }
         h.succeed();
     }
-    @GameTest public void activeCatalogContainsNoIndustry(GameTestHelper h) throws IOException {
+    @GameTest public void copperCatalogContainsNoLegacyIndustry(GameTestHelper h) throws IOException {
         try(var stream=ResourceGenerationTests.class.getResourceAsStream("/smog.content.json")) {
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
             h.assertTrue(root.getAsJsonObject("resource_policy").get("uranium_required").getAsBoolean(),"Uranium is mandatory for planned nuclear power");
             h.assertValueEqual(root.getAsJsonArray("ores").size(),13,"Requested ore count");h.assertValueEqual(root.getAsJsonArray("deposits").size(),7,"Requested deposit count");h.assertValueEqual(root.getAsJsonArray("underground_resources").size(),2,"Requested underground resource count");
-            h.assertTrue(root.getAsJsonArray("machines").isEmpty()&&root.getAsJsonArray("multiblocks").isEmpty(),"Release catalog has no legacy machines or generators");
-            for(var value:root.getAsJsonArray("items"))h.assertFalse(value.getAsJsonObject().has("kind"),"No old wire coils or configurator registered in release");
+            h.assertTrue(root.getAsJsonArray("machines").asList().stream().allMatch(v->v.getAsJsonObject().get("kind").getAsString().equals("COPPER_WORKSHOP")),"Only copper-era workshops are active");
+            for(var value:root.getAsJsonArray("items"))h.assertFalse(value.getAsJsonObject().has("kind")&&value.getAsJsonObject().get("kind").getAsString().equals("wire"),"No electrical wire coils in copper release");
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
-        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems().size(),10,"Only seven natural blocks and three material buckets in release tab");
+        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems().size(),19,"Natural materials and copper building parts");
         for(var stack:BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems())h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"No test content in release tab");
         h.assertFalse(BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(ModBlocks.id("machines")),"No empty industry tab");
         h.assertTrue(TestIndustryContent.fixture(BuiltInRegistries.ITEM.getValue(ModBlocks.id("electric_furnace"))),"System test fixture remains separate");

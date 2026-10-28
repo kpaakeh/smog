@@ -31,6 +31,7 @@ public final class SmogJeiPlugin implements IModPlugin {
     @Override public Identifier getPluginUid() { return ModBlocks.id("jei"); }
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))registration.addRecipeCategories(new CopperCategory(registration.getJeiHelpers().getGuiHelper()));
         for(var kind:List.of(io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER,io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))
             if(Machines.all().stream().anyMatch(machine->machine.spec().kind()==kind))registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),kind));
     }
@@ -43,6 +44,7 @@ public final class SmogJeiPlugin implements IModPlugin {
             if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
         }
         registration.addRecipes(TYPE, pages);
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))registration.addRecipes(CopperCategory.TYPE,io.github.kpaakeh.smog.copper.CopperWorkshops.recipes());
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER))registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
     }
@@ -52,7 +54,7 @@ public final class SmogJeiPlugin implements IModPlugin {
         @Override public IRecipeType<Page> getRecipeType() { return TYPE; }
         @Override public Component getTitle() { return Component.translatable("jei.smog.multiblocks"); }
         @Override public int getWidth() { return 170; }
-        @Override public int getHeight() { return 150; }
+        @Override public int getHeight() { return 168; }
         @Override public IDrawable getIcon() { return icon; }
         @Override public void setRecipe(IRecipeLayoutBuilder builder, Page page, IFocusGroup focuses) {
             builder.addOutputSlot(150,0).add(page.controller());
@@ -70,6 +72,8 @@ public final class SmogJeiPlugin implements IModPlugin {
         @Override public void createRecipeExtras(IRecipeExtrasBuilder builder, Page page, IFocusGroup focuses) {
             var preview=new StructurePreviewWidget(page);
             builder.addWidget(preview);builder.addInputHandler(preview);
+            var complex=io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(page.controller()));
+            if(complex!=null)builder.addText(Component.literal(complex.minWidth()+".."+complex.maxWidth()+" x "+complex.minHeight()+".."+complex.maxHeight()+" x "+complex.minDepth()+".."+complex.maxDepth()),166,12).setPosition(2,154);
             var b=page.structure().bounds();
             builder.addText(Component.translatable("multiblock."+page.structure().id().getNamespace()+"."+page.structure().id().getPath()),146,12).setPosition(2,0);
             builder.addText(Component.literal(b.width()+" x "+b.height()+" x "+b.depth()),140,10).setPosition(2,14);

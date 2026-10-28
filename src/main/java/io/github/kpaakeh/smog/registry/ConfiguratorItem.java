@@ -12,7 +12,10 @@ public final class ConfiguratorItem extends Item {
     public ConfiguratorItem(Properties properties){super(properties);}
     @Override public InteractionResult useOn(UseOnContext context){
         var level=context.getLevel();var pos=context.getClickedPos();var player=context.getPlayer();
-        if(!(level.getBlockEntity(pos) instanceof MachineEntity machine) || player==null)return InteractionResult.PASS;
+        if(player==null)return InteractionResult.PASS;
+        MachineEntity machine=level.getBlockEntity(pos) instanceof MachineEntity value?value:level instanceof net.minecraft.server.level.ServerLevel server?io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.owner(server,pos):null;
+        if(machine==null)return InteractionResult.PASS;
+        pos=machine.getBlockPos();
         if(level.isClientSide())return InteractionResult.SUCCESS;
         if(player.isShiftKeyDown()) {
             machine.disassemble();
@@ -22,6 +25,7 @@ public final class ConfiguratorItem extends Item {
         } else if(machine.multiblockController()) {
             boolean formed=machine.tryAssemble();
             player.sendSystemMessage(Component.translatable(formed?"message.smog.multiblock_formed":"message.smog.multiblock_incomplete"));
+            if(!formed&&!machine.assemblyDetail().isEmpty())player.sendSystemMessage(Component.literal(machine.assemblyDetail()));
         } else {
             var state=level.getBlockState(pos);
             level.setBlock(pos,state.setValue(MachineBlock.FACING,state.getValue(MachineBlock.FACING).getClockWise()),Block.UPDATE_ALL);

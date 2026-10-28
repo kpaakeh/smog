@@ -4,7 +4,7 @@ from PIL import Image,ImageDraw
 import json
 PROJECT=Path(__file__).resolve().parents[1]
 CATALOG=json.loads((PROJECT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
-ROOT=PROJECT/('src/main/resources' if CATALOG.get('machines') else 'src/gametest/resources')/'assets/smog/textures/gui'
+ROOT=PROJECT/('src/main/resources' if any(m.get('kind')!='COPPER_WORKSHOP' for m in CATALOG.get('machines',[])) else 'src/gametest/resources')/'assets/smog/textures/gui'
 ROOT.mkdir(parents=True,exist_ok=True)
 def save(name,im):
     p=ROOT/(name+'.png')

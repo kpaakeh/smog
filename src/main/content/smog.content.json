@@ -13,9 +13,141 @@
       "values": [
         "minecraft:sulfur"
       ]
+    },
+    {
+      "registry": "block",
+      "id": "smog:hearth_floor",
+      "values": [
+        "minecraft:stone",
+        "minecraft:cobblestone",
+        "minecraft:bricks",
+        "smog:firebrick_casing"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "smog:hearth_floor",
+      "values": [
+        "minecraft:stone",
+        "minecraft:cobblestone",
+        "minecraft:bricks",
+        "smog:firebrick_casing"
+      ]
+    },
+    {
+      "registry": "block",
+      "id": "smog:copper_masonry",
+      "values": [
+        "minecraft:bricks",
+        "smog:firebrick_casing"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "smog:copper_masonry",
+      "values": [
+        "minecraft:bricks",
+        "smog:firebrick_casing"
+      ]
     }
   ],
-  "blocks": [],
+  "blocks": [
+    {
+      "name": "ceramic_crucible",
+      "display": "Ceramic Crucible",
+      "display_ru": "Керамический тигель",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/ceramic_crucible",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "large_ceramic_crucible",
+      "display": "Large Ceramic Crucible",
+      "display_ru": "Увеличенный керамический тигель",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/large_ceramic_crucible",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "firebrick_casing",
+      "display": "Refractory Masonry",
+      "display_ru": "Футерованная кладка",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/firebrick_casing",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "casting_spout",
+      "display": "Casting Spout",
+      "display_ru": "Литейный носик",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/casting_spout",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age",
+      "horizontal": true
+    },
+    {
+      "name": "air_intake",
+      "display": "Air Intake",
+      "display_ru": "Воздушный ввод",
+      "hardness": 2,
+      "mining_level": "stone",
+      "model": "smog:block/air_intake",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age",
+      "horizontal": true
+    },
+    {
+      "name": "kiln_vent",
+      "display": "Kiln Vent",
+      "display_ru": "Печная вытяжка",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/kiln_vent",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "casting_channel",
+      "display": "Casting Channel",
+      "display_ru": "Литейный желоб",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/casting_channel",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age",
+      "horizontal": true
+    },
+    {
+      "name": "copper_workshop_lantern",
+      "display": "Workshop Lantern",
+      "display_ru": "Мастерской светильник",
+      "hardness": 2,
+      "mining_level": "stone",
+      "model": "smog:block/copper_workshop_lantern",
+      "texture": "minecraft:block/bricks",
+      "tab": "copper_age",
+      "light": 14
+    },
+    {
+      "name": "solid_firebox",
+      "display": "Solid Fuel Firebox",
+      "display_ru": "Твердотопливная топка",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/solid_firebox",
+      "texture": "minecraft:block/furnace_front",
+      "tab": "copper_age",
+      "horizontal": true
+    }
+  ],
   "ores": [
     {
       "name": "tin",
@@ -278,8 +410,359 @@
       "mining_level": "netherite"
     }
   ],
-  "machines": [],
-  "multiblocks": [],
+  "machines": [
+    {
+      "name": "copper_hearth",
+      "display": "Casting Hearth",
+      "display_ru": "Литейный очаг",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/copper_hearth",
+      "assembled_model": "smog:block/copper_hearth",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood",
+      "multiblock": "smog:copper_hearth"
+    },
+    {
+      "name": "casting_table",
+      "display": "Casting Table",
+      "display_ru": "Литейный стол",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/casting_table",
+      "assembled_model": "smog:block/casting_table",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "potter_table",
+      "display": "Potter Table",
+      "display_ru": "Стол керамиста",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/potter_table",
+      "assembled_model": "smog:block/potter_table",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "hand_bellows",
+      "display": "Hand Bellows",
+      "display_ru": "Ручные меха",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/hand_bellows",
+      "assembled_model": "smog:block/hand_bellows",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "ceramic_kiln",
+      "display": "Ceramic Kiln",
+      "display_ru": "Печь обжига",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/ceramic_kiln",
+      "assembled_model": "smog:block/ceramic_kiln",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood",
+      "multiblock": "smog:ceramic_kiln"
+    }
+  ],
+  "multiblocks": [
+    {
+      "name": "copper_hearth",
+      "display": "Casting Hearth (small example)",
+      "display_ru": "Литейный очаг (малый пример)",
+      "parts": [
+        {
+          "x": -1,
+          "y": -1,
+          "z": 0,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": -1,
+          "y": -1,
+          "z": 1,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": -1,
+          "y": -1,
+          "z": 2,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": 0,
+          "y": -1,
+          "z": 0,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": 0,
+          "y": -1,
+          "z": 1,
+          "block": "smog:solid_firebox"
+        },
+        {
+          "x": 0,
+          "y": -1,
+          "z": 2,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 0,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 1,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 2,
+          "block": "minecraft:cobblestone"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:casting_spout"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:ceramic_crucible"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:air_intake"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 2,
+          "block": "minecraft:bricks"
+        }
+      ]
+    },
+    {
+      "name": "ceramic_kiln",
+      "display": "Ceramic Kiln (small example)",
+      "display_ru": "Печь обжига (малый пример)",
+      "parts": [
+        {
+          "x": -1,
+          "y": -1,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": -1,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": -1,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 0,
+          "y": -1,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 0,
+          "y": -1,
+          "z": 1,
+          "block": "smog:solid_firebox"
+        },
+        {
+          "x": 0,
+          "y": -1,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "minecraft:air"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:kiln_vent"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 2,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 0,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "minecraft:bricks"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 2,
+          "block": "minecraft:bricks"
+        }
+      ]
+    }
+  ],
   "fluids": [
     {
       "name": "coolant",
@@ -320,7 +803,123 @@
       ]
     }
   ],
-  "items": [],
+  "items": [
+    {
+      "name": "configurator",
+      "display": "Configurator",
+      "display_ru": "Настройщик",
+      "tab": "copper_age",
+      "kind": "configurator"
+    },
+    {
+      "name": "tempered_clay",
+      "display": "Tempered Clay",
+      "display_ru": "Печная масса",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_crucible",
+      "display": "Unfired Crucible",
+      "display_ru": "Сырой тигель",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_large_crucible",
+      "display": "Unfired Large Crucible",
+      "display_ru": "Сырой увеличенный тигель",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_firebrick",
+      "display": "Unfired Firebrick",
+      "display_ru": "Сырой огнеупорный кирпич",
+      "tab": "copper_age"
+    },
+    {
+      "name": "firebrick",
+      "display": "Firebrick",
+      "display_ru": "Огнеупорный кирпич",
+      "tab": "copper_age"
+    },
+    {
+      "name": "copper_plate",
+      "display": "Copper Plate",
+      "display_ru": "Медная пластина",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_ingot_mold",
+      "display": "Unfired Ingot Mold",
+      "display_ru": "Сырая слитковая форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "ingot_mold",
+      "display": "Ingot Mold",
+      "display_ru": "Слитковая форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_plate_mold",
+      "display": "Unfired Plate Mold",
+      "display_ru": "Сырая плоская форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "plate_mold",
+      "display": "Plate Mold",
+      "display_ru": "Плоская форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_fitting_mold",
+      "display": "Unfired Fitting Mold",
+      "display_ru": "Сырая форма мелких деталей",
+      "tab": "copper_age"
+    },
+    {
+      "name": "fitting_mold",
+      "display": "Fitting Mold",
+      "display_ru": "Форма мелких деталей",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_pipe_mold",
+      "display": "Unfired Pipe Mold",
+      "display_ru": "Сырая трубная форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "pipe_mold",
+      "display": "Pipe Mold",
+      "display_ru": "Трубная форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "copper_fitting",
+      "display": "Copper Fitting",
+      "display_ru": "Медный фитинг",
+      "tab": "copper_age"
+    },
+    {
+      "name": "copper_pipe_part",
+      "display": "Copper Pipe Blank",
+      "display_ru": "Медный трубный элемент",
+      "tab": "copper_age"
+    },
+    {
+      "name": "bronze_fitting",
+      "display": "Bronze Fitting",
+      "display_ru": "Бронзовый фитинг",
+      "tab": "copper_age"
+    },
+    {
+      "name": "bronze_pipe_part",
+      "display": "Bronze Pipe Blank",
+      "display_ru": "Бронзовый трубный элемент",
+      "tab": "copper_age"
+    }
+  ],
   "alloys": [
     {
       "name": "steel",
@@ -332,6 +931,13 @@
         "minecraft:coal"
       ],
       "mining_level": "iron"
+    },
+    {
+      "name": "bronze",
+      "material": "Bronze",
+      "material_ru": "бронзы",
+      "color": "B8874D",
+      "mining_level": "stone"
     }
   ],
   "metals": [
@@ -499,5 +1105,596 @@
     "uranium_required": true,
     "sulfur_source": "minecraft:sulfur",
     "stable_raw_materials": true
+  },
+  "complex_multiblocks": [
+    {
+      "min_width": 3,
+      "max_width": 5,
+      "min_depth": 3,
+      "max_depth": 5,
+      "floor": "#smog:hearth_floor",
+      "casing": "#smog:copper_masonry",
+      "id": "smog:copper_hearth",
+      "controller": "smog:copper_hearth",
+      "closed": false,
+      "min_height": 2,
+      "max_height": 3,
+      "roles": [
+        {
+          "name": "fuel",
+          "block": "smog:solid_firebox",
+          "zones": [
+            "floor"
+          ],
+          "min": 1,
+          "max": 1
+        },
+        {
+          "name": "crucible",
+          "block": "smog:ceramic_crucible",
+          "zones": [
+            "interior"
+          ],
+          "min": 0,
+          "max": 9
+        },
+        {
+          "name": "large_crucible",
+          "block": "smog:large_ceramic_crucible",
+          "zones": [
+            "interior"
+          ],
+          "min": 0,
+          "max": 9
+        },
+        {
+          "name": "spout",
+          "block": "smog:casting_spout",
+          "zones": [
+            "wall"
+          ],
+          "min": 1,
+          "max": 4
+        },
+        {
+          "name": "air",
+          "block": "smog:air_intake",
+          "zones": [
+            "wall"
+          ],
+          "min": 0,
+          "max": 4
+        },
+        {
+          "name": "lining",
+          "block": "smog:firebrick_casing",
+          "zones": [
+            "floor",
+            "wall"
+          ],
+          "min": 0,
+          "max": 100
+        }
+      ],
+      "required_any": [
+        {
+          "roles": [
+            "crucible",
+            "large_crucible"
+          ],
+          "min": 1
+        }
+      ]
+    },
+    {
+      "min_width": 3,
+      "max_width": 5,
+      "min_depth": 3,
+      "max_depth": 5,
+      "floor": "#smog:hearth_floor",
+      "casing": "#smog:copper_masonry",
+      "id": "smog:ceramic_kiln",
+      "controller": "smog:ceramic_kiln",
+      "closed": true,
+      "min_height": 3,
+      "max_height": 5,
+      "roles": [
+        {
+          "name": "fuel",
+          "block": "smog:solid_firebox",
+          "zones": [
+            "floor"
+          ],
+          "min": 1,
+          "max": 1
+        },
+        {
+          "name": "vent",
+          "block": "smog:kiln_vent",
+          "zones": [
+            "roof"
+          ],
+          "min": 1,
+          "max": 2
+        },
+        {
+          "name": "lining",
+          "block": "smog:firebrick_casing",
+          "zones": [
+            "floor",
+            "wall",
+            "roof"
+          ],
+          "min": 0,
+          "max": 150
+        }
+      ]
+    }
+  ],
+  "pottery": [
+    {
+      "input": "minecraft:clay_ball",
+      "count": 2,
+      "output": "smog:unfired_ingot_mold"
+    },
+    {
+      "input": "minecraft:clay_ball",
+      "count": 2,
+      "output": "smog:unfired_plate_mold"
+    },
+    {
+      "input": "minecraft:clay_ball",
+      "count": 2,
+      "output": "smog:unfired_fitting_mold"
+    },
+    {
+      "input": "minecraft:clay_ball",
+      "count": 3,
+      "output": "smog:unfired_pipe_mold"
+    },
+    {
+      "input": "minecraft:clay_ball",
+      "count": 8,
+      "output": "smog:unfired_crucible"
+    },
+    {
+      "input": "smog:tempered_clay",
+      "count": 12,
+      "output": "smog:unfired_large_crucible"
+    },
+    {
+      "input": "smog:tempered_clay",
+      "count": 2,
+      "output": "smog:unfired_firebrick"
+    }
+  ],
+  "crafting": [
+    {
+      "name": "potter_table",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "C C",
+          "PPP",
+          "S S"
+        ],
+        "key": {
+          "C": "minecraft:clay_ball",
+          "P": "minecraft:oak_planks",
+          "S": "minecraft:stick"
+        },
+        "result": {
+          "id": "smog:potter_table",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "casting_table",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BBB",
+          "S S",
+          "S S"
+        ],
+        "key": {
+          "B": "minecraft:brick",
+          "S": "minecraft:cobblestone"
+        },
+        "result": {
+          "id": "smog:casting_table",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "copper_hearth",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BBB",
+          "BFB",
+          "CCC"
+        ],
+        "key": {
+          "B": "minecraft:brick",
+          "F": "minecraft:furnace",
+          "C": "minecraft:cobblestone"
+        },
+        "result": {
+          "id": "smog:copper_hearth",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "ceramic_kiln",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BBB",
+          "BFB",
+          "BBB"
+        ],
+        "key": {
+          "B": "minecraft:brick",
+          "F": "minecraft:furnace"
+        },
+        "result": {
+          "id": "smog:ceramic_kiln",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "hand_bellows",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP",
+          "LLL",
+          "PPP"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "L": "minecraft:leather"
+        },
+        "result": {
+          "id": "smog:hand_bellows",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "configurator",
+      "unlock": "minecraft:stick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " S",
+          "S "
+        ],
+        "key": {
+          "S": "minecraft:stick"
+        },
+        "result": {
+          "id": "smog:configurator",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "unfired_crucible",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "C C",
+          "C C",
+          "CCC"
+        ],
+        "key": {
+          "C": "minecraft:clay_ball"
+        },
+        "result": {
+          "id": "smog:unfired_crucible",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "unfired_ingot_mold",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:clay_ball",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:unfired_ingot_mold",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "unfired_plate_mold",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:clay_ball",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:unfired_plate_mold",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "unfired_fitting_mold",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:clay_ball",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:unfired_fitting_mold",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "unfired_pipe_mold",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:clay_ball",
+          "minecraft:clay_ball",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:unfired_pipe_mold",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "tempered_clay",
+      "unlock": "minecraft:clay_ball",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:clay_ball",
+          "minecraft:clay_ball",
+          "minecraft:clay_ball",
+          "minecraft:clay_ball",
+          "minecraft:sand"
+        ],
+        "result": {
+          "id": "smog:tempered_clay",
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "casting_spout",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "B B",
+          "BBB"
+        ],
+        "key": {
+          "B": "minecraft:brick"
+        },
+        "result": {
+          "id": "smog:casting_spout",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "casting_channel",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "B B",
+          "BBB"
+        ],
+        "key": {
+          "B": "minecraft:brick"
+        },
+        "result": {
+          "id": "smog:casting_channel",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "kiln_vent",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "B B",
+          "BBB"
+        ],
+        "key": {
+          "B": "minecraft:brick"
+        },
+        "result": {
+          "id": "smog:kiln_vent",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "air_intake",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "B B",
+          "BBB"
+        ],
+        "key": {
+          "B": "minecraft:brick"
+        },
+        "result": {
+          "id": "smog:air_intake",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "firebrick_casing",
+      "unlock": "smog:firebrick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BB",
+          "BB"
+        ],
+        "key": {
+          "B": "smog:firebrick"
+        },
+        "result": {
+          "id": "smog:firebrick_casing",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "copper_workshop_lantern",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " F ",
+          "PGP",
+          " T "
+        ],
+        "key": {
+          "F": "smog:copper_fitting",
+          "P": "smog:copper_plate",
+          "G": "minecraft:glass_pane",
+          "T": "minecraft:torch"
+        },
+        "result": {
+          "id": "smog:copper_workshop_lantern",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "solid_firebox",
+      "unlock": "minecraft:furnace",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BFB"
+        ],
+        "key": {
+          "B": "minecraft:brick",
+          "F": "minecraft:furnace"
+        },
+        "result": {
+          "id": "smog:solid_firebox"
+        }
+      }
+    }
+  ],
+  "firing": [
+    {
+      "input": "smog:unfired_ingot_mold",
+      "output": "smog:ingot_mold"
+    },
+    {
+      "input": "smog:unfired_plate_mold",
+      "output": "smog:plate_mold"
+    },
+    {
+      "input": "smog:unfired_fitting_mold",
+      "output": "smog:fitting_mold"
+    },
+    {
+      "input": "smog:unfired_pipe_mold",
+      "output": "smog:pipe_mold"
+    },
+    {
+      "input": "smog:unfired_crucible",
+      "output": "smog:ceramic_crucible"
+    },
+    {
+      "input": "smog:unfired_large_crucible",
+      "output": "smog:large_ceramic_crucible"
+    },
+    {
+      "input": "smog:unfired_firebrick",
+      "output": "smog:firebrick"
+    }
+  ],
+  "translations": {
+    "en_us": {
+      "itemGroup.smog.copper_age": "Smog: Copper Age",
+      "gui.smog.copper.previous": "Previous",
+      "gui.smog.copper.next": "Next",
+      "gui.smog.copper.craft": "Make batch",
+      "gui.smog.copper.alloy": "3Cu + Sn",
+      "gui.smog.copper.heat": "Heat: %s / %s",
+      "gui.smog.copper.metal": "Metal: %s / %s ingots",
+      "gui.smog.copper.selection": "Mode: %s",
+      "gui.smog.copper.status_0": "Ready",
+      "gui.smog.copper.status_1": "Assemble with configurator",
+      "gui.smog.copper.status_2": "Add recipe input",
+      "gui.smog.copper.status_3": "Add fuel",
+      "gui.smog.copper.status_4": "Warming up",
+      "gui.smog.copper.status_5": "Storage full",
+      "gui.smog.copper.status_6": "Insert suitable mold",
+      "gui.smog.copper.status_7": "Casting / cooling",
+      "gui.smog.copper.status_8": "Not enough molten metal",
+      "conductor.smog.bronze": "Bronze",
+      "jei.smog.copper.title": "Copper workshop",
+      "jei.smog.copper.pottery": "Choose shape; make a batch.",
+      "jei.smog.copper.casting": "Melt in hearth; pour into reusable mold.",
+      "jei.smog.copper.alloy": "Melt Cu and Sn; press alloy button."
+    },
+    "ru_ru": {
+      "itemGroup.smog.copper_age": "Smog: Медная эпоха",
+      "gui.smog.copper.previous": "Назад",
+      "gui.smog.copper.next": "Далее",
+      "gui.smog.copper.craft": "Партия",
+      "gui.smog.copper.alloy": "3Cu + Sn",
+      "gui.smog.copper.heat": "Нагрев: %s / %s",
+      "gui.smog.copper.metal": "Металл: %s / %s слитков",
+      "gui.smog.copper.selection": "Выбор: %s",
+      "gui.smog.copper.status_0": "Готово",
+      "gui.smog.copper.status_1": "Соберите настройщиком",
+      "gui.smog.copper.status_2": "Нужно сырьё",
+      "gui.smog.copper.status_3": "Нужно топливо",
+      "gui.smog.copper.status_4": "Идёт нагрев",
+      "gui.smog.copper.status_5": "Нет места",
+      "gui.smog.copper.status_6": "Нужна подходящая форма",
+      "gui.smog.copper.status_7": "Литьё / охлаждение",
+      "gui.smog.copper.status_8": "Не хватает расплава",
+      "conductor.smog.bronze": "Бронза",
+      "jei.smog.copper.title": "Медная мастерская",
+      "jei.smog.copper.pottery": "Выберите изделие и сделайте партию.",
+      "jei.smog.copper.casting": "Расплав в очаге, многоразовая форма.",
+      "jei.smog.copper.alloy": "Расплавьте Cu и Sn; кнопка сплава."
+    }
   }
 }

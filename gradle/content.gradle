@@ -57,6 +57,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             validId(baseModel)
             if (!entry.model) write("assets/smog/models/block/${name}.json", [parent:'minecraft:block/cube_all', textures:[all:texture]])
             def variants = ['':[model:baseModel]]
+            if(entry.horizontal){variants=[:];[north:0,east:90,south:180,west:270].each { facing,rotation -> variants["facing=$facing"]=[model:baseModel,y:rotation] }}
             if (machine) {
                 def assembled = entry.assembled_model ?: "smog:block/${name}_assembled"
                 validId(assembled)
@@ -198,6 +199,8 @@ abstract class GenerateSmogContent extends DefaultTask {
             if(entry.model)write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:entry.model]])
         }
         root.machines.each { block(it, it.name, it.texture, true) }
+        (root.crafting ?: []).each { entry -> recipe(entry.name,entry.data,entry.unlock) }
+        (root.firing ?: []).each { entry -> recipe(entry.output.split(':')[1]+'_firing',[type:'minecraft:smelting',ingredient:entry.input,result:[id:entry.output],experience:0.1,cookingtime:200],entry.input) }
         root.blocks.findAll { it.recipe_core }.each { entry ->
             recipe(entry.name,[type:'minecraft:crafting_shaped',pattern:['III','ICI','III'],key:[I:'minecraft:iron_ingot',C:entry.recipe_core],result:[id:"smog:${entry.name}",count:entry.recipe_count ?: 1]],entry.recipe_core)
         }
@@ -256,6 +259,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             en["multiblock.smog.${entry.name}"] = entry.display ?: entry.name
             ru["multiblock.smog.${entry.name}"] = entry.display_ru ?: entry.display ?: entry.name
         }
+        en.putAll(root.translations?.en_us ?: [:]);ru.putAll(root.translations?.ru_ru ?: [:]);
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
     }

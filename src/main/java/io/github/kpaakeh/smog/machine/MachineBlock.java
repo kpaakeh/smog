@@ -26,6 +26,10 @@ public class MachineBlock extends Block implements EntityBlock {
         return super.useItemOn(stack,state,level,pos,player,hand,hit);
     }
     @Override protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,net.minecraft.world.phys.BlockHitResult hit) {
+        if(level.getBlockEntity(pos) instanceof MachineEntity bellows && bellows.machineId().getPath().equals("hand_bellows")) {
+            if(level instanceof net.minecraft.server.level.ServerLevel server)io.github.kpaakeh.smog.copper.CopperWorkshops.pump(server,bellows);
+            return net.minecraft.world.InteractionResult.SUCCESS;
+        }
         if(level.getBlockEntity(pos) instanceof MachineEntity machine && machine.spec().gui()) {
             if(!level.isClientSide())player.openMenu(machine);
             return net.minecraft.world.InteractionResult.SUCCESS;

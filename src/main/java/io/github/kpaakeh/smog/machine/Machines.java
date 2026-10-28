@@ -21,7 +21,7 @@ public final class Machines {
         BlockEntityType<MachineEntity> type = new BlockEntityType<>((pos, state) -> new MachineEntity(id, pos, state), Set.of(block));
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, type);
         ENTRIES.put(id, new Entry(block, type, definition, spec));
-        team.reborn.energy.api.EnergyStorage.SIDED.registerForBlockEntity((machine,side)->machine.energyStorage(),type);
+        if(spec.kind()!=MachineSpec.Kind.COPPER_WORKSHOP)team.reborn.energy.api.EnergyStorage.SIDED.registerForBlockEntity((machine,side)->machine.energyStorage(),type);
         return block;
     }
     public static Entry get(Identifier id) { return Objects.requireNonNull(ENTRIES.get(id), "Unknown machine " + id); }

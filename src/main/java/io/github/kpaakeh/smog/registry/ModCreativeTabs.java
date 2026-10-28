@@ -12,7 +12,7 @@ import net.minecraft.world.item.*;
 public final class ModCreativeTabs {
     private ModCreativeTabs() {}
     public static void initialize(com.google.gson.JsonObject catalog) {
-        if(!catalog.getAsJsonArray("machines").isEmpty())Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("machines"), FabricCreativeModeTab.builder()
+        if(!catalog.getAsJsonArray("machines").isEmpty()&&catalog.getAsJsonArray("machines").asList().stream().anyMatch(v->!v.getAsJsonObject().get("kind").getAsString().equals("COPPER_WORKSHOP")))Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("machines"), FabricCreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smog.machines"))
             .icon(() -> Machines.all().iterator().next().block().asItem().getDefaultInstance())
             .displayItems((parameters, output) -> {Machines.all().forEach(e -> output.accept(e.block()));ModItems.all().stream().filter(e->e.tab().equals("machines")).forEach(e->output.accept(e.item()));}).build());
@@ -20,6 +20,14 @@ public final class ModCreativeTabs {
             .title(Component.translatable("itemGroup.smog.ores"))
             .icon(() -> ModOres.all().getFirst().stone().asItem().getDefaultInstance())
             .displayItems((parameters, output) -> {ModOres.all().forEach(ore -> ore.contents().forEach(output::accept));ModAlloys.all().forEach(alloy->alloy.contents().forEach(output::accept));ModDeposits.all().forEach(deposit->{output.accept(deposit.chunk());output.accept(deposit.dust());});ModItems.all().stream().filter(e->e.tab().equals("ores")).forEach(e->output.accept(e.item()));}).build());
+        if(catalog.has("complex_multiblocks")) {
+            List<net.minecraft.world.level.ItemLike> copper=new ArrayList<>();
+            for(var value:catalog.getAsJsonArray("machines"))copper.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
+            for(var value:catalog.getAsJsonArray("blocks"))if(value.getAsJsonObject().has("tab")&&value.getAsJsonObject().get("tab").getAsString().equals("copper_age"))copper.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
+            ModItems.all().stream().filter(e->e.tab().equals("copper_age")).forEach(e->copper.add(e.item()));
+            ModAlloys.all().stream().filter(e->e.name().equals("bronze")).forEach(e->copper.addAll(e.contents()));
+            Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id("copper_age"),FabricCreativeModeTab.builder().title(Component.translatable("itemGroup.smog.copper_age")).icon(()->Items.COPPER_INGOT.getDefaultInstance()).displayItems((parameters,output)->copper.forEach(output::accept)).build());
+        }
         // Catalog ownership is explicit: test fixtures and late registrations cannot leak into tabs.
         List<net.minecraft.world.level.block.Block> blocks=new ArrayList<>();
         for(var value:catalog.getAsJsonArray("blocks"))blocks.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));

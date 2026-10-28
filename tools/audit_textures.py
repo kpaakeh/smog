@@ -28,6 +28,8 @@ for kind in ['items','blockstates']:
 content=json.loads((ROOT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
 for fluid in content['fluids']:
     for kind in ['still','flow','overlay']:used.add('block/'+fluid['name']+'_'+kind+'.png')
+if any(m.get('kind')=='COPPER_WORKSHOP' for m in content.get('machines',[])):
+    used.update('gui/'+n+'.png' for n in ['copper_workshop','slot','structure_preview'])
 textures=SOURCE/'assets/smog/textures';actual={p.relative_to(textures).as_posix() for p in textures.rglob('*.png')}
 unused=sorted(actual-used);absent=sorted(used-actual)
 print('Active PNGs:',len(actual),'Unused:',len(unused),'Missing:',len(absent))

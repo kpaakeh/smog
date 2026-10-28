@@ -20,8 +20,11 @@ public final class ContentCatalog {
         try (var stream = ContentCatalog.class.getResourceAsStream("/smog.content.json")) {
             if (stream == null) throw new IllegalStateException("Missing content catalog");
             JsonObject root = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+            if(root.has("complex_multiblocks"))io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.load(root.getAsJsonArray("complex_multiblocks"));
             for (var value : root.getAsJsonArray("blocks")) {
-                var o = value.getAsJsonObject(); ModBlocks.register(o.get("name").getAsString(), BlockBehaviour.Properties.of().strength(hardness(o)).noOcclusion().requiresCorrectToolForDrops());
+                var o = value.getAsJsonObject(); var properties=BlockBehaviour.Properties.of().strength(hardness(o)).noOcclusion().lightLevel(state->o.has("light")?o.get("light").getAsInt():0).requiresCorrectToolForDrops();
+                if(o.has("horizontal")&&o.get("horizontal").getAsBoolean())ModBlocks.register(o.get("name").getAsString(),io.github.kpaakeh.smog.copper.WorkshopPartBlock::new,properties,true);
+                else ModBlocks.register(o.get("name").getAsString(),properties);
             }
             for (var value : root.getAsJsonArray("ores")) {
                 var o = value.getAsJsonObject(); String name = o.get("name").getAsString();

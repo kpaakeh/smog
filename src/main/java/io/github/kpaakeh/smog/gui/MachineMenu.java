@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 
 public final class MachineMenu extends AbstractContainerMenu {
-    public static final int DATA_SIZE=12;
+    public static final int DATA_SIZE=20;
     public final GuiLayouts.Layout layout;
     public final Container container;
     public final ContainerData data;
@@ -24,6 +24,7 @@ public final class MachineMenu extends AbstractContainerMenu {
     @Override public boolean stillValid(Player player) { return container.stillValid(player); }
     @Override public boolean clickMenuButton(Player player,int id) {
         if(!stillValid(player) || !(container instanceof MachineEntity machine))return false;
+        if(machine.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP && id>=20)return io.github.kpaakeh.smog.copper.CopperWorkshops.button(machine,id);
         if(id==0)machine.enabled(!machine.enabled());else if(id==1)machine.cycleTransferRate();else return false;
         broadcastChanges();return true;
     }
