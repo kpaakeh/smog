@@ -16,6 +16,7 @@ public final class ClientFormations {
     private static Set<BlockPos> controllers = Set.of();
     private static ClientLevel currentLevel;
     private ClientFormations() {}
+    public static java.util.List<MachineEntity> machines(){return java.util.List.copyOf(LOADED);}
     public static boolean hidden(BlockPos pos) { return hidden.contains(pos); }
     public static boolean controller(BlockPos pos) { return controllers.contains(pos); }
     public static Rotation rotation(MachineEntity machine) {

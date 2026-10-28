@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "brick": "minecraft:block/white_terracotta",
-    "particle": "minecraft:block/white_terracotta"
+    "brick": "smog:block/refractory_bricks",
+    "particle": "smog:block/refractory_bricks"
   },
   "elements": [
     {
@@ -17,24 +17,6 @@
         16
       ],
       "faces": {
-        "north": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "west": {
           "texture": "#brick",
           "uv": [
@@ -53,6 +35,15 @@
             16
           ]
         },
+        "down": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
         "up": {
           "texture": "#brick",
           "uv": [
@@ -62,7 +53,16 @@
             16
           ]
         },
-        "down": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
           "texture": "#brick",
           "uv": [
             0,

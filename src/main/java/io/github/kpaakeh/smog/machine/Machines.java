@@ -22,6 +22,7 @@ public final class Machines {
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, type);
         ENTRIES.put(id, new Entry(block, type, definition, spec));
         if(spec.kind()!=MachineSpec.Kind.COPPER_WORKSHOP)team.reborn.energy.api.EnergyStorage.SIDED.registerForBlockEntity((machine,side)->machine.energyStorage(),type);
+        if(name.equals("copper_hearth"))net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlockEntity((machine,side)->machine.molten,type);
         return block;
     }
     public static Entry get(Identifier id) { return Objects.requireNonNull(ENTRIES.get(id), "Unknown machine " + id); }

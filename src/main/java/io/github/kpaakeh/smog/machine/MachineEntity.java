@@ -26,6 +26,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     private ComplexMultiblockDefinition.Shape complexShape;
     private ComplexMultiblockDefinition.Inspection complexInspection;
     private String assemblyDetail="";
+    public final io.github.kpaakeh.smog.copper.MoltenMetalStorage molten=new io.github.kpaakeh.smog.copper.MoltenMetalStorage(this);
     public final io.github.kpaakeh.smog.copper.CopperState copper=new io.github.kpaakeh.smog.copper.CopperState();
     public ComplexMultiblockDefinition complexDefinition(){return ComplexMultiblocks.get(machineId);}
     public ComplexMultiblockDefinition.Shape complexShape(){return complexShape;}

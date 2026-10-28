@@ -28,7 +28,7 @@ public final class WireCoilItem extends Item {
         if(!(context.getLevel() instanceof ServerLevel level))return InteractionResult.SUCCESS;
         var player=context.getPlayer();if(player==null)return InteractionResult.PASS;
         var pos=context.getClickedPos();var stack=context.getItemInHand();
-        if(!EnergyNetwork.connector(level,pos,material)){player.sendSystemMessage(Component.translatable("message.smog.connector_required",material.displayName()));return InteractionResult.FAIL;}
+        if(!EnergyNetwork.connector(level,pos,material)){player.sendOverlayMessage(Component.translatable("message.smog.connector_required",material.displayName()));return InteractionResult.FAIL;}
         var data=stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();
         if(player.isShiftKeyDown()){
             WireData.get(level).disconnect(pos).forEach(link->EnergyNetwork.refund(level,pos,link.material()));
@@ -37,15 +37,15 @@ public final class WireCoilItem extends Item {
         String dimension=level.dimension().identifier().toString();
         if(!data.getStringOr("smog_wire_dimension","").equals(dimension)){
             data.putString("smog_wire_dimension",dimension);data.putInt("smog_wire_x",pos.getX());data.putInt("smog_wire_y",pos.getY());data.putInt("smog_wire_z",pos.getZ());
-            stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));player.sendSystemMessage(Component.translatable("message.smog.wire_start"));return InteractionResult.SUCCESS;
+            stack.set(DataComponents.CUSTOM_DATA,CustomData.of(data));player.sendOverlayMessage(Component.translatable("message.smog.wire_start"));return InteractionResult.SUCCESS;
         }
         BlockPos start=new BlockPos(data.getIntOr("smog_wire_x",0),data.getIntOr("smog_wire_y",0),data.getIntOr("smog_wire_z",0));
-        if(!EnergyNetwork.connector(level,start,material)||start.equals(pos)||start.distSqr(pos)>material.reach*material.reach){player.sendSystemMessage(Component.translatable("message.smog.wire_invalid",material.reach));return InteractionResult.FAIL;}
+        if(!EnergyNetwork.connector(level,start,material)||start.equals(pos)||start.distSqr(pos)>material.reach*material.reach){player.sendOverlayMessage(Component.translatable("message.smog.wire_invalid",material.reach));return InteractionResult.FAIL;}
         WireLink link=new WireLink(start,pos,material,ConnectorBlock.attachment(level.getBlockState(start)),ConnectorBlock.attachment(level.getBlockState(pos)));
         for(int i=1;i<32;i++){
             BlockPos test=BlockPos.containing(link.point(i/32.0));
             if(!level.hasChunkAt(test)||!test.equals(start)&&!test.equals(pos)&&level.getBlockState(test).isCollisionShapeFullBlock(level,test)){
-                player.sendSystemMessage(Component.translatable("message.smog.wire_obstructed"));return InteractionResult.FAIL;
+                player.sendOverlayMessage(Component.translatable("message.smog.wire_obstructed"));return InteractionResult.FAIL;
             }
         }
         if(!WireData.get(level).add(link))return InteractionResult.FAIL;

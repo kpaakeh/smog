@@ -49,6 +49,19 @@
         "minecraft:bricks",
         "smog:firebrick_casing"
       ]
+    },
+    {
+      "registry": "item",
+      "id": "c:unfired_ceramics",
+      "values": [
+        "smog:unfired_crucible",
+        "smog:unfired_large_crucible",
+        "smog:unfired_firebrick",
+        "smog:unfired_ingot_mold",
+        "smog:unfired_plate_mold",
+        "smog:unfired_fitting_mold",
+        "smog:unfired_pipe_mold"
+      ]
     }
   ],
   "blocks": [
@@ -60,7 +73,8 @@
       "mining_level": "wood",
       "model": "smog:block/ceramic_crucible",
       "texture": "minecraft:block/bricks",
-      "tab": "copper_age"
+      "tab": "copper_age",
+      "hollow_crucible": true
     },
     {
       "name": "large_ceramic_crucible",
@@ -70,7 +84,8 @@
       "mining_level": "wood",
       "model": "smog:block/large_ceramic_crucible",
       "texture": "minecraft:block/bricks",
-      "tab": "copper_age"
+      "tab": "copper_age",
+      "hollow_crucible": true
     },
     {
       "name": "firebrick_casing",
@@ -124,17 +139,6 @@
       "texture": "minecraft:block/bricks",
       "tab": "copper_age",
       "horizontal": true
-    },
-    {
-      "name": "copper_workshop_lantern",
-      "display": "Workshop Lantern",
-      "display_ru": "Мастерской светильник",
-      "hardness": 2,
-      "mining_level": "stone",
-      "model": "smog:block/copper_workshop_lantern",
-      "texture": "minecraft:block/bricks",
-      "tab": "copper_age",
-      "light": 14
     },
     {
       "name": "solid_firebox",
@@ -559,13 +563,13 @@
           "x": -1,
           "y": 0,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 0,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 0,
@@ -577,7 +581,7 @@
           "x": 0,
           "y": 0,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
@@ -589,13 +593,13 @@
           "x": 1,
           "y": 0,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 0,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         }
       ]
     },
@@ -608,61 +612,61 @@
           "x": -1,
           "y": -1,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": -1,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": -1,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 0,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 0,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 0,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 1,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 1,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": -1,
           "y": 1,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 0,
           "y": -1,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 0,
@@ -674,7 +678,7 @@
           "x": 0,
           "y": -1,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 0,
@@ -686,13 +690,13 @@
           "x": 0,
           "y": 0,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 0,
           "y": 1,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 0,
@@ -704,61 +708,61 @@
           "x": 0,
           "y": 1,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": -1,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": -1,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": -1,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 0,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 0,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 1,
           "z": 0,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 1,
           "z": 1,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         },
         {
           "x": 1,
           "y": 1,
           "z": 2,
-          "block": "minecraft:bricks"
+          "block": "smog:firebrick_casing"
         }
       ]
     }
@@ -800,6 +804,45 @@
       "bucket_texture": "smog:item/mineral_brine_bucket",
       "tags": [
         "smog:underground_fluids"
+      ]
+    },
+    {
+      "name": "molten_copper",
+      "display": "Molten Copper",
+      "display_ru": "Расплав: медь",
+      "color": "ED913F",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_copper_bucket",
+      "tags": [
+        "c:molten_copper"
+      ]
+    },
+    {
+      "name": "molten_tin",
+      "display": "Molten Tin",
+      "display_ru": "Расплав: олово",
+      "color": "F0CD97",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_tin_bucket",
+      "tags": [
+        "c:molten_tin"
+      ]
+    },
+    {
+      "name": "molten_bronze",
+      "display": "Molten Bronze",
+      "display_ru": "Расплав: бронза",
+      "color": "DFA64B",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_bronze_bucket",
+      "tags": [
+        "c:molten_bronze"
       ]
     }
   ],
@@ -917,6 +960,12 @@
       "name": "bronze_pipe_part",
       "display": "Bronze Pipe Blank",
       "display_ru": "Бронзовый трубный элемент",
+      "tab": "copper_age"
+    },
+    {
+      "name": "metal_residue",
+      "display": "Recoverable Metal Residue",
+      "display_ru": "Металлический остаток",
       "tab": "copper_age"
     }
   ],
@@ -1578,28 +1627,6 @@
       }
     },
     {
-      "name": "copper_workshop_lantern",
-      "unlock": "smog:copper_fitting",
-      "data": {
-        "type": "minecraft:crafting_shaped",
-        "pattern": [
-          " F ",
-          "PGP",
-          " T "
-        ],
-        "key": {
-          "F": "smog:copper_fitting",
-          "P": "smog:copper_plate",
-          "G": "minecraft:glass_pane",
-          "T": "minecraft:torch"
-        },
-        "result": {
-          "id": "smog:copper_workshop_lantern",
-          "count": 1
-        }
-      }
-    },
-    {
       "name": "solid_firebox",
       "unlock": "minecraft:furnace",
       "data": {
@@ -1670,7 +1697,30 @@
       "jei.smog.copper.title": "Copper workshop",
       "jei.smog.copper.pottery": "Choose shape; make a batch.",
       "jei.smog.copper.casting": "Melt in hearth; pour into reusable mold.",
-      "jei.smog.copper.alloy": "Melt Cu and Sn; press alloy button."
+      "jei.smog.copper.alloy": "Keep Cu and Sn molten together: automatic 3:1 alloy.",
+      "message.smog.molten_status": "Cu %s | Sn %s | Bronze %s ingots | Heat %s",
+      "message.smog.mold_selected": "Selected: %s",
+      "jei.smog.guide.hearth": "Open shell: width/depth 3–5, height 2–3. Controller on front wall above floor, not a corner. One firebox in floor, one or more crucibles inside, one to four spouts in walls. Configure to assemble. Drop metal into crucible or load by hand. Hot Cu and Sn automatically alloy 3:1. Sneak-right-click controller for optional detailed GUI.",
+      "jei.smog.guide.kiln": "Closed shell 3–5 wide/deep, 3–5 high. Empty chamber, one floor firebox and one or two roof vents. Configure to assemble. Load fuel and unfired ceramics by hand; empty-hand click collects output. Batch size 8–64 depends on chamber.",
+      "jei.smog.guide.casting": "Connect to spout directly or through up to eight channels, level or downhill. Click with mold to install; sneak empty-hand click removes it. Hot metal is selected automatically. Mold and finished casting are visible in world. Empty-hand click collects output.",
+      "jei.smog.guide.pottery": "Sneak empty-hand click selects a visible product. Click with clay or tempered clay to make up to eight. Empty-hand click collects output. Fire raw ceramics in a furnace or ceramic kiln. Sneak-click with an item opens the optional detailed GUI.",
+      "jei.smog.guide.bellows": "Place bellows beside an air intake on an assembled hearth. Right-click once to assist a batch of up to eight ingots. Increases heating/melting speed without changing metal yield.",
+      "jei.smog.guide.crucible": "Place inside a hearth. Basic crucible stores 16 ingots, large stores 32. More crucibles add capacity. Metal level and color are visible in the hollow vessel. Throw items inside or load by hand. Cooling preserves metal; reheat before pouring.",
+      "jei.smog.guide.firebox": "Exactly one Smog firebox in the floor. It shares the controller inventory rather than acting as a separate vanilla furnace. Click the assembled structure with fuel or feed the controller side with a hopper.",
+      "jei.smog.guide.spout": "Place one to four spouts in hearth walls. Connect tables using up to eight channel sections, horizontal or downhill. Compatible external fluid pipes connect to spout or controller. Right-click with fluid containers to fill/drain. Configure a loose part to rotate it.",
+      "jei.smog.guide.lining": "Fire refractory bricks from tempered clay; four bricks make refractory masonry. Replace ordinary masonry or floor blocks to reduce heat loss. More lining gives better retention. All models use 16 pixels per block.",
+      "jei.smog.guide.molds": "Reusable molds install with right-click on casting table. Ingot: one ingot. Plate: one plate per ingot. Fittings: four per ingot. Pipe blanks: four per two ingots. Tin supports ingots/plates; copper and bronze use all four molds.",
+      "jei.smog.guide.configurator": "Right-click controller to assemble. Sneak-right-click dismantles and rotates it. Formed parts route to their controller. Configure loose spouts, channels and intakes to rotate them. Feedback appears above the hotbar.",
+      "jei.smog.guide.residue": "Preserves an exact fractional fluid amount recovered when a tank is broken. Remelt it to recover all metal without rounding or duplication.",
+      "jei.smog.guide.parts": "Cast copper and bronze parts. A plate contains one ingot, fitting a quarter, pipe blank a half. Remelting returns exactly the same amount. Parts remain available for upcoming copper-age devices.",
+      "jei.smog.guide.bronze": "Three parts molten copper plus one part molten tin automatically become four parts molten bronze in a hot hearth. No mixing button. Excess metal stays in the tank. Reuse the same molds.",
+      "jei.smog.guide.molten": "Tank accepts molten copper, tin and bronze via Fabric Fluid Storage. 9000 Fabric units per ingot; 81000 per bucket (9 ingots). Other fluids are rejected. Common c:molten_* and item material tags allow integration.",
+      "jei.smog.structure.copper_hearth": "Open top; floor firebox, interior crucible, wall spout. Brick/refractory walls. Use configurator. See controller information page for full rules.",
+      "jei.smog.structure.ceramic_kiln": "Closed shell, empty chamber. Floor firebox, roof vent. Use configurator. Controller information page lists full rules.",
+      "jei.smog.copper.firing": "Batch firing: chamber size allows 8–64 items.",
+      "jei.smog.copper.melting": "Heat the hearth; molten metal drains through a spout.",
+      "message.smog.bellows": "Bellows operated: assists up to 8 ingots.",
+      "message.smog.bellows_disconnected": "Place beside an air intake of an assembled hearth."
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -1694,7 +1744,30 @@
       "jei.smog.copper.title": "Медная мастерская",
       "jei.smog.copper.pottery": "Выберите изделие и сделайте партию.",
       "jei.smog.copper.casting": "Расплав в очаге, многоразовая форма.",
-      "jei.smog.copper.alloy": "Расплавьте Cu и Sn; кнопка сплава."
+      "jei.smog.copper.alloy": "Cu и Sn вместе в расплаве: автосплав 3:1.",
+      "message.smog.molten_status": "Cu %s | Sn %s | Бронза %s слитков | Нагрев %s",
+      "message.smog.mold_selected": "Выбрано: %s",
+      "jei.smog.guide.hearth": "Открытый корпус: ширина и глубина 3–5, высота 2–3. Контроллер в передней стене над полом, не в углу. Пол: камень, булыжник, кирпичи или огнеупорная кладка. Стены: кирпичи или огнеупорная кладка. Нужны одна топка Smog в полу, минимум один тигель внутри и один слив в стене. Воздушные вводы необязательны. Соберите настройщиком. Бросайте металл в тигель или загрузите рукой. Медь и олово при нагреве автоматически смешиваются 3:1. Shift+ПКМ контроллера открывает подробный интерфейс.",
+      "jei.smog.guide.kiln": "Закрытая оболочка 3–5 × 3–5, высота 3–5. Внутренняя камера пустая. Контроллер на передней стене над полом, одна топка Smog в полу и одна-две вытяжки в крыше. Стены кирпичные или огнеупорные. Соберите настройщиком. Загрузите сырую керамику и топливо рукой; ПКМ пустой рукой забирает результат. Камера определяет партию от 8 до 64 изделий. Обычный обжиг в ванильной печи также доступен.",
+      "jei.smog.guide.casting": "Поставьте стол вплотную к сливу или соедините короткими желобами. ПКМ формой устанавливает её; Shift+ПКМ пустой рукой снимает. Достаточный горячий расплав выбирается автоматически, форма остаётся целой. Металл, форма и отливка видны в мире. ПКМ пустой рукой забирает результат. По умолчанию предпочтение текущему металлу, затем бронзе, меди и олову.",
+      "jei.smog.guide.pottery": "Shift+ПКМ пустой рукой выбирает изделие: оно видно на столе, название над хотбаром. ПКМ глиной или печной массой загружает материал и делает партию до восьми штук. ПКМ пустой рукой забирает результат. Сырые формы и тигли обжигаются в обычной печи или печи обжига. Печная масса: четыре глиняных шарика и песок. Shift+ПКМ с предметом открывает дополнительный интерфейс.",
+      "jei.smog.guide.bellows": "Поставьте меха рядом с воздушным вводом собранного очага. ПКМ запускает помощь для партии до восьми слитков. Ускоряет нагрев и плавку, не увеличивая выход. Воздушные вводы можно располагать в разных частях стен.",
+      "jei.smog.guide.crucible": "Устанавливается внутри очага. Обычный тигель хранит 16 слитков, увеличенный — 32. Дополнительные тигли увеличивают вместимость. Металл, его цвет и уровень видны в чаше. Тигель полый: предметы можно бросать внутрь. После охлаждения металл сохраняется; для разлива его нужно нагреть.",
+      "jei.smog.guide.firebox": "Функциональная топка Smog в полу комплекса, одна на установку. Это не ванильная печь с отдельным инвентарём. ПКМ топливом по собранной установке загружает общее топливо. Воронка сбоку контроллера также подаёт топливо.",
+      "jei.smog.guide.spout": "Слив ставится в стене очага; допускается до четырёх. Желоба соединяют слив со столом на расстоянии до восьми секций по горизонтали или вниз. Трубы других модов могут подключаться к сливу и контроллеру. ПКМ совместимым жидкостным контейнером наполняет или опорожняет бак. До сборки настройщик поворачивает отдельную часть.",
+      "jei.smog.guide.lining": "Огнеупорные кирпичи делаются из печной массы и обжигаются, четыре кирпича дают блок кладки. Кладка заменяет обычные кирпичи и части пола. Чем больше футеровки, тем медленнее остывает установка. Единая кирпичная текстура сохраняет 16 пикселей на блок.",
+      "jei.smog.guide.molds": "Многоразовые формы устанавливаются ПКМ по литейному столу. Слитковая: 1 слиток. Плоская: 1 пластина за слиток. Мелких деталей: 4 фитинга за слиток. Трубная: 4 трубных элемента за 2 слитка. Олово используется для слитков и пластин. Геометрически одинаковая форма подходит для меди и бронзы.",
+      "jei.smog.guide.configurator": "ПКМ по контроллеру собирает комплекс по его правилам. Shift+ПКМ разбирает и поворачивает контроллер. По части собранной установки работает тот же контроллер. До сборки ПКМ по сливу, вводу или желобу поворачивает отдельную деталь. Сообщения отображаются над хотбаром.",
+      "jei.smog.guide.residue": "Сохраняет точное количество металла, оставшееся после работы труб или разрушения бака. Переплавьте остаток обратно в очаге: материал не округляется и не теряется.",
+      "jei.smog.guide.parts": "Медные и бронзовые детали получаются литьём. Пластина содержит один слиток, фитинг — четверть, трубный элемент — половину. Переплавка возвращает ровно исходное количество металла. Эти детали сохраняются для следующих устройств медной эпохи.",
+      "jei.smog.guide.bronze": "В нагретом очаге 3 части расплавленной меди и 1 часть олова автоматически дают 4 части расплавленной бронзы. Кнопка смешивания не нужна. Излишки исходного металла остаются в баке. Для отливки используются те же многоразовые формы.",
+      "jei.smog.guide.molten": "В баке только расплавленные медь, олово и бронза. Поддерживаются совместимые жидкостные контейнеры и трубы через Fabric Fluid Storage. Один слиток — 9000 единиц Fabric, ведро — 81000, то есть 9 слитков. Посторонние жидкости не принимаются. Совместимость металлов задаётся общими тегами c:molten_*. Добытый металл других модов принимается через c:ingots/* и родственные теги.",
+      "jei.smog.structure.copper_hearth": "Открытый верх. Топка в полу; тигель внутри; слив в стене. Стены: кирпичи/футеровка. ПКМ настройщиком. Подробности — страница информации контроллера.",
+      "jei.smog.structure.ceramic_kiln": "Закрытая оболочка, пустая камера. Топка в полу, вытяжка в крыше. ПКМ настройщиком. Подробности — страница информации контроллера.",
+      "jei.smog.copper.firing": "Обжиг партии: от 8 до 64 изделий по камере.",
+      "jei.smog.copper.melting": "Нагрейте очаг; расплав сливается через носик.",
+      "message.smog.bellows": "Меха запущены: помощь для партии до 8 слитков.",
+      "message.smog.bellows_disconnected": "Рядом нужен воздушный ввод собранного очага."
     }
   }
 }

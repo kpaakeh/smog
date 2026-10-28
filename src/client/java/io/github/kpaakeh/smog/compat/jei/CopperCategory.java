@@ -22,9 +22,17 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
     @Override public int getHeight(){return 76;}
     @Override public IDrawable getIcon(){return icon;}
     @Override public void setRecipe(IRecipeLayoutBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){
-        for(int i=0;i<recipe.inputs().size();i++)builder.addInputSlot(6+i*20,23).setStandardSlotBackground().add(recipe.inputs().get(i));
+        for(int i=0;i<recipe.inputs().size();i++){
+            var stack=recipe.inputs().get(i);var slot=builder.addInputSlot(6+i*20,23).setStandardSlotBackground();
+            var metal=CopperWorkshops.melt(stack);
+            if(metal!=null&&(recipe.description().endsWith("casting")||recipe.description().endsWith("alloy")))slot.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(metal[0]).getFluid(),(long)metal[1]*stack.getCount()).setFluidRenderer((long)metal[1]*stack.getCount(),false,16,16);
+            else slot.add(stack);
+        }
         if(!recipe.tool().isEmpty())builder.addInputSlot(74,23).setStandardSlotBackground().add(recipe.tool());
-        builder.addOutputSlot(140,23).setOutputSlotBackground().add(recipe.result());
+        var output=builder.addOutputSlot(140,23).setOutputSlotBackground();
+        if(recipe.description().endsWith("alloy"))output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(2).getFluid(),36000).setFluidRenderer(36000,false,16,16);
+        else if(recipe.description().endsWith("melting")){int kind=CopperWorkshops.melt(recipe.inputs().getFirst())[0];output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(kind).getFluid(),(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount()).setFluidRenderer((long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount(),false,16,16);}
+        else output.add(recipe.result());
     }
     @Override public void createRecipeExtras(IRecipeExtrasBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){
         builder.addText(Component.translatable("block.smog."+recipe.machine()),170,12).setPosition(2,2);

@@ -23,14 +23,16 @@ public class MachineBlock extends Block implements EntityBlock {
     @Override protected net.minecraft.world.InteractionResult useItemOn(net.minecraft.world.item.ItemStack stack,BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,net.minecraft.world.InteractionHand hand,net.minecraft.world.phys.BlockHitResult hit) {
         // PASS skips the empty-hand GUI fallback and lets the configurator handle the click.
         if(stack.getItem() instanceof io.github.kpaakeh.smog.registry.ConfiguratorItem)return net.minecraft.world.InteractionResult.PASS;
+        if(level instanceof net.minecraft.server.level.ServerLevel server&&level.getBlockEntity(pos) instanceof MachineEntity machine&&machine.spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP){var result=io.github.kpaakeh.smog.copper.CopperInteractions.use(server,machine,player,hand,pos);if(result!=net.minecraft.world.InteractionResult.PASS)return result;}
         return super.useItemOn(stack,state,level,pos,player,hand,hit);
     }
     @Override protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,net.minecraft.world.phys.BlockHitResult hit) {
         if(level.getBlockEntity(pos) instanceof MachineEntity bellows && bellows.machineId().getPath().equals("hand_bellows")) {
-            if(level instanceof net.minecraft.server.level.ServerLevel server)io.github.kpaakeh.smog.copper.CopperWorkshops.pump(server,bellows);
+            if(level instanceof net.minecraft.server.level.ServerLevel server)return io.github.kpaakeh.smog.copper.CopperInteractions.use(server,bellows,player,net.minecraft.world.InteractionHand.MAIN_HAND,pos);
             return net.minecraft.world.InteractionResult.SUCCESS;
         }
         if(level.getBlockEntity(pos) instanceof MachineEntity machine && machine.spec().gui()) {
+            if(level instanceof net.minecraft.server.level.ServerLevel server&&machine.spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP)return io.github.kpaakeh.smog.copper.CopperInteractions.use(server,machine,player,net.minecraft.world.InteractionHand.MAIN_HAND,pos);
             if(!level.isClientSide())player.openMenu(machine);
             return net.minecraft.world.InteractionResult.SUCCESS;
         }

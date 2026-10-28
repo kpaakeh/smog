@@ -12,6 +12,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 
 public final class CopperTests {
+    private static final int U=io.github.kpaakeh.smog.copper.MoltenMetalStorage.QUARTER;
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
     private static void set(GameTestHelper h,BlockPos pos,Block block){h.getLevel().setBlock(pos,block.defaultBlockState(),Block.UPDATE_ALL);}
@@ -29,10 +30,19 @@ public final class CopperTests {
     }
     @GameTest public void complexHearthResizesAndAcceptsFunctionalReplacements(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,origin,3);
-        h.assertTrue(m.tryAssemble(),"Small hearth assembles");h.assertValueEqual(m.complexShape().width(),3,"Small width");h.assertValueEqual(CopperWorkshops.capacity(m),64,"Basic crucible = 16 ingots");
-        m.copper.copper=40;m.disassemble();hearth(h,origin,5);set(h,origin.offset(0,0,1),block("large_ceramic_crucible"));set(h,origin.offset(1,0,1),block("ceramic_crucible"));
-        h.assertTrue(m.tryAssemble(),"Larger hearth is the same machine type");h.assertValueEqual(m.complexShape().width(),5,"Width changed");h.assertValueEqual(CopperWorkshops.capacity(m),192,"Functional parts define capacity");h.assertValueEqual(m.copper.copper,40,"Stored metal survives resizing");
-        m.disassemble();set(h,origin.offset(0,0,1),Blocks.AIR);set(h,origin.offset(1,0,1),Blocks.AIR);h.assertFalse(m.tryAssemble(),"No crucible is not a functioning hearth");h.assertValueEqual(m.copper.copper,40,"Invalid structure preserves contents");h.succeed();
+        h.assertTrue(m.tryAssemble(),"Small hearth assembles");h.assertValueEqual(m.complexShape().width(),3,"Small width");h.assertValueEqual(CopperWorkshops.capacity(m),64*U,"Basic crucible = 16 ingots");
+        m.copper.copper=40*U;m.disassemble();hearth(h,origin,5);set(h,origin.offset(0,0,1),block("large_ceramic_crucible"));set(h,origin.offset(1,0,1),block("ceramic_crucible"));
+        h.assertTrue(m.tryAssemble(),"Larger hearth is the same machine type");h.assertValueEqual(m.complexShape().width(),5,"Width changed");h.assertValueEqual(CopperWorkshops.capacity(m),192*U,"Functional parts define capacity");h.assertValueEqual(m.copper.copper,40*U,"Stored metal survives resizing");
+        m.disassemble();set(h,origin.offset(0,0,1),Blocks.AIR);set(h,origin.offset(1,0,1),Blocks.AIR);h.assertFalse(m.tryAssemble(),"No crucible is not a functioning hearth");h.assertValueEqual(m.copper.copper,40*U,"Invalid structure preserves contents");h.succeed();
+    }
+    @GameTest public void moltenTransferRollsBackWithoutRounding(GameTestHelper h){
+        var m=hearth(h,h.absolutePos(new BlockPos(6,2,2)),3);h.assertTrue(m.tryAssemble(),"Assembled tank");
+        var copper=io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0);
+        try(var transaction=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.molten.insert(copper,9001,transaction),9001L,"Accept exact fluid units");}
+        h.assertValueEqual(m.copper.total(),0,"Uncommitted transfer rolls back");
+        try(var transaction=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){m.molten.insert(copper,9001,transaction);transaction.commit();}
+        try(var transaction=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.molten.extract(copper,1,transaction),1L,"Single-unit extraction is supported");transaction.commit();}
+        h.assertValueEqual(m.copper.copper,9000,"No quarter-ingot rounding");h.assertTrue(CopperWorkshops.melt(ItemStack.EMPTY)==null,"Empty input cannot create tin from absent item IDs");h.succeed();
     }
     @GameTest public void complexOwnershipPersistsAndRejectsOverlap(GameTestHelper h){
         var data=new ComplexFormationData();var a=new BlockPos(1,2,3);var b=new BlockPos(4,5,6);var part=new BlockPos(7,8,9);
@@ -41,10 +51,10 @@ public final class CopperTests {
         h.assertTrue(restored.owner(part).equals(a),"Ownership survives save/load");restored.release(a);h.assertTrue(restored.claim(b,java.util.List.of(b,part)),"Disassembly releases ownership");h.succeed();
     }
     @GameTest public void bronzeAndCastingConserveMetalAndKeepMolds(GameTestHelper h){
-        var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Working hearth");m.copper.heat=1000;m.copper.copper=12;m.copper.tin=4;
-        h.assertTrue(CopperWorkshops.button(m,23),"Bronze action");h.assertValueEqual(m.copper.bronze,16,"3 copper + 1 tin = 4 bronze");h.assertValueEqual(m.copper.total(),16,"No alloy multiplication");
-        var tablePos=origin.offset(-1,0,-1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;table.setItem(1,new ItemStack(item("ingot_mold")));
+        var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Working hearth");m.copper.heat=1000;m.copper.copper=12*U;m.copper.tin=4*U;
+        CopperWorkshops.tick(h.getLevel(),m);h.assertValueEqual(m.copper.bronze,16*U,"3 copper + 1 tin = 4 bronze");h.assertValueEqual(m.copper.total(),16*U,"No alloy multiplication");
+        var tablePos=origin.offset(-1,0,-1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;m.copper.lastPour=h.getLevel().getGameTime()-10;table.setItem(1,new ItemStack(item("ingot_mold")));
         for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
-        h.assertTrue(table.getItem(3).is(item("bronze_ingot")),"Connected table casts bronze");h.assertTrue(table.getItem(1).is(item("ingot_mold")),"Mold is reusable");h.assertValueEqual(m.copper.total()+table.getItem(3).getCount()*4,16,"Casting conserves quarter-ingot units");h.succeed();
+        h.assertTrue(table.getItem(3).is(item("bronze_ingot")),"Connected table casts bronze");h.assertTrue(table.getItem(1).is(item("ingot_mold")),"Mold is reusable");h.assertValueEqual(m.copper.total()+table.getItem(3).getCount()*4*U,16*U,"Casting conserves quarter-ingot units");h.succeed();
     }
 }

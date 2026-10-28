@@ -89,7 +89,7 @@ for f in CATALOG['fluids']:
                 bucket.putpixel((x,y),pixel)
     save(bucket,'item/'+n+'_bucket')
     for kind in ['still','flow','overlay']:
-        im=vanilla('block/water_'+kind)
+        im=vanilla('block/'+('lava_'+kind if n.startswith('molten_') and kind!='overlay' else 'water_'+kind))
         im=recolor(im,c)
         # Oil is opaque; aqueous materials preserve the original water alpha.
         if n=='crude_oil':
@@ -97,7 +97,7 @@ for f in CATALOG['fluids']:
                 for x in range(im.width):
                     r,g,b,a=im.getpixel((x,y));im.putpixel((x,y),(round(r*.2),round(g*.18),round(b*.16),255))
         save(im,'block/'+n+'_'+kind)
-        meta='assets/minecraft/textures/block/water_'+kind+'.png.mcmeta'
+        meta='assets/minecraft/textures/block/'+('lava_' if n.startswith('molten_') and kind!='overlay' else 'water_')+kind+'.png.mcmeta'
         if meta in archive.namelist():
             (OUT/('block/'+n+'_'+kind+'.png.mcmeta')).write_bytes(archive.read(meta))
 # Visual QA contact sheet is a build artifact, never a game texture.

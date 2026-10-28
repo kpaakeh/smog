@@ -21,11 +21,10 @@ public final class ConfiguratorItem extends Item {
             machine.disassemble();
             var state=level.getBlockState(pos);
             level.setBlock(pos,state.setValue(MachineBlock.FACING,state.getValue(MachineBlock.FACING).getClockWise()),Block.UPDATE_ALL);
-            player.sendSystemMessage(Component.translatable("message.smog.configurator_rotated"));
+            player.sendOverlayMessage(Component.translatable("message.smog.configurator_rotated"));
         } else if(machine.multiblockController()) {
             boolean formed=machine.tryAssemble();
-            player.sendSystemMessage(Component.translatable(formed?"message.smog.multiblock_formed":"message.smog.multiblock_incomplete"));
-            if(!formed&&!machine.assemblyDetail().isEmpty())player.sendSystemMessage(Component.literal(machine.assemblyDetail()));
+            player.sendOverlayMessage(Component.translatable(formed?"message.smog.multiblock_formed":"message.smog.multiblock_incomplete").append(!formed&&!machine.assemblyDetail().isEmpty()?" "+machine.assemblyDetail():""));
         } else {
             var state=level.getBlockState(pos);
             level.setBlock(pos,state.setValue(MachineBlock.FACING,state.getValue(MachineBlock.FACING).getClockWise()),Block.UPDATE_ALL);
