@@ -42,7 +42,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         extractWorkshop(machine,state);
         state.formed = machine.structure() != null && machine.assembled() && ClientFormations.controller(machine.getBlockPos());
         if (!state.formed) return;
-        if(machine.complexDefinition()!=null){
+        if(machine.complexDefinition()!=null||io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)){
             java.util.List<State.Part> parts=new java.util.ArrayList<>();
             var definition=machine.structure();var offsets=new java.util.ArrayList<>(definition.parts().keySet());offsets.add(net.minecraft.core.BlockPos.ZERO);
             for(var offset:offsets){var rotated=offset.rotate(machine.rotation());var block=machine.getLevel().getBlockState(machine.getBlockPos().offset(rotated));if(block.isAir())continue;
@@ -90,6 +90,10 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             if(!machine.getItem(1).isEmpty())addItem(shown,machine.getItem(1),.5f,.775f,.5f,machine);
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.825f,.5f,machine);
             else if(storage.work>0&&storage.status==7)surfaces.add(new MoltenRendering.Surface(.32f,.805f,.38f,.36f,.24f,Math.floorMod(storage.selection,3),true));
+        }else if(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.WaterSupply.handles(machine)){
+            if(storage.processFluid>0&&!kind.equals("hand_water_pump"))surfaces.add(new MoltenRendering.Surface(.14f,.35f+.3f*storage.processFluid/io.github.kpaakeh.smog.copper.WorkshopFluidStorage.CAPACITY,.14f,.72f,.72f,kind.equals("lever_press")?4:3,false));
+            if(!machine.getItem(0).isEmpty())addItem(shown,machine.getItem(0),.5f,.8f,.5f,machine);
+            if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.9f,.5f,machine);
         }else if(kind.equals("potter_table")){
             var selected=machine.getItem(3).isEmpty()?net.minecraft.world.item.Item.byId(io.github.kpaakeh.smog.copper.CopperWorkshops.data(machine,12)).getDefaultInstance():machine.getItem(3);addItem(shown,selected,.5f,1.035f,.5f,machine);
         }

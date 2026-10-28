@@ -31,7 +31,7 @@ public final class SmogJeiPlugin implements IModPlugin {
     @Override public Identifier getPluginUid() { return ModBlocks.id("jei"); }
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
-        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))registration.addRecipeCategories(new CopperCategory(registration.getJeiHelpers().getGuiHelper()));
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))for(String machine:CopperCategory.TYPES.keySet())registration.addRecipeCategories(new CopperCategory(registration.getJeiHelpers().getGuiHelper(),machine));
         for(var kind:List.of(io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER,io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))
             if(Machines.all().stream().anyMatch(machine->machine.spec().kind()==kind))registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),kind));
     }
@@ -45,22 +45,22 @@ public final class SmogJeiPlugin implements IModPlugin {
         }
         registration.addRecipes(TYPE, pages);
         java.util.Map<String,String> guides=java.util.Map.ofEntries(
-            java.util.Map.entry("copper_hearth","hearth"),java.util.Map.entry("ceramic_kiln","kiln"),java.util.Map.entry("casting_table","casting"),java.util.Map.entry("potter_table","pottery"),java.util.Map.entry("hand_bellows","bellows"),java.util.Map.entry("ceramic_crucible","crucible"),java.util.Map.entry("large_ceramic_crucible","crucible"),java.util.Map.entry("solid_firebox","firebox"),java.util.Map.entry("casting_faucet","spout"),java.util.Map.entry("air_nozzle","bellows"),java.util.Map.entry("casting_spout","spout"),java.util.Map.entry("casting_channel","spout"),java.util.Map.entry("air_intake","bellows"),java.util.Map.entry("kiln_vent","kiln"),java.util.Map.entry("firebrick_casing","lining"));
+            java.util.Map.entry("water_tank","water"),java.util.Map.entry("hand_water_pump","water"),java.util.Map.entry("washing_trough","washing"),java.util.Map.entry("lever_press","pressing"),java.util.Map.entry("copper_hearth","hearth"),java.util.Map.entry("ceramic_kiln","kiln"),java.util.Map.entry("casting_table","casting"),java.util.Map.entry("potter_table","pottery"),java.util.Map.entry("hand_bellows","bellows"),java.util.Map.entry("ceramic_crucible","crucible"),java.util.Map.entry("large_ceramic_crucible","crucible"),java.util.Map.entry("solid_firebox","firebox"),java.util.Map.entry("casting_faucet","spout"),java.util.Map.entry("air_nozzle","bellows"),java.util.Map.entry("casting_spout","spout"),java.util.Map.entry("casting_channel","spout"),java.util.Map.entry("air_intake","bellows"),java.util.Map.entry("kiln_vent","kiln"),java.util.Map.entry("firebrick_casing","lining"));
         guides.forEach((id,guide)->registration.addIngredientInfo(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(ModBlocks.id(id)),Component.translatable("jei.smog.guide."+guide)));
         for(var entry:io.github.kpaakeh.smog.registry.ModItems.all())if(entry.tab().equals("copper_age")){
-            String name=net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(entry.item()).getPath();String guide=name.contains("mold")?"molds":name.equals("configurator")?"configurator":name.equals("metal_residue")?"residue":name.startsWith("unfired")||name.contains("clay")||name.contains("firebrick")?"pottery":"parts";
+            String name=net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(entry.item()).getPath();String guide=name.equals("field_journal")?"survey":name.equals("copper_concentrate")?"washing":java.util.Set.of("seed_cake","plant_oil_bottle","waxed_cord","lubricating_compound").contains(name)?"pressing":name.contains("mold")?"molds":name.equals("configurator")?"configurator":name.equals("metal_residue")?"residue":name.startsWith("unfired")||name.contains("clay")||name.contains("firebrick")?"pottery":"parts";
             registration.addIngredientInfo(entry.item(),Component.translatable("jei.smog.guide."+guide));
         }
         io.github.kpaakeh.smog.registry.ModAlloys.all().stream().filter(a->a.name().equals("bronze")).forEach(a->a.contents().forEach(item->registration.addIngredientInfo(item,Component.translatable("jei.smog.guide.bronze"))));
         for(var fluid:io.github.kpaakeh.smog.fluid.ModFluids.all())if(fluid.name.startsWith("molten_"))registration.addIngredientInfo(fluid.bucket,Component.translatable("jei.smog.guide.molten"));
-        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))registration.addRecipes(CopperCategory.TYPE,io.github.kpaakeh.smog.copper.CopperWorkshops.recipes());
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))CopperCategory.TYPES.forEach((machine,type)->registration.addRecipes(type,io.github.kpaakeh.smog.copper.CopperWorkshops.recipes().stream().filter(recipe->recipe.machine().equals(machine)).toList()));
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER))registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
     }
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration){
         for(var entry:Machines.all()){
             if(entry.definition().multiblock()!=null)registration.addCraftingStation(TYPE,entry.block());
-            if(entry.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP&&!net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(entry.block()).getPath().equals("hand_bellows"))registration.addCraftingStation(CopperCategory.TYPE,entry.block());
+            if(entry.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP&&CopperCategory.TYPES.containsKey(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(entry.block()).getPath()))registration.addCraftingStation(CopperCategory.TYPES.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(entry.block()).getPath()),entry.block());
         }
     }
     private static final class Category implements IRecipeCategory<Page> {

@@ -40,7 +40,7 @@ public final class WorkshopPartBlock extends Block {
         return super.getShape(state,level,pos,context);
     }
     @Override protected InteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,InteractionHand hand,net.minecraft.world.phys.BlockHitResult hit){
-        if(stack.getItem() instanceof ConfiguratorItem){if(player.isShiftKeyDown()&&!level.isClientSide())level.setBlock(pos,state.setValue(FACING,state.getValue(FACING).getClockWise()),Block.UPDATE_ALL);return InteractionResult.SUCCESS;}
+        if(stack.getItem() instanceof ConfiguratorItem tool)return tool.useOn(new net.minecraft.world.item.context.UseOnContext(player,hand,hit));
         return super.useItemOn(stack,state,level,pos,player,hand,hit);
     }
 }

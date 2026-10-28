@@ -42,6 +42,68 @@ public final class CopperTests {
         m.disassemble();set(h,origin.offset(-5,0,1),Blocks.BRICKS);set(h,origin.offset(-5,0,0),block("casting_spout"));h.assertFalse(m.tryAssemble(),"Wall corner rejects functional component");
         set(h,origin.offset(-5,0,0),Blocks.BRICKS);set(h,origin.offset(-5,0,1),block("casting_spout"));h.assertTrue(m.tryAssemble(),"Face-mounted component works");h.succeed();
     }
+    @GameTest public void wallFireboxAndIndependentOrientation(GameTestHelper h){
+        var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);
+        set(h,origin.offset(0,-1,1),Blocks.COBBLESTONE);set(h,origin.offset(0,0,2),block("solid_firebox"));
+        h.getLevel().setBlock(origin,m.getBlockState().setValue(MachineBlock.FACING,Direction.SOUTH),Block.UPDATE_ALL);
+        var clicked=origin.offset(-1,0,1);
+        h.assertTrue(ComplexMultiblocks.nearbyControllers(h.getLevel(),clicked).contains(m),"Unassembled port finds its controller");
+        var player=h.makeMockServerPlayerInLevel();var tool=new ItemStack(item("configurator"));player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tool);
+        var hit=new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(clicked),Direction.WEST,clicked,false);
+        player.gameMode.useItemOn(player,h.getLevel(),tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        h.assertTrue(m.assembled(),"Real configurator click on an unassembled port assembles reversed controller and wall firebox");
+        h.assertTrue(m.rotation()==Rotation.NONE,"Shell direction follows actual walls");
+        h.assertTrue(m.getBlockState().getValue(MachineBlock.FACING)==Direction.SOUTH,"Assembly does not rotate controller");
+        h.assertTrue(ComplexMultiblocks.owner(h.getLevel(),clicked)==m,"Ownership uses detected orientation");
+        m.disassemble();h.assertFalse(m.tryAssembleAt(origin.offset(4,0,0)),"Unrelated clicked part cannot assemble this hearth");h.succeed();
+    }
+    private static MachineEntity manual(GameTestHelper h,String name,BlockPos origin){
+        var definition=io.github.kpaakeh.smog.multiblock.Multiblocks.get(ModBlocks.id(name));
+        definition.parts().forEach((offset,ingredient)->set(h,origin.offset(offset),ingredient.block()));set(h,origin,block(name));
+        var machine=(MachineEntity)h.getLevel().getBlockEntity(origin);h.assertTrue(machine.tryAssemble(),"Manual workshop assembles");return machine;
+    }
+    @GameTest public void washingConsumesOnlyPrimaryOreAndWater(GameTestHelper h){
+        var m=manual(h,"washing_trough",h.absolutePos(new BlockPos(5,2,4)));m.setItem(0,new ItemStack(Items.RAW_COPPER,16));
+        h.assertFalse(m.canPlaceItem(0,new ItemStack(Items.COPPER_INGOT)),"Finished metal cannot be enriched");
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){m.processFluid.insert(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.world.level.material.Fluids.WATER),81000,tx);}
+        h.assertValueEqual(m.copper.processFluid,0,"Water transfer rollback");
+        io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m);for(int i=0;i<120;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertValueEqual(m.getItem(0).getCount(),16,"No water means no input consumption");m.copper.processFluid=81000;
+        for(int i=0;i<100;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertValueEqual(m.getItem(0).getCount(),8,"Exactly eight raw copper per batch");h.assertValueEqual(m.getItem(3).getCount(),5,"Five concentrate per batch");h.assertValueEqual(m.copper.processFluid,0,"One bucket consumed");
+        h.assertValueEqual(CopperWorkshops.melt(m.getItem(3))[1],18000,"Concentrate melts to two ingots");h.succeed();
+    }
+    @GameTest public void pressingQueuesAndPausesWithoutDuplication(GameTestHelper h){
+        var m=manual(h,"lever_press",h.absolutePos(new BlockPos(5,2,4)));m.setItem(0,new ItemStack(Items.WHEAT_SEEDS,16));
+        h.assertValueEqual(io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m),2,"One action queues loaded batches");
+        for(int i=0;i<20;i++){io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m);CopperWorkshops.tick(h.getLevel(),m);}
+        h.assertTrue(m.getItem(3).isEmpty(),"Repeated clicks do not finish early");
+        for(int i=0;i<180;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(0).isEmpty(),"Two batches consume sixteen seeds");h.assertValueEqual(m.getItem(3).getCount(),2,"Two cakes produced");h.assertValueEqual(m.copper.processFluid,40500,"Two quarter-bucket oil batches");h.assertValueEqual(m.copper.queued,0,"Finite queue ends");
+        for(int i=0;i<100;i++)CopperWorkshops.tick(h.getLevel(),m);h.assertValueEqual(m.copper.processFluid,40500,"Idle device cannot duplicate oil");
+        h.assertTrue(item("seed_cake").getDefaultInstance().has(net.minecraft.core.component.DataComponents.COMPOSTABLE),"Cake is actually compostable");h.succeed();
+    }
+    @GameTest public void manualWaterSupplyIsFiniteAndTransactional(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(5,2,5));set(h,pos,block("hand_water_pump"));set(h,pos.below(),Blocks.WATER);
+        set(h,pos.east(),block("water_tank"));var pump=(MachineEntity)h.getLevel().getBlockEntity(pos);var tank=(MachineEntity)h.getLevel().getBlockEntity(pos.east());pump.serverTick();tank.serverTick();
+        h.assertTrue(io.github.kpaakeh.smog.copper.WaterSupply.prime(h.getLevel(),pump),"Source primes pump");
+        h.assertValueEqual(pump.copper.pumpBudget,324000,"One action grants four buckets");
+        io.github.kpaakeh.smog.copper.WaterSupply.prime(h.getLevel(),pump);h.assertValueEqual(pump.copper.pumpBudget,324000,"Repeated use does not extend active budget");
+        tank.copper.processFluid=81000;
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+            h.assertValueEqual(tank.processFluid.extract(tank.processFluid.resource(),12345,tx),12345L,"Exact finite extraction");
+        }
+        h.assertValueEqual(tank.copper.processFluid,81000,"Cancelled transfer preserves tank");
+        set(h,pos.below(),Blocks.AIR);h.assertFalse(io.github.kpaakeh.smog.copper.WaterSupply.prime(h.getLevel(),pump),"No source cannot prime");h.succeed();
+    }
+    @GameTest public void journalStoresOnlyInspectedResources(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(5,2,5));var journal=new ItemStack(item("field_journal"));set(h,pos,Blocks.COPPER_ORE);
+        h.assertTrue(io.github.kpaakeh.smog.copper.FieldJournalItem.record(journal,h.getLevel(),pos),"Inspected ore is recorded");
+        h.assertFalse(io.github.kpaakeh.smog.copper.FieldJournalItem.record(journal,h.getLevel(),pos),"Same point is not duplicated");
+        set(h,pos.east(),Blocks.STONE);h.assertFalse(io.github.kpaakeh.smog.copper.FieldJournalItem.record(journal,h.getLevel(),pos.east()),"Ordinary stone does not claim a hidden deposit");
+        var records=journal.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getListOrEmpty("survey_records");h.assertValueEqual(records.size(),1,"Only personally inspected point stored");h.assertValueEqual(records.getCompoundOrEmpty(0).getIntOr("x",0),pos.getX(),"World coordinate, not test-local coordinate");
+        h.assertTrue(journal.copy().get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).equals(journal.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA)),"Records travel with the item");h.succeed();
+    }
     @GameTest public void moltenTransferRollsBackWithoutRounding(GameTestHelper h){
         var m=hearth(h,h.absolutePos(new BlockPos(6,2,2)),3);h.assertTrue(m.tryAssemble(),"Assembled tank");
         var copper=io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0);

@@ -57,15 +57,15 @@ public record ComplexMultiblockDefinition(Identifier id,Identifier controller,bo
             BlockIngredient required;
             if(role!=null){
                 int boundaries=(x==bounds.minX()||x==bounds.maxX()?1:0)+(z==0||z==shape.depth-1?1:0)+(y==-1||y==bounds.maxY()?1:0);
-                if(!role.name.equals("lining")&&boundaries>1)return failure(shape,"component on edge/corner @ "+local.toShortString(),matched);
+                if(!role.name.equals("lining")&&boundaries>1)return failure(shape,"edge|"+world.getX()+"|"+world.getY()+"|"+world.getZ(),matched);
                 if(role.name.equals("fuel")&&level.getBlockEntity(world) instanceof net.minecraft.world.Container container&&!container.isEmpty())return failure(shape,"empty fuel container @ "+local.toShortString(),matched);
                 counts.merge(role.name,1,Integer::sum);required=role.ingredient;
             }
             else {required=switch(zone){case FLOOR->floor;case WALL,ROOF->casing;case INTERIOR->new BlockIngredient("minecraft:air");};}
-            if(!required.matches(state))return failure(shape,zone.name().toLowerCase()+" @ "+local.toShortString()+" : "+required.value(),matched);
+            if(!required.matches(state))return failure(shape,"block|"+world.getX()+"|"+world.getY()+"|"+world.getZ()+"|"+zone.name().toLowerCase(),matched);
             parts.put(local,required);matched++;
         }
-        for(var role:roles){int count=counts.getOrDefault(role.name,0);if(count<role.minimum||count>role.maximum)return failure(shape,role.name+" ("+count+", "+role.minimum+".."+role.maximum+")",matched);}
+        for(var role:roles){int count=counts.getOrDefault(role.name,0);if(count<role.minimum||count>role.maximum)return failure(shape,"role|"+role.name+"|"+count+"|"+role.minimum+"|"+role.maximum,matched);}
         for(var group:groups)if(group.roles.stream().mapToInt(name->counts.getOrDefault(name,0)).sum()<group.minimum)return failure(shape,String.join(" / ",group.roles),matched);
         return new Inspection(MultiblockDefinition.Result.COMPLETE,shape,new MultiblockDefinition(id,parts),Map.copyOf(counts),"complete",matched);
     }

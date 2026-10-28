@@ -62,6 +62,17 @@
         "smog:unfired_fitting_mold",
         "smog:unfired_pipe_mold"
       ]
+    },
+    {
+      "registry": "item",
+      "id": "smog:oil_seeds",
+      "values": [
+        "minecraft:wheat_seeds",
+        "minecraft:beetroot_seeds",
+        "minecraft:pumpkin_seeds",
+        "minecraft:melon_seeds",
+        "minecraft:torchflower_seeds"
+      ]
     }
   ],
   "blocks": [
@@ -173,6 +184,61 @@
       "texture": "minecraft:block/copper_block",
       "horizontal": true,
       "valve": true,
+      "tab": "copper_age"
+    },
+    {
+      "name": "washing_section",
+      "display": "Washing Channel",
+      "display_ru": "Секция промывочного лотка",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/washing_section",
+      "texture": "minecraft:block/oak_planks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "washing_sieve",
+      "display": "Washing Sieve",
+      "display_ru": "Промывочное сито",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/washing_sieve",
+      "texture": "minecraft:block/oak_planks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "workshop_support",
+      "display": "Workshop Support",
+      "display_ru": "Опора мастерской",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/workshop_support",
+      "texture": "minecraft:block/oak_planks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "press_frame",
+      "display": "Press Frame",
+      "display_ru": "Рама пресса",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/press_frame",
+      "texture": "minecraft:block/oak_planks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "press_basket",
+      "display": "Press Basket",
+      "display_ru": "Корзина пресса",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/press_basket",
+      "texture": "minecraft:block/oak_planks",
       "tab": "copper_age"
     }
   ],
@@ -515,6 +581,68 @@
       "texture": "minecraft:block/bricks",
       "mining_level": "wood",
       "multiblock": "smog:ceramic_kiln"
+    },
+    {
+      "name": "washing_trough",
+      "display": "Ore Washing Trough",
+      "display_ru": "Промывочный лоток",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/washing_trough",
+      "assembled_model": "smog:block/washing_trough",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood",
+      "multiblock": "smog:washing_trough"
+    },
+    {
+      "name": "lever_press",
+      "display": "Lever Press",
+      "display_ru": "Рычажный пресс",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/lever_press",
+      "assembled_model": "smog:block/lever_press",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood",
+      "multiblock": "smog:lever_press"
+    },
+    {
+      "name": "water_tank",
+      "display": "Workshop Water Tank",
+      "display_ru": "Резервуар мастерской",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/water_tank",
+      "assembled_model": "smog:block/water_tank",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "hand_water_pump",
+      "display": "Hand Water Pump",
+      "display_ru": "Ручная водяная помпа",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/hand_water_pump",
+      "assembled_model": "smog:block/hand_water_pump",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
     }
   ],
   "multiblocks": [
@@ -843,6 +971,116 @@
           "block": "smog:firebrick_casing"
         }
       ]
+    },
+    {
+      "name": "washing_trough",
+      "display": "Washing Trough",
+      "display_ru": "Промывочный лоток",
+      "parts": [
+        {
+          "x": -1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:washing_section"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:washing_section"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:washing_sieve"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:workshop_support"
+        }
+      ]
+    },
+    {
+      "name": "lever_press",
+      "display": "Lever Press",
+      "display_ru": "Рычажный пресс",
+      "parts": [
+        {
+          "x": -1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:press_basket"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 1,
+          "block": "smog:press_frame"
+        }
+      ]
     }
   ],
   "fluids": [
@@ -922,6 +1160,15 @@
       "tags": [
         "c:molten_bronze"
       ]
+    },
+    {
+      "name": "plant_oil",
+      "display": "Plant Oil",
+      "display_ru": "Растительное масло",
+      "color": "BB8D31",
+      "tick_delay": 10,
+      "infinite": false,
+      "bucket_texture": "smog:item/plant_oil_bucket"
     }
   ],
   "items": [
@@ -1044,6 +1291,43 @@
       "name": "metal_residue",
       "display": "Recoverable Metal Residue",
       "display_ru": "Металлический остаток",
+      "tab": "copper_age"
+    },
+    {
+      "name": "copper_concentrate",
+      "display": "Copper Concentrate",
+      "display_ru": "Медный концентрат",
+      "tab": "copper_age"
+    },
+    {
+      "name": "seed_cake",
+      "display": "Seed Cake",
+      "display_ru": "Растительный жмых",
+      "tab": "copper_age"
+    },
+    {
+      "name": "plant_oil_bottle",
+      "display": "Plant Oil Bottle",
+      "display_ru": "Бутылочка растительного масла",
+      "tab": "copper_age"
+    },
+    {
+      "name": "lubricating_compound",
+      "display": "Lubricating Compound",
+      "display_ru": "Смазочная смесь",
+      "tab": "copper_age"
+    },
+    {
+      "name": "waxed_cord",
+      "display": "Waxed Cord",
+      "display_ru": "Вощёный шнур",
+      "tab": "copper_age"
+    },
+    {
+      "name": "field_journal",
+      "kind": "field_journal",
+      "display": "Field Journal",
+      "display_ru": "Полевой журнал",
       "tab": "copper_age"
     }
   ],
@@ -1251,7 +1535,8 @@
           "name": "fuel",
           "block": "smog:solid_firebox",
           "zones": [
-            "floor"
+            "floor",
+            "wall"
           ],
           "min": 1,
           "max": 1
@@ -1303,7 +1588,8 @@
           "name": "fuel",
           "block": "smog:solid_firebox",
           "zones": [
-            "floor"
+            "floor",
+            "wall"
           ],
           "min": 1,
           "max": 1
@@ -1729,6 +2015,254 @@
           "id": "smog:air_nozzle"
         }
       }
+    },
+    {
+      "name": "washing_trough",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "P P",
+          "CBC",
+          "PPP"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "C": "smog:copper_fitting",
+          "B": "minecraft:bucket"
+        },
+        "result": {
+          "id": "smog:washing_trough",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "washing_section",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "P P",
+          "PPP"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks"
+        },
+        "result": {
+          "id": "smog:washing_section",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "washing_sieve",
+      "unlock": "minecraft:string",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "SSS",
+          "PPP"
+        ],
+        "key": {
+          "S": "minecraft:string",
+          "P": "minecraft:oak_planks"
+        },
+        "result": {
+          "id": "smog:washing_sieve",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "workshop_support",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "P P",
+          "SSS",
+          "P P"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "S": "minecraft:stick"
+        },
+        "result": {
+          "id": "smog:workshop_support",
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "lever_press",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PSP",
+          "CFC",
+          "PPP"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "S": "minecraft:stick",
+          "C": "smog:copper_fitting",
+          "F": "minecraft:oak_fence"
+        },
+        "result": {
+          "id": "smog:lever_press",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "press_frame",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP",
+          "C C"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "C": "smog:copper_fitting"
+        },
+        "result": {
+          "id": "smog:press_frame",
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "press_basket",
+      "unlock": "minecraft:stick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "S S",
+          "S S",
+          "PPP"
+        ],
+        "key": {
+          "S": "minecraft:stick",
+          "P": "minecraft:oak_planks"
+        },
+        "result": {
+          "id": "smog:press_basket",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "lubricating_compound",
+      "unlock": "smog:plant_oil_bottle",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:plant_oil_bottle",
+          "smog:graphite_dust"
+        ],
+        "result": {
+          "id": "smog:lubricating_compound",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "waxed_cord",
+      "unlock": "smog:plant_oil_bottle",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:plant_oil_bottle",
+          "minecraft:honeycomb",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:waxed_cord",
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "water_tank",
+      "unlock": "minecraft:copper_ingot",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP",
+          "C C",
+          "PPP"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "C": "smog:copper_plate"
+        },
+        "result": {
+          "id": "smog:water_tank",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "hand_water_pump",
+      "unlock": "minecraft:copper_ingot",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " S ",
+          "CPC",
+          " C "
+        ],
+        "key": {
+          "S": "minecraft:stick",
+          "C": "smog:copper_fitting",
+          "P": "smog:copper_pipe_part"
+        },
+        "result": {
+          "id": "smog:hand_water_pump",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "press_basket_waxed",
+      "unlock": "smog:waxed_cord",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "S S",
+          "S S",
+          "PPP"
+        ],
+        "key": {
+          "S": "smog:waxed_cord",
+          "P": "minecraft:oak_planks"
+        },
+        "result": {
+          "id": "smog:press_basket",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "field_journal",
+      "unlock": "minecraft:paper",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:paper",
+          "minecraft:paper",
+          "minecraft:string",
+          "smog:copper_fitting"
+        ],
+        "result": {
+          "id": "smog:field_journal",
+          "count": 1
+        }
+      }
     }
   ],
   "firing": [
@@ -1787,13 +2321,13 @@
       "jei.smog.copper.alloy": "Keep Cu and Sn molten together: automatic 3:1 alloy.",
       "message.smog.molten_status": "Cu %s | Sn %s | Bronze %s ingots | Heat %s",
       "message.smog.mold_selected": "Selected: %s",
-      "jei.smog.guide.hearth": "Open hearth from 3x3x3 to 11x11x11. Interior must be empty: no crucibles or other blocks. Continuous floor and walls form a bowl. One Smog firebox on floor face, one to four wall spouts and optional air intakes. Functional components cannot occupy edges/corners. Controller anchors the front wall above floor. Molten metal remains visible in the chamber after assembly. Each interior cell stores eight ingots. Configure to assemble; sneak-click controller for optional GUI.",
+      "jei.smog.guide.hearth": "Open hearth from 3x3x3 to 11x11x11. Interior must be empty: no crucibles or other blocks. Continuous floor and walls form a bowl. One Smog firebox on a floor or wall face, one to four wall spouts and optional air intakes. Functional components cannot occupy edges/corners. Controller anchors the front wall above floor. Molten metal remains visible in the chamber after assembly. Each interior cell stores eight ingots. Configure to assemble; sneak-click controller for optional GUI.",
       "jei.smog.guide.kiln": "Closed shell 3–5 wide/deep, 3–5 high. Empty chamber, one floor firebox and one or two roof vents. Configure to assemble. Load fuel and unfired ceramics by hand; empty-hand click collects output. Batch size 8–64 depends on chamber.",
       "jei.smog.guide.casting": "Attach a faucet outside a wall fluid port and open it. Place table directly below faucet, or route channels downhill beneath it. Click with mold to install; sneak empty-hand click removes mold. Empty-hand click collects output. Bare wall port never pours.",
       "jei.smog.guide.pottery": "Sneak empty-hand click selects a visible product. Click with clay or tempered clay to make up to eight. Empty-hand click collects output. Fire raw ceramics in a furnace or ceramic kiln. Sneak-click with an item opens the optional detailed GUI.",
       "jei.smog.guide.bellows": "Fit an air nozzle outside a formed hearth air port, open it and place hand bellows beside it. Right-click bellows to assist up to eight ingots. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.crucible": "Separate ceramic vessel. Do not install it inside the casting hearth: its chamber must be completely empty. Hearth capacity now comes from chamber dimensions, not crucibles.",
-      "jei.smog.guide.firebox": "Exactly one Smog firebox in the floor. It shares the controller inventory rather than acting as a separate vanilla furnace. Click the assembled structure with fuel or feed the controller side with a hopper.",
+      "jei.smog.guide.firebox": "Exactly one Smog firebox in a floor or wall face. It shares the controller inventory rather than acting as a separate vanilla furnace. Click the assembled structure with fuel or feed the controller side with a hopper.",
       "jei.smog.guide.spout": "Wall fluid port does not pour by itself. Attach a casting faucet outside and open with right-click. It pours downward onto a table or channel below. Pipes and compatible containers may still connect directly to the port. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.lining": "Fire refractory bricks from tempered clay; four bricks make refractory masonry. Replace ordinary masonry or floor blocks to reduce heat loss. More lining gives better retention. All models use 16 pixels per block.",
       "jei.smog.guide.molds": "Reusable molds install with right-click on casting table. Ingot: one ingot. Plate: one plate per ingot. Fittings: four per ingot. Pipe blanks: four per two ingots. Tin supports ingots/plates; copper and bronze use all four molds.",
@@ -1802,7 +2336,7 @@
       "jei.smog.guide.parts": "Cast copper and bronze parts. A plate contains one ingot, fitting a quarter, pipe blank a half. Remelting returns exactly the same amount. Parts remain available for upcoming copper-age devices.",
       "jei.smog.guide.bronze": "Three parts molten copper plus one part molten tin automatically become four parts molten bronze in a hot hearth. No mixing button. Excess metal stays in the tank. Reuse the same molds.",
       "jei.smog.guide.molten": "Tank accepts molten copper, tin and bronze via Fabric Fluid Storage. 9000 Fabric units per ingot; 81000 per bucket (9 ingots). Other fluids are rejected. Common c:molten_* and item material tags allow integration.",
-      "jei.smog.structure.copper_hearth": "Open shell, 3–11 on each axis. Empty interior. Floor firebox; wall ports. Edges/corners are masonry only. Configure controller to form.",
+      "jei.smog.structure.copper_hearth": "Open shell, from 3 to 11 on each axis. Empty chamber. One floor or wall firebox and wall fluid port. Edges/corners are masonry. Configure controller or port to form.",
       "jei.smog.structure.ceramic_kiln": "Closed shell, empty chamber. Floor firebox, roof vent. Use configurator. Controller information page lists full rules.",
       "jei.smog.copper.firing": "Batch firing: chamber size allows 8–64 items.",
       "jei.smog.copper.melting": "Heat the hearth; molten metal drains through a spout.",
@@ -1810,7 +2344,48 @@
       "message.smog.bellows_disconnected": "Requires an open air nozzle and a formed hearth air port.",
       "message.smog.valve_open": "Valve open",
       "message.smog.valve_closed": "Valve closed",
-      "jei.smog.size_range": "Size: from %s to %s blocks"
+      "jei.smog.size_range": "Size: from %s to %s blocks",
+      "message.smog.controller_missing": "Place a hearth or kiln controller in the structure wall",
+      "message.smog.manual_workshop": "Fluid: %s mB | Queued batches: %s. Load ingredients, then use with an empty hand.",
+      "message.smog.manual_queued": "Queued batches: %s. Repeated clicks do not speed up work.",
+      "jei.smog.copper.washing": "8 raw copper + 1 bucket of water → 5 concentrate; each yields 2 ingots.",
+      "jei.smog.copper.pressing": "8 seeds → 250 mB oil + seed cake. Start empty-handed; extract with bottles or pipes.",
+      "jei.smog.guide.washing": "Build the 3 × 1 × 2 layout and assemble with the configurator. Add water by bucket or compatible pipe. Load raw copper and use empty-handed to queue batches. Ingots cannot be washed.",
+      "jei.smog.guide.pressing": "Build the 3 × 2 × 2 layout. Load seeds, then use empty-handed to queue batches. Extract oil with bottles, buckets or pipes. Seed cake is compostable. This press does not make metal plates.",
+      "message.smog.assembly_edge": "Component on an edge or corner at %s, %s, %s; use masonry here.",
+      "message.smog.assembly_block": "Check block at %s, %s, %s: complete the shell and keep the chamber empty.",
+      "message.smog.assembly_role": "%s: found %s, requires %s to %s.",
+      "message.smog.assembly_overlap": "A block already belongs to another structure.",
+      "message.smog.assembly_check": "Check the JEI layout, controller position and required parts.",
+      "role.smog.fuel": "Firebox",
+      "role.smog.spout": "Fluid port",
+      "role.smog.air": "Air port",
+      "role.smog.vent": "Vent",
+      "role.smog.lining": "Lining",
+      "message.smog.pump_ready": "Pump primed: up to 4 buckets per action.",
+      "message.smog.pump_missing_water": "Place the pump above a water source.",
+      "message.smog.water_supply": "Water: %s / 8000 mB. Supplies adjacent workshops.",
+      "message.smog.lubricated": "Press lubricated: the next 8 batches work faster.",
+      "jei.smog.guide.water": "The tank stores 8 buckets and supplies an adjacent assembled trough. Place the hand pump above a water source; one action supplies up to 4 buckets to adjacent tanks or troughs. Repeated clicks do not accelerate pumping. Supports Fabric fluid storage, buckets and other mods' pipes in loaded chunks.",
+      "message.smog.journal_empty": "No records. Use the journal on an exposed ore or deposit.",
+      "message.smog.journal_entry": "%s/%s: %s at %s, %s, %s (%s)",
+      "message.smog.journal_rejected": "Inspect a new exposed resource block. The journal holds up to 32 records.",
+      "item.smog.field_journal.help": "Use on a resource to record it. Use in the air to browse; sneak to go back.",
+      "jei.smog.guide.survey": "The field journal stores personally inspected ores and deposits: material, coordinates and dimension. Use on an exposed block to record; use in the air to browse, sneak to reverse. Records travel with the item. Hidden veins are not scanned.",
+      "advancements.smog.copper.root.title": "Copper workshop",
+      "advancements.smog.copper.root.description": "Prepare molds, heat and a workshop. Vanilla routes remain available.",
+      "advancements.smog.copper.pottery.title": "A reusable mold",
+      "advancements.smog.copper.pottery.description": "Fire an ingot mold. Casting does not consume it.",
+      "advancements.smog.copper.casting.title": "Cast workshop parts",
+      "advancements.smog.copper.casting.description": "Cast fittings for workshop equipment.",
+      "advancements.smog.copper.washing.title": "Prepare the ore",
+      "advancements.smog.copper.washing.description": "Wash 8 raw copper into 5 concentrate, yielding 10 ingots.",
+      "advancements.smog.copper.pressing.title": "Workshop oil",
+      "advancements.smog.copper.pressing.description": "Press seeds and bottle the oil. Compost the seed cake.",
+      "advancements.smog.copper.survey.title": "Field observations",
+      "advancements.smog.copper.survey.description": "Take a journal and record personally inspected resources.",
+      "advancements.smog.copper.bronze.title": "Ready for moving parts",
+      "advancements.smog.copper.bronze.description": "Combine 3 parts copper and 1 part tin to prepare for mechanization."
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -1837,13 +2412,13 @@
       "jei.smog.copper.alloy": "Cu и Sn вместе в расплаве: автосплав 3:1.",
       "message.smog.molten_status": "Cu %s | Sn %s | Бронза %s слитков | Нагрев %s",
       "message.smog.mold_selected": "Выбрано: %s",
-      "jei.smog.guide.hearth": "Открытый очаг от 3×3×3 до 11×11×11. Внутри только воздух: тигли и другие блоки не нужны и мешают сборке. Пол и стены образуют цельную чашу. Одна топка Smog внутри грани пола (не на рёбрах), один-четыре слива и необязательные воздушные вводы в стенах. Компоненты нельзя ставить на рёбрах и в углах; там только кладка. Контроллер на передней стене над полом. Металл виден в свободной камере после сборки, уровень зависит от заполнения. На каждый внутренний блок пространства приходится 8 слитков ёмкости. Настройщик собирает очаг; Shift+ПКМ контроллера открывает подробный интерфейс.",
+      "jei.smog.guide.hearth": "Открытый очаг от 3×3×3 до 11×11×11. Внутри только воздух: тигли и другие блоки не нужны и мешают сборке. Пол и стены образуют цельную чашу. Одна топка Smog внутри грани пола или стены (не на рёбрах), от одного до четырёх жидкостных портов и необязательные воздушные порты в стенах. Компоненты нельзя ставить на рёбрах и в углах; там только кладка. Контроллер на передней стене над полом. Металл виден в свободной камере после сборки, уровень зависит от заполнения. На каждый внутренний блок пространства приходится 8 слитков ёмкости. Настройщик собирает очаг; Shift+ПКМ контроллера открывает подробный интерфейс.",
       "jei.smog.guide.kiln": "Закрытая оболочка от 3 до 5 × от 3 до 5, высота от 3 до 5. Внутренняя камера пустая. Контроллер на передней стене над полом, одна топка Smog в полу и одна-две вытяжки в крыше. Стены кирпичные или огнеупорные. Соберите настройщиком. Загрузите сырую керамику и топливо рукой; ПКМ пустой рукой забирает результат. Камера определяет партию от 8 до 64 изделий. Обычный обжиг в ванильной печи также доступен.",
       "jei.smog.guide.casting": "К стеновому жидкостному порту прикрепите краник снаружи. Откройте его ПКМ, стол поставьте непосредственно под краником либо подведите желоб вниз от него. ПКМ формой ставит форму, Shift+ПКМ пустой рукой снимает. Обычный ПКМ забирает отливку. Голый порт сам не льёт металл.",
       "jei.smog.guide.pottery": "Shift+ПКМ пустой рукой выбирает изделие: оно видно на столе, название над хотбаром. ПКМ глиной или печной массой загружает материал и делает партию до восьми штук. ПКМ пустой рукой забирает результат. Сырые формы и тигли обжигаются в обычной печи или печи обжига. Печная масса: четыре глиняных шарика и песок. Shift+ПКМ с предметом открывает дополнительный интерфейс.",
       "jei.smog.guide.bellows": "Воздушный порт ставится в стенке. Снаружи прикрепите к нему воздушную насадку, откройте её ПКМ и поставьте рядом меха. ПКМ по мехам даёт нагнетание для партии до восьми слитков. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.crucible": "Отдельное керамическое изделие. В литейный очаг больше не устанавливается: камера очага должна быть полностью пустой. Вместимость очага определяется размерами свободного пространства, а не тиглями.",
-      "jei.smog.guide.firebox": "Функциональная топка Smog в полу комплекса, одна на установку. Это не ванильная печь с отдельным инвентарём. ПКМ топливом по собранной установке загружает общее топливо. Воронка сбоку контроллера также подаёт топливо.",
+      "jei.smog.guide.firebox": "Функциональная топка Smog в полу или стене комплекса, одна на установку. Это не ванильная печь с отдельным инвентарём. ПКМ топливом по собранной установке загружает общее топливо. Воронка сбоку контроллера также подаёт топливо.",
       "jei.smog.guide.spout": "Жидкостный порт — блок стенки, он сам не разливает металл. Прикрепите снаружи литейный краник и откройте его ПКМ. Расплав из краника льётся вниз: под ним нужен стол или желоб. Насадка не является частью стенки. Порт сохраняет подключение внешних труб и контейнеров. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.lining": "Огнеупорные кирпичи делаются из печной массы и обжигаются, четыре кирпича дают блок кладки. Кладка заменяет обычные кирпичи и части пола. Чем больше футеровки, тем медленнее остывает установка. Единая кирпичная текстура сохраняет 16 пикселей на блок.",
       "jei.smog.guide.molds": "Многоразовые формы устанавливаются ПКМ по литейному столу. Слитковая: 1 слиток. Плоская: 1 пластина за слиток. Мелких деталей: 4 фитинга за слиток. Трубная: 4 трубных элемента за 2 слитка. Олово используется для слитков и пластин. Геометрически одинаковая форма подходит для меди и бронзы.",
@@ -1852,7 +2427,7 @@
       "jei.smog.guide.parts": "Медные и бронзовые детали получаются литьём. Пластина содержит один слиток, фитинг — четверть, трубный элемент — половину. Переплавка возвращает ровно исходное количество металла. Эти детали сохраняются для следующих устройств медной эпохи.",
       "jei.smog.guide.bronze": "В нагретом очаге 3 части расплавленной меди и 1 часть олова автоматически дают 4 части расплавленной бронзы. Кнопка смешивания не нужна. Излишки исходного металла остаются в баке. Для отливки используются те же многоразовые формы.",
       "jei.smog.guide.molten": "В баке только расплавленные медь, олово и бронза. Поддерживаются совместимые жидкостные контейнеры и трубы через Fabric Fluid Storage. Один слиток — 9000 единиц Fabric, ведро — 81000, то есть 9 слитков. Посторонние жидкости не принимаются. Совместимость металлов задаётся общими тегами c:molten_*. Добытый металл других модов принимается через c:ingots/* и родственные теги.",
-      "jei.smog.structure.copper_hearth": "Открытый корпус от 3 до 11 по каждой оси. Центр пустой. Топка в полу, слив и ввод в гранях; рёбра/углы — только кладка. Настройщиком по контроллеру.",
+      "jei.smog.structure.copper_hearth": "Открытый корпус от 3 до 11 по каждой оси. Центр пустой. Одна топка в полу или стене, жидкостный порт в стене; рёбра и углы — кладка. ПКМ настройщиком по контроллеру или порту.",
       "jei.smog.structure.ceramic_kiln": "Закрытая оболочка, пустая камера. Топка в полу, вытяжка в крыше. ПКМ настройщиком. Подробности — страница информации контроллера.",
       "jei.smog.copper.firing": "Обжиг партии: от 8 до 64 изделий по камере.",
       "jei.smog.copper.melting": "Нагрейте очаг; расплав сливается через носик.",
@@ -1860,7 +2435,48 @@
       "message.smog.bellows_disconnected": "Нужны открытая воздушная насадка и порт собранного очага.",
       "message.smog.valve_open": "Кран открыт",
       "message.smog.valve_closed": "Кран закрыт",
-      "jei.smog.size_range": "Размеры: от %s до %s блоков"
+      "jei.smog.size_range": "Размеры: от %s до %s блоков",
+      "message.smog.controller_missing": "Нужен контроллер литейного очага или печи обжига в стене конструкции",
+      "message.smog.manual_workshop": "Жидкость: %s мВ | Заказано партий: %s. Загрузите сырьё и нажмите пустой рукой.",
+      "message.smog.manual_queued": "Заказано партий: %s. Повторный клик не ускоряет работу.",
+      "jei.smog.copper.washing": "8 необработанной меди + 1 ведро воды → 5 концентрата. Каждый даёт 2 слитка.",
+      "jei.smog.copper.pressing": "8 семян → 250 мВ масла + жмых. Запуск пустой рукой; масло забирается бутылкой или трубой.",
+      "jei.smog.guide.washing": "Соберите лоток 3 × 1 × 2 по схеме и нажмите настройщиком. Вода подаётся ведром или совместимой трубой. Загрузите необработанную медь и нажмите пустой рукой: заказ обрабатывается партиями. Слитки промывать нельзя.",
+      "jei.smog.guide.pressing": "Соберите пресс 3 × 2 × 2 по схеме. Загрузите семена и нажмите пустой рукой. Один заказ обрабатывает загруженные партии без повторных ударов. Масло забирается бутылкой, ведром или трубой; жмых идёт в компост. Металлические пластины здесь не производятся.",
+      "message.smog.assembly_edge": "Компонент на ребре или в углу: %s, %s, %s. Здесь нужна кладка.",
+      "message.smog.assembly_block": "Проверьте блок на %s, %s, %s: оболочка должна быть целой, камера — пустой.",
+      "message.smog.assembly_role": "Узел «%s»: установлено %s, требуется от %s до %s.",
+      "message.smog.assembly_overlap": "Блок уже принадлежит другой конструкции.",
+      "message.smog.assembly_check": "Проверьте схему JEI, положение контроллера и обязательные узлы.",
+      "role.smog.fuel": "Топка",
+      "role.smog.spout": "Жидкостный порт",
+      "role.smog.air": "Воздушный порт",
+      "role.smog.vent": "Вытяжка",
+      "role.smog.lining": "Футеровка",
+      "message.smog.pump_ready": "Помпа запущена: до 4 вёдер за одно действие.",
+      "message.smog.pump_missing_water": "Поместите помпу над источником воды.",
+      "message.smog.water_supply": "Вода: %s / 8000 мВ. Передача соседним установкам.",
+      "message.smog.lubricated": "Пресс смазан: ускорение следующих 8 партий.",
+      "jei.smog.guide.water": "Резервуар хранит 8 вёдер воды и подаёт её соседнему собранному лотку. Ручная помпа ставится над источником воды: одно нажатие подаёт до 4 вёдер в соседний резервуар или лоток. Частые клики не ускоряют подачу. Поддерживаются Fabric Fluid Storage, вёдра и трубы других модов; работа только в загруженных чанках.",
+      "message.smog.journal_empty": "Записей нет. Осмотрите журналом открытый рудный блок или залежь.",
+      "message.smog.journal_entry": "%s/%s: %s — %s, %s, %s (%s)",
+      "message.smog.journal_rejected": "Нужен открытый ресурсный блок и новая точка. Журнал хранит до 32 записей.",
+      "item.smog.field_journal.help": "ПКМ по ресурсу: записать. ПКМ в воздух: следующая запись, Shift — предыдущая.",
+      "jei.smog.guide.survey": "Полевой журнал записывает лично осмотренные руды и неметаллические залежи: материал, координаты и измерение. ПКМ по открытому блоку добавляет точку, ПКМ в воздух перебирает записи; Shift меняет направление. Данные хранятся в самом журнале. Скрытые жилы не сканируются.",
+      "advancements.smog.copper.root.title": "Мастерская начинается здесь",
+      "advancements.smog.copper.root.description": "Подготовьте формы, огонь и удобное место для работы. Ванильные способы остаются доступны.",
+      "advancements.smog.copper.pottery.title": "Повторяемая форма",
+      "advancements.smog.copper.pottery.description": "Обожгите слитковую форму. Она не расходуется при каждом литье.",
+      "advancements.smog.copper.casting.title": "Своя оснастка",
+      "advancements.smog.copper.casting.description": "Отлейте фитинги для новых устройств мастерской.",
+      "advancements.smog.copper.washing.title": "Больше из первичного сырья",
+      "advancements.smog.copper.washing.description": "Промойте 8 необработанной меди: 5 концентрата дают 10 слитков.",
+      "advancements.smog.copper.pressing.title": "Масло мастерской",
+      "advancements.smog.copper.pressing.description": "Отожмите семена и заберите масло бутылкой. Жмых можно компостировать.",
+      "advancements.smog.copper.survey.title": "Полевые наблюдения",
+      "advancements.smog.copper.survey.description": "Возьмите журнал и запишите координаты открытой руды.",
+      "advancements.smog.copper.bronze.title": "Для движущихся деталей",
+      "advancements.smog.copper.bronze.description": "Смешайте 3 части меди и 1 часть олова. Это подготовка к механизации."
     }
   }
 }

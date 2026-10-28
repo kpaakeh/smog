@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:copper_fitting"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.casting.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.casting.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:copper_fitting"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain"
+    ]
+  ],
+  "parent": "smog:copper/pottery"
+}

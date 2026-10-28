@@ -1,9 +1,10 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "copper": "minecraft:block/copper_block",
+    "copper": "smog:block/refractory_bricks",
+    "hardware": "minecraft:block/copper_block",
     "dark": "minecraft:block/black_terracotta",
-    "particle": "minecraft:block/copper_block"
+    "particle": "smog:block/refractory_bricks"
   },
   "elements": [
     {
@@ -2843,7 +2844,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             3,
             1,
@@ -2852,7 +2853,7 @@
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             12,
             1,
@@ -2861,7 +2862,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             12,
@@ -2870,7 +2871,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             3,
@@ -2879,7 +2880,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -2902,7 +2903,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             4,
             1,
@@ -2911,7 +2912,7 @@
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             9,
             1,
@@ -2920,7 +2921,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             9,
@@ -2929,7 +2930,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             4,
@@ -2952,7 +2953,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -2961,7 +2962,7 @@
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -2970,7 +2971,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             7,
@@ -2993,7 +2994,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             9,
             1,
@@ -3002,7 +3003,7 @@
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             5,
             1,
@@ -3011,7 +3012,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             5,
@@ -3020,7 +3021,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             9,
@@ -3043,7 +3044,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             11,
             1,
@@ -3052,7 +3053,7 @@
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             4,
             1,
@@ -3061,7 +3062,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             4,
@@ -3070,7 +3071,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             11,
@@ -3093,7 +3094,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             12,
             1,
@@ -3102,7 +3103,7 @@
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             3,
             1,
@@ -3111,7 +3112,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             3,
@@ -3120,7 +3121,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             12,
@@ -3129,7 +3130,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,

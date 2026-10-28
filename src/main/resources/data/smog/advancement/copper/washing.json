@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:copper_concentrate"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.washing.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.washing.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:copper_concentrate"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain"
+    ]
+  ],
+  "parent": "smog:copper/root"
+}

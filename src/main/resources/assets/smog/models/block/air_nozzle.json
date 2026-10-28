@@ -1,9 +1,10 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "copper": "minecraft:block/copper_block",
+    "copper": "smog:block/refractory_bricks",
+    "hardware": "minecraft:block/copper_block",
     "dark": "minecraft:block/black_terracotta",
-    "particle": "minecraft:block/copper_block"
+    "particle": "smog:block/refractory_bricks"
   },
   "elements": [
     {
@@ -19,7 +20,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -28,7 +29,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             3,
             7,
@@ -37,7 +38,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             3,
             7,
@@ -46,7 +47,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             12,
             1,
@@ -55,7 +56,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             3,
             1,
@@ -790,7 +791,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             4,
             7,
@@ -799,7 +800,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             4,
             7,
@@ -808,7 +809,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             11,
             1,
@@ -817,7 +818,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             4,
             1,
@@ -1504,7 +1505,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             5,
             7,
@@ -1513,7 +1514,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             5,
             7,
@@ -1522,7 +1523,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             10,
             1,
@@ -1531,7 +1532,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             5,
             1,
@@ -2104,7 +2105,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             6,
             7,
@@ -2113,7 +2114,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             6,
             7,
@@ -2122,7 +2123,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             9,
             1,
@@ -2131,7 +2132,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             6,
             1,
@@ -2781,7 +2782,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             7,
@@ -2790,7 +2791,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -2799,7 +2800,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -3372,7 +3373,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             9,
             7,
@@ -3381,7 +3382,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             9,
             7,
@@ -3390,7 +3391,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             6,
             1,
@@ -3399,7 +3400,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             9,
             1,
@@ -4086,7 +4087,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             10,
             7,
@@ -4095,7 +4096,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             10,
             7,
@@ -4104,7 +4105,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             5,
             1,
@@ -4113,7 +4114,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             10,
             1,
@@ -4848,7 +4849,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             11,
             7,
@@ -4857,7 +4858,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             11,
             7,
@@ -4866,7 +4867,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             4,
             1,
@@ -4875,7 +4876,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             11,
             1,
@@ -4898,7 +4899,7 @@
       ],
       "faces": {
         "east": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             7,
             1,
@@ -4907,7 +4908,7 @@
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             12,
             7,
@@ -4916,7 +4917,7 @@
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             12,
             7,
@@ -4925,7 +4926,7 @@
           ]
         },
         "north": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             3,
             1,
@@ -4934,7 +4935,7 @@
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#hardware",
           "uv": [
             12,
             1,

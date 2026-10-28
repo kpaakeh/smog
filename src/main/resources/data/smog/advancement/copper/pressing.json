@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:plant_oil_bottle"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.pressing.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.pressing.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:plant_oil_bottle"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain"
+    ]
+  ],
+  "parent": "smog:copper/casting"
+}

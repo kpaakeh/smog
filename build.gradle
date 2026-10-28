@@ -84,3 +84,8 @@ publishing {
         }
     }
 }
+
+// Run the copper scene in isolation; legacy foundation scenes keep their default behavior.
+if(providers.gradleProperty('copperTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.copperTest=true' }
+}

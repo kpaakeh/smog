@@ -12,6 +12,11 @@ public final class TestJeiProbe implements IModPlugin {
     @Override public void onRuntimeAvailable(IJeiRuntime value) { runtime = value; }
     @Override public void onRuntimeUnavailable() { runtime = null; }
     public static boolean ready() { return runtime != null; }
+    public static void showCopper(String machine){
+        var type=io.github.kpaakeh.smog.compat.jei.CopperCategory.TYPES.get(machine);var manager=runtime.getRecipeManager();
+        if(type==null||manager.createRecipeLookup(type).get().findAny().isEmpty())throw new IllegalStateException("Missing copper JEI category: "+machine);
+        runtime.getRecipesGui().showTypes(List.of(type));
+    }
     public static void showMultiblocks() {
         var type = runtime.getRecipeManager().getRecipeType(Identifier.fromNamespaceAndPath("smog", "multiblocks")).orElseThrow();
         runtime.getRecipesGui().showTypes(List.of(type));

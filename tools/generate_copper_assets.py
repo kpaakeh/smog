@@ -4,6 +4,7 @@ from zipfile import ZipFile
 from io import BytesIO
 import json,shutil,sys,colorsys
 REFRESH_ICONS="--refresh-icons" in sys.argv
+MANUAL_ICONS={"copper_concentrate","seed_cake","plant_oil_bottle","plant_oil_bucket","lubricating_compound","waxed_cord","field_journal"}
 from PIL import Image,ImageDraw,ImageEnhance
 ROOT=Path(__file__).resolve().parents[1];A=ROOT/'src/main/resources/assets/smog';C=json.loads((ROOT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
 Z=ZipFile(ROOT/'.gradle-user-home/caches/fabric-loom/26.3/minecraft-client.jar')
@@ -31,7 +32,7 @@ for c in COPPER:
 FIRED=[(46,38,31),(70,57,45),(99,80,61),(128,105,80),(155,132,103),(184,160,126),(209,186,151)]
 def sprite(n,im):
  p=A/'textures/item'/(n+'.png');p.parent.mkdir(parents=True,exist_ok=True)
- if REFRESH_ICONS or not p.exists():im.save(p)
+ if REFRESH_ICONS or n in MANUAL_ICONS and "--refresh-manual-icons" in sys.argv or not p.exists():im.save(p)
 def plate(colors):
  raw=remap(image('item/iron_ingot'),colors);im=Image.new('RGBA',(16,16));part=raw.crop(raw.getbbox()).resize((14,5),Image.Resampling.NEAREST);im.alpha_composite(part,(1,6));return im
 def pipe(colors):
@@ -63,6 +64,7 @@ def mold_icon(kind,colors):
 
 for e in C['items']:
  n=e['name']
+ if n in MANUAL_ICONS:continue
  if n=='copper_plate':im=plate(COPPER)
  elif n.endswith('_fitting'):im=remap(image('item/iron_chain'),COPPER if n.startswith('copper') else BRONZE)
  elif n.endswith('_pipe_part'):im=pipe(COPPER if n.startswith('copper') else BRONZE)
@@ -145,17 +147,17 @@ for n,size in [('ceramic_crucible',12),('large_ceramic_crucible',16)]:
  lo=(16-size)/2;hi=16-lo;model(n,[box([lo,0,lo],[hi,3,hi],'clay'),box([lo,3,lo],[lo+2,14,hi],'clay'),box([hi-2,3,lo],[hi,14,hi],'clay'),box([lo+2,3,lo],[hi-2,14,lo+2],'clay'),box([lo+2,3,hi-2],[hi-2,14,hi],'clay')],dict(clay=clay))
 model('firebrick_casing',[box([0,0,0],[16,16,16],'brick')],dict(brick=brick))
 # Wall ports are flat sockets; detachable fittings provide the external geometry.
-model('casting_spout',[box([0,0,0],[16,16,16],'brick'),box([4,4,0],[12,12,1],'copper'),box([6,6,0],[10,10,2],'dark')],dict(brick=brick,copper=copper,dark='minecraft:block/black_terracotta'))
+model('casting_spout',[box([0,0,0],[16,16,16],'brick'),box([4,4,0],[12,12,1],'brick'),box([6,6,0],[10,10,2],'dark')],dict(brick=brick,copper=copper,dark='minecraft:block/black_terracotta'))
 model('casting_channel',[box([0,12,0],[16,14,16],'clay'),box([0,14,0],[3,16,16],'clay'),box([13,14,0],[16,16,16],'clay')],dict(clay=clay))
-model('air_intake',[box([0,0,0],[16,16,16],'brick'),box([3,5,0],[13,11,1],'copper'),box([5,6,0],[11,10,2],'dark')],dict(brick=brick,copper=copper,dark='minecraft:block/black_terracotta'))
+model('air_intake',[box([0,0,0],[16,16,16],'brick'),box([3,5,0],[13,11,1],'brick'),box([5,6,0],[11,10,2],'dark')],dict(brick=brick,copper=copper,dark='minecraft:block/black_terracotta'))
 for name in ['casting_faucet','air_nozzle']:
  for opened in [False,True]:
-  handle=box([7,13,3],[9,15,13],'copper') if opened else box([3,13,7],[13,15,9],'copper')
+  handle=box([7,13,3],[9,15,13],'hardware') if opened else box([3,13,7],[13,15,9],'hardware')
   if name=='casting_faucet':
    body=[box([4,6,12],[12,12,16],'copper'),box([6,7,7],[10,11,16],'copper'),box([6,3,6],[10,9,10],'copper'),box([4,0,4],[6,3,12],'copper'),box([10,0,4],[12,3,12],'copper'),box([6,0,4],[10,3,6],'copper'),box([6,0,10],[10,3,12],'copper'),box([6,2,6],[10,3,10],'dark'),box([7,11,7],[9,13,9],'copper')]
   else:
    body=[box([4,4,11],[12,12,16],'copper'),box([5,5,3],[11,11,12],'copper'),box([4,4,0],[6,12,4],'copper'),box([10,4,0],[12,12,4],'copper'),box([6,4,0],[10,6,4],'copper'),box([6,10,0],[10,12,4],'copper'),box([6,6,3],[10,10,4],'dark'),box([7,11,7],[9,13,9],'copper')]
-  model(name+('_open' if opened else ''),body+[handle],dict(copper=copper,dark='minecraft:block/black_terracotta'))
+  model(name+('_open' if opened else ''),body+[handle],dict(copper=brick,hardware=copper,dark='minecraft:block/black_terracotta'))
 model('kiln_vent',[box([0,0,0],[16,5,16],'brick'),box([3,5,3],[6,16,13],'brick'),box([10,5,3],[13,16,13],'brick'),box([6,5,3],[10,16,6],'brick'),box([6,5,10],[10,16,13],'brick')],dict(brick=brick))
 legs=[box([x,0,z],[x+3,12,z+3],{'all':'leg','up':'end','down':'end'}) for x,z in [(1,1),(12,1),(1,12),(12,12)]]
 model('potter_table',legs+[box([0,11,0],[16,14,16],'wood'),box([3,14,3],[13,16,13],'clay')],dict(wood=wood,clay=clay,leg='minecraft:block/stripped_oak_log',end='minecraft:block/stripped_oak_log_top'))
@@ -164,6 +166,42 @@ model('hand_bellows',[box([1,0,1],[15,3,15],'wood'),box([2,3,2],[14,10,14],'leat
 for n,face in [('copper_hearth','hearth'),('ceramic_kiln','kiln'),('solid_firebox','firebox')]:
  details={'hearth':[box([6,6,0],[10,10,2],'handle')],'kiln':[box([10,6,0],[12,10,2],'handle')],'firebox':[box([4,3,0],[12,5,2],'handle')]}[face]
  model(n,[box([0,0,1],[16,16,16],{'all':'brick','north':'front'})]+details,dict(brick=brick,front='smog:block/refractory_'+face+'_front',handle='minecraft:block/copper_block'))
+# Modular manual workshop pieces keep their own world-scale UVs after assembly.
+woodparts=dict(wood=wood,metal=copper,mesh='minecraft:block/iron_bars',log='minecraft:block/stripped_oak_log')
+trough=[box([0,3,0],[16,5,16],'wood'),box([0,5,0],[2,13,16],'wood'),box([14,5,0],[16,13,16],'wood'),box([2,5,0],[14,13,2],'wood')]
+model('water_tank',[box([0,0,0],[16,3,16],'wood'),box([0,3,0],[2,16,16],'wood'),box([14,3,0],[16,16,16],'wood'),box([2,3,0],[14,16,2],'wood'),box([2,3,14],[14,16,16],'wood'),box([0,5,0],[16,7,1],'metal'),box([0,12,0],[16,14,1],'metal')],woodparts)
+model('hand_water_pump',[box([3,0,3],[13,3,13],'wood'),box([6,3,6],[10,12,10],'metal'),box([7,12,7],[9,16,9],'metal'),box([2,14,7],[14,16,9],'wood'),box([8,7,2],[10,9,6],'metal')],woodparts)
+model('washing_section',trough,woodparts)
+model('washing_trough',trough+[box([2,5,14],[14,13,16],'wood'),box([7,0,7],[9,3,9],'metal')],woodparts)
+model('washing_sieve',[box([0,3,0],[16,5,16],'wood'),box([0,5,0],[2,9,16],'wood'),box([14,5,0],[16,9,16],'wood')]+[box([2,5,z],[14,6,z+1],'metal') for z in range(1,16,3)],woodparts)
+model('workshop_support',[box([1,0,1],[5,16,5],'log'),box([11,0,11],[15,16,15],'log'),box([0,9,0],[16,12,16],'wood')],woodparts)
+model('press_frame',[box([0,0,0],[4,16,4],'log'),box([12,0,12],[16,16,16],'log'),box([0,12,0],[16,16,16],'wood')],woodparts)
+model('press_basket',[box([1,0,1],[15,3,15],'wood')]+[box([x,3,z],[x+2,13,z+2],'wood') for x in range(1,15,3) for z in range(1,15,3) if x in [1,13] or z in [1,13]],woodparts)
+model('lever_press',[box([0,0,0],[16,4,16],'wood'),box([1,4,1],[4,16,4],'log'),box([12,4,12],[15,16,15],'log'),box([4,6,4],[12,8,12],'wood'),box([7,8,7],[9,15,9],'metal'),box([3,14,7],[13,16,9],'wood')],woodparts)
+sprite('copper_concentrate',remap(image('item/raw_copper'),COPPER))
+sprite('field_journal',tint(image('item/book'),(169,123,71)))
+sprite('seed_cake',remap(image('item/dried_kelp'),FIRED))
+sprite('plant_oil_bottle',tint(image('item/honey_bottle'),(210,161,57)))
+sprite('lubricating_compound',tint(image('item/slime_ball'),(85,77,46)))
+sprite('waxed_cord',tint(image('item/string'),(181,142,75)))
+# New oil assets reuse water shading and animation, preserving the bucket's metal rim.
+oil=(187,141,49)
+for kind in ['still','flow','overlay']:
+ path=A/('textures/block/plant_oil_'+kind+'.png')
+ if not path.exists():
+  tint(image('block/water_'+kind),oil).save(path)
+  meta='assets/minecraft/textures/block/water_'+kind+'.png.mcmeta'
+  if meta in Z.namelist():Path(str(path)+'.mcmeta').write_bytes(Z.read(meta))
+bucket=image('item/water_bucket');colored=tint(bucket,oil)
+for y in range(16):
+ for x in range(16):
+  r,g,b,a=bucket.getpixel((x,y))
+  if a and b>r*1.2 and b>g*1.05:bucket.putpixel((x,y),colored.getpixel((x,y)))
+sprite('plant_oil_bucket',bucket)
+for name,im in [('workshop_water_surface',tint(image('block/water_still'),(70,116,210))),('plant_oil_surface',tint(image('block/water_still'),oil))]:
+ path=A/('textures/block/'+name+'.png')
+ if not path.exists():
+  im=im.crop((0,0,16,16));im.putalpha(255);im.save(path)
 # Only currently needed GUI images are installed in main resources.
 gui=A/'textures/gui';gui.mkdir(parents=True,exist_ok=True)
 for n in ['slot','structure_preview']:

@@ -15,6 +15,15 @@ public final class ComplexMultiblocks {
         var pos=ComplexFormationData.get(level).owner(part);
         return pos!=null&&level.hasChunkAt(pos)&&level.getBlockEntity(pos) instanceof io.github.kpaakeh.smog.machine.MachineEntity m&&m.assembled()?m:null;
     }
+    /** Search loaded block entities only; using the configurator must not load world chunks. */
+    public static List<io.github.kpaakeh.smog.machine.MachineEntity> nearbyControllers(net.minecraft.server.level.ServerLevel level,net.minecraft.core.BlockPos part){
+        List<io.github.kpaakeh.smog.machine.MachineEntity> result=new ArrayList<>();
+        for(int x=(part.getX()-10)>>4;x<=((part.getX()+10)>>4);x++)for(int z=(part.getZ()-10)>>4;z<=((part.getZ()+10)>>4);z++){
+            var chunk=level.getChunkSource().getChunkNow(x,z);if(chunk==null)continue;
+            for(var entity:chunk.getBlockEntities().values())if(entity instanceof io.github.kpaakeh.smog.machine.MachineEntity m&&(m.complexDefinition()!=null||io.github.kpaakeh.smog.copper.ManualWorkshops.handles(m))&&!m.assembled()&&Math.abs(m.getBlockPos().getX()-part.getX())<=10&&Math.abs(m.getBlockPos().getY()-part.getY())<=10&&Math.abs(m.getBlockPos().getZ()-part.getZ())<=10)result.add(m);
+        }
+        result.sort(Comparator.comparingDouble(m->m.getBlockPos().distSqr(part)));return result;
+    }
     public static void initializeInteractions(){
         net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlocks((level,pos,state,entity,side)->{
             if(!(level instanceof net.minecraft.server.level.ServerLevel server))return null;var m=owner(server,pos);return m!=null&&io.github.kpaakeh.smog.copper.CopperWorkshops.workshop(m,"copper_hearth")?m.molten:null;

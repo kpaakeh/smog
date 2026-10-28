@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:ingot_mold"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.pottery.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.pottery.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:ingot_mold"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain"
+    ]
+  ],
+  "parent": "smog:copper/root"
+}

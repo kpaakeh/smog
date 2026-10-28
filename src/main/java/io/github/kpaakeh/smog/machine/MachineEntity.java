@@ -24,14 +24,23 @@ import net.minecraft.world.level.storage.*;
 public final class MachineEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     private final Identifier machineId;
     private ComplexMultiblockDefinition.Shape complexShape;
+    private Rotation complexRotation=Rotation.NONE;
     private ComplexMultiblockDefinition.Inspection complexInspection;
     private String assemblyDetail="";
+    public final io.github.kpaakeh.smog.copper.WorkshopFluidStorage processFluid=new io.github.kpaakeh.smog.copper.WorkshopFluidStorage(this);
     public final io.github.kpaakeh.smog.copper.MoltenMetalStorage molten=new io.github.kpaakeh.smog.copper.MoltenMetalStorage(this);
     public final io.github.kpaakeh.smog.copper.CopperState copper=new io.github.kpaakeh.smog.copper.CopperState();
     public ComplexMultiblockDefinition complexDefinition(){return ComplexMultiblocks.get(machineId);}
     public ComplexMultiblockDefinition.Shape complexShape(){return complexShape;}
     public java.util.Map<String,Integer> complexRoles(){return complexInspection==null?java.util.Map.of():complexInspection.roles();}
     public String assemblyDetail(){return assemblyDetail;}
+    public Component assemblyProblem(){
+        var fields=assemblyDetail.split("\\|");
+        if(fields.length>=4&&(fields[0].equals("edge")||fields[0].equals("block")))return Component.translatable("message.smog.assembly_"+fields[0],fields[1],fields[2],fields[3]);
+        if(fields.length==5&&fields[0].equals("role"))return Component.translatable("message.smog.assembly_role",Component.translatable("role.smog."+fields[1]),fields[2],fields[3],fields[4]);
+        if(assemblyDetail.equals("overlap"))return Component.translatable("message.smog.assembly_overlap");
+        return Component.translatable("message.smog.assembly_check");
+    }
     public void sync(){setChanged();if(level instanceof ServerLevel)level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),Block.UPDATE_CLIENTS);}
 
     private final MachineEnergyStorage energyStorage=new MachineEnergyStorage(this);
@@ -69,7 +78,8 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         Identifier id=spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER && generator()!=GeneratorKind.NONE?generator().structureId():Machines.get(machineId).definition().multiblock();
         return id==null?null:Multiblocks.get(id);
     }
-    public Rotation rotation() {
+    public Rotation rotation() { return complexShape==null?facingRotation():complexRotation; }
+    private Rotation facingRotation() {
         return switch(getBlockState().getValue(MachineBlock.FACING)) {
             case EAST->Rotation.CLOCKWISE_90;case SOUTH->Rotation.CLOCKWISE_180;case WEST->Rotation.COUNTERCLOCKWISE_90;default->Rotation.NONE;
         };
@@ -78,16 +88,27 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         return complexDefinition()!=null || spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER || Machines.get(machineId).definition().multiblock()!=null;
     }
     /** Assembly is an explicit player action; ticks only validate the selected structure. */
-    public boolean tryAssemble() {
+    public boolean tryAssemble() { return tryAssembleAt(null); }
+    public boolean tryAssembleAt(BlockPos clickedPart) {
         if(!(level instanceof ServerLevel server) || !multiblockController())return false;
         if(assembled())return validate(server);
         if(complexDefinition()!=null) {
-            var found=complexDefinition().discover(server,worldPosition,rotation());
-            assemblyDetail=found.detail();
-            if(found.result()!=MultiblockDefinition.Result.COMPLETE)return false;
-            if(!claim(server,found)){assemblyDetail="overlap";return false;}
-            complexShape=found.shape();complexInspection=found;
-            server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,true),Block.UPDATE_ALL);sync();return true;
+            ComplexMultiblockDefinition.Inspection best=null;
+            var turns=new LinkedHashSet<Rotation>();turns.add(facingRotation());turns.addAll(List.of(Rotation.values()));
+            for(var turn:turns){
+                var found=complexDefinition().discover(server,worldPosition,turn);
+                if(best==null||found.matched()>best.matched())best=found;
+                if(found.result()!=MultiblockDefinition.Result.COMPLETE)continue;
+                if(clickedPart!=null&&!clickedPart.equals(worldPosition)&&found.snapshot().parts().entrySet().stream().noneMatch(e->!e.getValue().value().equals("minecraft:air")&&worldPosition.offset(e.getKey().rotate(turn)).equals(clickedPart)))continue;
+                if(!claim(server,found,turn)){assemblyDetail="overlap";return false;}
+                complexShape=found.shape();complexRotation=turn;complexInspection=found;assemblyDetail="";
+                server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,true),Block.UPDATE_ALL);sync();return true;
+            }
+            assemblyDetail=best==null?"":best.detail();return false;
+        }
+        if(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)){
+            if(clickedPart!=null&&!clickedPart.equals(worldPosition)&&structure().parts().entrySet().stream().noneMatch(e->!e.getValue().value().equals("minecraft:air")&&worldPosition.offset(e.getKey().rotate(rotation())).equals(clickedPart)))return false;
+            if(structure().check(server,worldPosition,rotation())!=MultiblockDefinition.Result.COMPLETE||!claimManual(server))return false;
         }
         GeneratorKind chosen=GeneratorKind.NONE;
         if(spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER) {
@@ -101,9 +122,15 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         server.setBlock(worldPosition,getBlockState().setValue(MachineBlock.ASSEMBLED,true).setValue(MachineBlock.GENERATOR,chosen),Block.UPDATE_ALL);
         setChanged();return true;
     }
-    private boolean claim(ServerLevel server,ComplexMultiblockDefinition.Inspection inspection) {
+    private boolean claim(ServerLevel server,ComplexMultiblockDefinition.Inspection inspection) { return claim(server,inspection,rotation()); }
+    private boolean claim(ServerLevel server,ComplexMultiblockDefinition.Inspection inspection,Rotation turn) {
         java.util.List<BlockPos> parts=new java.util.ArrayList<>();parts.add(worldPosition);
-        inspection.snapshot().parts().forEach((offset,ingredient)->{if(!ingredient.value().equals("minecraft:air"))parts.add(worldPosition.offset(offset.rotate(rotation())));});
+        inspection.snapshot().parts().forEach((offset,ingredient)->{if(!ingredient.value().equals("minecraft:air"))parts.add(worldPosition.offset(offset.rotate(turn)));});
+        return ComplexFormationData.get(server).claim(worldPosition,parts);
+    }
+    private boolean claimManual(ServerLevel server){
+        List<BlockPos> parts=new ArrayList<>();parts.add(worldPosition);
+        structure().parts().forEach((offset,ingredient)->{if(!ingredient.value().equals("minecraft:air"))parts.add(worldPosition.offset(offset.rotate(rotation())));});
         return ComplexFormationData.get(server).claim(worldPosition,parts);
     }
     public void disassemble() {
@@ -132,6 +159,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         var definition=structure();
         // An unloaded structure pauses; a missing part dismantles it until configured again.
         var result=definition==null?MultiblockDefinition.Result.INCOMPLETE:definition.check(server,worldPosition,rotation());
+        if(result==MultiblockDefinition.Result.COMPLETE&&io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)&&!claimManual(server)){disassemble();return false;}
         if(result==MultiblockDefinition.Result.INCOMPLETE)disassemble();
         return result==MultiblockDefinition.Result.COMPLETE;
     }
@@ -262,7 +290,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         @Override public void set(int index,int value) {}
     };
     @Override protected AbstractContainerMenu createMenu(int id,Inventory inventory) {
-        var layout=GuiLayouts.get(spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
+        var layout=GuiLayouts.get(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)?"manual_workshop":io.github.kpaakeh.smog.copper.WaterSupply.handles(this)?"water_supply":spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
     }
     @Override public void preRemoveSideEffects(BlockPos pos,BlockState state) {
         super.preRemoveSideEffects(pos,state);
@@ -273,7 +301,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         output.putInt("progress",progress);output.putInt("energy",energy);output.putInt("burn_ticks",burnTicks);output.putInt("burn_total",burnTotal);output.putBoolean("enabled",enabled);
         output.store("strikes",com.mojang.serialization.Codec.STRING.listOf(),List.copyOf(strikes));
         output.putInt("output_limit",outputLimit);copper.save(output);
-        if(complexShape!=null){output.putInt("complex_width",complexShape.width());output.putInt("complex_depth",complexShape.depth());output.putInt("complex_height",complexShape.height());output.putInt("complex_left",complexShape.left());}
+        if(complexShape!=null){output.putInt("complex_rotation",complexRotation.ordinal());output.putInt("complex_width",complexShape.width());output.putInt("complex_depth",complexShape.depth());output.putInt("complex_height",complexShape.height());output.putInt("complex_left",complexShape.left());}
     }
     @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket(){return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);}
     @Override public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries){return saveCustomOnly(registries);}
@@ -283,6 +311,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         burnTicks=Math.max(0,input.getIntOr("burn_ticks",0));burnTotal=Math.max(burnTicks,input.getIntOr("burn_total",0));enabled=input.getBooleanOr("enabled",true);
         processingItem=items.get(0).getItem();copper.load(input);
         complexInspection=null;complexShape=null;
+        complexRotation=Rotation.values()[Math.clamp(input.getIntOr("complex_rotation",facingRotation().ordinal()),0,3)];
         int width=input.getIntOr("complex_width",0);
         if(width>=3&&width<=11)try{complexShape=new ComplexMultiblockDefinition.Shape(width,input.getIntOr("complex_depth",3),input.getIntOr("complex_height",2),input.getIntOr("complex_left",1));}catch(IllegalArgumentException ignored){}
         strikes.clear();input.read("strikes",com.mojang.serialization.Codec.STRING.listOf()).ifPresent(strikes::addAll);

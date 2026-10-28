@@ -16,7 +16,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     @Override protected void init() {
         super.init();
-        if(menu.layout.id.equals("copper_workshop")) {
+        if((menu.layout.id.equals("copper_workshop")||menu.layout.id.equals("manual_workshop")||menu.layout.id.equals("water_supply"))) {
             previous=addRenderableWidget(Button.builder(Component.literal("<"),button->send(20)).bounds(leftPos+7,topPos+83,20,16).build());
             next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+30,topPos+83,20,16).build());
             craft=addRenderableWidget(Button.builder(Component.translatable("gui.smog.copper.craft"),button->send(22)).bounds(leftPos+55,topPos+83,59,16).build());
@@ -34,7 +34,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     private void send(int id){if(minecraft.gameMode!=null)minecraft.gameMode.handleInventoryButtonClick(menu.containerId,id);}
     private void refreshButtons(){
-        if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==1||kind==2;craft.visible=kind==2;}
+        if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==1||kind==2;craft.visible=kind==2||kind==5;}
         if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
         if(rateButton!=null)rateButton.visible=menu.data.get(11)==MachineSpec.Kind.TRANSFORMER.ordinal();
     }
@@ -45,13 +45,15 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         for(var slot:menu.layout.slots)GuiTextures.draw(g,"slot",x+slot.x()-1,y+slot.y()-1,18,18);
         for(int row=0;row<3;row++)for(int col=0;col<9;col++)GuiTextures.draw(g,"slot",x+7+col*18,y+107+row*18,18,18);
         for(int col=0;col<9;col++)GuiTextures.draw(g,"slot",x+7+col*18,y+165,18,18);
-        if(menu.layout.id.equals("copper_workshop")) {
+        if((menu.layout.id.equals("copper_workshop")||menu.layout.id.equals("manual_workshop")||menu.layout.id.equals("water_supply"))) {
             int kind=menu.data.get(14);
+            if(kind==6){g.text(font,Component.literal(menu.data.get(19)+" / 8000 mB"),x+7,y+20,0xFF404040,false);return;}
             GuiTextures.draw(g,"copper_progress_empty",x+99,y+35,24,16);
             int work=24*Math.clamp(menu.data.get(0),0,Math.max(1,menu.data.get(1)))/Math.max(1,menu.data.get(1));
             GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,work,16,24,16);
             if(menu.data.get(2)>0)GuiTextures.draw(g,"copper_lit_progress",x+49,y+36,14,14);
-            if(kind==2)g.text(font,net.minecraft.world.item.Item.byId(menu.data.get(12)).getDefaultInstance().getHoverName(),x+7,y+20,0xFF404040,false);
+            if(kind==5||kind==6)g.text(font,Component.literal(menu.data.get(19)+" / 8000 mB"),x+7,y+20,0xFF404040,false);
+            else if(kind==2)g.text(font,net.minecraft.world.item.Item.byId(menu.data.get(12)).getDefaultInstance().getHoverName(),x+7,y+20,0xFF404040,false);
             else if(kind==1)g.text(font,Component.translatable("conductor.smog."+new String[]{"copper","tin","bronze"}[Math.floorMod(menu.data.get(6),3)]),x+7,y+20,0xFF404040,false);
             else g.text(font,Component.translatable("gui.smog.copper.heat",menu.data.get(2),menu.data.get(3)),x+7,y+20,0xFF404040,false);
             g.text(font,Component.translatable("gui.smog.copper.status_"+menu.data.get(7)),x+7,y+55,0xFF404040,false);

@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:field_journal"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.survey.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.survey.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:field_journal"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtain"
+    ]
+  ],
+  "parent": "smog:copper/root"
+}

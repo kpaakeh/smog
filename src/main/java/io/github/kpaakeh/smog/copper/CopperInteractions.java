@@ -22,6 +22,28 @@ public final class CopperInteractions {
     private static boolean take(MachineEntity m,Player player,int slot){if(m.getItem(slot).isEmpty())return false;var stack=m.removeItemNoUpdate(slot);player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);m.sync();return true;}
     public static InteractionResult use(ServerLevel level,MachineEntity m,Player player,InteractionHand hand,BlockPos clicked){
         var held=player.getItemInHand(hand);
+        if(WaterSupply.handles(m)){
+            if(FluidStorageUtil.interactWithFluidStorage(m.processFluid,player,hand))return InteractionResult.SUCCESS;
+            if(CopperWorkshops.workshop(m,"hand_water_pump")&&held.isEmpty())player.sendOverlayMessage(Component.translatable(WaterSupply.prime(level,m)?"message.smog.pump_ready":"message.smog.pump_missing_water"));
+            else player.sendOverlayMessage(Component.translatable("message.smog.water_supply",m.copper.processFluid/81));
+            return InteractionResult.SUCCESS;
+        }
+        if(ManualWorkshops.handles(m)){
+            if(!m.assembled()){player.sendOverlayMessage(Component.translatable("message.smog.multiblock_incomplete"));return InteractionResult.SUCCESS;}
+            if(FluidStorageUtil.interactWithFluidStorage(m.processFluid,player,hand))return InteractionResult.SUCCESS;
+            if(!m.processFluid.washing()&&CopperWorkshops.is(held,"smog:lubricating_compound")&&m.copper.air==0){if(!player.isCreative())held.shrink(1);m.copper.air=8;m.sync();player.sendOverlayMessage(Component.translatable("message.smog.lubricated"));return InteractionResult.SUCCESS;}
+            if(!m.processFluid.washing()&&held.is(Items.GLASS_BOTTLE)&&m.copper.processFluid>=WorkshopFluidStorage.BUCKET/4){
+                m.copper.processFluid-=WorkshopFluidStorage.BUCKET/4;if(!player.isCreative())held.shrink(1);
+                var bottle=new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("plant_oil_bottle")));player.getInventory().add(bottle);if(!bottle.isEmpty())Containers.dropItemStack(level,player.getX(),player.getY(),player.getZ(),bottle);m.sync();return InteractionResult.SUCCESS;
+            }
+            if(player.isShiftKeyDown()&&held.isEmpty()){take(m,player,0);m.copper.queued=0;m.copper.work=0;m.sync();return InteractionResult.SUCCESS;}
+            if(!held.isEmpty()&&put(m,0,held))return InteractionResult.SUCCESS;
+            if(held.isEmpty()){
+                if(take(m,player,3))return InteractionResult.SUCCESS;
+                int batches=ManualWorkshops.queue(m);player.sendOverlayMessage(batches>0?Component.translatable("message.smog.manual_queued",batches):Component.translatable("message.smog.manual_workshop",m.copper.processFluid/81,0));return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
+        }
         if(player.isShiftKeyDown()&&!held.isEmpty()&&CopperWorkshops.workshop(m,"potter_table")){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(player.isShiftKeyDown()&&held.isEmpty()){
             if(CopperWorkshops.workshop(m,"casting_table")&&take(m,player,1)){m.copper.work=0;return InteractionResult.SUCCESS;}

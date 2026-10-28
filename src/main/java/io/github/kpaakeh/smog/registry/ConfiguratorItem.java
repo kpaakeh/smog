@@ -18,6 +18,11 @@ public final class ConfiguratorItem extends Item {
             var state=level.getBlockState(pos);
             if(!(state.getBlock() instanceof io.github.kpaakeh.smog.copper.WorkshopPartBlock))return InteractionResult.PASS;
             if(player.isShiftKeyDown()&&!level.isClientSide()){level.setBlock(pos,state.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,state.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getClockWise()),Block.UPDATE_ALL);player.sendOverlayMessage(Component.translatable("message.smog.configurator_rotated"));}
+            if(!player.isShiftKeyDown()&&level instanceof net.minecraft.server.level.ServerLevel server){
+                var candidates=io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.nearbyControllers(server,pos);
+                boolean formed=false;for(var candidate:candidates)if(candidate.tryAssembleAt(pos)){formed=true;break;}
+                player.sendOverlayMessage(formed?Component.translatable("message.smog.multiblock_formed"):candidates.isEmpty()?Component.translatable("message.smog.controller_missing"):candidates.getFirst().assemblyProblem());
+            }
             return InteractionResult.SUCCESS;
         }
         pos=machine.getBlockPos();
@@ -29,7 +34,7 @@ public final class ConfiguratorItem extends Item {
             player.sendOverlayMessage(Component.translatable("message.smog.configurator_rotated"));
         } else if(machine.multiblockController()) {
             boolean formed=machine.tryAssemble();
-            player.sendOverlayMessage(Component.translatable(formed?"message.smog.multiblock_formed":"message.smog.multiblock_incomplete").append(!formed&&!machine.assemblyDetail().isEmpty()?" "+machine.assemblyDetail():""));
+            player.sendOverlayMessage(formed?Component.translatable("message.smog.multiblock_formed"):machine.assemblyProblem());
         }
         return InteractionResult.SUCCESS;
     }

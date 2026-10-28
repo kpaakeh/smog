@@ -20,10 +20,7 @@ public final class ClientFormations {
     public static boolean hidden(BlockPos pos) { return hidden.contains(pos); }
     public static boolean controller(BlockPos pos) { return controllers.contains(pos); }
     public static Rotation rotation(MachineEntity machine) {
-        return switch (machine.getBlockState().getValue(MachineBlock.FACING)) {
-            case EAST -> Rotation.CLOCKWISE_90; case SOUTH -> Rotation.CLOCKWISE_180;
-            case WEST -> Rotation.COUNTERCLOCKWISE_90; default -> Rotation.NONE;
-        };
+        return machine.rotation();
     }
     public static void initialize() {
         ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register((entity, level) -> { if (entity instanceof MachineEntity machine) LOADED.add(machine); });

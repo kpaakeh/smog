@@ -25,6 +25,7 @@ public final class ModCreativeTabs {
             for(var value:catalog.getAsJsonArray("machines"))copper.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
             for(var value:catalog.getAsJsonArray("blocks"))if(value.getAsJsonObject().has("tab")&&value.getAsJsonObject().get("tab").getAsString().equals("copper_age"))copper.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
             ModItems.all().stream().filter(e->e.tab().equals("copper_age")).forEach(e->copper.add(e.item()));
+            ModFluids.all().stream().filter(f->f.name.equals("plant_oil")).forEach(f->copper.add(f.bucket));
             ModAlloys.all().stream().filter(e->e.name().equals("bronze")).forEach(e->copper.addAll(e.contents()));
             Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id("copper_age"),FabricCreativeModeTab.builder().title(Component.translatable("itemGroup.smog.copper_age")).icon(()->Items.COPPER_INGOT.getDefaultInstance()).displayItems((parameters,output)->copper.forEach(output::accept)).build());
         }

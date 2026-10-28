@@ -13,7 +13,9 @@ public final class ModItems {
     private ModItems(){}
     public static Item register(String name,String kind,String conductor,String tab){
         var id=ModBlocks.id(name);var properties=new Item.Properties().setId(ResourceKey.create(Registries.ITEM,id));
-        Item item=switch(kind){case "wire"->new WireCoilItem(properties,ConductorMaterial.valueOf(conductor.toUpperCase(Locale.ROOT)));case "wrench","configurator"->new ConfiguratorItem(properties.stacksTo(1));default->new Item(properties);};
+        if(name.equals("seed_cake"))properties.component(net.minecraft.core.component.DataComponents.COMPOSTABLE,new net.minecraft.world.item.component.Compostable(ResourceKey.create(Registries.CONTEXT_INT_PROVIDER,net.minecraft.resources.Identifier.withDefaultNamespace("compostable/medium_high"))));
+        if(name.equals("plant_oil_bottle"))properties.craftRemainder(net.minecraft.world.item.Items.GLASS_BOTTLE);
+        Item item=switch(kind){case "field_journal"->new io.github.kpaakeh.smog.copper.FieldJournalItem(properties);case "wire"->new WireCoilItem(properties,ConductorMaterial.valueOf(conductor.toUpperCase(Locale.ROOT)));case "wrench","configurator"->new ConfiguratorItem(properties.stacksTo(1));default->new Item(properties);};
         Registry.register(BuiltInRegistries.ITEM,id,item);VALUES.add(new Entry(item,tab));return item;
     }
     public static List<Entry> all(){return List.copyOf(VALUES);}
