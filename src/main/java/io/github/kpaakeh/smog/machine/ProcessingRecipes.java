@@ -29,7 +29,5 @@ public final class ProcessingRecipes {
         for(var alloy:ModAlloys.all())register(MachineSpec.Kind.PRESS,alloy.ingot(),1,alloy.plate(),1);
         register(MachineSpec.Kind.CRUSHER,Items.COBBLESTONE,1,Items.GRAVEL,1);
         register(MachineSpec.Kind.CRUSHER,Items.GRAVEL,1,Items.SAND,1);
-        register(MachineSpec.Kind.PRESS,Items.IRON_INGOT,1,BuiltInRegistries.ITEM.getValue(ModBlocks.id("iron_plate")),1);
-        register(MachineSpec.Kind.PRESS,Items.COPPER_INGOT,1,BuiltInRegistries.ITEM.getValue(ModBlocks.id("copper_plate")),1);
     }
 }

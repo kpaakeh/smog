@@ -25,14 +25,15 @@
       "color": "9FBFC9",
       "product": "ingot",
       "vein_size": 8,
-      "veins_per_chunk": 3,
-      "min_y": -32,
-      "max_y": 64,
+      "veins_per_chunk": 5,
+      "min_y": -64,
+      "max_y": 96,
       "biomes": "overworld",
       "generation_profile": "accessible_vein",
       "rarity": 1,
       "mineral": "cassiterite",
-      "potential_byproducts": []
+      "potential_byproducts": [],
+      "height_distribution": "trapezoid"
     },
     {
       "name": "zinc",
@@ -42,16 +43,17 @@
       "color": "B4B99D",
       "product": "ingot",
       "vein_size": 7,
-      "veins_per_chunk": 2,
-      "min_y": -16,
-      "max_y": 72,
+      "veins_per_chunk": 4,
+      "min_y": -64,
+      "max_y": 64,
       "biomes": "overworld",
       "generation_profile": "accessible_vein",
       "rarity": 1,
       "mineral": "sphalerite",
       "potential_byproducts": [
         "germanium"
-      ]
+      ],
+      "height_distribution": "trapezoid"
     },
     {
       "name": "lead",
@@ -60,18 +62,18 @@
       "display_ru": "Свинцовая руда",
       "color": "77748F",
       "product": "ingot",
-      "veins_per_chunk": 1,
-      "min_y": -48,
+      "veins_per_chunk": 3,
+      "min_y": -64,
       "max_y": 32,
       "biomes": "overworld",
-      "generation_profile": "ore_body",
-      "rarity": 6,
-      "radius": 3,
-      "thickness": 2,
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
       "mineral": "galena",
       "potential_byproducts": [
         "silver"
-      ]
+      ],
+      "vein_size": 8,
+      "height_distribution": "trapezoid"
     },
     {
       "name": "nickel",
@@ -80,19 +82,18 @@
       "display_ru": "Никелевая руда",
       "color": "A8AA83",
       "product": "ingot",
-      "veins_per_chunk": 1,
-      "min_y": -48,
-      "max_y": 24,
+      "veins_per_chunk": 2,
+      "min_y": -64,
+      "max_y": 16,
       "biomes": "overworld",
-      "generation_profile": "ore_body",
-      "rarity": 10,
-      "radius": 3,
-      "thickness": 2,
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
       "mineral": "nickel_sulfide",
       "potential_byproducts": [
-        "cobalt",
         "platinum_group"
-      ]
+      ],
+      "vein_size": 7,
+      "height_distribution": "trapezoid"
     },
     {
       "name": "bauxite",
@@ -101,16 +102,17 @@
       "display_ru": "Бокситовая руда",
       "color": "B07854",
       "product": "none",
-      "veins_per_chunk": 1,
+      "veins_per_chunk": 3,
       "biomes": "overworld",
-      "generation_profile": "shallow",
-      "rarity": 10,
-      "radius": 4,
-      "thickness": 2,
-      "surface_depth": 6,
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
       "potential_byproducts": [
         "gallium"
-      ]
+      ],
+      "vein_size": 9,
+      "min_y": -32,
+      "max_y": 128,
+      "height_distribution": "trapezoid"
     },
     {
       "name": "manganese",
@@ -119,16 +121,16 @@
       "display_ru": "Марганцевая руда",
       "color": "78808C",
       "product": "ingot",
-      "veins_per_chunk": 1,
-      "min_y": -48,
-      "max_y": 40,
+      "veins_per_chunk": 3,
+      "min_y": -64,
+      "max_y": 48,
       "biomes": "overworld",
-      "generation_profile": "ore_body",
-      "rarity": 8,
-      "radius": 3,
-      "thickness": 2,
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
       "mineral": "pyrolusite",
-      "potential_byproducts": []
+      "potential_byproducts": [],
+      "vein_size": 8,
+      "height_distribution": "trapezoid"
     },
     {
       "name": "chromium",
@@ -137,16 +139,16 @@
       "display_ru": "Хромовая руда",
       "color": "8DAAA7",
       "product": "ingot",
-      "veins_per_chunk": 1,
+      "veins_per_chunk": 2,
       "min_y": -64,
       "max_y": 16,
       "biomes": "overworld",
-      "generation_profile": "ore_body",
-      "rarity": 14,
-      "radius": 3,
-      "thickness": 2,
+      "generation_profile": "accessible_vein",
+      "rarity": 1,
       "mineral": "chromite",
-      "potential_byproducts": []
+      "potential_byproducts": [],
+      "vein_size": 7,
+      "height_distribution": "trapezoid"
     },
     {
       "name": "titanium",
@@ -155,18 +157,19 @@
       "display_ru": "Титановая руда",
       "color": "8F9FB3",
       "product": "ingot",
-      "veins_per_chunk": 1,
+      "veins_per_chunk": 2,
       "biomes": "overworld",
-      "generation_profile": "placer",
-      "rarity": 24,
-      "radius": 2,
-      "thickness": 1,
-      "surface_depth": 3,
+      "generation_profile": "special_vein",
+      "rarity": 2,
       "mineral": "ilmenite",
       "potential_byproducts": [
         "iron",
         "vanadium"
-      ]
+      ],
+      "vein_size": 6,
+      "min_y": -64,
+      "max_y": 0,
+      "height_distribution": "trapezoid"
     },
     {
       "name": "tungsten",
@@ -175,15 +178,16 @@
       "display_ru": "Вольфрамовая руда",
       "color": "6D7886",
       "product": "ingot",
-      "vein_size": 10,
+      "vein_size": 6,
       "veins_per_chunk": 1,
       "min_y": -64,
-      "max_y": -24,
+      "max_y": -8,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 24,
+      "rarity": 3,
       "mineral": "scheelite",
-      "potential_byproducts": []
+      "potential_byproducts": [],
+      "height_distribution": "trapezoid"
     },
     {
       "name": "molybdenum",
@@ -192,17 +196,18 @@
       "display_ru": "Молибденовая руда",
       "color": "8E9FAB",
       "product": "ingot",
-      "vein_size": 10,
+      "vein_size": 6,
       "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": 0,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 20,
+      "rarity": 3,
       "mineral": "molybdenite",
       "potential_byproducts": [
         "rhenium"
-      ]
+      ],
+      "height_distribution": "trapezoid"
     },
     {
       "name": "uranium",
@@ -211,14 +216,15 @@
       "display_ru": "Урановая руда",
       "color": "7F964D",
       "product": "ingot",
-      "vein_size": 9,
+      "vein_size": 5,
       "veins_per_chunk": 1,
       "min_y": -64,
       "max_y": -16,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 28,
-      "potential_byproducts": []
+      "rarity": 4,
+      "potential_byproducts": [],
+      "height_distribution": "trapezoid"
     },
     {
       "name": "lithium",
@@ -227,15 +233,16 @@
       "display_ru": "Литиевая руда",
       "color": "C3BED4",
       "product": "ingot",
-      "vein_size": 10,
+      "vein_size": 6,
       "veins_per_chunk": 1,
-      "min_y": -32,
-      "max_y": 48,
+      "min_y": -64,
+      "max_y": 32,
       "biomes": "overworld",
       "generation_profile": "special_vein",
-      "rarity": 16,
+      "rarity": 2,
       "mineral": "spodumene",
-      "potential_byproducts": []
+      "potential_byproducts": [],
+      "height_distribution": "trapezoid"
     },
     {
       "name": "rare_earth",
@@ -246,15 +253,16 @@
       "product": "none",
       "veins_per_chunk": 1,
       "biomes": "overworld",
-      "generation_profile": "placer",
-      "rarity": 40,
-      "radius": 2,
-      "thickness": 1,
-      "surface_depth": 3,
+      "generation_profile": "special_vein",
+      "rarity": 4,
       "mineral": "monazite",
       "potential_byproducts": [
         "rare_earth_elements"
-      ]
+      ],
+      "vein_size": 5,
+      "min_y": -64,
+      "max_y": 16,
+      "height_distribution": "trapezoid"
     }
   ],
   "machines": [],
@@ -299,20 +307,7 @@
       ]
     }
   ],
-  "items": [
-    {
-      "name": "iron_plate",
-      "display": "Iron Plate",
-      "display_ru": "Железная пластина",
-      "tab": "ores"
-    },
-    {
-      "name": "copper_plate",
-      "display": "Copper Plate",
-      "display_ru": "Медная пластина",
-      "tab": "ores"
-    }
-  ],
+  "items": [],
   "alloys": [
     {
       "name": "steel",
@@ -337,18 +332,6 @@
       "material": "Silver",
       "material_ru": "серебра",
       "color": "D4DDE8"
-    },
-    {
-      "name": "cobalt",
-      "material": "Cobalt",
-      "material_ru": "кобальта",
-      "color": "3E7CA9"
-    },
-    {
-      "name": "bismuth",
-      "material": "Bismuth",
-      "material_ru": "висмута",
-      "color": "BC8EA9"
     }
   ],
   "deposits": [

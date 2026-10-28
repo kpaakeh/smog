@@ -100,7 +100,7 @@ abstract class GenerateSmogContent extends DefaultTask {
                 modifiers.add([type:'minecraft:heightmap',heightmap:'OCEAN_FLOOR_WG'])
                 int depth=entry.surface_depth ?: 5
                 modifiers.add([type:'minecraft:offset',x:0,y:[type:'minecraft:uniform',min_inclusive:-depth-2,max_inclusive:-depth],z:0])
-            } else modifiers.add([type:'minecraft:height_range',height:[type:'minecraft:uniform',min_inclusive:[absolute:entry.min_y],max_inclusive:[absolute:entry.max_y]]])
+            } else modifiers.add([type:'minecraft:height_range',height:[type:'minecraft:'+ (entry.height_distribution ?: 'uniform'),min_inclusive:[absolute:entry.min_y],max_inclusive:[absolute:entry.max_y]]])
             modifiers.add([type:'minecraft:biome']);return modifiers
         };
         def naturalMass={ String id,String stoneState,String deepState,Map entry ->
@@ -156,8 +156,7 @@ abstract class GenerateSmogContent extends DefaultTask {
                 ore.biomes == 'nether' ? [predicate_type:'minecraft:tag_match',tag:'minecraft:base_stone_nether'] :
                 ore.biomes == 'end' ? [predicate_type:'minecraft:block_match',block:'minecraft:end_stone'] :
                 [predicate_type:'minecraft:tag_match',tag:'minecraft:stone_ore_replaceables']
-            if(!(ore.generation_profile in ['accessible_vein','special_vein']))naturalMass(name,"smog:$name","smog:deepslate_$name",ore)
-            else write("data/smog/worldgen/feature/${name}.json", [type:'minecraft:ore', size:ore.vein_size, discard_chance_on_air_exposure:0.0, targets:[
+            write("data/smog/worldgen/feature/${name}.json", [type:'minecraft:ore', size:ore.vein_size, discard_chance_on_air_exposure:0.0, targets:[
                 [target:stoneTarget,state:"smog:$name"],
                 [target:[predicate_type:'minecraft:tag_match',tag:ore.deepslate_replaceables ?: 'minecraft:deepslate_ore_replaceables'],state:"smog:deepslate_$name"]
             ]])

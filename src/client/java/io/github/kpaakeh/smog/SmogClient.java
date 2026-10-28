@@ -17,7 +17,7 @@ public class SmogClient implements ClientModInitializer {
                 new net.minecraft.client.resources.model.sprite.Material(io.github.kpaakeh.smog.registry.ModBlocks.id("block/" + fluid.name + "_still")),
                 new net.minecraft.client.resources.model.sprite.Material(io.github.kpaakeh.smog.registry.ModBlocks.id("block/" + fluid.name + "_flow")),
                 new net.minecraft.client.resources.model.sprite.Material(io.github.kpaakeh.smog.registry.ModBlocks.id("block/" + fluid.name + "_overlay")),
-                net.minecraft.client.color.block.BlockTintSources.constant(0xFF000000 | fluid.color));
+                net.minecraft.client.color.block.BlockTintSources.constant(0xFFFFFFFF));
             net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderingRegistry.register(fluid.source, fluid.flowing, model);
         }
     }

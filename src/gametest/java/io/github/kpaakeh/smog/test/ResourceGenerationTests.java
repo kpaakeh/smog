@@ -38,17 +38,18 @@ public final class ResourceGenerationTests {
         h.assertTrue(found<= (name.endsWith("reservoir")?1728:600),"Natural deposit stays bounded: "+name+" blocks="+found);
         h.assertTrue(found>16,"Deposit generates a usable amount: "+name+" blocks="+found);
     }
-    @GameTest public void placersUseSedimentsAndBodiesUseRock(GameTestHelper h) {
+    @GameTest public void veinsGenerateInBothHostRocks(GameTestHelper h) {
         var level=h.getLevel();var pos=h.absolutePos(new BlockPos(4,4,4));
         var registry=level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE);
-        var placer=registry.getOrThrow(ResourceKey.create(Registries.PLACED_FEATURE,ModBlocks.id("titanium_ore"))).value().feature().value();
-        var body=registry.getOrThrow(ResourceKey.create(Registries.PLACED_FEATURE,ModBlocks.id("nickel_ore"))).value().feature().value();
-        for(int x=0;x<9;x++)for(int y=0;y<9;y++)for(int z=0;z<9;z++)level.setBlock(h.absolutePos(new BlockPos(x,y,z)),Blocks.SAND.defaultBlockState(),Block.UPDATE_CLIENTS);
-        h.assertFalse(body.place(level,level.getChunkSource().getGenerator(),RandomSource.create(7),pos),"Deep ore body does not replace sand");
-        h.assertTrue(placer.place(level,level.getChunkSource().getGenerator(),RandomSource.create(7),pos),"Heavy-mineral placer forms in sediments");
-        int titanium=0;
-        for(int x=0;x<9;x++)for(int y=0;y<9;y++)for(int z=0;z<9;z++)if(level.getBlockState(h.absolutePos(new BlockPos(x,y,z))).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("titanium_ore"))))titanium++;
-        h.assertTrue(titanium>0&&titanium<=25,"Titanium placer is a small find, not a massive ore slab: "+titanium);
+        for(var ore:ModOres.all())for(boolean deep:new boolean[]{false,true}) {
+            var feature=registry.getOrThrow(ResourceKey.create(Registries.PLACED_FEATURE,ModBlocks.id(ore.name()+"_ore"))).value().feature().value();
+            h.assertFalse(feature instanceof io.github.kpaakeh.smog.worldgen.ResourceDepositFeature,"Ores use vanilla veins, never solid masses");
+            for(int x=0;x<9;x++)for(int y=0;y<9;y++)for(int z=0;z<9;z++)level.setBlock(h.absolutePos(new BlockPos(x,y,z)),(deep?Blocks.DEEPSLATE:Blocks.STONE).defaultBlockState(),Block.UPDATE_CLIENTS);
+            for(int seed=0;seed<20;seed++)feature.place(level,level.getChunkSource().getGenerator(),RandomSource.create(seed),pos);
+            int found=0;
+            for(int x=0;x<9;x++)for(int y=0;y<9;y++)for(int z=0;z<9;z++)if(level.getBlockState(h.absolutePos(new BlockPos(x,y,z))).is(deep?ore.deepslate():ore.stone()))found++;
+            h.assertTrue(found>0,"Vein generates in its host rock: "+ore.name()+" deep="+deep);
+        }
         h.succeed();
     }
     @GameTest public void activeCatalogContainsNoIndustry(GameTestHelper h) throws IOException {

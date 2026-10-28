@@ -117,3 +117,9 @@
 ## 2026-10-28 — Ore distribution balance
 
 Reduced solid ore bodies from radii 10–12 to 2–4, with resource-specific placement rarity. Tin/zinc remain accessible; advanced ores and titanium/rare-earth placers are scarce. Reduced mineral masses while keeping limestone/dolomite larger than ores. Existing chunks and textures unchanged. Generation tests now bound deposit sizes and specifically prevent massive titanium placers.
+
+## 2026-10-28 — Vanilla veins and material asset overhaul
+
+All 13 ores now use minecraft:ore (sizes 5–9), triangular height distributions and tuned counts/rarity. Titanium and rare earth are no longer surface masses. Deep ores cover deepslate with individual height peaks. Rock/reservoir geometry uses domain-warped multi-scale seeded value noise. Removed active cobalt/bismuth families and iron/copper plates, their press recipes and textures. Original art was backed up under ignored .gradle/material-art-before-vanilla-recolor.
+
+Replaced material graphics with palette edits of locally installed Minecraft 26.3 textures: iron ingots/nuggets/blocks/raw materials, redstone dust, glowstone dust, flint shards; vanilla host rock plus iron-ore inclusions; calcite/diorite/clay/amethyst/tuff/basalt for geological materials. Water bucket metal is unchanged; only the water fill is recolored. Fluids preserve vanilla water animation strips/mcmeta. Oil alpha is 255, dark palette; client tint is white to prevent double coloration. Texture audit: 183 PNGs, no unused/missing assets. assemble and compileGametestJava succeeded; no game or GameTest run, per user instruction. Generation changes affect new chunks only.
