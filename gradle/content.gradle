@@ -86,7 +86,13 @@ abstract class GenerateSmogContent extends DefaultTask {
             ]]
             write("data/smog/loot_table/blocks/${name}.json", [type:'minecraft:block', pools:[[rolls:1, entries:[lootEntry], condition:[type:'minecraft:survives_explosion']]]])
             tag('block', 'minecraft:mineable/pickaxe', id)
-            tag('block', entry.tool_tag ?: 'minecraft:needs_stone_tool', id)
+            def miningLevel=entry.mining_level ?: 'stone'
+            if(!(miningLevel in ['wood','stone','iron','diamond','netherite']))throw new GradleException("Invalid mining level: $miningLevel")
+            if(miningLevel!='wood')tag('block',entry.tool_tag ?: "minecraft:needs_${miningLevel=='netherite'?'diamond':miningLevel}_tool",id)
+            if(miningLevel=='netherite') {
+                tag('block','smog:needs_netherite_tool',id)
+                tag('block','minecraft:incorrect_for_diamond_tool',id)
+            }
             (entry.tags ?: []).each { t -> tag('block', t, id); tag('item', t, id) }
             en["block.smog.$name"] = entry.display ?: name
             ru["block.smog.$name"] = entry.display_ru ?: entry.display ?: name
@@ -130,8 +136,8 @@ abstract class GenerateSmogContent extends DefaultTask {
             def oreTags = (ore.tags ?: []) + ['smog:ores','c:ores',"c:ores/$material"]
             block(ore + [drop:"smog:$raw",tags:oreTags], name, ore.texture, false)
             block(ore + [drop:"smog:$raw",display:"Deepslate ${ore.display}", display_ru:"Глубинная ${ore.display_ru.toLowerCase()}", tags:oreTags], "deepslate_$name", ore.deepslate_texture, false)
-            block([display:"Raw $english Block",display_ru:"Блок необработанного $russian",tags:['c:storage_blocks',"c:storage_blocks/raw_$material"]], rawBlock, "smog:block/$rawBlock", false)
-            if(product != 'none')block([display:"$english Block",display_ru:"Блок $russian",tags:['c:storage_blocks',"c:storage_blocks/$material"]], metalBlock, "smog:block/$metalBlock", false)
+            block([mining_level:ore.mining_level,display:"Raw $english Block",display_ru:"Блок необработанного $russian",tags:['c:storage_blocks',"c:storage_blocks/raw_$material"]], rawBlock, "smog:block/$rawBlock", false)
+            if(product != 'none')block([mining_level:ore.mining_level,display:"$english Block",display_ru:"Блок $russian",tags:['c:storage_blocks',"c:storage_blocks/$material"]], metalBlock, "smog:block/$metalBlock", false)
             item(raw, "Raw $english", "Необработанная руда $russian", ['c:raw_materials',"c:raw_materials/$material"])
             if(product != 'none')item(result, "$english ${product == 'gem' ? 'Crystal' : 'Ingot'}", "${product == 'gem' ? 'Кристалл' : 'Слиток'} $russian", ["c:${product}s","c:${product}s/$material"])
             item(dust, "$english Dust", "Пыль $russian", ['c:dusts',"c:dusts/$material"])
@@ -170,7 +176,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             item(n+'_dust',enName+' Dust','Пыль '+ruName,['c:dusts',"c:dusts/$n"])
             item(n+'_nugget',enName+' Nugget','Самородок '+ruName,['c:nuggets',"c:nuggets/$n"])
             item(n+'_plate',enName+' Plate','Пластина '+ruName,['c:plates',"c:plates/$n"])
-            block([display:enName+' Block',display_ru:'Блок '+ruName,tags:['c:storage_blocks',"c:storage_blocks/$n"]],n+'_block',"smog:block/${n}_block",false)
+            block([mining_level:alloy.mining_level,display:enName+' Block',display_ru:'Блок '+ruName,tags:['c:storage_blocks',"c:storage_blocks/$n"]],n+'_block',"smog:block/${n}_block",false)
             compact(n+'_block',"smog:${n}_ingot","smog:${n}_block")
             shapeless(n+'_ingot_from_block',["smog:${n}_block"],"smog:${n}_ingot",9)
             compact(n+'_ingot_from_nuggets',"smog:${n}_nugget","smog:${n}_ingot")
@@ -181,7 +187,7 @@ abstract class GenerateSmogContent extends DefaultTask {
         def undergroundFeature={ resourceName,blockState,parameters,exposureChance -> naturalMass(resourceName,blockState,blockState,parameters) };
         (root.deposits ?: []).each { entry ->
             def n=entry.name;def material=entry.material;def russianName=entry.material_ru
-            block([display:material,display_ru:entry.display_ru,tags:['smog:nonmetal_deposits',"c:stones/$n"]],n,"smog:block/$n",false)
+            block([mining_level:entry.mining_level,display:material,display_ru:entry.display_ru,tags:['smog:nonmetal_deposits',"c:stones/$n"]],n,"smog:block/$n",false)
             item(n+'_chunk',material+' Chunk','Кусок '+russianName,['smog:nonmetal_materials',"c:raw_materials/$n"])
             item(n+'_dust',material+' Dust','Пыль '+russianName,['c:dusts',"c:dusts/$n"])
             undergroundFeature(n+'_deposit',"smog:$n",entry,0d)
