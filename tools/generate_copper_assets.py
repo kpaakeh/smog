@@ -2,7 +2,8 @@
 from pathlib import Path
 from zipfile import ZipFile
 from io import BytesIO
-import json,shutil
+import json,shutil,sys,colorsys
+REFRESH_ICONS="--refresh-icons" in sys.argv
 from PIL import Image,ImageDraw,ImageEnhance
 ROOT=Path(__file__).resolve().parents[1];A=ROOT/'src/main/resources/assets/smog';C=json.loads((ROOT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
 Z=ZipFile(ROOT/'.gradle-user-home/caches/fabric-loom/26.3/minecraft-client.jar')
@@ -14,16 +15,53 @@ def tint(im,color):
    r,g,b,a=im.getpixel((x,y));v=max(r,g,b)/255
    im.putpixel((x,y),tuple(round(channel*v) for channel in color)+(a,))
  return im
+def luminance(c):return .2126*c[0]+.7152*c[1]+.0722*c[2]
+def palette(im):return sorted({p[:3] for p in im.getdata() if p[3]},key=luminance)
+def remap(im,colors):
+ im=im.copy();levels=sorted({luminance(p) for p in im.getdata() if p[3]});ranks={v:i for i,v in enumerate(levels)}
+ for y in range(im.height):
+  for x in range(im.width):
+   r,g,b,a=im.getpixel((x,y))
+   if a:im.putpixel((x,y),colors[round(ranks[luminance((r,g,b))]*(len(colors)-1)/max(1,len(levels)-1))]+(a,))
+ return im
+COPPER=palette(image('item/copper_ingot'));RAW_CLAY=palette(image('item/clay_ball'))
+BRONZE=[]
+for c in COPPER:
+ h,sat,val=colorsys.rgb_to_hsv(*(v/255 for v in c));BRONZE.append(tuple(round(v*255) for v in colorsys.hsv_to_rgb(h+.035,sat*.9,val*.9)))
+FIRED=palette(ImageEnhance.Brightness(ImageEnhance.Color(image('item/brick')).enhance(1.2)).enhance(.72))
 def sprite(n,im):
  p=A/'textures/item'/(n+'.png');p.parent.mkdir(parents=True,exist_ok=True)
- if not p.exists():im.save(p)
+ if REFRESH_ICONS or not p.exists():im.save(p)
+def plate(colors):
+ raw=remap(image('item/iron_ingot'),colors);im=Image.new('RGBA',(16,16));part=raw.crop(raw.getbbox()).resize((14,5),Image.Resampling.NEAREST);im.alpha_composite(part,(1,6));return im
 for e in C['items']:
- n=e['name'];base='item/iron_nugget' if n=='metal_residue' else 'item/brick' if 'firebrick' in n else 'item/bowl' if 'crucible' in n else 'item/clay_ball' if n=='tempered_clay' else 'item/stick' if n=='configurator' else 'item/iron_ingot' if 'plate'==n.split('_')[-1] else 'item/iron_nugget' if 'fitting'==n.split('_')[-1] else 'item/bamboo' if 'pipe_part' in n else 'item/brick'
- color=(170,170,170) if n=='metal_residue' else (174,109,64) if n.startswith('copper') else (179,134,76) if n.startswith('bronze') else (151,160,179) if n.startswith('unfired') else (220,191,154)
- im=tint(image(base),color)
- if 'mold' in n:
-  d=ImageDraw.Draw(im);size={'ingot':(5,7,10,9),'plate':(4,6,11,10),'fitting':(6,7,8,8),'pipe':(3,8,12,8)}[n.removeprefix('unfired_').removesuffix('_mold')];d.rectangle(size,fill=(65,52,43,255))
+ n=e['name']
+ if n=='copper_plate':im=plate(COPPER)
+ elif n.endswith('_fitting'):im=remap(image('item/iron_chain'),COPPER if n.startswith('copper') else BRONZE)
+ elif n.endswith('_pipe_part'):im=remap(image('item/spyglass'),COPPER if n.startswith('copper') else BRONZE)
+ elif n=='metal_residue':im=image('item/iron_nugget')
+ elif n=='tempered_clay':
+  im=image('item/clay_ball');d=ImageDraw.Draw(im)
+  for pos in [(5,7),(9,10),(10,6)]:d.point(pos,fill=(128,114,98,255))
+ elif 'crucible' in n:im=remap(image('item/bowl'),RAW_CLAY)
+ elif n=='configurator':im=remap(image('item/stick'),COPPER)
+ else:
+  colors=RAW_CLAY if n.startswith('unfired_') else FIRED;im=remap(image('item/brick'),colors)
+  if 'mold' in n:
+   kind=n.removeprefix('unfired_').removesuffix('_mold')
+   grooves={'ingot':[(5,7,10,9)],'plate':[(4,6,11,10)],'fitting':[(5,6,6,7),(8,6,9,7),(5,9,6,10),(8,9,9,10)],'pipe':[(4,7,11,7),(5,9,12,9)]}[kind]
+   for x0,y0,x1,y1 in grooves:
+    for y in range(y0,y1+1):
+     for x in range(x0,x1+1):
+      if im.getpixel((x,y))[3]:im.putpixel((x,y),colors[0 if y==y0 else 1]+(255,))
+    for x in range(x0,x1+1):
+     if y1+1<16 and im.getpixel((x,y1+1))[3]:im.putpixel((x,y1+1),colors[-3]+(255,))
  sprite(n,im)
+# The bronze family uses the same small ramp and vanilla silhouettes as copper parts.
+for kind,base in [('ingot','iron_ingot'),('nugget','iron_nugget'),('dust','redstone')]:sprite('bronze_'+kind,remap(image('item/'+base),BRONZE))
+sprite('bronze_plate',plate(BRONZE))
+if REFRESH_ICONS or not (A/'textures/block/bronze_block.png').exists():remap(image('block/iron_block'),BRONZE).save(A/'textures/block/bronze_block.png')
+
 def box(a,b,texture):return {'from':a,'to':b,'material':texture}
 def uv(side,a,b):
  x,y,z=a;xx,yy,zz=b
@@ -43,7 +81,7 @@ def surface(elements):
  for (i,j,k),texture in occupied.items():
   a=[axes[0][i],axes[1][j],axes[2][k]];b=[axes[0][i+1],axes[1][j+1],axes[2][k+1]];faces={}
   for side,offset in [('west',(-1,0,0)),('east',(1,0,0)),('down',(0,-1,0)),('up',(0,1,0)),('north',(0,0,-1)),('south',(0,0,1))]:
-   if (i+offset[0],j+offset[1],k+offset[2]) not in occupied:faces[side]={'texture':'#'+texture,'uv':uv(side,a,b)}
+   if (i+offset[0],j+offset[1],k+offset[2]) not in occupied:faces[side]={'texture':'#'+(texture.get(side,texture.get('all')) if isinstance(texture,dict) else texture),'uv':uv(side,a,b)}
   if faces:result.append({'from':a,'to':b,'faces':faces})
  return result
 
@@ -56,6 +94,14 @@ refractory=ImageEnhance.Brightness(ImageEnhance.Color(image('block/bricks')).enh
 refractory.save(A/'textures/block/refractory_bricks.png')
 firebrick=ImageEnhance.Brightness(ImageEnhance.Color(image('item/brick')).enhance(1.2)).enhance(.72)
 firebrick.save(A/'textures/item/firebrick.png')
+# Native furnace apertures, copied at 1:1 scale onto the shared brick face.
+for name,rect in [('hearth',(3,7,13,14)),('kiln',(3,4,13,14)),('firebox',(3,7,13,14))]:
+ front=refractory.copy();furnace=image('block/furnace_front');front.alpha_composite(furnace.crop(rect),(rect[0],rect[1]));front.save(A/('textures/block/refractory_'+name+'_front.png'))
+leather=image('block/brown_terracotta')
+for y in [6,10,13]:
+ for x in range(16):
+  r,g,b,a=leather.getpixel((x,y));leather.putpixel((x,y),(round(r*.78),round(g*.78),round(b*.78),a))
+leather.save(A/'textures/block/bellows_leather.png')
 brick='smog:block/refractory_bricks';clay='smog:block/refractory_bricks';wood='minecraft:block/oak_planks';copper='minecraft:block/copper_block'
 for n,size in [('ceramic_crucible',12),('large_ceramic_crucible',16)]:
  lo=(16-size)/2;hi=16-lo;model(n,[box([lo,0,lo],[hi,3,hi],'clay'),box([lo,3,lo],[lo+2,14,hi],'clay'),box([hi-2,3,lo],[hi,14,hi],'clay'),box([lo+2,3,lo],[hi-2,14,lo+2],'clay'),box([lo+2,3,hi-2],[hi-2,14,hi],'clay')],dict(clay=clay))
@@ -64,11 +110,12 @@ model('casting_spout',[box([0,0,4],[16,16,16],'brick'),box([3,12,0],[13,14,16],'
 model('casting_channel',[box([0,12,0],[16,14,16],'clay'),box([0,14,0],[3,16,16],'clay'),box([13,14,0],[16,16,16],'clay')],dict(clay=clay))
 model('air_intake',[box([0,0,4],[16,16,16],'brick'),box([4,4,0],[12,12,6],'dark')],dict(brick=brick,dark='minecraft:block/coal_block'))
 model('kiln_vent',[box([0,0,0],[16,5,16],'brick'),box([3,5,3],[6,16,13],'brick'),box([10,5,3],[13,16,13],'brick'),box([6,5,3],[10,16,6],'brick'),box([6,5,10],[10,16,13],'brick')],dict(brick=brick))
-legs=[box([x,0,z],[x+3,12,z+3],'wood') for x,z in [(1,1),(12,1),(1,12),(12,12)]]
-model('potter_table',legs+[box([0,11,0],[16,14,16],'wood'),box([3,14,3],[13,16,13],'clay')],dict(wood=wood,clay=clay))
+legs=[box([x,0,z],[x+3,12,z+3],{'all':'leg','up':'end','down':'end'}) for x,z in [(1,1),(12,1),(1,12),(12,12)]]
+model('potter_table',legs+[box([0,11,0],[16,14,16],'wood'),box([3,14,3],[13,16,13],'clay')],dict(wood=wood,clay=clay,leg='minecraft:block/stripped_oak_log',end='minecraft:block/stripped_oak_log_top'))
 model('casting_table',[box([0,0,0],[3,10,16],'brick'),box([13,0,0],[16,10,16],'brick'),box([0,9,0],[16,11,16],'brick'),box([2,11,2],[14,12,14],'clay')],dict(brick=brick,clay=clay))
-model('hand_bellows',[box([1,0,1],[15,3,15],'wood'),box([2,3,2],[14,10,14],'leather'),box([1,10,1],[15,13,15],'wood'),box([0,4,5],[3,9,11],'dark')],dict(wood=wood,leather='minecraft:block/brown_terracotta',dark='minecraft:block/coal_block'))
-for n in ['copper_hearth','ceramic_kiln','solid_firebox']:model(n,[box([0,0,0],[16,16,16],'brick'),box([3,4,0],[13,12,1],'dark'),box([5,6,0],[11,8,2],'clay')],dict(brick=brick,dark='minecraft:block/coal_block',clay=clay))
+model('hand_bellows',[box([1,0,1],[15,3,15],'wood'),box([2,3,2],[14,10,14],'leather'),box([1,10,1],[15,13,15],'wood'),box([0,4,5],[3,9,11],'dark')],dict(wood=wood,leather='smog:block/bellows_leather',dark='minecraft:block/coal_block'))
+for n,face in [('copper_hearth','hearth'),('ceramic_kiln','kiln'),('solid_firebox','firebox')]:
+ model(n,[box([0,0,1],[16,16,16],{'all':'brick','north':'front'}),box([5,6,0],[11,8,2],'handle')],dict(brick=brick,front='smog:block/refractory_'+face+'_front',handle='minecraft:block/copper_block'))
 # Only currently needed GUI images are installed in main resources.
 gui=A/'textures/gui';gui.mkdir(parents=True,exist_ok=True)
 for n in ['slot','structure_preview']:

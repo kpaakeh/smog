@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "textures": {
     "wood": "minecraft:block/oak_planks",
-    "leather": "minecraft:block/brown_terracotta",
+    "leather": "smog:block/bellows_leather",
     "dark": "minecraft:block/coal_block",
     "particle": "minecraft:block/oak_planks"
   },
