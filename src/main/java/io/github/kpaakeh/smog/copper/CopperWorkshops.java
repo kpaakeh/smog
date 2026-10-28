@@ -57,8 +57,7 @@ public final class CopperWorkshops {
     }
     public static int capacity(MachineEntity m){
         if(!workshop(m,"copper_hearth"))return 0;
-        int basic=m.complexRoles().getOrDefault("crucible",0),large=m.complexRoles().getOrDefault("large_crucible",0);
-        return (basic*64+large*128)*U;
+        var shape=m.complexShape();return shape==null?0:shape.internalVolume(false)*8*MoltenMetalStorage.INGOT;
     }
     public static int threshold(MachineEntity m){return workshop(m,"ceramic_kiln")?400:capacity(m)>64*U?800:600;}
     public static int data(MachineEntity m,int index){var s=m.copper;return switch(index){case 0->s.work;case 1->workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 14->workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->m.complexShape()==null?0:m.complexShape().height();case 18->s.air;default->0;};}
@@ -101,7 +100,7 @@ public final class CopperWorkshops {
     private static boolean working(MachineEntity m,String key,int ticks,int step){var s=m.copper;if(!s.workKey.equals(key)){s.work=0;s.workKey=key;}s.work+=step;m.setChanged();return s.work>=ticks;}
     private static void hearth(ServerLevel level,MachineEntity m){var s=m.copper;
         net.minecraft.world.entity.item.ItemEntity worldInput=null;
-        if(m.getItem(0).isEmpty()&&m.complexShape()!=null){var box=new net.minecraft.world.phys.AABB(m.getBlockPos()).inflate(7,3,7);for(var entity:level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,box)){
+        if(m.getItem(0).isEmpty()&&m.complexShape()!=null){var box=new net.minecraft.world.phys.AABB(m.getBlockPos()).inflate(12,11,12);for(var entity:level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,box)){
             var local=entity.blockPosition().subtract(m.getBlockPos()).rotate(m.rotation()==Rotation.CLOCKWISE_90?Rotation.COUNTERCLOCKWISE_90:m.rotation()==Rotation.COUNTERCLOCKWISE_90?Rotation.CLOCKWISE_90:m.rotation());var bounds=m.complexShape().bounds();
             if(local.getX()>bounds.minX()&&local.getX()<bounds.maxX()&&local.getZ()>0&&local.getZ()<bounds.maxZ()&&local.getY()>=0&&local.getY()<=bounds.maxY()+1&&melt(entity.getItem())!=null){worldInput=entity;break;}}
         }

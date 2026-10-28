@@ -26,8 +26,8 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
     @Override public ScreenRectangle getScreenRectangle() { return area; }
     @Override public ScreenRectangle getArea() { return area; }
     @Override public boolean handleMouseDragged(double x,double y,InputConstants.Key key,double dx,double dy) {
-        if (!area.containsPoint((int)x,(int)y) || !key.equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT))) return false;
-        yaw=(yaw+(float)dx*1.2f)%360; pitch=Math.clamp(pitch+(float)dy, -80, 80); return true;
+        if (!key.equals(InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_LEFT))) return false;
+        yaw=(yaw+(float)dx*1.2f)%360; pitch=(pitch+(float)dy)%360; return true;
     }
     @Override public boolean handleMouseScrolled(double x,double y,double dx,double dy) {
         if (!area.containsPoint((int)x,(int)y)) return false;
@@ -62,7 +62,9 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
                     if (!iterator.hasNext()) return; block=iterator.next().value();
                 } else block=ingredient.block();
                 if (block.defaultBlockState().isAir()) return;
-                var part=new BlockModelRenderState();resolver.update(part,block.defaultBlockState(),display);
+                var state=block.defaultBlockState();
+                if(block instanceof io.github.kpaakeh.smog.copper.WorkshopPartBlock){var bounds=page.structure().bounds();net.minecraft.core.Direction facing=pos.getX()==bounds.minX()?Direction.WEST:pos.getX()==bounds.maxX()?Direction.EAST:pos.getZ()==bounds.minZ()?Direction.NORTH:pos.getZ()==bounds.maxZ()?Direction.SOUTH:Direction.NORTH;state=state.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,facing);}
+                var part=new BlockModelRenderState();resolver.update(part,state,display);
                 parts.add(new StructurePreviewState.Part(pos,part));
             });
         }

@@ -16,24 +16,31 @@ public final class CopperTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
     private static void set(GameTestHelper h,BlockPos pos,Block block){h.getLevel().setBlock(pos,block.defaultBlockState(),Block.UPDATE_ALL);}
-    private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width){
+    private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width){return hearth(h,origin,width,3);}
+    private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width,int height){
         int left=width/2;
-        for(int x=-left;x<width-left;x++)for(int y=-1;y<=0;y++)for(int z=0;z<width;z++){
+        for(int x=-left;x<width-left;x++)for(int y=-1;y<height-1;y++)for(int z=0;z<width;z++){
             if(x==0&&y==0&&z==0)continue;
             var b=y==-1?Blocks.COBBLESTONE:x==-left||x==width-left-1||z==0||z==width-1?Blocks.BRICKS:Blocks.AIR;
             set(h,origin.offset(x,y,z),b);
         }
-        set(h,origin.offset(0,-1,1),block("solid_firebox"));set(h,origin.offset(0,0,1),block("ceramic_crucible"));
-        set(h,origin.offset(-left,0,0),block("casting_spout"));set(h,origin.offset(left,0,0),block("air_intake"));
+        set(h,origin.offset(0,-1,1),block("solid_firebox"));
+        set(h,origin.offset(-left,0,1),block("casting_spout"));set(h,origin.offset(left,0,1),block("air_intake"));
         if(!h.getLevel().getBlockState(origin).is(block("copper_hearth")))set(h,origin,block("copper_hearth"));
         return (MachineEntity)h.getLevel().getBlockEntity(origin);
     }
-    @GameTest public void complexHearthResizesAndAcceptsFunctionalReplacements(GameTestHelper h){
+    @GameTest public void complexHearthResizesWithEmptyChamber(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,origin,3);
-        h.assertTrue(m.tryAssemble(),"Small hearth assembles");h.assertValueEqual(m.complexShape().width(),3,"Small width");h.assertValueEqual(CopperWorkshops.capacity(m),64*U,"Basic crucible = 16 ingots");
-        m.copper.copper=40*U;m.disassemble();hearth(h,origin,5);set(h,origin.offset(0,0,1),block("large_ceramic_crucible"));set(h,origin.offset(1,0,1),block("ceramic_crucible"));
-        h.assertTrue(m.tryAssemble(),"Larger hearth is the same machine type");h.assertValueEqual(m.complexShape().width(),5,"Width changed");h.assertValueEqual(CopperWorkshops.capacity(m),192*U,"Functional parts define capacity");h.assertValueEqual(m.copper.copper,40*U,"Stored metal survives resizing");
-        m.disassemble();set(h,origin.offset(0,0,1),Blocks.AIR);set(h,origin.offset(1,0,1),Blocks.AIR);h.assertFalse(m.tryAssemble(),"No crucible is not a functioning hearth");h.assertValueEqual(m.copper.copper,40*U,"Invalid structure preserves contents");h.succeed();
+        h.assertTrue(m.tryAssemble(),"3x3x3 hollow hearth assembles");h.assertValueEqual(m.complexShape().height(),3,"Actual rim height");h.assertValueEqual(CopperWorkshops.capacity(m),64*U,"Small chamber = 16 ingots");
+        m.copper.copper=40*U;m.disassemble();hearth(h,origin,5);
+        h.assertTrue(m.tryAssemble(),"5x3x5 hollow hearth assembles");h.assertValueEqual(m.complexShape().width(),5,"Width changed");h.assertValueEqual(CopperWorkshops.capacity(m),576*U,"Capacity follows free chamber volume");h.assertValueEqual(m.copper.copper,40*U,"Stored metal survives resizing");
+        m.disassemble();set(h,origin.offset(0,0,1),block("ceramic_crucible"));h.assertFalse(m.tryAssemble(),"Crucible obstructs required empty chamber");h.assertValueEqual(m.copper.copper,40*U,"Invalid structure preserves contents");h.succeed();
+    }
+    @GameTest public void fullHeightAndCornerRules(GameTestHelper h){
+        var origin=h.absolutePos(new BlockPos(7,2,2));var m=hearth(h,origin,11,11);
+        h.assertTrue(m.tryAssemble(),"Maximum 11x11x11 hearth assembles");h.assertValueEqual(m.complexShape().height(),11,"Tall shell cannot be detected as smaller open prefix");h.assertValueEqual(CopperWorkshops.capacity(m),6480*9000,"Maximum chamber capacity");
+        m.disassemble();set(h,origin.offset(-5,0,1),Blocks.BRICKS);set(h,origin.offset(-5,0,0),block("casting_spout"));h.assertFalse(m.tryAssemble(),"Wall corner rejects functional component");
+        set(h,origin.offset(-5,0,0),Blocks.BRICKS);set(h,origin.offset(-5,0,1),block("casting_spout"));h.assertTrue(m.tryAssemble(),"Face-mounted component works");h.succeed();
     }
     @GameTest public void moltenTransferRollsBackWithoutRounding(GameTestHelper h){
         var m=hearth(h,h.absolutePos(new BlockPos(6,2,2)),3);h.assertTrue(m.tryAssemble(),"Assembled tank");
@@ -53,7 +60,7 @@ public final class CopperTests {
     @GameTest public void bronzeAndCastingConserveMetalAndKeepMolds(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Working hearth");m.copper.heat=1000;m.copper.copper=12*U;m.copper.tin=4*U;
         CopperWorkshops.tick(h.getLevel(),m);h.assertValueEqual(m.copper.bronze,16*U,"3 copper + 1 tin = 4 bronze");h.assertValueEqual(m.copper.total(),16*U,"No alloy multiplication");
-        var tablePos=origin.offset(-1,0,-1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;m.copper.lastPour=h.getLevel().getGameTime()-10;table.setItem(1,new ItemStack(item("ingot_mold")));
+        var tablePos=origin.offset(-2,0,1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;m.copper.lastPour=h.getLevel().getGameTime()-10;table.setItem(1,new ItemStack(item("ingot_mold")));
         for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
         h.assertTrue(table.getItem(3).is(item("bronze_ingot")),"Connected table casts bronze");h.assertTrue(table.getItem(1).is(item("ingot_mold")),"Mold is reusable");h.assertValueEqual(m.copper.total()+table.getItem(3).getCount()*4*U,16*U,"Casting conserves quarter-ingot units");h.succeed();
     }

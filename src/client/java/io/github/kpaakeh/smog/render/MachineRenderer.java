@@ -66,11 +66,16 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         var surfaces=new java.util.ArrayList<MoltenRendering.Surface>();var shown=new java.util.ArrayList<State.ItemPart>();
         String kind=machine.machineId().getPath();var storage=machine.copper;
         if(kind.equals("copper_hearth")&&machine.assembled()&&machine.structure()!=null){
-            var vessels=new java.util.ArrayList<net.minecraft.core.BlockPos>();int capacity=0;
-            for(var offset:machine.structure().parts().keySet()){var rotated=offset.rotate(machine.rotation());var block=machine.getLevel().getBlockState(machine.getBlockPos().offset(rotated));String name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block.getBlock()).getPath();if(name.equals("ceramic_crucible")||name.equals("large_ceramic_crucible")){vessels.add(rotated);capacity+=name.startsWith("large")?128:64;}}
-            float ratio=capacity==0?0:Math.clamp(storage.total()/(float)(capacity*2250),0,1);
-            for(var offset:vessels){boolean large=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(machine.getLevel().getBlockState(machine.getBlockPos().offset(offset)).getBlock()).getPath().startsWith("large");float lo=large?2.05f/16:4.05f/16,span=1-2*lo;
-                float at=offset.getX()+lo;for(int metal=0;metal<3;metal++)if(storage.metal(metal)>0){float width=span*storage.metal(metal)/storage.total();surfaces.add(new MoltenRendering.Surface(at,offset.getY()+(3.15f+10.5f*ratio)/16,offset.getZ()+lo,width,span,metal,storage.heat>=600));at+=width;}
+            var shape=machine.complexShape();var bounds=shape.bounds();int capacity=io.github.kpaakeh.smog.copper.CopperWorkshops.capacity(machine);
+            float ratio=capacity==0?0:Math.clamp(storage.total()/(float)capacity,0,1);
+            float level=.015f+ratio*(shape.height()-1-.065f);
+            if(storage.total()>0){float stripe=bounds.minX()+1;int innerWidth=shape.width()-2;
+                for(int metal=0;metal<3;metal++)if(storage.metal(metal)>0){float end=stripe+innerWidth*storage.metal(metal)/(float)storage.total();
+                    for(int x=bounds.minX()+1;x<bounds.maxX();x++)for(int z=1;z<shape.depth()-1;z++){
+                        float left=Math.max(x,stripe),right=Math.min(x+1,end);if(right-left<.0001f)continue;
+                        surfaces.add(chamberSurface(left,level,z,right-left,1,metal,storage.heat>=io.github.kpaakeh.smog.copper.CopperWorkshops.threshold(machine),machine.rotation()));
+                    }stripe=end;
+                }
             }
             var shownFlow=new java.util.HashSet<net.minecraft.core.BlockPos>();
             var tables=ClientFormations.machines().stream().filter(m->m.machineId().getPath().equals("casting_table")&&m.copper.work>0&&m.copper.status==7&&m.getItem(3).isEmpty()).sorted(java.util.Comparator.comparingLong(m->m.getBlockPos().asLong())).toList();
@@ -79,7 +84,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
                 if(id.equals("casting_channel")){boolean alongX=block.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getAxis()==net.minecraft.core.Direction.Axis.X;surfaces.add(new MoltenRendering.Surface(offset.getX()+(alongX?0:.191f),offset.getY()+.882f,offset.getZ()+(alongX?.191f:0),alongX?1:.618f,alongX?.618f:1,Math.floorMod(table.copper.selection,3),true));}
                 else if(id.equals("casting_spout")){var facing=block.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING);boolean alongX=facing.getAxis()==net.minecraft.core.Direction.Axis.X;float x=facing==net.minecraft.core.Direction.EAST?.75f:facing==net.minecraft.core.Direction.WEST?0:.315f,z=facing==net.minecraft.core.Direction.SOUTH?.75f:facing==net.minecraft.core.Direction.NORTH?0:.315f;surfaces.add(new MoltenRendering.Surface(offset.getX()+x,offset.getY()+.882f,offset.getZ()+z,alongX?.25f:.37f,alongX?.37f:.25f,Math.floorMod(table.copper.selection,3),true));}
             }
-            if(!vessels.isEmpty()&&!machine.getItem(0).isEmpty()){var offset=vessels.getFirst();addItem(shown,machine.getItem(0),offset.getX()+.5f,offset.getY()+.99f,offset.getZ()+.5f,machine);}
+            if(!machine.getItem(0).isEmpty()){var offset=new net.minecraft.core.BlockPos(0,0,1).rotate(machine.rotation());addItem(shown,machine.getItem(0),offset.getX()+.5f,Math.max(.25f,level+.12f),offset.getZ()+.5f,machine);}
         }else if(kind.equals("casting_table")){
             if(!machine.getItem(1).isEmpty())addItem(shown,machine.getItem(1),.5f,.775f,.5f,machine);
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.825f,.5f,machine);
@@ -88,6 +93,14 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             var selected=machine.getItem(3).isEmpty()?net.minecraft.world.item.Item.byId(io.github.kpaakeh.smog.copper.CopperWorkshops.data(machine,12)).getDefaultInstance():machine.getItem(3);addItem(shown,selected,.5f,1.035f,.5f,machine);
         }
         state.moltenSurfaces=java.util.List.copyOf(surfaces);state.displayedItems=java.util.List.copyOf(shown);
+    }
+    private MoltenRendering.Surface chamberSurface(float x,float y,float z,float width,float depth,int metal,boolean hot,net.minecraft.world.level.block.Rotation rotation){
+        return switch(rotation){
+            case CLOCKWISE_90->new MoltenRendering.Surface(1-z-depth,y,x,depth,width,metal,hot);
+            case CLOCKWISE_180->new MoltenRendering.Surface(1-x-width,y,1-z-depth,width,depth,metal,hot);
+            case COUNTERCLOCKWISE_90->new MoltenRendering.Surface(z,y,1-x-width,depth,width,metal,hot);
+            default->new MoltenRendering.Surface(x,y,z,width,depth,metal,hot);
+        };
     }
     private java.util.List<net.minecraft.core.BlockPos> flowPath(MachineEntity machine,net.minecraft.core.BlockPos table){
         record Node(net.minecraft.core.BlockPos pos,java.util.List<net.minecraft.core.BlockPos> path){}

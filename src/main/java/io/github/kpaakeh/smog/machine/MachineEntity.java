@@ -284,7 +284,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         processingItem=items.get(0).getItem();copper.load(input);
         complexInspection=null;complexShape=null;
         int width=input.getIntOr("complex_width",0);
-        if(width>=3&&width<=9)try{complexShape=new ComplexMultiblockDefinition.Shape(width,input.getIntOr("complex_depth",3),input.getIntOr("complex_height",2),input.getIntOr("complex_left",1));}catch(IllegalArgumentException ignored){}
+        if(width>=3&&width<=11)try{complexShape=new ComplexMultiblockDefinition.Shape(width,input.getIntOr("complex_depth",3),input.getIntOr("complex_height",2),input.getIntOr("complex_left",1));}catch(IllegalArgumentException ignored){}
         strikes.clear();input.read("strikes",com.mojang.serialization.Codec.STRING.listOf()).ifPresent(strikes::addAll);
         outputLimit=Math.clamp(input.getIntOr("output_limit",new int[]{32,128,512}[Math.clamp(input.getIntOr("voltage",0),0,2)]),1,spec().transferRate());
     }
