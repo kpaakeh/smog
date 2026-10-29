@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 
 /** Native pixel panel, a real common tank, paged input jobs and separate fuel indicator. */
 public final class SmelteryGui {
-    public static final int TX=84,TY=24,TW=96,TH=104;
+    public static final int TX=84,TY=24,TW=128,TH=104;
     public record Layer(int metal,int y,int height,int amount){}
     public static int value(MachineMenu m,int index){return (m.data.get(index)&65535)|((m.data.get(index+1)&65535)<<16);}
     public static int amount(MachineMenu m,int kind){return value(m,Smeltery.METALS+kind*2);}
@@ -41,14 +41,14 @@ public final class SmelteryGui {
         if(mouseX>=x+222&&mouseX<x+238&&mouseY>=y+23&&mouseY<y+100)g.setTooltipForNextFrame(Component.translatable("gui.smog.smeltery.heat",menu.data.get(2),maximum,menu.data.get(28)),mouseX,mouseY);
         g.text(font,Component.literal((menu.data.get(23)+1)+" / "+Math.max(1,(menu.data.get(33)+Smeltery.PAGE_SIZE-1)/Smeltery.PAGE_SIZE)),x+16,y+212,0xFF404040,false);
         int page=menu.data.get(23);
-        for(int n=page*Smeltery.PAGE_SIZE;n<Math.min((page+1)*Smeltery.PAGE_SIZE,Smeltery.MAX_WORKERS);n++){int slot=Smeltery.slot(n);if(n>=menu.data.get(22)&&menu.container.getItem(slot).isEmpty())continue;int px=x+7+(n%3)*18,py=y+45+((n%Smeltery.PAGE_SIZE)/3)*20;g.fill(px,py,px+18,py+2,0xFF373737);g.fill(px,py,px+18*menu.data.get(Smeltery.PROGRESS+n)/1000,py+2,0xFF84AA55);int status=menu.data.get(Smeltery.STATUS+n);if(status!=0&&!menu.container.getItem(slot).isEmpty())g.fill(px+15,py,px+18,py+2,0xFFB05D49);if(mouseX>=px&&mouseX<px+18&&mouseY>=py&&mouseY<py+3)g.setTooltipForNextFrame(Component.translatable("gui.smog.copper.status_"+status),mouseX,mouseY);if(n>=menu.data.get(22))g.fill(px,py-18,px+18,py,0x66888888);}
+        for(int n=page*Smeltery.PAGE_SIZE;n<Math.min((page+1)*Smeltery.PAGE_SIZE,Smeltery.MAX_WORKERS);n++){int slot=Smeltery.slot(n);if(menu.container.getItem(slot).isEmpty())continue;int px=x+7+(n%3)*18,py=y+45+((n%Smeltery.PAGE_SIZE)/3)*20;g.fill(px,py,px+18,py+2,0xFF373737);g.fill(px,py,px+18*menu.data.get(Smeltery.PROGRESS+n)/1000,py+2,0xFF84AA55);int status=menu.data.get(Smeltery.STATUS+n);if(status!=0&&!menu.container.getItem(slot).isEmpty())g.fill(px+15,py,px+18,py+2,0xFFB05D49);if(mouseX>=px&&mouseX<px+18&&mouseY>=py&&mouseY<py+3)g.setTooltipForNextFrame(Component.translatable("gui.smog.copper.status_"+status),mouseX,mouseY);if(n>=menu.data.get(22))g.fill(px,py-18,px+18,py,0x66888888);}
 
     }
     public static void marks(GuiGraphicsExtractor g,int x,int y,int w,int h){for(int offset=8;offset<h;offset+=8){int length=offset%32==0?5:3;g.fill(x,y+offset,x+length,y+offset+1,0xFF373737);g.fill(x+w-length,y+offset,x+w,y+offset+1,0xFF373737);}}
     public static int click(MachineMenu menu,double mouseX,double mouseY,int x,int y,int button){
         if(button==1)return -1;
-        if(mouseX>=x+TX&&mouseX<x+TX+TW&&mouseY>=y+TY&&mouseY<y+TY+TH){for(var layer:layers(menu))if(mouseY>=y+layer.y()&&mouseY<y+layer.y()+layer.height())return Smeltery.SELECT+layer.metal();if(!menu.getCarried().isEmpty())return Smeltery.SELECT+Math.clamp(menu.data.get(24),0,MoltenMetalStorage.NAMES.length-1);}
-        if(mouseX>=x+223&&mouseX<x+237&&mouseY>=y+23&&mouseY<y+100&&!menu.getCarried().isEmpty())return Smeltery.CURSOR_FUEL_IN;
+        if(mouseX>=x+TX&&mouseX<x+TX+TW&&mouseY>=y+TY&&mouseY<y+TY+TH){for(var layer:layers(menu))if(mouseY>=y+layer.y()&&mouseY<y+layer.y()+layer.height())return Smeltery.SELECT+layer.metal();}
+
         return -1;
     }
 }

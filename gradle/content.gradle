@@ -125,7 +125,8 @@ abstract class GenerateSmogContent extends DefaultTask {
                 }
                 write("assets/smog/blockstates/${name}.json",[multipart:parts])
             }else write("assets/smog/blockstates/${name}.json", [variants:variants])
-            write("assets/smog/items/${name}.json", [model:[type:'minecraft:model', model:baseModel]])
+            if(entry.render_parts)write("assets/smog/items/${name}.json",[model:[type:'minecraft:select',property:'minecraft:custom_model_data',index:0,cases:entry.render_parts.collect { part -> [when:part,model:[type:'minecraft:model',model:"smog:block/${name}_${part}"]] },fallback:[type:'minecraft:model',model:baseModel]]])
+            else write("assets/smog/items/${name}.json", [model:[type:'minecraft:model', model:baseModel]])
             def drop = entry.drop ?: id
             validId(drop)
             def lootEntry = [type:'minecraft:item', name:drop]

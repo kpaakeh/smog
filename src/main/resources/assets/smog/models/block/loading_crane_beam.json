@@ -1,0 +1,150 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "wood": "minecraft:block/stripped_oak_log",
+    "plank": "minecraft:block/oak_planks",
+    "dark": "minecraft:block/dark_oak_planks",
+    "copper": "minecraft:block/copper_block",
+    "rope": "minecraft:block/white_wool",
+    "letter": "minecraft:block/white_concrete",
+    "particle": "minecraft:block/stripped_oak_log"
+  },
+  "elements": [
+    {
+      "to": [
+        16,
+        8,
+        13
+      ],
+      "faces": {
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            3,
+            8,
+            13,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            3,
+            8,
+            13,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            3,
+            16,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            3,
+            16,
+            13
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            8,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            8,
+            16,
+            16
+          ]
+        }
+      },
+      "from": [
+        0,
+        0,
+        3
+      ]
+    },
+    {
+      "to": [
+        16,
+        9,
+        12
+      ],
+      "faces": {
+        "west": {
+          "texture": "#copper",
+          "uv": [
+            4,
+            7,
+            12,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#copper",
+          "uv": [
+            4,
+            7,
+            12,
+            9
+          ]
+        },
+        "down": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            4,
+            16,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            4,
+            16,
+            12
+          ]
+        },
+        "north": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            7,
+            16,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            7,
+            16,
+            9
+          ]
+        }
+      },
+      "from": [
+        0,
+        7,
+        4
+      ]
+    }
+  ]
+}

@@ -45,9 +45,11 @@ public final class CopperInteractions {
         if(LoadingCrane.handles(m)){
             if(!held.isEmpty())return InteractionResult.PASS;
             if(!m.assembled()){player.sendOverlayMessage(Component.translatable("message.smog.multiblock_incomplete"));return InteractionResult.SUCCESS;}
-            if(player.isShiftKeyDown()){m.copper.selection=1-Math.floorMod(m.copper.selection,2);m.copper.work=0;m.copper.queued=0;m.sync();}
-            else LoadingCrane.queue(m);
-            player.sendOverlayMessage(Component.translatable(m.copper.selection%2==0?"message.smog.crane_forward":"message.smog.crane_reverse"));return InteractionResult.SUCCESS;
+            if(player.isShiftKeyDown()){
+                if(m.copper.queued>0||!m.getItem(1).isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.crane_busy"));return InteractionResult.SUCCESS;}
+                m.copper.selection=1-Math.floorMod(m.copper.selection,2);m.copper.work=0;m.copper.status=0;m.sync();
+                player.sendOverlayMessage(Component.translatable("message.smog.crane_direction",LoadingCrane.coordinates(LoadingCrane.bay(m,m.copper.selection%2==1)),LoadingCrane.coordinates(LoadingCrane.bay(m,m.copper.selection%2==0))));
+            }else player.sendOverlayMessage(LoadingCrane.queue(m));return InteractionResult.SUCCESS;
         }
         if(ToolAssembly.handles(m))return ToolAssembly.use(level,m,player,hand);
         if(player.isShiftKeyDown()&&!held.isEmpty()&&(WaterSupply.handles(m)||ManualWorkshops.handles(m))){player.openMenu(m);return InteractionResult.SUCCESS;}

@@ -926,12 +926,24 @@
       "capacity": 1,
       "transfer_rate": 1,
       "cost": 0,
-      "work_ticks": 80,
+      "work_ticks": 160,
       "model": "smog:block/loading_crane",
       "assembled_model": "smog:block/loading_crane",
       "texture": "minecraft:block/bricks",
       "mining_level": "wood",
-      "multiblock": "smog:loading_crane"
+      "multiblock": "smog:loading_crane",
+      "render_parts": [
+        "post",
+        "beam",
+        "rail",
+        "brace",
+        "trolley",
+        "drum",
+        "hook",
+        "cargo",
+        "marker_a",
+        "marker_b"
+      ]
     },
     {
       "name": "rope_anchor",
@@ -1422,52 +1434,106 @@
       "display_ru": "Погрузочный кран",
       "parts": [
         {
-          "x": -1,
+          "x": -2,
+          "y": -4,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -2,
+          "y": -3,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -2,
           "y": -2,
           "z": 0,
           "block": "smog:workshop_support"
         },
         {
-          "x": -1,
+          "x": -2,
           "y": -1,
           "z": 0,
           "block": "smog:workshop_support"
         },
         {
-          "x": -1,
+          "x": -2,
+          "y": -4,
+          "z": 4,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -2,
+          "y": -3,
+          "z": 4,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -2,
           "y": -2,
-          "z": 1,
+          "z": 4,
           "block": "smog:workshop_support"
         },
         {
-          "x": -1,
+          "x": -2,
           "y": -1,
-          "z": 1,
+          "z": 4,
           "block": "smog:workshop_support"
         },
         {
-          "x": 1,
+          "x": 2,
+          "y": -4,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 2,
+          "y": -3,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 2,
           "y": -2,
           "z": 0,
           "block": "smog:workshop_support"
         },
         {
-          "x": 1,
+          "x": 2,
           "y": -1,
           "z": 0,
           "block": "smog:workshop_support"
         },
         {
-          "x": 1,
-          "y": -2,
-          "z": 1,
+          "x": 2,
+          "y": -4,
+          "z": 4,
           "block": "smog:workshop_support"
         },
         {
-          "x": 1,
-          "y": -1,
-          "z": 1,
+          "x": 2,
+          "y": -3,
+          "z": 4,
           "block": "smog:workshop_support"
+        },
+        {
+          "x": 2,
+          "y": -2,
+          "z": 4,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 2,
+          "y": -1,
+          "z": 4,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -2,
+          "y": 0,
+          "z": 0,
+          "block": "smog:press_frame"
         },
         {
           "x": -1,
@@ -1476,9 +1542,45 @@
           "block": "smog:press_frame"
         },
         {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": -2,
+          "y": 0,
+          "z": 4,
+          "block": "smog:press_frame"
+        },
+        {
           "x": -1,
           "y": 0,
-          "z": 1,
+          "z": 4,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 4,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 4,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "z": 4,
           "block": "smog:press_frame"
         },
         {
@@ -1488,15 +1590,15 @@
           "block": "smog:press_frame"
         },
         {
-          "x": 1,
+          "x": 0,
           "y": 0,
-          "z": 0,
+          "z": 2,
           "block": "smog:press_frame"
         },
         {
-          "x": 1,
+          "x": 0,
           "y": 0,
-          "z": 1,
+          "z": 3,
           "block": "smog:press_frame"
         }
       ]
@@ -4191,7 +4293,7 @@
       "message.smog.rope_unlinked": "Ropeway disconnected; travelling cargo remains in its anchor",
       "message.smog.rope_queued": "One cargo batch queued",
       "jei.smog.guide.handcart": "54 ordinary slots. Use to open cargo; sneak + use to pull or park. Prepare a road. Disconnects beyond 6 blocks. Cargo persists and drops on destruction.",
-      "jei.smog.guide.crane": "Fixed gantry. Two bays are two blocks below its controller: directly below and two blocks into the structure. Place containers or park a cart there. Use orders up to 64 items in 4 seconds; sneak reverses direction. A flowing-water bronze drive next to the controller automates it.",
+      "jei.smog.guide.crane": "5 × 5 × 5 gantry, 3 × 4 passage. Bays A and B are 4 blocks below the controller, 1 and 3 blocks inside. Use empty-handed to transfer up to 64 items; sneak-use reverses. Cargo remains on the hoist if blocked. A bronze drive speeds up and repeats loading.",
       "jei.smog.guide.ropeway": "Connect two anchors with freight rope across a clear, loaded span up to 24 blocks. Insert items and use empty-handed to send one stack. Take delivered items with use; sneak empty-handed retrieves input. Hoppers work. Sneak with rope disconnects without losing cargo.",
       "jei.smog.guide.closed_insert": "Install in a flat hearth wall and configure the structure. Allows hot zinc processing and automatic brass alloying at 3 copper to 1 zinc. Open zinc remelting needs low heat. Ready aluminum needs refractory lining; bauxite cannot be reduced by this process.",
       "jei.smog.copper.brass_alloy": "Closed insert · Cu:Zn = 3:1",
@@ -4253,7 +4355,17 @@
       "gui.smog.smeltery.heat": "Heat: %s / %s °C; fuel limit: %s °C",
       "jei.smog.smeltery_fuels": "Smeltery Fuels",
       "jei.smog.fuel_heat": "Limit: %s °C · speed ×%s",
-      "jei.smog.fuel_preparation": "Prepare inside the fuel tank"
+      "jei.smog.fuel_preparation": "Prepare inside the fuel tank",
+      "message.smog.crane_started": "Loading started: %s → %s",
+      "message.smog.crane_busy": "Crane is working; wait for the batch",
+      "message.smog.crane_source": "No container or parked handcart at %s",
+      "message.smog.crane_empty": "No cargo available at %s",
+      "message.smog.crane_destination": "No room for cargo at %s",
+      "message.smog.crane_blocked": "Hoist path obstructed: %s",
+      "message.smog.crane_unloaded": "Loading bay is not loaded",
+      "message.smog.crane_direction": "Direction: %s → %s · Use to load",
+      "message.smog.crane_wait": "Cargo held safely; clear the destination",
+      "message.smog.crane_complete": "Transferred: %s items"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -4388,7 +4500,7 @@
       "message.smog.rope_unlinked": "Переправа отключена; груз сохранён в своём анкере",
       "message.smog.rope_queued": "Заказана перевозка одной партии",
       "jei.smog.guide.handcart": "54 слота для обычных предметов. ПКМ открывает груз, Shift + ПКМ берёт тележку за рукоять или отпускает. Тяни её по подготовленной дороге; при удалении игрока дальше 6 блоков тележка остаётся на месте. Содержимое сохраняется и выпадает при разрушении.",
-      "jei.smog.guide.crane": "Фиксированный кран: четыре пары стоек и верхняя перекладина. Две грузовые позиции находятся на два блока ниже контроллера: прямо под ним и на два блока вглубь схемы. Поставь там контейнеры или припаркуй тележку. ПКМ заказывает перенос до 64 предметов за 4 секунды, Shift + ПКМ меняет направление. Бронзовый водяной привод рядом с контроллером автоматизирует перенос.",
+      "jei.smog.guide.crane": "Кран 5 × 5 × 5: проход 3 × 4. Грузовые точки на 4 блока ниже контроллера, на 1 и 3 блока вглубь; отмечены A и B. ПКМ пустой рукой запускает партию до 64 предметов; Shift + ПКМ меняет направление. Подвес показывает весь цикл. Груз при остановке сохраняется. Бронзовый привод ускоряет и повторяет погрузку.",
       "jei.smog.guide.ropeway": "Два анкера с лебёдками и грузовой канат образуют переправу до 24 блоков. Канатом нажми по первому и второму анкеру; пролёт должен быть свободен и загружен. Загрузи обычные предметы и нажми пустой рукой: каретка перевезёт до стака. ПКМ забирает доставленное, Shift + пустая рука возвращает загрузку. Воронки доступны. Shift + канат отсоединяет линию без потери груза.",
       "jei.smog.guide.closed_insert": "Поставь вставку в плоскую стенку очага и собери структуру настройщиком. Она позволяет работать с цинком при высоком нагреве и получать латунь из трёх частей меди и одной цинка. В открытой конфигурации цинк переплавляется только в низком диапазоне нагрева. Готовый алюминий требует огнеупорной футеровки; боксит этим способом не восстанавливается.",
       "jei.smog.copper.brass_alloy": "Закрытая вставка · Cu:Zn = 3:1",
@@ -4450,7 +4562,17 @@
       "gui.smog.smeltery.heat": "Нагрев: %s / %s °C; предел топлива: %s °C",
       "jei.smog.smeltery_fuels": "Топливо плавильни",
       "jei.smog.fuel_heat": "Предел: %s °C · скорость ×%s",
-      "jei.smog.fuel_preparation": "Подготовка в топливном баке"
+      "jei.smog.fuel_preparation": "Подготовка в топливном баке",
+      "message.smog.crane_started": "Погрузка начата: %s → %s",
+      "message.smog.crane_busy": "Кран работает; дождись завершения партии",
+      "message.smog.crane_source": "Нет сундука или припаркованной тележки в точке %s",
+      "message.smog.crane_empty": "В точке %s нет подходящего груза",
+      "message.smog.crane_destination": "Нет места для груза в точке %s",
+      "message.smog.crane_blocked": "Путь подвеса перекрыт: %s",
+      "message.smog.crane_unloaded": "Грузовая площадка не загружена",
+      "message.smog.crane_direction": "Направление: %s → %s · ПКМ — погрузка",
+      "message.smog.crane_wait": "Груз сохранён на подвесе; освободи место выгрузки",
+      "message.smog.crane_complete": "Перегружено: %s предметов"
     }
   },
   "workshop_modules": [

@@ -21,6 +21,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         public MultiblockDefinition.Bounds bounds;
         public float angle;
         public boolean formed;
+        public CraneRendering.State crane;
         public Vec3 ropeEnd;
         public boolean drawRope;
         public float cargoProgress;
@@ -53,6 +54,8 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         }
         state.complexParts=java.util.List.of();
         extractWorkshop(machine,state);
+        state.crane=CraneRendering.extract(machine,items,tick);
+        if(state.crane!=null){state.formed=true;return;}
         if(machine.complexDefinition()!=null){state.formed=false;return;}
         state.formed = machine.structure() != null && machine.assembled() && ClientFormations.controller(machine.getBlockPos());
         if (!state.formed) return;
@@ -145,6 +148,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         MoltenRendering.submit(state.moltenSurfaces,pose,collector,state.lightCoords);
         MoltenRendering.submitStreams(state.streams,pose,collector);
         for(var item:state.displayedItems){pose.pushPose();pose.translate(item.x(),item.y(),item.z());pose.rotate(Axis.XP.rotationDegrees(90));pose.scale(.55f,.55f,.55f);item.model().submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}
+        if(state.crane!=null){CraneRendering.submit(state.crane,pose,collector);return;}
         if (!state.formed) return;
         if(!state.complexParts.isEmpty()){
             for(var part:state.complexParts){pose.pushPose();pose.translate(part.offset().getX(),part.offset().getY(),part.offset().getZ());part.model().submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}return;
