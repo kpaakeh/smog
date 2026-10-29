@@ -33,7 +33,7 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
         }
         if(recipe.machine().equals("lever_press")&&!recipe.description().endsWith("fiber_pressing"))builder.addOutputSlot(116,7).setStandardSlotBackground().addFluidStack(BuiltInRegistries.FLUID.getValue(ModBlocks.id("plant_oil")),20250).setFluidRenderer(20250,false,16,16);
         if(!recipe.tool().isEmpty())builder.addInputSlot(machine.equals("tool_workbench")?104:74,7).setStandardSlotBackground().add(recipe.tool());
-        boolean tank=recipe.description().endsWith("melting")||recipe.description().endsWith("alloy");var output=builder.addOutputSlot(140,tank?3:7);if(tank)output.setBackground(new SmelteryTankDrawable(),-1,-1);else output.setOutputSlotBackground();
+        boolean tank=recipe.description().endsWith("melting")||recipe.description().endsWith("alloy");var output=builder.addOutputSlot(140,tank?3:7);if(tank)output.setBackground(new SmelteryTankDrawable(),-1,-1).setOverlay(SmelteryTankDrawable.MARKS,0,0);else output.setOutputSlotBackground();
         if(recipe.description().endsWith("alloy"))output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(CopperWorkshops.melt(recipe.result())[0]).getFluid(),9000L*recipe.result().getCount()).setFluidRenderer(tankCapacity(),false,16,30);
         else if(recipe.description().endsWith("melting")){int kind=CopperWorkshops.melt(recipe.inputs().getFirst())[0];output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(kind).getFluid(),(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount()).setFluidRenderer(tankCapacity(),false,16,30);}
         else output.add(recipe.result());

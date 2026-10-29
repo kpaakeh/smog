@@ -44,20 +44,8 @@ public final class Smeltery {
     public static MachineEntity shownTank(MachineEntity m){var tanks=tanks(m);return tanks.stream().filter(t->t.getBlockPos().asLong()==m.smeltery.fuelViewTarget).findFirst().or(()->tanks.stream().filter(t->t.smeltery.fuelAmount>0).findFirst()).orElse(tanks.isEmpty()?null:tanks.getFirst());}
     public static boolean portable(ItemStack stack){return !stack.isEmpty()&&ContainerItemContext.withConstant(stack).find(FluidStorage.ITEM)!=null;}
     public static void containers(MachineEntity m){
-        if(m.getItem(4).isEmpty())return;
-        if(m.smeltery.containerMode!=2&&transferContainer(m,true))return;
-        if(m.smeltery.containerMode!=1)transferContainer(m,false);
-    }
-    private static boolean transferContainer(MachineEntity m,boolean empty){
-        var input=m.getItem(4);if(input.isEmpty())return false;
-        var slot=new SingleStackStorage(){private ItemStack value=input.copyWithCount(1);protected ItemStack getStack(){return value;}protected void setStack(ItemStack v){value=v;}};
-        var fluid=ContainerItemContext.ofSingleSlot(slot).find(FluidStorage.ITEM);if(fluid==null)return false;
-        try(var tx=Transaction.openOuter()){
-            long moved=empty?StorageUtil.move(fluid,m.molten,v->MoltenMetalStorage.kind(v)>=0,Long.MAX_VALUE,tx):StorageUtil.move(m.molten,fluid,v->MoltenMetalStorage.kind(v)==selected(m),Long.MAX_VALUE,tx);
-            if(moved==0)return false;var result=slot.getResource().toStack((int)slot.getAmount());var output=m.getItem(5);if(!result.isEmpty()&&result.getCount()>m.getMaxStackSize(result))return false;
-            if(!result.isEmpty()&&(!output.isEmpty()&&(!ItemStack.isSameItemSameComponents(output,result)||output.getCount()+result.getCount()>m.getMaxStackSize(result))))return false;
-            tx.commit();input.shrink(1);if(!result.isEmpty()){if(output.isEmpty())m.setItem(5,result);else output.grow(result.getCount());}m.sync();return true;
-        }
+        if(!(m.getLevel() instanceof net.minecraft.server.level.ServerLevel level))return;
+        for(int slot:new int[]{4,5})if(!m.getItem(slot).isEmpty()){var old=m.removeItemNoUpdate(slot);net.minecraft.world.Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,old);m.sync();}
     }
     public static boolean cursor(MachineEntity m,net.minecraft.world.entity.player.Player player,net.minecraft.world.inventory.AbstractContainerMenu menu,int kind,boolean empty,boolean fuel){
         var item=ContainerItemContext.ofPlayerCursor(player,menu).find(FluidStorage.ITEM);if(item==null)return false;var tank=shownTank(m);Storage<FluidVariant> storage=fuel?(tank==null?null:tank.smelteryFuel):m.molten;if(storage==null)return false;

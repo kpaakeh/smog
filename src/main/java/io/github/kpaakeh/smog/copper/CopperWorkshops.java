@@ -74,7 +74,7 @@ public final class CopperWorkshops {
     public static boolean accepts(MachineEntity m,int slot,ItemStack stack){
         if(Smeltery.fuelTank(m))return false;
         if(Smeltery.vessel(m))return slot==1&&!CastingProcesses.locked(m)&&!workshop(m,"casting_basin")&&(mold(stack)>=0||MoldMaking.pattern(stack)!=null);
-        if(Smeltery.handles(m)){int worker=Smeltery.worker(slot);return worker>=0?worker<Smeltery.workers(m)&&melt(stack)!=null:slot==2?stack.has(net.minecraft.core.component.DataComponents.COOKING_FUEL):slot==4&&net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext.withConstant(stack).find(net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.ITEM)!=null;}
+        if(Smeltery.handles(m)){int worker=Smeltery.worker(slot);return worker>=0?worker<Smeltery.workers(m)&&melt(stack)!=null:slot==2?stack.has(net.minecraft.core.component.DataComponents.COOKING_FUEL):false;}
 
         if(Ropeway.handles(m))return slot==0;
         if(LoadingCrane.handles(m))return false;
@@ -120,7 +120,7 @@ public final class CopperWorkshops {
         if(stack.getItem() instanceof ModularToolItem||ToolDefinitions.part(stack)!=null)return ToolParts.melt(stack);
         if(BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("smog")&&MOLD_VARIANTS.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath())&&BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().startsWith("metal_"))return new int[]{Arrays.asList(MoltenMetalStorage.NAMES).indexOf("gold"),2*MoltenMetalStorage.INGOT};
         if(is(stack,"smog:copper_concentrate"))return new int[]{0,2*MoltenMetalStorage.INGOT};
-        if(is(stack,"smog:metal_residue")){var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();int kind=data.getIntOr("metal",-1),amount=data.getIntOr("units",0);return kind>=0&&kind<MoltenMetalStorage.NAMES.length&&amount>0&&amount<MoltenMetalStorage.INGOT?new int[]{kind,amount}:null;}
+        if(is(stack,"smog:metal_residue")){var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();int kind=data.contains("metal_name")?java.util.Arrays.asList(MoltenMetalStorage.NAMES).indexOf(data.getStringOr("metal_name","")):data.getIntOr("metal",-1),amount=data.getIntOr("units",0);return kind>=0&&kind<MoltenMetalStorage.NAMES.length&&amount>0&&amount<MoltenMetalStorage.INGOT?new int[]{kind,amount}:null;}
         for(int k=0;k<MoltenMetalStorage.NAMES.length;k++){
             String n=MoltenMetalStorage.NAMES[k],ns=namespace(k);
             if(is(stack,"smog:"+n+"_relief"))return new int[]{k,MoltenMetalStorage.INGOT};
@@ -194,6 +194,6 @@ public final class CopperWorkshops {
     }
     public static void dropMetal(ServerLevel level,MachineEntity m){if(!workshop(m,"copper_hearth"))return;
         for(int kind=0;kind<MoltenMetalStorage.NAMES.length;kind++){int units=m.copper.metal(kind);while(units>=MoltenMetalStorage.INGOT){int ingots=Math.min(64,units/MoltenMetalStorage.INGOT);Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,new ItemStack(item(namespace(kind)+MoltenMetalStorage.NAMES[kind]+"_ingot"),ingots));units-=ingots*MoltenMetalStorage.INGOT;}
-            if(units>0){var residue=new ItemStack(item("smog:metal_residue"));var data=new net.minecraft.nbt.CompoundTag();data.putInt("metal",kind);data.putInt("units",units);residue.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,residue);}m.copper.metal(kind,0);}
+            if(units>0){var residue=new ItemStack(item("smog:metal_residue"));var data=new net.minecraft.nbt.CompoundTag();data.putString("metal_name",MoltenMetalStorage.NAMES[kind]);data.putInt("units",units);residue.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,residue);}m.copper.metal(kind,0);}
     }
 }

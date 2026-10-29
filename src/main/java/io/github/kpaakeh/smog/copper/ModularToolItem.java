@@ -58,7 +58,7 @@ public final class ModularToolItem extends Item {
         if(!configured(stack)){lines.accept(Component.translatable("tool.smog.unconfigured"));return;}
         var schema=ToolParts.schema(stack);var components=ToolParts.components(stack);
         for(int i=0;i<components.size();i++)if(!components.get(i).isEmpty())lines.accept(Component.translatable("tool.smog.part_"+schema.roles().get(i).category(),components.get(i).getHoverName()));
-        for(var component:components){var head=ToolDefinitions.part(component);if(head==null||!head.form().category().equals("head"))continue;var profile=head.material().profile(head.form());lines.accept(Component.translatable("tool.smog.tier",Component.literal(ToolDefinitions.string(profile,"harvest_tier","—"))));}
+        for(var component:components){var head=ToolDefinitions.part(component);if(head==null||!head.form().category().equals("head"))continue;var profile=head.material().profile(head.form());lines.accept(Component.translatable("tool.smog.tier",Component.translatable("tool.smog.tier."+ToolDefinitions.string(profile,"harvest_tier","wooden"))));}
         var mining=stack.get(DataComponents.TOOL);if(mining!=null)lines.accept(Component.translatable("tool.smog.speed",String.format(java.util.Locale.ROOT,"%.2f",mining.rules().stream().flatMap(r->r.speed().stream()).max(Float::compare).orElse(1f))));
         lines.accept(Component.translatable(broken(stack)?"tool.smog.broken":"tool.smog.durability",Math.max(0,stack.getMaxDamage()-stack.getDamageValue()),stack.getMaxDamage()));
     }

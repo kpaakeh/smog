@@ -28,10 +28,10 @@ public final class SmelteryFuelCategory implements IRecipeCategory<SmelteryFuelC
     @Override public IDrawable getIcon(){return icon;}
     @Override public void setRecipe(IRecipeLayoutBuilder b,Page page,IFocusGroup focuses){
         var fuel=BuiltInRegistries.FLUID.getValue(Identifier.parse(page.fuel().fluid()));
-        b.addInputSlot(8,5).setBackground(new SmelteryTankDrawable(),-1,-1).addFluidStack(page.preparation()?net.minecraft.world.level.material.Fluids.LAVA:fuel,81000).setFluidRenderer(648000,false,16,30);
+        b.addInputSlot(8,5).setBackground(new SmelteryTankDrawable(),-1,-1).setOverlay(SmelteryTankDrawable.MARKS,0,0).addFluidStack(page.preparation()?net.minecraft.world.level.material.Fluids.LAVA:fuel,81000).setFluidRenderer(648000,false,16,30);
         if(page.preparation()){
             b.addInputSlot(40,12).setStandardSlotBackground().add(new ItemStack(Items.BLAZE_POWDER,2));
-            b.addOutputSlot(140,5).setBackground(new SmelteryTankDrawable(),-1,-1).addFluidStack(fuel,81000).setFluidRenderer(648000,false,16,30);
+            b.addOutputSlot(140,5).setBackground(new SmelteryTankDrawable(),-1,-1).setOverlay(SmelteryTankDrawable.MARKS,0,0).addFluidStack(fuel,81000).setFluidRenderer(648000,false,16,30);
         }
     }
     @Override public void createRecipeExtras(IRecipeExtrasBuilder b,Page page,IFocusGroup focuses){

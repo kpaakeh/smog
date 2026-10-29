@@ -291,9 +291,9 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         return spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?slot==2&&stack.has(net.minecraft.core.component.DataComponents.COOKING_FUEL)
             :!spec().source()&&!spec().relay()&&slot==0;
     }
-    @Override public int[] getSlotsForFace(Direction side) {return io.github.kpaakeh.smog.copper.Smeltery.handles(this)?(side==Direction.DOWN?new int[]{5}:side==Direction.UP?java.util.stream.IntStream.range(0,io.github.kpaakeh.smog.copper.Smeltery.workers(this)).map(io.github.kpaakeh.smog.copper.Smeltery::slot).toArray():new int[]{2,4}):spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};}
+    @Override public int[] getSlotsForFace(Direction side) {return io.github.kpaakeh.smog.copper.Smeltery.handles(this)?(side==Direction.DOWN?new int[]{}:side==Direction.UP?java.util.stream.IntStream.range(0,io.github.kpaakeh.smog.copper.Smeltery.workers(this)).map(io.github.kpaakeh.smog.copper.Smeltery::slot).toArray():new int[]{2}):spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};}
     @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side) {return canPlaceItem(slot,stack);}
-    @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side) {return slot==3||io.github.kpaakeh.smog.copper.Smeltery.handles(this)&&slot==5;}
+    @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side) {return slot==3;}
     public final ContainerData data=new ContainerData() {
         @Override public int getCount() {return MachineMenu.DATA_SIZE;}
         @Override public int get(int index) {if(spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP)return io.github.kpaakeh.smog.copper.CopperWorkshops.data(MachineEntity.this,index);return switch(index) {

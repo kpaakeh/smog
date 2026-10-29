@@ -29,7 +29,7 @@ public final class CraneRendering {
         }
         for(int z:new int[]{0,4})for(int x=-2;x<=2;x++)parts.add(new Part(models.get("beam"),x+.5f,.5f,z+.5f,0,0));
         for(int z=0;z<=4;z++)parts.add(new Part(models.get("rail"),.5f,.5f,z+.5f,0,0));
-        parts.add(new Part(models.get("marker_a"),.5f,-3.5f,1.5f,0,0));parts.add(new Part(models.get("marker_b"),.5f,-3.5f,3.5f,0,0));
+        parts.add(new Part(models.get("marker_a"),-.5f,-3.5f,1.5f,0,0));parts.add(new Part(models.get("marker_b"),-.5f,-3.5f,3.5f,0,0));
         float t=machine.copper.queued==0?0:Math.clamp((machine.copper.work+(machine.copper.status==0?partial:0))/LoadingCrane.duration(machine),0,1);
         float travel=t<.3f?0:t<.6f?smooth((t-.3f)/.3f):t<.9f?1:1-smooth((t-.9f)/.1f);
         float lower=t<.15f?smooth(t/.15f):t<.3f?1-smooth((t-.15f)/.15f):t<.6f?0:t<.75f?smooth((t-.6f)/.15f):t<.9f?1-smooth((t-.75f)/.15f):0;
@@ -48,6 +48,6 @@ public final class CraneRendering {
     public static void submit(State state,PoseStack pose,SubmitNodeCollector collector){
         pose.pushPose();pose.translate(.5,0,.5);pose.rotate(Axis.YP.rotationDegrees(state.yaw()));pose.translate(-.5,0,-.5);
         for(var part:state.parts()){pose.pushPose();pose.translate(part.x(),part.y(),part.z());if(part.yaw()!=0)pose.rotate(Axis.YP.rotationDegrees(part.yaw()));if(part.roll()!=0)pose.rotate(Axis.XP.rotationDegrees(part.roll()));part.model().submit(pose,collector,state.light(),net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}
-        pose.pushPose();pose.translate(.5,.0,state.z());RopeRendering.submit(new net.minecraft.world.phys.Vec3(0,state.hookY()+.5,0),pose,collector,state.light());pose.popPose();pose.popPose();
+        for(double x:new double[]{.35,.65})RopeRendering.straight(new net.minecraft.world.phys.Vec3(x,.1,state.z()),new net.minecraft.world.phys.Vec3(x,state.hookY()+.5,state.z()),pose,collector,state.light());pose.popPose();
     }
 }

@@ -39,7 +39,7 @@ public final class SmelteryGui {
         if(height>0)g.fill(x+224,y+99-height,x+236,y+99,0xFFE6A23A);
         int limit=y+99-Math.clamp(75*menu.data.get(28)/maximum,0,75);g.fill(x+222,limit,x+238,limit+1,0xFFF6E7BC);
         if(mouseX>=x+222&&mouseX<x+238&&mouseY>=y+23&&mouseY<y+100)g.setTooltipForNextFrame(Component.translatable("gui.smog.smeltery.heat",menu.data.get(2),maximum,menu.data.get(28)),mouseX,mouseY);
-        g.text(font,Component.literal((menu.data.get(23)+1)+" / "+Math.max(1,(menu.data.get(33)+Smeltery.PAGE_SIZE-1)/Smeltery.PAGE_SIZE)),x+16,y+212,0xFF404040,false);
+        g.text(font,Component.literal((menu.data.get(23)+1)+" / "+Math.max(1,(menu.data.get(33)+Smeltery.PAGE_SIZE-1)/Smeltery.PAGE_SIZE)),x+16,y+208,0xFF404040,false);
         int page=menu.data.get(23);
         for(int n=page*Smeltery.PAGE_SIZE;n<Math.min((page+1)*Smeltery.PAGE_SIZE,Smeltery.MAX_WORKERS);n++){int slot=Smeltery.slot(n);if(menu.container.getItem(slot).isEmpty())continue;int px=x+7+(n%3)*18,py=y+45+((n%Smeltery.PAGE_SIZE)/3)*20;g.fill(px,py,px+18,py+2,0xFF373737);g.fill(px,py,px+18*menu.data.get(Smeltery.PROGRESS+n)/1000,py+2,0xFF84AA55);int status=menu.data.get(Smeltery.STATUS+n);if(status!=0&&!menu.container.getItem(slot).isEmpty())g.fill(px+15,py,px+18,py+2,0xFFB05D49);if(mouseX>=px&&mouseX<px+18&&mouseY>=py&&mouseY<py+3)g.setTooltipForNextFrame(Component.translatable("gui.smog.copper.status_"+status),mouseX,mouseY);if(n>=menu.data.get(22))g.fill(px,py-18,px+18,py,0x66888888);}
 

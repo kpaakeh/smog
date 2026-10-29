@@ -32,6 +32,7 @@ public final class ConfiguratorItem extends Item {
         }
         pos=machine.getBlockPos();
         if(level.isClientSide())return InteractionResult.SUCCESS;
+        if(player.isShiftKeyDown()&&io.github.kpaakeh.smog.copper.LoadingCrane.handles(machine)&&(machine.copper.queued>0||!machine.getItem(1).isEmpty())){player.sendOverlayMessage(Component.translatable("message.smog.crane_busy"));return InteractionResult.SUCCESS;}
         if(player.isShiftKeyDown()) {
             machine.disassemble();
             var state=level.getBlockState(pos);

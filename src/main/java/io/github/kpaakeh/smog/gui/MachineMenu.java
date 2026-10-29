@@ -33,9 +33,7 @@ public final class MachineMenu extends AbstractContainerMenu {
         if(io.github.kpaakeh.smog.copper.Smeltery.handles(machine)){
             var state=machine.smeltery;int count=io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length;
             if(id==io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS||id==io.github.kpaakeh.smog.copper.Smeltery.NEXT)viewPage=Math.floorMod(viewPage+(id==io.github.kpaakeh.smog.copper.Smeltery.NEXT?1:-1),Math.max(1,(io.github.kpaakeh.smog.copper.Smeltery.visibleWorkers(machine)+io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE-1)/io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE));
-            else if(id==io.github.kpaakeh.smog.copper.Smeltery.MODE)state.containerMode=(state.containerMode+1)%3;
-            else if(id>=io.github.kpaakeh.smog.copper.Smeltery.SELECT&&id<io.github.kpaakeh.smog.copper.Smeltery.SELECT+count){int kind=id-io.github.kpaakeh.smog.copper.Smeltery.SELECT;if(!io.github.kpaakeh.smog.copper.Smeltery.portable(getCarried())){if(machine.copper.metal(kind)<=0)return false;state.selected=io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES[kind];}else {boolean moved=state.containerMode!=2&&io.github.kpaakeh.smog.copper.Smeltery.cursor(machine,player,this,kind,true,false);}}
-            else if(id==io.github.kpaakeh.smog.copper.Smeltery.CURSOR_FUEL_IN)io.github.kpaakeh.smog.copper.Smeltery.cursor(machine,player,this,0,true,true);
+            else if(id>=io.github.kpaakeh.smog.copper.Smeltery.SELECT&&id<io.github.kpaakeh.smog.copper.Smeltery.SELECT+count){int kind=id-io.github.kpaakeh.smog.copper.Smeltery.SELECT;if(machine.copper.metal(kind)<=0)return false;state.selected=io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES[kind];}
             else return false;machine.sync();broadcastChanges();return true;
         }
         if(machine.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP && id>=20)return io.github.kpaakeh.smog.copper.CopperWorkshops.button(machine,id);

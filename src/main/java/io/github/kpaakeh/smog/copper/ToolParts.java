@@ -98,10 +98,11 @@ public final class ToolParts {
     public static Shaping shaping(ItemStack ingredient,ToolDefinitions.Template schema){
         var role=schema.roles().get(ToolDefinitions.primary(schema));for(var candidate:shapingChoices(ingredient))if(role.accepts(candidate)){var plan=shaping(ingredient,candidate);if(ingredient.getCount()>=plan.count())return plan;}return null;
     }
+    public static ItemStack preserveIdentity(ItemStack old,ItemStack result){if(!result.isEmpty()&&!old.isEmpty()){if(old.has(DataComponents.CUSTOM_NAME))result.set(DataComponents.CUSTOM_NAME,old.get(DataComponents.CUSTOM_NAME));if(old.has(DataComponents.REPAIR_COST))result.set(DataComponents.REPAIR_COST,old.get(DataComponents.REPAIR_COST));}return result;}
     public static ItemStack repair(ItemStack tool,ItemStack ingredient){
         var schema=schema(tool);if(schema==null)return ItemStack.EMPTY;var parts=new ArrayList<>(components(tool));
         for(int i=0;i<parts.size();i++){var p=ToolDefinitions.part(parts.get(i));if(p==null||!p.form().category().equals("head")||!materialIngredient(ingredient,p.material())||wear(parts.get(i)).numerator().signum()==0)continue;
-            var repaired=parts.get(i).copy();var data=ModularToolItem.parts(repaired);wear(repaired).add(-9000,Math.max(36000,units(p))).write(data);repaired.set(DataComponents.CUSTOM_DATA,CustomData.of(data));parts.set(i,repaired);return assemble(schema,parts);
+            var repaired=parts.get(i).copy();var data=ModularToolItem.parts(repaired);wear(repaired).add(-9000,Math.max(36000,units(p))).write(data);repaired.set(DataComponents.CUSTOM_DATA,CustomData.of(data));parts.set(i,repaired);return preserveIdentity(tool,assemble(schema,parts));
         }return ItemStack.EMPTY;
     }
 }
