@@ -37,6 +37,7 @@ public final class WorkshopPartBlock extends Block {
     @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state,net.minecraft.world.level.BlockGetter level,BlockPos pos,net.minecraft.world.phys.shapes.CollisionContext context){
         var name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath();
         if(name.equals("ceramic_crucible")||name.equals("large_ceramic_crucible")){double lo=name.startsWith("large")?0:2,hi=16-lo;return net.minecraft.world.phys.shapes.Shapes.or(box(lo,0,lo,hi,3,hi),box(lo,3,lo,lo+2,14,hi),box(hi-2,3,lo,hi,14,hi),box(lo+2,3,lo,hi-2,14,lo+2),box(lo+2,3,hi-2,hi-2,14,hi));}
+        if(name.equals("casting_faucet"))return WorkshopModelShapes.get(state.getValue(OPEN)?"casting_faucet_open":"casting_faucet",state.getValue(FACING));
         var shape=WorkshopShapes.shape(name,state.getValue(FACING));return shape==null?super.getShape(state,level,pos,context):shape;
     }
     @Override protected InteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,InteractionHand hand,net.minecraft.world.phys.BlockHitResult hit){

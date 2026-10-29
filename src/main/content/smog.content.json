@@ -45,7 +45,8 @@
         "minecraft:bricks",
         "smog:firebrick_casing",
         "smog:firebrick_tiles",
-        "smog:carved_firebrick"
+        "smog:carved_firebrick",
+        "smog:smeltery_glass"
       ]
     },
     {
@@ -168,6 +169,14 @@
       "values": [
         "minecraft:wheat",
         "minecraft:vine"
+      ]
+    },
+    {
+      "registry": "block",
+      "id": "smog:smeltery_heaters",
+      "values": [
+        "smog:solid_firebox",
+        "smog:smeltery_fuel_tank"
       ]
     }
   ],
@@ -467,6 +476,16 @@
       "hardness": 2,
       "mining_level": "stone",
       "horizontal": true
+    },
+    {
+      "name": "smeltery_glass",
+      "display": "Refractory Glass",
+      "display_ru": "Огнеупорное стекло",
+      "tab": "copper_age",
+      "texture": "minecraft:block/glass",
+      "model": "smog:block/smeltery_glass",
+      "hardness": 2,
+      "mining_level": "wood"
     }
   ],
   "ores": [
@@ -734,8 +753,8 @@
   "machines": [
     {
       "name": "copper_hearth",
-      "display": "Casting Hearth",
-      "display_ru": "Литейный очаг",
+      "display": "Smeltery",
+      "display_ru": "Плавильня",
       "kind": "COPPER_WORKSHOP",
       "hardness": 2,
       "capacity": 1,
@@ -914,6 +933,36 @@
       "work_ticks": 80,
       "model": "smog:block/rope_anchor",
       "assembled_model": "smog:block/rope_anchor",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "smeltery_fuel_tank",
+      "display": "Smeltery Fuel Tank",
+      "display_ru": "Топливный бак плавильни",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/smeltery_fuel_tank",
+      "assembled_model": "smog:block/smeltery_fuel_tank",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "casting_basin",
+      "display": "Casting Basin",
+      "display_ru": "Глубокая литейная ёмкость",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/casting_basin",
+      "assembled_model": "smog:block/casting_basin",
       "texture": "minecraft:block/bricks",
       "mining_level": "wood"
     }
@@ -1943,6 +1992,18 @@
       "tags": [
         "c:molten_netherite"
       ]
+    },
+    {
+      "name": "blazing_fuel",
+      "display": "Blazing Fuel",
+      "display_ru": "Пылающее топливо",
+      "color": "F7CB55",
+      "tick_delay": 30,
+      "infinite": false,
+      "bucket_texture": "smog:item/blazing_fuel_bucket",
+      "tags": [
+        "smog:smeltery_fuels"
+      ]
     }
   ],
   "items": [
@@ -2172,6 +2233,13 @@
       "display": "Ceramic Casting Core",
       "display_ru": "Керамический литейный стержень",
       "tab": "copper_age"
+    },
+    {
+      "name": "fluid_canister",
+      "kind": "fluid_canister",
+      "display": "Workshop Canister",
+      "display_ru": "Канистра мастерской",
+      "tab": "copper_age"
     }
   ],
   "alloys": [
@@ -2184,7 +2252,12 @@
         "minecraft:iron_ingot",
         "minecraft:coal"
       ],
-      "mining_level": "iron"
+      "mining_level": "iron",
+      "composition": {
+        "iron": 99,
+        "carbon": 1
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "bronze",
@@ -2206,7 +2279,12 @@
       "material_ru": "чугуна",
       "color": "665D59",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "iron": 96,
+        "carbon": 4
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "wrought_iron",
@@ -2214,7 +2292,11 @@
       "material_ru": "кричного железа",
       "color": "A4A19A",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "iron": 100
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "stainless_steel",
@@ -2230,7 +2312,13 @@
       "material_ru": "инструментальной стали",
       "color": "69747D",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "iron": 98,
+        "carbon": 1,
+        "tungsten": 1
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "duralumin",
@@ -2238,7 +2326,14 @@
       "material_ru": "дюралюминия",
       "color": "B4C6CF",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "aluminum": 94,
+        "copper": 4,
+        "magnesium": 1,
+        "manganese": 1
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "cupronickel",
@@ -2294,7 +2389,13 @@
       "material_ru": "вольфрамовой стали",
       "color": "535E6C",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "iron": 89,
+        "tungsten": 10,
+        "carbon": 1
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "titanium_alloy",
@@ -2302,7 +2403,13 @@
       "material_ru": "титанового сплава",
       "color": "A9B9CB",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "titanium": 90,
+        "aluminum": 6,
+        "molybdenum": 4
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "nickel_superalloy",
@@ -2310,7 +2417,14 @@
       "material_ru": "никелевого жаропрочного сплава",
       "color": "B4A385",
       "mining_level": "iron",
-      "planned": true
+      "planned": true,
+      "composition": {
+        "nickel": 60,
+        "chromium": 20,
+        "iron": 15,
+        "molybdenum": 5
+      },
+      "process": "future_controlled_metallurgy"
     },
     {
       "name": "aluminum_bronze",
@@ -2503,13 +2617,13 @@
       "roles": [
         {
           "name": "fuel",
-          "block": "smog:solid_firebox",
+          "block": "#smog:smeltery_heaters",
           "zones": [
             "floor",
             "wall"
           ],
           "min": 1,
-          "max": 1
+          "max": 4
         },
         {
           "name": "spout",
@@ -3786,6 +3900,85 @@
           "count": 4
         }
       }
+    },
+    {
+      "name": "smeltery_fuel_tank",
+      "unlock": "smog:firebrick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BGB",
+          "G G",
+          "BBB"
+        ],
+        "key": {
+          "B": "smog:firebrick",
+          "G": "minecraft:glass"
+        },
+        "result": {
+          "id": "smog:smeltery_fuel_tank",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "casting_basin",
+      "unlock": "smog:firebrick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "B B",
+          "B B",
+          "BBB"
+        ],
+        "key": {
+          "B": "smog:firebrick"
+        },
+        "result": {
+          "id": "smog:casting_basin",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "smeltery_glass",
+      "unlock": "smog:firebrick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BBB",
+          "BGB",
+          "BBB"
+        ],
+        "key": {
+          "B": "smog:firebrick",
+          "G": "minecraft:glass"
+        },
+        "result": {
+          "id": "smog:smeltery_glass",
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "fluid_canister",
+      "unlock": "smog:copper_plate",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " F ",
+          "P P",
+          "PPP"
+        ],
+        "key": {
+          "F": "smog:copper_fitting",
+          "P": "smog:copper_plate"
+        },
+        "result": {
+          "id": "smog:fluid_canister",
+          "count": 1
+        }
+      }
     }
   ],
   "firing": [
@@ -3848,16 +4041,16 @@
       "jei.smog.copper.alloy": "Keep Cu and Sn molten together: automatic 3:1 alloy.",
       "message.smog.molten_status": "Cu %s | Sn %s | Bronze %s ingots | Heat %s",
       "message.smog.mold_selected": "Selected: %s",
-      "jei.smog.guide.hearth": "Open hearth from 3x3x3 to 11x11x11. Interior must be empty: no crucibles or other blocks. Continuous floor and walls form a bowl. One Smog firebox on a floor or wall face, one to four wall spouts and optional air intakes. Functional components cannot occupy edges/corners. Controller anchors the front wall above floor. Molten metal remains visible in the chamber after assembly. Each interior cell stores eight ingots. Configure to assemble; sneak-click controller for optional GUI.",
+      "jei.smog.guide.hearth": "Hollow 3 to 11 blocks on every axis. Solid floor, valid walls, empty chamber. Functional inserts cannot occupy edges or corners. Configure with ordinary use; sneak-use only rotates. Use the controller empty-handed for the tank GUI and up to 81 independent input jobs, nine per page. Click a fluid layer to select it for every faucet. Stored liquids do not solidify when fuel ends. Alloys form automatically only with sufficient fuel heat. Hoppers and items dropped inside the chamber remain supported. Resizing preserves all items and fluid.",
       "jei.smog.guide.kiln": "Closed shell 3–5 wide/deep, 3–5 high. Empty chamber, one floor firebox and one or two roof vents. Configure to assemble. Load fuel and unfired ceramics by hand; empty-hand click collects output. Batch size 8–64 depends on chamber.",
-      "jei.smog.guide.casting": "Attach a faucet outside a wall fluid port and open it. Place table directly below faucet, or route channels downhill beneath it. Click with mold to install; sneak empty-hand click removes mold. Empty-hand click collects output. Bare wall port never pours. Sand and investment relief molds are single use. Fire the investment shell before casting. A relief uses and returns exactly one ingot.",
+      "jei.smog.guide.casting": "Mount a mold on the table, select the fluid in the controller and open the faucet. Actual fluid portions accumulate in the mold, then cool separately. A partial cast retains its metal and cannot accept a different metal. Closing the faucet, stopping fuel or reloading the world preserves it. Mold pickup is locked until finished. Breaking the vessel returns exact molten contents in canisters. Take finished castings by hand or hopper. Use a basin for nine-ingot storage blocks.",
       "jei.smog.guide.pottery": "Sneak empty-hand click selects a visible product. Click with clay or tempered clay to make up to eight. Empty-hand click collects output. Fire raw ceramics in a furnace or ceramic kiln. Sneak-click with an item opens the optional detailed GUI.",
       "jei.smog.guide.bellows": "Fit an air nozzle outside a formed hearth air port, open it and place hand bellows beside it. Right-click bellows to assist up to eight ingots. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.crucible": "Separate ceramic vessel. Do not install it inside the casting hearth: its chamber must be completely empty. Hearth capacity now comes from chamber dimensions, not crucibles.",
       "jei.smog.guide.firebox": "Exactly one Smog firebox in a floor or wall face. It shares the controller inventory rather than acting as a separate vanilla furnace. Click the assembled structure with fuel or feed the controller side with a hopper.",
       "jei.smog.guide.spout": "Wall fluid port does not pour by itself. Attach a casting faucet outside and open with right-click. It pours downward onto a table or channel below. Pipes and compatible containers may still connect directly to the port. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.lining": "Fire refractory bricks from tempered clay; four bricks make refractory masonry. Replace ordinary masonry or floor blocks to reduce heat loss. More lining gives better retention. All models use 16 pixels per block.",
-      "jei.smog.guide.molds": "Reusable molds install with right-click on casting table. Ingot: one ingot. Plate: one plate per ingot. Fittings: four per ingot. Pipe blanks: four per two ingots. Tin supports ingots/plates; copper and bronze use all four molds.",
+      "jei.smog.guide.molds": "Ceramic starter molds remain usable. Imprint a sand mold on the toolmaker bench: molding sand in slot1, a finished head/tool/component in slot2, then hammer. The sample is retained; sand molds are single use. Pour two gold ingots around a sample on the casting table for a reusable metal cast. The sample remains, and remelting the cast returns the same two gold ingots. Forms depend on shape, not material.",
       "jei.smog.guide.configurator": "Right-click controller to assemble. Sneak-right-click dismantles and rotates it. Formed parts route to their controller. Sneak-right-click loose spouts, channels and intakes with the configurator to rotate them. Feedback appears above the hotbar.",
       "jei.smog.guide.residue": "Preserves an exact fractional fluid amount recovered when a tank is broken. Remelt it to recover all metal without rounding or duplication.",
       "jei.smog.guide.parts": "Cast copper and bronze parts. A plate contains one ingot, fitting a quarter, pipe blank a half. Remelting returns exactly the same amount. Parts remain available for upcoming copper-age devices.",
@@ -3988,7 +4181,31 @@
       "conductor.smog.titanium_alloy": "Titanium Alloy",
       "conductor.smog.nickel_superalloy": "Nickel Superalloy",
       "conductor.smog.aluminum_bronze": "Aluminum Bronze",
-      "conductor.smog.netherite": "Netherite"
+      "conductor.smog.netherite": "Netherite",
+      "gui.smog.smeltery.inputs": "Slots: %s",
+      "gui.smog.smeltery.quantity": "Volume: %s ingots",
+      "gui.smog.smeltery.select": "Left click: select bottom layer · Right click with container: fill",
+      "gui.smog.smeltery.fuel": "Stored: %s mB",
+      "gui.smog.smeltery.temperature": "Heat: %s · Fuel limit: %s",
+      "gui.smog.smeltery.fuel_cursor": "Carried container: left click to empty, right click to fill",
+      "gui.smog.smeltery.container_modes": "Container mode: auto / empty / fill",
+      "gui.smog.smeltery.container_mode_0": "Auto: empty container first, then try filling it",
+      "gui.smog.smeltery.container_mode_1": "Empty containers into the shared tank",
+      "gui.smog.smeltery.container_mode_2": "Fill containers with the selected molten metal",
+      "gui.smog.smeltery.solid_fuel": "Solid fuel",
+      "message.smog.fuel_tank": "Fuel tank: %s / 8000 mB",
+      "message.smog.fuel_powder": "Blaze powder required for all stored lava: %s",
+      "message.smog.fuel_prepared": "Lava converted into blazing fuel without changing its volume",
+      "message.smog.casting_locked": "Pouring: %s / %s mB · Mold locked until ready",
+      "gui.smog.copper.status_10": "Casting is cooling",
+      "jei.smog.copper.imprint": "Sand mold · Sample retained",
+      "jei.smog.copper.mold_making": "Gold cast · Sample retained",
+      "jei.smog.copper.required_heat": "Requires heat %s",
+      "jei.smog.guide.fuel_tank": "Physical eight-bucket fuel tank in a flat wall or floor. Use lava buckets, canisters or Fabric pipes. Lava heat1100; blazing fuel1600, limited by the shell to1100 or1350 with sufficient refractory lining. Use blaze powder on stored lava: two powder per started bucket of the entire tank. Volume is preserved and no extra bucket is produced. Larger workshops consume more fuel. Breaking returns residual fuel in a canister.",
+      "jei.smog.guide.basin": "Cast one metal storage block from nine ingots of fluid, without a mold. Fill under a faucet or via compatible Fabric fluid pipes. Filling and cooling are distinct world-visible stages.",
+      "jei.smog.guide.canister": "Eight-bucket single-fluid canister, exact Fabric units, standard FluidStorage.ITEM support. The smeltery GUI has input/output container slots and automatic/empty/fill modes. Left click a tank region to empty a carried container, right click to fill. Breaking a partially filled casting vessel or fuel tank returns residual amounts without rounding.",
+      "gui.smog.copper.status_11": "Needs a larger structure; input may be retrieved",
+      "gui.smog.smeltery.capacity": "Tank: %s / %s ingots"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -4015,16 +4232,16 @@
       "jei.smog.copper.alloy": "Cu и Sn вместе в расплаве: автосплав 3:1.",
       "message.smog.molten_status": "Cu %s | Sn %s | Бронза %s слитков | Нагрев %s",
       "message.smog.mold_selected": "Выбрано: %s",
-      "jei.smog.guide.hearth": "Открытый очаг от 3×3×3 до 11×11×11. Внутри только воздух: тигли и другие блоки не нужны и мешают сборке. Пол и стены образуют цельную чашу. Одна топка Smog внутри грани пола или стены (не на рёбрах), от одного до четырёх жидкостных портов и необязательные воздушные порты в стенах. Компоненты нельзя ставить на рёбрах и в углах; там только кладка. Контроллер на передней стене над полом. Металл виден в свободной камере после сборки, уровень зависит от заполнения. На каждый внутренний блок пространства приходится 8 слитков ёмкости. Настройщик собирает очаг; Shift+ПКМ контроллера открывает подробный интерфейс.",
+      "jei.smog.guide.hearth": "Полая плавильня от 3 до 11 блоков по каждой стороне: сплошное дно, стены, пустая камера. Контроллер и порты — в плоскостях, не на рёбрах или углах. Топка или топливный бак заменяет часть стены/дна. Собери настройщиком обычным ПКМ; Shift + ПКМ только поворачивает. ПКМ пустой рукой по контроллеру открывает GUI. Число параллельных слотов зависит от объёма камеры, максимум 81; стрелки листают их по девять. Отдельные полосы показывают прогресс. Слои в центре — настоящий общий резервуар, слева выбранный расплав отмечен светлой чертой: ЛКМ выбирает его для всех кранов. Количество, рецепт и нагрев видны по наведению. Уже накопленный расплав не затвердевает при остановке топлива. Сплавление автоматически работает при подходящем топливе и нагреве. Металл можно забрасывать в камеру и подавать воронками. При перестройке содержимое сохраняется; лишние слоты доступны для возврата, новые задания в них не стартуют.",
       "jei.smog.guide.kiln": "Закрытая оболочка от 3 до 5 × от 3 до 5, высота от 3 до 5. Внутренняя камера пустая. Контроллер на передней стене над полом, одна топка Smog в полу и одна-две вытяжки в крыше. Стены кирпичные или огнеупорные. Соберите настройщиком. Загрузите сырую керамику и топливо рукой; ПКМ пустой рукой забирает результат. Камера определяет партию от 8 до 64 изделий. Обычный обжиг в ванильной печи также доступен.",
-      "jei.smog.guide.casting": "К стеновому жидкостному порту прикрепите краник снаружи. Откройте его ПКМ, стол поставьте непосредственно под краником либо подведите желоб вниз от него. ПКМ формой ставит форму, Shift+ПКМ пустой рукой снимает. Обычный ПКМ забирает отливку. Голый порт сам не льёт металл. Песчаная и оболочковая формы рельефа расходуются на одну отливку. Модель из дерева и воска задаёт мотив; оболочку сначала обожги. Рельеф требует один слиток и возвращает ровно столько же при переплавке.",
+      "jei.smog.guide.casting": "Кран устанавливается на жидкостный порт и открывается ПКМ. Выбери расплав в GUI плавильни: стол не подменяет выбор другим доступным металлом. Поставь форму ПКМ на стол, подведи кран сверху напрямую или через желоба. Металл постепенно переходит в собственный резервуар формы; после полной заливки отливка отдельно остывает. До завершения форма закреплена. Закрытие крана, смена выбранного металла или остановка печи не теряют частичную заливку. Нельзя доливать другой металл. При разрушении заливка возвращается в канистре. Готовую отливку забери пустой рукой или воронкой. Для полного блока используй глубокую литейную ёмкость: 9 слитков без формы.",
       "jei.smog.guide.pottery": "Shift+ПКМ пустой рукой выбирает изделие: оно видно на столе, название над хотбаром. ПКМ глиной или печной массой загружает материал и делает партию до восьми штук. ПКМ пустой рукой забирает результат. Сырые формы и тигли обжигаются в обычной печи или печи обжига. Печная масса: четыре глиняных шарика и песок. Shift+ПКМ с предметом открывает дополнительный интерфейс.",
       "jei.smog.guide.bellows": "Воздушный порт ставится в стенке. Снаружи прикрепите к нему воздушную насадку, откройте её ПКМ и поставьте рядом меха. ПКМ по мехам даёт нагнетание для партии до восьми слитков. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.crucible": "Отдельное керамическое изделие. В литейный очаг больше не устанавливается: камера очага должна быть полностью пустой. Вместимость очага определяется размерами свободного пространства, а не тиглями.",
       "jei.smog.guide.firebox": "Функциональная топка Smog в полу или стене комплекса, одна на установку. Это не ванильная печь с отдельным инвентарём. ПКМ топливом по собранной установке загружает общее топливо. Воронка сбоку контроллера также подаёт топливо.",
       "jei.smog.guide.spout": "Жидкостный порт — блок стенки, он сам не разливает металл. Прикрепите снаружи литейный краник и откройте его ПКМ. Расплав из краника льётся вниз: под ним нужен стол или желоб. Насадка не является частью стенки. Порт сохраняет подключение внешних труб и контейнеров. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.lining": "Огнеупорные кирпичи делаются из печной массы и обжигаются, четыре кирпича дают блок кладки. Кладка заменяет обычные кирпичи и части пола. Чем больше футеровки, тем медленнее остывает установка. Единая кирпичная текстура сохраняет 16 пикселей на блок.",
-      "jei.smog.guide.molds": "Многоразовые формы устанавливаются ПКМ по литейному столу. Слитковая: 1 слиток. Плоская: 1 пластина за слиток. Мелких деталей: 4 фитинга за слиток. Трубная: 4 трубных элемента за 2 слитка. Олово используется для слитков и пластин. Геометрически одинаковая форма подходит для меди и бронзы.",
+      "jei.smog.guide.molds": "Керамические формы сохраняются как стартовый вариант. Песчаную форму отпечатай на верстаке инструментальщика: формовочная смесь в первый слот, подходящая готовая головка, инструмент или простая металлическая деталь во второй; удар молотом. Образец остаётся, расходуется только смесь. Песчаная форма одноразовая. Для многоразовой металлической формы положи образец на литейный стол и залей 2 слитка золота; после охлаждения получишь оснастку, образец сохраняется. Повторная переплавка оснастки возвращает те же 2 слитка золота. Формы зависят от геометрии детали, а не её материала.",
       "jei.smog.guide.configurator": "ПКМ по контроллеру собирает комплекс по его правилам. Shift+ПКМ разбирает и поворачивает контроллер. По части собранной установки работает тот же контроллер. До сборки Shift+ПКМ по сливу, вводу или желобу поворачивает отдельную деталь. Сообщения отображаются над хотбаром.",
       "jei.smog.guide.residue": "Сохраняет точное количество металла, оставшееся после работы труб или разрушения бака. Переплавьте остаток обратно в очаге: материал не округляется и не теряется.",
       "jei.smog.guide.parts": "Медные и бронзовые детали получаются литьём. Пластина содержит один слиток, фитинг — четверть, трубный элемент — половину. Переплавка возвращает ровно исходное количество металла. Эти детали сохраняются для следующих устройств медной эпохи.",
@@ -4155,7 +4372,31 @@
       "conductor.smog.titanium_alloy": "Титановый сплав",
       "conductor.smog.nickel_superalloy": "Никелевый жаропрочный сплав",
       "conductor.smog.aluminum_bronze": "Алюминиевая бронза",
-      "conductor.smog.netherite": "Незерит"
+      "conductor.smog.netherite": "Незерит",
+      "gui.smog.smeltery.inputs": "Слоты: %s",
+      "gui.smog.smeltery.quantity": "Объём: %s слитка",
+      "gui.smog.smeltery.select": "ЛКМ: выбрать нижний слой · ПКМ с ёмкостью: наполнить",
+      "gui.smog.smeltery.fuel": "Запас: %s mB",
+      "gui.smog.smeltery.temperature": "Нагрев: %s · Предел топлива: %s",
+      "gui.smog.smeltery.fuel_cursor": "Ёмкость на курсоре: ЛКМ — залить, ПКМ — забрать",
+      "gui.smog.smeltery.container_modes": "Режим ёмкостей: авто / опорожнение / наполнение",
+      "gui.smog.smeltery.container_mode_0": "Авто: сначала опорожнить ёмкость, затем попробовать наполнить",
+      "gui.smog.smeltery.container_mode_1": "Опорожнять ёмкости в общий резервуар",
+      "gui.smog.smeltery.container_mode_2": "Наполнять ёмкости выбранным расплавом",
+      "gui.smog.smeltery.solid_fuel": "Твёрдое топливо",
+      "message.smog.fuel_tank": "Топливо в баке: %s / 8000 mB",
+      "message.smog.fuel_powder": "Для всего запаса лавы нужно огненного порошка: %s",
+      "message.smog.fuel_prepared": "Лава превращена в пылающее топливо без изменения объёма",
+      "message.smog.casting_locked": "Заливка: %s / %s mB · Форма закреплена до готовности",
+      "gui.smog.copper.status_10": "Отливка остывает",
+      "jei.smog.copper.imprint": "Песчаная форма · Образец сохраняется",
+      "jei.smog.copper.mold_making": "Золотая оснастка · Образец сохраняется",
+      "jei.smog.copper.required_heat": "Нагрев не ниже %s",
+      "jei.smog.guide.fuel_tank": "Физический бак вмещает 8 вёдер топлива и является функциональной вставкой в стене или дне плавильни. Заполняй лавой через ведро, канистру или Fabric-совместимые трубы. Топливо хранится здесь, отдельно от расплавов. Лава даёт нагрев до 1100; пылающее топливо — до 1600, но обычный корпус ограничен 1100, с достаточной огнеупорной футеровкой — 1350. Чтобы усилить лаву, нажми огненным порошком по баку: 2 порошка на каждое начатое ведро всего запаса. Топливо не создаёт второй бак или ведро. Большая камера и параллельная работа расходуют больше топлива. При разрушении остаток возвращается в канистре.",
+      "jei.smog.guide.basin": "Глубокая ёмкость отливает металлический блок из 9 слитков расплава. Форма не нужна. Поставь под краном, выбери расплав в плавильне и открой кран. Заливка и охлаждение видны в мире. Можно подать металл трубой другого мода; принимается только совместимый металл текущей отливки.",
+      "jei.smog.guide.canister": "Канистра хранит до 8 вёдер одной обычной жидкости с точностью до единицы Fabric. Поддерживает стандартный FluidStorage.ITEM: совместимые трубы, машины, топливные баки и GUI. В плавильне есть вход/выход ёмкостей и три режима: авто, опорожнение, наполнение. Слой расплава на курсоре: ЛКМ выбирает/опорожняет ёмкость, ПКМ наполняет; топливная шкала работает с баком. При разрушении формы или топливного бака неполное количество не округляется и возвращается в канистре.",
+      "gui.smog.copper.status_11": "Нужно больше рабочих мест; предмет можно забрать",
+      "gui.smog.smeltery.capacity": "Резервуар: %s / %s слитков"
     }
   },
   "workshop_modules": [
@@ -4522,6 +4763,104 @@
       "closed": false,
       "controlled_atmosphere": false,
       "open_max_heat": 10000
+    }
+  ],
+  "smeltery_fuels": [
+    {
+      "fluid": "minecraft:lava",
+      "heat": 1100,
+      "speed": 1,
+      "cost": 9
+    },
+    {
+      "fluid": "smog:blazing_fuel",
+      "heat": 1600,
+      "speed": 2,
+      "cost": 12
+    }
+  ],
+  "alloy_recipes": [
+    {
+      "output": "bronze",
+      "ingredients": {
+        "copper": 3,
+        "tin": 1
+      },
+      "heat": 600
+    },
+    {
+      "output": "brass",
+      "ingredients": {
+        "copper": 3,
+        "zinc": 1
+      },
+      "heat": 600,
+      "closed": true
+    },
+    {
+      "output": "electrum",
+      "ingredients": {
+        "gold": 1,
+        "silver": 1
+      },
+      "heat": 600
+    },
+    {
+      "output": "solder",
+      "ingredients": {
+        "tin": 3,
+        "lead": 2
+      },
+      "heat": 350
+    },
+    {
+      "output": "aluminum_bronze",
+      "ingredients": {
+        "copper": 9,
+        "aluminum": 1
+      },
+      "heat": 650
+    },
+    {
+      "output": "cupronickel",
+      "ingredients": {
+        "copper": 3,
+        "nickel": 1
+      },
+      "heat": 1200
+    },
+    {
+      "output": "constantan",
+      "ingredients": {
+        "copper": 1,
+        "nickel": 1
+      },
+      "heat": 1250
+    },
+    {
+      "output": "invar",
+      "ingredients": {
+        "iron": 2,
+        "nickel": 1
+      },
+      "heat": 1450
+    },
+    {
+      "output": "nichrome",
+      "ingredients": {
+        "nickel": 4,
+        "chromium": 1
+      },
+      "heat": 1450
+    },
+    {
+      "output": "stainless_steel",
+      "ingredients": {
+        "iron": 6,
+        "chromium": 2,
+        "nickel": 1
+      },
+      "heat": 1500
     }
   ]
 }

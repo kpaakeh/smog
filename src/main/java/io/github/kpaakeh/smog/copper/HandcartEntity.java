@@ -36,13 +36,17 @@ public final class HandcartEntity extends AbstractMinecartContainer {
         }
         if(!level().isClientSide())player.openMenu(this);return InteractionResult.SUCCESS;
     }
+    @Override protected void comeOffTrack(ServerLevel level){
+        if(!pulling()){super.comeOffTrack(level);return;}
+        var velocity=getDeltaMovement();double speed=velocity.horizontalDistance(),maximum=getMaxSpeed(level);if(speed>maximum)velocity=new Vec3(velocity.x*maximum/speed,velocity.y,velocity.z*maximum/speed);setDeltaMovement(velocity);move(MoverType.SELF,velocity);if(!onGround())setDeltaMovement(getDeltaMovement().scale(getAirDrag()));
+    }
     @Override public void tick(){
         if(level() instanceof ServerLevel server&&puller!=null){
             var player=server.getPlayerByUUID(puller);
             if(player==null||!player.isAlive()||player.isSpectator()||player.distanceToSqr(this)>36)puller=null;
             else {
                 var delta=player.position().subtract(position());double distance=delta.horizontalDistance();
-                var velocity=distance>1.65?delta.multiply(1,0,1).normalize().scale(Math.min(.22,(distance-1.65)*.15)):Vec3.ZERO;
+                var velocity=distance>1.65?delta.multiply(1,0,1).normalize().scale(Math.min(.24,(distance-1.65)*.15)):Vec3.ZERO;
                 setDeltaMovement(velocity.x,getDeltaMovement().y,velocity.z);
             }
         }

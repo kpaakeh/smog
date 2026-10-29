@@ -13,6 +13,7 @@ public final class ToolAssembly {
     public static boolean handles(MachineEntity m){return CopperWorkshops.workshop(m,"tool_workbench");}
     public static ToolDefinitions.Template schema(Container inventory){return !inventory.getItem(5).isEmpty()?ToolParts.schema(inventory.getItem(5)):inventory instanceof MachineEntity machine?ToolDefinitions.at(machine.copper.selection):ToolDefinitions.at(0);}
     public static boolean accepts(MachineEntity machine,int slot,ItemStack stack){
+        if(slot==0&&CopperWorkshops.is(stack,"smog:molding_sand")||slot==1&&CopperWorkshops.is(machine.getItem(0),"smog:molding_sand")&&MoldMaking.pattern(stack)!=null)return true;
         if(slot==5)return canMount(stack);if(slot==0&&(ToolParts.nativeSource(stack)!=null||ToolDefinitions.parts().stream().anyMatch(p->ToolParts.materialIngredient(stack,p.material()))))return true;
         int role=ToolDefinitions.role(slot);var schema=schema(machine);return role>=0&&role<schema.roles().size()&&schema.roles().get(role).accepts(ToolDefinitions.part(stack));
     }
@@ -25,6 +26,7 @@ public final class ToolAssembly {
     public static ItemStack preview(Container inventory){return preview(inventory,schema(inventory),inventory instanceof MachineEntity machine?activePart(machine):-1);}
     public static ItemStack preview(Container inventory,ToolDefinitions.Template schema){return preview(inventory,schema,-1);}
     public static ItemStack preview(Container inventory,ToolDefinitions.Template schema,int selectedPart){
+        var imprint=MoldMaking.preview(inventory);if(!imprint.isEmpty())return imprint;
         var mounted=inventory.getItem(5);if(!mounted.isEmpty())schema=ToolParts.schema(mounted);var input=inventory.getItem(0);
         if(mounted.isEmpty()&&empty(inventory,0)){var finished=ToolParts.finish(input);if(!finished.isEmpty())return finished;var choices=ToolParts.shapingChoices(input);var shaped=selectedPart>=0&&!choices.isEmpty()?ToolParts.shaping(input,choices.get(Math.floorMod(selectedPart,choices.size()))):ToolParts.shaping(input,schema);if(shaped!=null&&input.getCount()>=shaped.count())return shaped.result();}
         if(!mounted.isEmpty()&&!input.isEmpty()&&ToolDefinitions.part(input)==null&&empty(inventory,0))return ToolParts.repair(mounted,input);
@@ -36,8 +38,9 @@ public final class ToolAssembly {
         if(result.isEmpty()){m.copper.work=0;m.copper.queued=0;m.sync();return;}if(!m.getItem(3).isEmpty()){m.copper.status=5;return;}if(++m.copper.work<40){m.setChanged();return;}
         var mounted=m.getItem(5);boolean repair=!mounted.isEmpty()&&!m.getItem(0).isEmpty()&&ToolDefinitions.part(m.getItem(0))==null;
         if(!mounted.isEmpty()&&!repair)for(int i=0;i<schema.roles().size();i++){int slot=ToolDefinitions.slot(i);if(!m.getItem(slot).isEmpty()){var old=ToolParts.extract(mounted,slot);if(!old.isEmpty())Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+1,m.getBlockPos().getZ()+.5,old);}}
+        boolean imprint=!MoldMaking.preview(m).isEmpty();
         var shaping=shapingMode(m)?shapingPlan(m):null;
-        for(int i=0;i<ToolDefinitions.maxParts();i++)if(!m.getItem(ToolDefinitions.slot(i)).isEmpty())m.getItem(ToolDefinitions.slot(i)).shrink(i==0&&shaping!=null?shaping.count():1);
+        for(int i=0;i<ToolDefinitions.maxParts();i++)if(!(imprint&&i==1)&&!m.getItem(ToolDefinitions.slot(i)).isEmpty())m.getItem(ToolDefinitions.slot(i)).shrink(i==0&&shaping!=null?shaping.count():1);
         m.setItem(5,ItemStack.EMPTY);m.setItem(3,result);m.copper.queued=0;m.copper.work=0;m.copper.status=0;m.sync();
     }
     private static void give(Player player,ItemStack stack){player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);}

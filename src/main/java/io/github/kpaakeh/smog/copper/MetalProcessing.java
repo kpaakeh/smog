@@ -10,9 +10,10 @@ public final class MetalProcessing {
     private static final Map<String,Conditions> VALUES=new LinkedHashMap<>();
     public static void initialize(JsonObject root){
         for(var value:root.getAsJsonArray("casting_metals")){var o=value.getAsJsonObject();VALUES.put(o.get("id").getAsString(),new Conditions(o.get("working_heat").getAsInt(),o.get("lining").getAsBoolean(),o.get("closed").getAsBoolean(),o.get("controlled_atmosphere").getAsBoolean(),o.get("open_max_heat").getAsInt()));}
+        if(VALUES.size()>128)throw new IllegalArgumentException("At most 128 molten material kinds fit the synchronized tank layout");
         MoltenMetalStorage.NAMES=VALUES.keySet().toArray(String[]::new);
     }
     public static Conditions conditions(int kind){return VALUES.get(MoltenMetalStorage.NAMES[kind]);}
-    public static boolean compatible(MachineEntity m,int kind){var c=conditions(kind);return c.heat()<=1100&&(!c.lining()||m.complexRoles().getOrDefault("lining",0)>0)&&(!c.closed()||CopperWorkshops.closed(m))&&(!c.atmosphere()||m.complexRoles().getOrDefault("controlled_atmosphere",0)>0);}
+    public static boolean compatible(MachineEntity m,int kind){var c=conditions(kind);return c.heat()<=Smeltery.maximumHeat(m)&&(!c.lining()||m.complexRoles().getOrDefault("lining",0)>0)&&(!c.closed()||CopperWorkshops.closed(m))&&(!c.atmosphere()||m.complexRoles().getOrDefault("controlled_atmosphere",0)>0);}
     public static boolean safe(MachineEntity m,int kind){return compatible(m,kind)&&(CopperWorkshops.closed(m)||m.copper.heat<=conditions(kind).openMax());}
 }

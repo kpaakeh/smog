@@ -183,3 +183,13 @@ Validation: 30 server GameTests passed; isolated real client scene with JEI pass
 
 Saved the previous Russian gameplay/visual explanation and an expanded smeltery walkthrough in docs/MODULAR_WORKSHOP_REFERENCE.md. Covers structure, fuel, parallel melting, fluid selection, automatic alloys, molds, casting, cooling, recycling and automation. Descriptive reference only; no gameplay changes. Product and author names omitted as requested.
 
+## 2026-10-29 — Modular smeltery reference, 0.10.0
+
+Implemented the user's MODULAR_WORKSHOP_REFERENCE, explicitly excluding the small melter as instructed. Added independent persisted input jobs (volume-based, maximum81), paged vanilla-style GUI, source-owned selected liquid, physical eight-bucket fuel tanks, lava/blazing-fuel heat/speed, fuel-sensitive automatic alloy recipes, portable fluid slot modes and cursor transfers. Hot fuel is prepared directly in the tank, preserving volume and avoiding a bucket remainder duplication. Cold fuel cannot use residual heat to process a hotter recipe. Stored molten fluids remain liquid and drainable without fuel. Resizing preserves excess fluid and recoverable item slots.
+
+Casting now transactionally transfers actual portions into each table/basin, then cools independently. Saved recipe/mold/metal/required volume prevent substitutions, reload loss and changes to in-flight costs. Forms lock against pickup including Shift-click. Sand imprints retain samples; reusable gold casts cost/remelt exactly two ingots. Basin makes nine-ingot blocks. Partial casting and broken fuel storage recover into exact native-unit canisters with FluidStorage.ITEM capability.
+
+Artist faucet models and PNGs preserved. Collision derives from closed/open JSON including quarter-pixel stepped rotated handles. Layered world fluids expose side bands through refractory glass, and the faucet stream follows the new outlet location. Existing art generators protect Blockbench models. Also fixed native minecart ground drag during manual handcart pulling and aligned ropeway clearance with the shared sagging cargo path. Menus page independently per player.
+
+Independent read-only review identified and resolved shape pickup bypass, cold-fuel bypass, bucket-remainder duplication, stale fuel capability access, cast snapshot dependence and inaccurate JEI volume/variant previews. Native sources confirmed all54 cart slots persist and native preRemove empties original inventory stacks; removed redundant second item-drop loop. User requested no game or automated tests, so validation is compilation/build with check excluded. Gameplay/visual verification remains for the user.
+

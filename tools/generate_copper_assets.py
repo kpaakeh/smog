@@ -150,6 +150,7 @@ def surface(elements):
 
 def model(n,elements,textures):
  p=A/'models/block'/(n+'.json');p.parent.mkdir(parents=True,exist_ok=True)
+ if p.exists() and 'Blockbench' in json.loads(p.read_text(encoding='utf-8')).get('credit',''):return
  textures=dict(textures);textures['particle']=next(iter(textures.values()))
  p.write_text(json.dumps(dict(parent='minecraft:block/block',textures=textures,elements=surface(elements),display=dict(gui=dict(rotation=[30,225,0],translation=[0,0,0],scale=[.6,.6,.6]),fixed=dict(rotation=[0,180,0],scale=[.5,.5,.5]))),indent=2)+'\n',encoding='utf-8')
 

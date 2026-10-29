@@ -30,6 +30,7 @@ public final class ComplexMultiblocks {
         },net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("casting_spout")));
         net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player,level,hand,hit)->{
             if(!(level instanceof net.minecraft.server.level.ServerLevel server)||player.isSpectator()||hand!=net.minecraft.world.InteractionHand.MAIN_HAND)return net.minecraft.world.InteractionResult.PASS;
+            if(server.getBlockEntity(hit.getBlockPos()) instanceof io.github.kpaakeh.smog.machine.MachineEntity direct&&io.github.kpaakeh.smog.copper.Smeltery.fuelTank(direct))return net.minecraft.world.InteractionResult.PASS;
             var machine=owner(server,hit.getBlockPos());if(machine==null||machine.getBlockPos().equals(hit.getBlockPos()))return net.minecraft.world.InteractionResult.PASS;
             if(player.getItemInHand(hand).getItem() instanceof io.github.kpaakeh.smog.registry.ConfiguratorItem tool)return tool.useOn(new net.minecraft.world.item.context.UseOnContext(player,hand,hit));
             if(machine.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP)return io.github.kpaakeh.smog.copper.CopperInteractions.use(server,machine,player,hand,hit.getBlockPos());

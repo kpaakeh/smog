@@ -41,6 +41,8 @@ abstract class GenerateSmogContent extends DefaultTask {
             root.firing.add([input:"smog:unfired_$moldName",output:"smog:$moldName"])
             root.tags.find { it.registry=='item'&&it.id=='c:unfired_ceramics' }.values.add("smog:unfired_$moldName")
         }
+        def castingShapes=[[id:'ingot',en:'Ingot',ru:'слитка'],[id:'plate',en:'Plate',ru:'пластины'],[id:'fitting',en:'Fitting',ru:'фитинга'],[id:'pipe',en:'Pipe',ru:'трубы']]+root.tool_forms.findAll { it.category=='head' }.collect { [id:it.id.replaceFirst(/_head$/,''),en:it.name.en_us,ru:it.name.ru_ru] }
+        castingShapes.each { shape -> ['sand','metal'].each { style -> root.items.add([name:"${style}_${shape.id}_mold",kind:'mold_variant',base_mold:"${shape.id}_mold",style:style,display:(style=='sand'?'Sand mold: ':'Metal cast: ')+shape.en,display_ru:(style=='sand'?'Песчаная форма: ':'Металлическая форма: ')+shape.ru,tab:'copper_age']) } }
         root.tool_templates.each { schema ->
             def memberships=['minecraft:enchantable/durability']
             def miningForms=schema.parts.findAll { it.category=='head' }.collectMany { role -> root.tool_forms.findAll { form -> form.category=='head'&&(!role.forms||form.id in role.forms)&&form.mining_tag } }
@@ -243,6 +245,10 @@ abstract class GenerateSmogContent extends DefaultTask {
             item(entry.name,entry.display ?: entry.name,entry.display_ru ?: entry.name,entry.tags ?: [])
             if(entry.model)write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:entry.model]])
             if(entry.kind=='tool_mold')write("assets/smog/models/item/${entry.name}.json",[parent:'minecraft:item/generated',textures:[layer0:"smog:item/tool_molds/${entry.raw?'unfired_':''}${entry.form}"]])
+            if(entry.kind=='mold_variant') {
+                write("assets/smog/models/item/${entry.name}.json",[parent:'minecraft:item/generated',textures:[layer0:"smog:item/casting_molds/${entry.base_mold}"]])
+                write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:"smog:item/${entry.name}",tints:[[type:'minecraft:custom_model_data',index:0,default:entry.style=='sand'?0xE6CEA4:0xF3CB57]]]])
+            }
             if(entry.kind=='tool_part') {
                 def metadata=root.tool_parts["smog:${entry.name}"];def material=root.tool_materials.find { it.id==metadata.material };def form=root.tool_forms.find { it.id==metadata.form };def texture=(metadata.cast?'cast_':'')+form.id
                 write("assets/smog/models/item/tool_forms/${texture}.json",[parent:'minecraft:item/handheld',textures:[layer0:"smog:item/tool_forms/$texture"]])
@@ -343,4 +349,4 @@ tasks.register('generateContent', GenerateSmogContent) {
 }
 sourceSets.main.resources.srcDir(generatedContent)
 tasks.named('processResources') { dependsOn('generateContent') }
-tasks.named('sourcesJar') { dependsOn('generateContent'); from(catalogFile) { into('content') } }
+tasks.named('sourcesJar') { dependsOn('generateContent'); from(catalogFile) { into('content') }; from(layout.projectDirectory.file('src/main/content/tool_templates.json')) { into('content') }; from(layout.projectDirectory.dir('src/main/content/tool_materials')) { into('content/tool_materials') } }

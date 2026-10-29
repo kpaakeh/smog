@@ -29,6 +29,8 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     private String assemblyDetail="";
     public final io.github.kpaakeh.smog.copper.WorkshopFluidStorage processFluid=new io.github.kpaakeh.smog.copper.WorkshopFluidStorage(this);
     public final io.github.kpaakeh.smog.copper.MoltenMetalStorage molten=new io.github.kpaakeh.smog.copper.MoltenMetalStorage(this);
+    public final io.github.kpaakeh.smog.copper.SmelteryState smeltery=new io.github.kpaakeh.smog.copper.SmelteryState();
+    public final io.github.kpaakeh.smog.copper.SmelteryFuelStorage smelteryFuel=new io.github.kpaakeh.smog.copper.SmelteryFuelStorage(this);
     public final io.github.kpaakeh.smog.copper.CopperState copper=new io.github.kpaakeh.smog.copper.CopperState();
     public ComplexMultiblockDefinition complexDefinition(){return ComplexMultiblocks.get(machineId);}
     public ComplexMultiblockDefinition.Shape complexShape(){return complexShape;}
@@ -43,6 +45,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     }
     public void sync(){setChanged();if(level instanceof ServerLevel)level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),Block.UPDATE_CLIENTS);}
 
+    public final io.github.kpaakeh.smog.copper.CastingStorage castingFluid=new io.github.kpaakeh.smog.copper.CastingStorage(this);
     private final MachineEnergyStorage energyStorage=new MachineEnergyStorage(this);
     public MachineEnergyStorage energyStorage(){return energyStorage;}
     private NonNullList<ItemStack> items=NonNullList.withSize(4,ItemStack.EMPTY);
@@ -56,7 +59,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         if(!strikes.add(id))return false;
         if(strikes.size()>128)strikes.remove(strikes.iterator().next());setChanged();return true;
     }
-    public MachineEntity(Identifier id,BlockPos pos,BlockState state) { super(Machines.get(id).entityType(),pos,state);machineId=id;if(id.getPath().equals("tool_workbench"))items=NonNullList.withSize(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),ItemStack.EMPTY); }
+    public MachineEntity(Identifier id,BlockPos pos,BlockState state) { super(Machines.get(id).entityType(),pos,state);machineId=id;if(id.getPath().equals("copper_hearth"))items=NonNullList.withSize(io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE,ItemStack.EMPTY);if(id.getPath().equals("tool_workbench"))items=NonNullList.withSize(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),ItemStack.EMPTY); }
     public Identifier machineId() { return machineId; }
     public MachineSpec spec() { return Machines.get(machineId).spec(); }
     public int progress() { return progress; }
@@ -78,6 +81,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         Identifier id=spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER && generator()!=GeneratorKind.NONE?generator().structureId():Machines.get(machineId).definition().multiblock();
         return id==null?null:Multiblocks.get(id);
     }
+    public java.util.Map<BlockPos,io.github.kpaakeh.smog.multiblock.BlockIngredient> formationParts(){if(complexInspection!=null)return complexInspection.snapshot().parts();var definition=structure();return definition==null?java.util.Map.of():definition.parts();}
     public Rotation rotation() { return complexShape==null?facingRotation():complexRotation; }
     private Rotation facingRotation() {
         return switch(getBlockState().getValue(MachineBlock.FACING)) {
@@ -167,6 +171,9 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         if(!(level instanceof ServerLevel server))return;
         if(machineId.getPath().equals("tool_workbench")&&!getItem(5).isEmpty()&&!io.github.kpaakeh.smog.copper.ToolAssembly.canMount(getItem(5))){var preserved=removeItemNoUpdate(5);copper.queued=0;copper.work=0;Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
         if(machineId.getPath().equals("tool_workbench"))for(int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize();slot<items.size();slot++)if(!items.get(slot).isEmpty()){var extra=items.get(slot);items.set(slot,ItemStack.EMPTY);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}
+        if(io.github.kpaakeh.smog.copper.Smeltery.handles(this)){
+            for(int slot=0;slot<items.size();slot++)if((slot==1||slot==3||slot==6||slot==7||slot>=io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE)&&!items.get(slot).isEmpty()){var preserved=removeItemNoUpdate(slot);if(slot==3&&items.get(5).isEmpty())items.set(5,preserved);else Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
+        }
         if(spec().kind()!=MachineSpec.Kind.COPPER_WORKSHOP)EnergyNetwork.track(this);
         if(!validate(server) || !enabled)return;
         switch(spec().kind()) {
@@ -185,8 +192,9 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         int duration=net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt.getFromItem(fuel,net.minecraft.core.component.DataComponents.COOKING_FUEL,net.minecraft.world.item.component.CookingFuel::burnTime,getLootContext(server),0);
         if(duration<=0)return 0;
         var remainder=fuel.getItem().getCraftingRemainder();ItemStack rest=remainder==null?ItemStack.EMPTY:remainder.create();
-        if(!rest.isEmpty()&&!canOutput(rest))return 0;
-        fuel.shrink(1);if(!rest.isEmpty())output(rest);setChanged();return duration;
+        int resultSlot=io.github.kpaakeh.smog.copper.Smeltery.handles(this)?5:3;var previous=items.get(resultSlot);
+        if(!rest.isEmpty()&&!previous.isEmpty()&&(!ItemStack.isSameItemSameComponents(previous,rest)||previous.getCount()+rest.getCount()>previous.getMaxStackSize()))return 0;
+        fuel.shrink(1);if(!rest.isEmpty()){if(previous.isEmpty())items.set(resultSlot,rest);else previous.grow(rest.getCount());}setChanged();return duration;
     }
     private void tickFuel(ServerLevel server) {
         if(energy>=capacity())return;
@@ -280,9 +288,9 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         return spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?slot==2&&stack.has(net.minecraft.core.component.DataComponents.COOKING_FUEL)
             :!spec().source()&&!spec().relay()&&slot==0;
     }
-    @Override public int[] getSlotsForFace(Direction side) {return spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};}
+    @Override public int[] getSlotsForFace(Direction side) {return io.github.kpaakeh.smog.copper.Smeltery.handles(this)?(side==Direction.DOWN?new int[]{5}:side==Direction.UP?java.util.stream.IntStream.range(0,io.github.kpaakeh.smog.copper.Smeltery.workers(this)).map(io.github.kpaakeh.smog.copper.Smeltery::slot).toArray():new int[]{2,4}):spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};}
     @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side) {return canPlaceItem(slot,stack);}
-    @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side) {return slot==3;}
+    @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side) {return slot==3||io.github.kpaakeh.smog.copper.Smeltery.handles(this)&&slot==5;}
     public final ContainerData data=new ContainerData() {
         @Override public int getCount() {return MachineMenu.DATA_SIZE;}
         @Override public int get(int index) {if(spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP)return io.github.kpaakeh.smog.copper.CopperWorkshops.data(MachineEntity.this,index);return switch(index) {
@@ -293,26 +301,27 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         @Override public void set(int index,int value) {}
     };
     @Override protected AbstractContainerMenu createMenu(int id,Inventory inventory) {
-        var layout=GuiLayouts.get(io.github.kpaakeh.smog.copper.ToolAssembly.handles(this)?"tool_workbench":(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))?"manual_workshop":io.github.kpaakeh.smog.copper.WaterSupply.handles(this)?"water_supply":spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
+        if(io.github.kpaakeh.smog.copper.Smeltery.handles(this))smeltery.page=Math.clamp(smeltery.page,0,Math.max(0,(io.github.kpaakeh.smog.copper.Smeltery.visibleWorkers(this)-1)/9));
+        var layout=GuiLayouts.get(io.github.kpaakeh.smog.copper.Smeltery.handles(this)?"smeltery":io.github.kpaakeh.smog.copper.Smeltery.vessel(this)?machineId.getPath():io.github.kpaakeh.smog.copper.ToolAssembly.handles(this)?"tool_workbench":(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))?"manual_workshop":io.github.kpaakeh.smog.copper.WaterSupply.handles(this)?"water_supply":spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
     }
     @Override public void preRemoveSideEffects(BlockPos pos,BlockState state) {
         super.preRemoveSideEffects(pos,state);
-        if(level instanceof ServerLevel server){ComplexFormationData.get(server).release(worldPosition);io.github.kpaakeh.smog.copper.CopperWorkshops.dropMetal(server,this);Containers.dropContents(server,worldPosition,this);}
+        if(level instanceof ServerLevel server){ComplexFormationData.get(server).release(worldPosition);io.github.kpaakeh.smog.copper.CopperWorkshops.dropMetal(server,this);io.github.kpaakeh.smog.copper.CastingProcesses.drop(server,this);}
     }
     @Override protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);output.putInt("inventory_size",items.size());ContainerHelper.saveAllItems(output,items);
         output.putInt("progress",progress);output.putInt("energy",energy);output.putInt("burn_ticks",burnTicks);output.putInt("burn_total",burnTotal);output.putBoolean("enabled",enabled);
         output.store("strikes",com.mojang.serialization.Codec.STRING.listOf(),List.copyOf(strikes));
-        output.putInt("output_limit",outputLimit);copper.save(output);
+        output.putInt("output_limit",outputLimit);copper.save(output);if(io.github.kpaakeh.smog.copper.Smeltery.related(this))smeltery.save(output);
         if(complexShape!=null){output.putInt("complex_rotation",complexRotation.ordinal());output.putInt("complex_width",complexShape.width());output.putInt("complex_depth",complexShape.depth());output.putInt("complex_height",complexShape.height());output.putInt("complex_left",complexShape.left());}
     }
     @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket(){return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);}
     @Override public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries){return saveCustomOnly(registries);}
     @Override protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);items=NonNullList.withSize(machineId.getPath().equals("tool_workbench")?Math.max(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),Math.clamp(input.getIntOr("inventory_size",256),6,256)):4,ItemStack.EMPTY);ContainerHelper.loadAllItems(input,items);
+        super.loadAdditional(input);items=NonNullList.withSize(machineId.getPath().equals("copper_hearth")?Math.max(io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE,Math.clamp(input.getIntOr("inventory_size",4),4,256)):machineId.getPath().equals("tool_workbench")?Math.max(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),Math.clamp(input.getIntOr("inventory_size",256),6,256)):4,ItemStack.EMPTY);ContainerHelper.loadAllItems(input,items);
         progress=Math.max(0,input.getIntOr("progress",0));energy=Math.clamp(input.getIntOr("energy",0),0,capacity());
         burnTicks=Math.max(0,input.getIntOr("burn_ticks",0));burnTotal=Math.max(burnTicks,input.getIntOr("burn_total",0));enabled=input.getBooleanOr("enabled",true);
-        processingItem=items.get(0).getItem();copper.load(input);
+        processingItem=items.get(0).getItem();copper.load(input);if(io.github.kpaakeh.smog.copper.Smeltery.related(this))smeltery.load(input);
         complexInspection=null;complexShape=null;
         complexRotation=Rotation.values()[Math.clamp(input.getIntOr("complex_rotation",facingRotation().ordinal()),0,3)];
         int width=input.getIntOr("complex_width",0);

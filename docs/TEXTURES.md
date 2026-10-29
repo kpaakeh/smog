@@ -53,3 +53,12 @@ GUI `copper_workshop.png`, `slot.png`, `copper_progress_*`, `copper_lit_progress
 Новые PNG предметов: `item/copper_concentrate.png`, `seed_cake.png`, `plant_oil_bottle.png`, `plant_oil_bucket.png`, `lubricating_compound.png`, `waxed_cord.png`, `field_journal.png`. Вода/масло в ёмкостях используют `block/workshop_water_surface.png` и `plant_oil_surface.png`; масло в мире — `plant_oil_still/flow/overlay.png` и ванильная анимация воды. Металл обода ведра сохраняет исходный рисунок.
 
 Генератор по умолчанию сохраняет существующие отдельные PNG. `--refresh-manual-icons` обновляет только семь перечисленных новых прототипов; `--refresh-icons` — все иконки медной мастерской. Рисунки руд этим изменением не затрагивались.
+
+
+## Общие части инструментов и плавильня 0.10.0
+
+`src/main/resources/assets/smog/textures/item/tool_forms/` содержит нейтральные головки, рукояти и отдельные крепления; `tool_overlays/` — небольшие крепления/обмотки в собранном инструменте. `tool_molds/` — исходные формы; `casting_molds/` — нейтральные маски песчаной и металлической оснастки. Размер 16×16, прозрачный фон; позиция частей важна. Цвет материала берётся из отдельного JSON в `src/main/content/tool_materials/`.
+
+Новый GUI `gui/smeltery.png` собран из ванильной рамки и инвентаря без растягивания. Рабочие слоты, реальные слои резервуара, прогресс и топливо рисуются поверх. Изображение не содержит декоративных имитаций шкал. Новые модели — `models/block/smeltery_glass.json`, `smeltery_fuel_tank.json`, `casting_basin.json`. Модели краника `casting_faucet.json` и `casting_faucet_open.json` авторские: они сохранены; сервер читает из них геометрию хитбокса.
+
+Обычный Gradle build не вызывает генераторы арта. Новый `generate_smeltery_assets.py` создаёт недостающие PNG и защищает модели с отметкой Blockbench; пользовательские рисунки не перезаписывает. Для своих правок редактируйте исходные PNG/JSON в `src/main/resources`, затем пересобирайте.

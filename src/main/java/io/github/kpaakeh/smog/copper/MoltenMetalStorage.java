@@ -27,12 +27,12 @@ public final class MoltenMetalStorage extends SnapshotParticipant<int[]> impleme
     }
     private boolean ready(){return machine.getLevel()!=null&&!machine.getLevel().isClientSide()&&!machine.isRemoved()&&machine.assembled()&&CopperWorkshops.workshop(machine,"copper_hearth");}
     @Override public long insert(FluidVariant resource,long maxAmount,TransactionContext transaction){
-        StoragePreconditions.notNegative(maxAmount);int k=kind(resource);if(k<0||!ready()||!MetalProcessing.safe(machine,k))return 0;
+        StoragePreconditions.notNegative(maxAmount);int k=kind(resource);if(k<0||!ready())return 0;
         long accepted=Math.min(maxAmount,Math.max(0,CopperWorkshops.capacity(machine)-machine.copper.total()));if(accepted==0)return 0;
-        updateSnapshots(transaction);int previous=machine.copper.total();machine.copper.heat=(int)(((long)machine.copper.heat*previous+1000L*accepted)/(previous+accepted));machine.copper.metal(k,machine.copper.metal(k)+(int)accepted);return accepted;
+        updateSnapshots(transaction);machine.copper.metal(k,machine.copper.metal(k)+(int)accepted);return accepted;
     }
     @Override public long extract(FluidVariant resource,long maxAmount,TransactionContext transaction){
-        StoragePreconditions.notNegative(maxAmount);int k=kind(resource);if(k<0||!ready()||!MetalProcessing.safe(machine,k)||machine.copper.heat<CopperWorkshops.meltingHeat(k))return 0;
+        StoragePreconditions.notNegative(maxAmount);int k=kind(resource);if(k<0||!ready())return 0;
         int extracted=(int)Math.min(maxAmount,machine.copper.metal(k));if(extracted==0)return 0;
         updateSnapshots(transaction);machine.copper.metal(k,machine.copper.metal(k)-extracted);return extracted;
     }
