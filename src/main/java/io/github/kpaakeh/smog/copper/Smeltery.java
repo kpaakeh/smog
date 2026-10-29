@@ -23,6 +23,7 @@ public final class Smeltery {
     public record Fuel(String fluid,int heat,int speed,int cost){}
     private static final Map<String,Fuel> FUELS=new LinkedHashMap<>();
     public static void initialize(JsonObject root){if(root.has("smeltery_fuels"))for(var v:root.getAsJsonArray("smeltery_fuels")){var o=v.getAsJsonObject();FUELS.put(o.get("fluid").getAsString(),new Fuel(o.get("fluid").getAsString(),o.get("heat").getAsInt(),o.get("speed").getAsInt(),o.get("cost").getAsInt()));}}
+    public static java.util.List<Fuel> fuels(){return java.util.List.copyOf(FUELS.values());}
     public static Fuel fuel(FluidVariant fluid){return fluid.isBlank()||!fluid.equals(FluidVariant.of(fluid.getFluid()))?null:FUELS.get(BuiltInRegistries.FLUID.getKey(fluid.getFluid()).toString());}
     public static boolean handles(MachineEntity m){return CopperWorkshops.workshop(m,"copper_hearth");}
     public static boolean fuelTank(MachineEntity m){return CopperWorkshops.workshop(m,"smeltery_fuel_tank");}

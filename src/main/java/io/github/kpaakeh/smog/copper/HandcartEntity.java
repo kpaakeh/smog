@@ -51,5 +51,6 @@ public final class HandcartEntity extends AbstractMinecartContainer {
             }
         }
         super.tick();
+        if(level() instanceof ServerLevel server&&puller!=null){var player=server.getPlayerByUUID(puller);if(player!=null){var delta=player.position().subtract(position());if(delta.horizontalDistanceSqr()>.01)setYRot((float)Math.toDegrees(Math.atan2(-delta.x,delta.z))+180);}}
     }
 }

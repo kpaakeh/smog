@@ -30,12 +30,15 @@ public final class SmogJeiPlugin implements IModPlugin {
     public static final IRecipeType<Page> TYPE = IRecipeType.create("smog", "multiblocks", Page.class);
     @Override public Identifier getPluginUid() { return ModBlocks.id("jei"); }
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new Category(registration.getJeiHelpers().getGuiHelper()),new SmelteryFuelCategory(registration.getJeiHelpers().getGuiHelper()));
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))for(String machine:CopperCategory.TYPES.keySet())registration.addRecipeCategories(new CopperCategory(registration.getJeiHelpers().getGuiHelper(),machine));
         for(var kind:List.of(io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER,io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))
             if(Machines.all().stream().anyMatch(machine->machine.spec().kind()==kind))registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),kind));
     }
     @Override public void registerRecipes(IRecipeRegistration registration) {
+        var fuelPages=new ArrayList<SmelteryFuelCategory.Page>();
+        for(var fuel:io.github.kpaakeh.smog.copper.Smeltery.fuels()){fuelPages.add(new SmelteryFuelCategory.Page(fuel,false));if(fuel.fluid().equals("smog:blazing_fuel"))fuelPages.add(new SmelteryFuelCategory.Page(fuel,true));}
+        registration.addRecipes(SmelteryFuelCategory.TYPE,fuelPages);
         List<Page> pages = new ArrayList<>();
         for (var entry : Machines.all()) {
             if(entry.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.GENERATOR_CONTROLLER)
@@ -49,6 +52,7 @@ public final class SmogJeiPlugin implements IModPlugin {
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
     }
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration){
+        registration.addCraftingStation(SmelteryFuelCategory.TYPE,net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(ModBlocks.id("smeltery_fuel_tank")));
         for(var entry:Machines.all()){
             if(entry.definition().multiblock()!=null)registration.addCraftingStation(TYPE,entry.block());
             if(entry.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP&&CopperCategory.TYPES.containsKey(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(entry.block()).getPath()))registration.addCraftingStation(CopperCategory.TYPES.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(entry.block()).getPath()),entry.block());

@@ -21,7 +21,7 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
     @Override public IRecipeType<CopperWorkshops.RecipePreview> getRecipeType(){return TYPES.get(machine);}
     @Override public Component getTitle(){return Component.translatable("block.smog."+machine);}
     @Override public int getWidth(){return 174;}
-    @Override public int getHeight(){return machine.equals("tool_workbench")?12+20*((io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+3)/4):32;}
+    @Override public int getHeight(){return machine.equals("tool_workbench")?12+20*((io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+3)/4):40;}
     @Override public IDrawable getIcon(){return icon;}
     @Override public void setRecipe(IRecipeLayoutBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){
         for(int i=0;i<recipe.inputs().size();i++){
@@ -33,10 +33,10 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
         }
         if(recipe.machine().equals("lever_press")&&!recipe.description().endsWith("fiber_pressing"))builder.addOutputSlot(116,7).setStandardSlotBackground().addFluidStack(BuiltInRegistries.FLUID.getValue(ModBlocks.id("plant_oil")),20250).setFluidRenderer(20250,false,16,16);
         if(!recipe.tool().isEmpty())builder.addInputSlot(machine.equals("tool_workbench")?104:74,7).setStandardSlotBackground().add(recipe.tool());
-        var output=builder.addOutputSlot(140,7).setOutputSlotBackground();
-        if(recipe.description().endsWith("alloy"))output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(CopperWorkshops.melt(recipe.result())[0]).getFluid(),9000L*recipe.result().getCount()).setFluidRenderer(9000L*recipe.result().getCount(),false,16,16);
-        else if(recipe.description().endsWith("melting")){int kind=CopperWorkshops.melt(recipe.inputs().getFirst())[0];output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(kind).getFluid(),(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount()).setFluidRenderer((long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount(),false,16,16);}
+        boolean tank=recipe.description().endsWith("melting")||recipe.description().endsWith("alloy");var output=builder.addOutputSlot(140,tank?3:7);if(tank)output.setBackground(new SmelteryTankDrawable(),-4,-2);else output.setOutputSlotBackground();
+        if(recipe.description().endsWith("alloy"))output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(CopperWorkshops.melt(recipe.result())[0]).getFluid(),9000L*recipe.result().getCount()).setFluidRenderer(9000L*recipe.result().getCount(),false,16,30);
+        else if(recipe.description().endsWith("melting")){int kind=CopperWorkshops.melt(recipe.inputs().getFirst())[0];output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(kind).getFluid(),(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount()).setFluidRenderer((long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount(),false,16,30);}
         else output.add(recipe.result());
     }
-    @Override public void createRecipeExtras(IRecipeExtrasBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){}
+    @Override public void createRecipeExtras(IRecipeExtrasBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){builder.addRecipeArrow().setPosition(machine.equals("tool_workbench")?120:108,7);}
 }

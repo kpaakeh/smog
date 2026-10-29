@@ -295,6 +295,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             write("assets/smog/blockstates/${name}.json", [variants:['':[model:'minecraft:block/water']]])
             write("assets/smog/models/item/${name}_bucket.json", [parent:'minecraft:item/generated',textures:[layer0:fluid.bucket_texture ?: 'minecraft:item/water_bucket']])
             write("assets/smog/items/${name}_bucket.json", [model:[type:'minecraft:model',model:"smog:item/${name}_bucket"]])
+            en["block.smog.${name}"] = fluid.display; ru["block.smog.${name}"] = fluid.display_ru ?: fluid.display
             en["item.smog.${name}_bucket"] = "${fluid.display} Bucket"
             ru["item.smog.${name}_bucket"] = "Ведро: ${fluid.display_ru}"
             if (name == 'coolant') shapeless('coolant_bucket', ['minecraft:bucket','minecraft:snowball','minecraft:lapis_lazuli'], 'smog:coolant_bucket', 1)

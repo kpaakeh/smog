@@ -485,7 +485,8 @@
       "texture": "minecraft:block/glass",
       "model": "smog:block/smeltery_glass",
       "hardness": 2,
-      "mining_level": "wood"
+      "mining_level": "wood",
+      "horizontal": true
     },
     {
       "name": "smeltery_item_port",
@@ -4247,7 +4248,12 @@
       "jei.smog.guide.canister": "Eight-bucket single-fluid canister, exact Fabric units, standard FluidStorage.ITEM support. The smeltery GUI has input/output container slots and automatic/empty/fill modes. Left click a tank region to empty a carried container, right click to fill. Breaking a partially filled casting vessel or fuel tank returns residual amounts without rounding.",
       "gui.smog.copper.status_11": "Needs a larger structure; input may be retrieved",
       "gui.smog.smeltery.capacity": "Tank: %s / %s ingots",
-      "role.smog.items": "Item input"
+      "role.smog.items": "Item input",
+      "entity.smog.handcart": "Cargo Handcart",
+      "gui.smog.smeltery.heat": "Heat: %s / %s °C; fuel limit: %s °C",
+      "jei.smog.smeltery_fuels": "Smeltery Fuels",
+      "jei.smog.fuel_heat": "Limit: %s °C · speed ×%s",
+      "jei.smog.fuel_preparation": "Prepare inside the fuel tank"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -4439,7 +4445,12 @@
       "jei.smog.guide.canister": "Канистра хранит до 8 вёдер одной обычной жидкости с точностью до единицы Fabric. Поддерживает стандартный FluidStorage.ITEM: совместимые трубы, машины, топливные баки и GUI. В плавильне есть вход/выход ёмкостей и три режима: авто, опорожнение, наполнение. Слой расплава на курсоре: ЛКМ выбирает/опорожняет ёмкость, ПКМ наполняет; топливная шкала работает с баком. При разрушении формы или топливного бака неполное количество не округляется и возвращается в канистре.",
       "gui.smog.copper.status_11": "Нужно больше рабочих мест; предмет можно забрать",
       "gui.smog.smeltery.capacity": "Резервуар: %s / %s слитков",
-      "role.smog.items": "Подача предметов"
+      "role.smog.items": "Подача предметов",
+      "entity.smog.handcart": "Грузовая тележка",
+      "gui.smog.smeltery.heat": "Нагрев: %s / %s °C; предел топлива: %s °C",
+      "jei.smog.smeltery_fuels": "Топливо плавильни",
+      "jei.smog.fuel_heat": "Предел: %s °C · скорость ×%s",
+      "jei.smog.fuel_preparation": "Подготовка в топливном баке"
     }
   },
   "workshop_modules": [

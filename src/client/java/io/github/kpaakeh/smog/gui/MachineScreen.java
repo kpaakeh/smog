@@ -18,8 +18,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         super.init();
         if(menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin"))return;
         if(menu.layout.id.equals("smeltery")){
-            addRenderableWidget(Button.builder(Component.literal("<"),button->send(io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS)).bounds(leftPos+7,topPos+224,20,18).build());
-            addRenderableWidget(Button.builder(Component.literal(">"),button->send(io.github.kpaakeh.smog.copper.Smeltery.NEXT)).bounds(leftPos+43,topPos+224,20,18).build());
+            addRenderableWidget(Button.builder(Component.literal("<"),button->send(io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS)).bounds(leftPos+7,topPos+223,20,18).build());
+            addRenderableWidget(Button.builder(Component.literal(">"),button->send(io.github.kpaakeh.smog.copper.Smeltery.NEXT)).bounds(leftPos+43,topPos+223,20,18).build());
             containerMode=addRenderableWidget(Button.builder(Component.literal("↔"),button->send(io.github.kpaakeh.smog.copper.Smeltery.MODE)).bounds(leftPos+188,topPos+64,22,18).build());containerMode.setTooltip(Tooltip.create(Component.translatable("gui.smog.smeltery.container_modes")));return;
         }
         if((menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin")||menu.layout.id.equals("copper_workshop")||menu.layout.id.equals("manual_workshop")||menu.layout.id.equals("water_supply")||menu.layout.id.equals("tool_workbench"))) {
@@ -44,7 +44,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     private void send(int id){if(minecraft.gameMode!=null)minecraft.gameMode.handleInventoryButtonClick(menu.containerId,id);}
     private void refreshButtons(){
-        if(containerMode!=null){containerMode.setMessage(Component.literal(new String[]{"↔","↓","↑"}[Math.floorMod(menu.data.get(29),3)]));containerMode.setTooltip(Tooltip.create(Component.translatable("gui.smog.smeltery.container_mode_"+Math.floorMod(menu.data.get(29),3))));}
+        if(containerMode!=null){containerMode.setMessage(Component.literal(new String[]{"A","↓","↑"}[Math.floorMod(menu.data.get(29),3)]));containerMode.setTooltip(Tooltip.create(Component.translatable("gui.smog.smeltery.container_mode_"+Math.floorMod(menu.data.get(29),3))));}
         if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null)craft.visible=kind==2||kind==5;}
         if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
         if(rateButton!=null)rateButton.visible=menu.data.get(11)==MachineSpec.Kind.TRANSFORMER.ordinal();

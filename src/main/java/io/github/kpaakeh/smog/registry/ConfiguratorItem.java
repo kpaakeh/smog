@@ -13,6 +13,10 @@ public final class ConfiguratorItem extends Item {
     @Override public InteractionResult useOn(UseOnContext context){
         var level=context.getLevel();var pos=context.getClickedPos();var player=context.getPlayer();
         if(player==null)return InteractionResult.PASS;
+        var clickedState=level.getBlockState(pos);
+        if(player.isShiftKeyDown()&&clickedState.getBlock() instanceof io.github.kpaakeh.smog.copper.WorkshopPartBlock){
+            if(!level.isClientSide()){level.setBlock(pos,clickedState.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,clickedState.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getClockWise()),Block.UPDATE_ALL);player.sendOverlayMessage(Component.translatable("message.smog.configurator_rotated"));}return InteractionResult.SUCCESS;
+        }
         MachineEntity machine=level.getBlockEntity(pos) instanceof MachineEntity value?value:level instanceof net.minecraft.server.level.ServerLevel server?io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.owner(server,pos):null;
         if(machine!=null&&io.github.kpaakeh.smog.copper.Smeltery.fuelTank(machine)&&!player.isShiftKeyDown()&&level instanceof net.minecraft.server.level.ServerLevel server){var owner=io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.owner(server,pos);if(owner!=null)machine=owner;else{var candidates=io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.nearbyControllers(server,pos);boolean formed=false;for(var candidate:candidates)if(candidate.tryAssembleAt(pos)){formed=true;break;}player.sendOverlayMessage(formed?Component.translatable("message.smog.multiblock_formed"):candidates.isEmpty()?Component.translatable("message.smog.controller_missing"):candidates.getFirst().assemblyProblem());return InteractionResult.SUCCESS;}}
         if(machine==null){
