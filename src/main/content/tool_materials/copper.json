@@ -1,0 +1,35 @@
+{
+  "id": "copper",
+  "name": {
+    "en_us": "Copper",
+    "ru_ru": "Медь"
+  },
+  "color": "D58659",
+  "profiles": {
+    "head": {
+      "durability": 200,
+      "mining_speed": 5,
+      "attack_damage": 3,
+      "harvest_tier": "copper",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "hollow_handle"
+      ],
+      "speed_multiplier": 0.98,
+      "durability_multiplier": 1.05
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08
+    }
+  },
+  "repair_item": "minecraft:copper_ingot",
+  "native_prefix": "copper",
+  "molten": "copper"
+}

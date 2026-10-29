@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.kpaakeh.smog.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "ModularCraftRepairMixin",
+    "ModularGrindstoneMixin",
+    "ModularAnvilMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

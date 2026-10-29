@@ -1,0 +1,25 @@
+{
+  "id": "leather",
+  "name": {
+    "en_us": "Leather",
+    "ru_ru": "Кожа"
+  },
+  "color": "8E5937",
+  "profiles": {
+    "binding": {
+      "forms": [
+        "binding"
+      ],
+      "durability_multiplier": 1.03,
+      "material_units": 4500
+    },
+    "wrap": {
+      "forms": [
+        "wrap"
+      ],
+      "speed_multiplier": 1.01,
+      "durability_multiplier": 1.04
+    }
+  },
+  "repair_ingredient": "minecraft:leather"
+}

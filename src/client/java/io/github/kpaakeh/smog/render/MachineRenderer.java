@@ -21,6 +21,9 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         public MultiblockDefinition.Bounds bounds;
         public float angle;
         public boolean formed;
+        public Vec3 ropeEnd;
+        public float cargoProgress;
+        public net.minecraft.client.renderer.item.ItemStackRenderState cargo;
         public record Part(net.minecraft.core.BlockPos offset,BlockModelRenderState model){}
         public record ItemPart(float x,float y,float z,net.minecraft.client.renderer.item.ItemStackRenderState model){}
         public java.util.List<ItemPart> displayedItems=java.util.List.of();
@@ -38,11 +41,19 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         BlockEntityRenderer.super.extractRenderState(machine, state, tick, camera, overlay);
         state.wires=machine.spec().kind()==MachineSpec.Kind.CONNECTOR?ClientWires.from(machine.getBlockPos()):java.util.List.of();
         if(!state.wires.isEmpty())state.lightCoords=net.minecraft.util.LightCoordsUtil.pack(machine.getLevel().getBrightness(net.minecraft.world.level.LightLayer.BLOCK,machine.getBlockPos().relative(ConnectorBlock.attachment(machine.getBlockState()))),machine.getLevel().getBrightness(net.minecraft.world.level.LightLayer.SKY,machine.getBlockPos().relative(ConnectorBlock.attachment(machine.getBlockState()))));
+        state.ropeEnd=null;state.cargo=null;
+        if(io.github.kpaakeh.smog.copper.Ropeway.handles(machine)&&machine.copper.ropeLinked){
+            var target=net.minecraft.core.BlockPos.of(machine.copper.ropeTarget);
+            if(machine.getLevel().hasChunkAt(target)&&machine.getLevel().getBlockEntity(target) instanceof MachineEntity other&&other.copper.ropeLinked&&other.copper.ropeTarget==machine.getBlockPos().asLong()){
+                state.ropeEnd=Vec3.atLowerCornerOf(target.subtract(machine.getBlockPos()));
+                if(!machine.getItem(1).isEmpty()){state.cargo=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(state.cargo,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CHEST),net.minecraft.world.item.ItemDisplayContext.NONE,machine.getLevel(),null,0);state.cargoProgress=Math.clamp((machine.copper.work+tick)/io.github.kpaakeh.smog.copper.Ropeway.duration(machine),0,1);}
+            }
+        }
         state.complexParts=java.util.List.of();
         extractWorkshop(machine,state);
         state.formed = machine.structure() != null && machine.assembled() && ClientFormations.controller(machine.getBlockPos());
         if (!state.formed) return;
-        if(machine.complexDefinition()!=null||io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)){
+        if(machine.complexDefinition()!=null||(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(machine))){
             java.util.List<State.Part> parts=new java.util.ArrayList<>();
             var definition=machine.structure();var offsets=new java.util.ArrayList<>(definition.parts().keySet());offsets.add(net.minecraft.core.BlockPos.ZERO);
             for(var offset:offsets){var rotated=offset.rotate(machine.rotation());var block=machine.getLevel().getBlockState(machine.getBlockPos().offset(rotated));if(block.isAir())continue;
@@ -71,7 +82,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             float ratio=capacity==0?0:Math.clamp(storage.total()/(float)capacity,0,1);
             float level=.015f+ratio*(shape.height()-1-.065f);
             if(storage.total()>0){float stripe=bounds.minX()+1;int innerWidth=shape.width()-2;
-                for(int metal=0;metal<3;metal++)if(storage.metal(metal)>0){float end=stripe+innerWidth*storage.metal(metal)/(float)storage.total();
+                for(int metal=0;metal<io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length;metal++)if(storage.metal(metal)>0){float end=stripe+innerWidth*storage.metal(metal)/(float)storage.total();
                     for(int x=bounds.minX()+1;x<bounds.maxX();x++)for(int z=1;z<shape.depth()-1;z++){
                         float left=Math.max(x,stripe),right=Math.min(x+1,end);if(right-left<.0001f)continue;
                         surfaces.add(chamberSurface(left,level,z,right-left,1,metal,storage.heat>=io.github.kpaakeh.smog.copper.CopperWorkshops.threshold(machine),machine.rotation()));
@@ -82,16 +93,19 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             var tables=ClientFormations.machines().stream().filter(m->m.machineId().getPath().equals("casting_table")&&m.copper.work>0&&m.copper.status==7&&m.getItem(3).isEmpty()).sorted(java.util.Comparator.comparingLong(m->m.getBlockPos().asLong())).toList();
             for(var table:tables)for(var pos:flowPath(machine,table.getBlockPos()))if(shownFlow.add(pos)){
                 var block=machine.getLevel().getBlockState(pos);String id=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block.getBlock()).getPath();var offset=pos.subtract(machine.getBlockPos());
-                if(id.equals("casting_channel")){boolean alongX=block.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getAxis()==net.minecraft.core.Direction.Axis.X;surfaces.add(new MoltenRendering.Surface(offset.getX()+(alongX?0:.191f),offset.getY()+.882f,offset.getZ()+(alongX?.191f:0),alongX?1:.618f,alongX?.618f:1,Math.floorMod(table.copper.selection,3),true));}
-                else if(id.equals("casting_faucet")){String below=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(machine.getLevel().getBlockState(pos.below()).getBlock()).getPath();float top=below.equals("casting_channel")?.882f:.805f;streams.add(new MoltenRendering.Stream(offset.getX()+.5f,offset.getY()+.04f,offset.getZ()+.5f,1.04f-top,Math.floorMod(table.copper.selection,3)));}
+                if(id.equals("casting_channel")){boolean alongX=block.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getAxis()==net.minecraft.core.Direction.Axis.X;surfaces.add(new MoltenRendering.Surface(offset.getX()+(alongX?0:.191f),offset.getY()+.882f,offset.getZ()+(alongX?.191f:0),alongX?1:.618f,alongX?.618f:1,Math.floorMod(table.copper.selection,io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length),true));}
+                else if(id.equals("casting_faucet")){String below=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(machine.getLevel().getBlockState(pos.below()).getBlock()).getPath();float top=below.equals("casting_channel")?.882f:.805f;streams.add(new MoltenRendering.Stream(offset.getX()+.5f,offset.getY()+.04f,offset.getZ()+.5f,1.04f-top,Math.floorMod(table.copper.selection,io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length)));}
             }
             if(!machine.getItem(0).isEmpty()){var offset=new net.minecraft.core.BlockPos(0,0,1).rotate(machine.rotation());addItem(shown,machine.getItem(0),offset.getX()+.5f,Math.max(.25f,level+.12f),offset.getZ()+.5f,machine);}
+        }else if(kind.equals("tool_workbench")){
+            for(int i=0;i<io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts();i++){int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.slot(i);if(!machine.getItem(slot).isEmpty())addItem(shown,machine.getItem(slot),(i+1f)/(io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+1),1.02f,.5f,machine);}
+            var preview=machine.getItem(3).isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.preview(machine):machine.getItem(3);if(!preview.isEmpty())addItem(shown,preview,.5f,1.06f,.8f,machine);
         }else if(kind.equals("casting_table")){
             if(!machine.getItem(1).isEmpty())addItem(shown,machine.getItem(1),.5f,.775f,.5f,machine);
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.825f,.5f,machine);
-            else if(storage.work>0&&storage.status==7)surfaces.add(new MoltenRendering.Surface(.32f,.805f,.38f,.36f,.24f,Math.floorMod(storage.selection,3),true));
-        }else if(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.WaterSupply.handles(machine)){
-            if(storage.processFluid>0&&!kind.equals("hand_water_pump"))surfaces.add(new MoltenRendering.Surface(.14f,.35f+.3f*storage.processFluid/io.github.kpaakeh.smog.copper.WorkshopFluidStorage.CAPACITY,.14f,.72f,.72f,kind.equals("lever_press")?4:3,false));
+            else if(storage.work>0&&storage.status==7)surfaces.add(new MoltenRendering.Surface(.32f,.805f,.38f,.36f,.24f,Math.floorMod(storage.selection,io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length),true));
+        }else if((io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(machine))||io.github.kpaakeh.smog.copper.WaterSupply.handles(machine)){
+            if(storage.processFluid>0&&!kind.equals("hand_water_pump"))surfaces.add(new MoltenRendering.Surface(.14f,.35f+.3f*storage.processFluid/io.github.kpaakeh.smog.copper.WorkshopFluidStorage.CAPACITY,.14f,.72f,.72f,kind.equals("lever_press")?-2:-1,false));
             if(!machine.getItem(0).isEmpty())addItem(shown,machine.getItem(0),.5f,.8f,.5f,machine);
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.9f,.5f,machine);
         }else if(kind.equals("potter_table")){
@@ -120,6 +134,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
     }
     private void addItem(java.util.List<State.ItemPart> shown,net.minecraft.world.item.ItemStack stack,float x,float y,float z,MachineEntity machine){var model=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(model,stack,net.minecraft.world.item.ItemDisplayContext.FIXED,machine.getLevel(),null,0);shown.add(new State.ItemPart(x,y,z,model));}
     @Override public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
+        if(state.ropeEnd!=null){RopeRendering.submit(state.ropeEnd,pose,collector,state.lightCoords);if(state.cargo!=null){var at=RopeRendering.point(state.ropeEnd,state.cargoProgress);pose.pushPose();pose.translate(at.x,at.y-.35,at.z);pose.scale(.6f,.6f,.6f);state.cargo.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}}
         if(!state.wires.isEmpty())WireRendering.submit(state.wires,state.blockPos,pose,collector,state.lightCoords);
         MoltenRendering.submit(state.moltenSurfaces,pose,collector,state.lightCoords);
         MoltenRendering.submitStreams(state.streams,pose,collector);

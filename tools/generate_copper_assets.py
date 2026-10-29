@@ -30,9 +30,41 @@ BRONZE=[]
 for c in COPPER:
  h,sat,val=colorsys.rgb_to_hsv(*(v/255 for v in c));BRONZE.append(tuple(round(v*255) for v in colorsys.hsv_to_rgb(h+.035,sat*.9,val*.9)))
 FIRED=[(46,38,31),(70,57,45),(99,80,61),(128,105,80),(155,132,103),(184,160,126),(209,186,151)]
+TOOL_SHAPES={
+ 'pickaxe':[(4,1),(10,1),(14,5),(14,9),(12,9),(11,6),(8,4),(4,4)],
+ 'axe':[(8,1),(13,1),(15,3),(15,6),(11,8),(8,7)],
+ 'shovel':[(11,1),(14,2),(15,5),(12,8),(9,7),(8,5)],
+ 'hoe':[(5,2),(12,2),(14,4),(14,7),(11,7),(11,5),(6,5)],
+ 'hammer':[(6,1),(9,1),(15,7),(15,10),(12,10),(6,4)],
+ 'chisel':[(11,1),(14,1),(14,4),(10,8),(8,7)]}
+TOOL_PART_NAMES={'wooden_handle','light_handle','reinforced_handle','short_handle','hollow_copper_handle','cord_binding','leather_binding','copper_clamp','bronze_clamp','fiber_wrap','leather_wrap','wool_wrap','tool_handle','stone_work_hammer'}
+def tool_asset(n):return n in TOOL_PART_NAMES or n.startswith(('modular_','tool_binding_','tool_wrap_')) or n.endswith('_head') or any(n.endswith(k+'_mold') for k in TOOL_SHAPES)
+def head_icon(shape,colors,cast=False):
+ mask=Image.new('1',(16,16));ImageDraw.Draw(mask).polygon(TOOL_SHAPES[shape],fill=1);im=Image.new('RGBA',(16,16))
+ for y in range(16):
+  for x in range(16):
+   if not mask.getpixel((x,y)):continue
+   left=x==0 or not mask.getpixel((x-1,y));top=y==0 or not mask.getpixel((x,y-1));right=x==15 or not mask.getpixel((x+1,y));bottom=y==15 or not mask.getpixel((x,y+1))
+   index=0 if right or bottom else len(colors)-1 if top else len(colors)-2 if left else 3 if (x+y)%4 else 4
+   im.putpixel((x,y),colors[index]+(255,))
+ if cast:
+  d=ImageDraw.Draw(im);d.line((9,7,6,11),fill=colors[1]+(255,),width=2);d.rectangle((4,11,7,13),fill=colors[2]+(255,));d.point((5,11),fill=colors[-1]+(255,))
+ return im
+
+def handle_icon(name):
+ im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im);short=name=='short_handle';a=(6,11) if short else (2,15)
+ color=(192,131,76) if name=='hollow_copper_handle' else (141,101,54)
+ d.line([a,(9,7)],fill=(51,36,22,255),width=3);d.line([a,(9,7)],fill=color+(255,),width=2);d.line([(a[0],a[1]-1),(8,7)],fill=(210,170,102,255),width=1)
+ if name=='reinforced_handle':
+  for x,y in [(4,12),(7,9)]:d.line((x-1,y-1,x+1,y+1),fill=COPPER[3]+(255,),width=2)
+ if name=='light_handle':
+  for x,y in [(4,12),(6,10)]:d.point((x,y),fill=(65,78,32,255))
+ if name=='hollow_copper_handle':d.rectangle((1,13,3,15),fill=COPPER[0]+(255,));d.point((2,14),fill=(20,17,14,255))
+ return im
+
 def sprite(n,im):
  p=A/'textures/item'/(n+'.png');p.parent.mkdir(parents=True,exist_ok=True)
- if REFRESH_ICONS or n in MANUAL_ICONS and "--refresh-manual-icons" in sys.argv or not p.exists():im.save(p)
+ if REFRESH_ICONS or tool_asset(n) and "--refresh-tool-icons" in sys.argv or n in MANUAL_ICONS and "--refresh-manual-icons" in sys.argv or not p.exists():im.save(p)
 def plate(colors):
  raw=remap(image('item/iron_ingot'),colors);im=Image.new('RGBA',(16,16));part=raw.crop(raw.getbbox()).resize((14,5),Image.Resampling.NEAREST);im.alpha_composite(part,(1,6));return im
 def pipe(colors):
@@ -57,15 +89,25 @@ def mold_icon(kind,colors):
  shapes={'ingot':[[(4,6),(9,4),(11,6),(6,8)]],
  'plate':[[(3,6),(9,3),(12,6),(6,9)]],
  'fitting':[[(4,6),(5,5),(6,6),(5,7)],[(7,5),(8,4),(9,5),(8,6)],[(7,7),(8,6),(9,7),(8,8)],[(10,6),(11,5),(12,6),(11,7)]],
- 'pipe':[[(3,6),(9,3),(10,4),(4,7)],[(6,8),(12,5),(13,6),(7,9)]]}[kind]
+ 'pipe':[[(3,6),(9,3),(10,4),(4,7)],[(6,8),(12,5),(13,6),(7,9)]]}.get(kind,[[(3,6),(7,4),(12,5),(10,7),(7,6),(6,8)]])
+ if kind in TOOL_SHAPES:shapes=[[(round(2+(x+y)*.34),round(6+(y-x)*.18)) for x,y in TOOL_SHAPES[kind]]]
  for points in shapes:
   d.polygon(points,fill=colors[0]+(255,));d.line(points[:2],fill=colors[1]+(255,));d.line(points[2:]+[points[0]],fill=colors[-2]+(255,))
  return im
 
 for e in C['items']:
  n=e['name']
- if n in MANUAL_ICONS:continue
- if n=='copper_plate':im=plate(COPPER)
+ if n in MANUAL_ICONS or n=='plant_fiber':continue
+ if n.startswith('modular_') or n.endswith('_head'):
+  shape=n.removeprefix('modular_') if n.startswith('modular_') else next(k for k in ['pickaxe','axe','shovel','hoe','hammer','chisel'] if n.endswith('_'+k+'_head'))
+  colors=[(v,v,v) for v in [35,65,100,145,180,215,245]] if n.startswith('modular_') else BRONZE if n.startswith('bronze') else COPPER
+  im=head_icon(shape,colors,'_cast_' in n)
+ elif 'handle' in n:im=handle_icon(n)
+ elif n.endswith('_binding') or n.endswith('_wrap'):im=image('item/leather' if n.startswith('leather') else 'block/white_wool' if n.startswith('wool') else 'item/string')
+ elif n.endswith('_clamp'):im=remap(image('item/iron_nugget'),BRONZE if n.startswith('bronze') else COPPER)
+ elif n=='stone_work_hammer':
+  im=handle_icon('wooden_handle');im.alpha_composite(head_icon('hammer',[(v,v,v) for v in [25,45,65,95,125,155,185]]))
+ elif n=='copper_plate':im=plate(COPPER)
  elif n.endswith('_fitting'):im=remap(image('item/iron_chain'),COPPER if n.startswith('copper') else BRONZE)
  elif n.endswith('_pipe_part'):im=pipe(COPPER if n.startswith('copper') else BRONZE)
  elif n=='metal_residue':im=image('item/iron_nugget')
@@ -202,6 +244,28 @@ for name,im in [('workshop_water_surface',tint(image('block/water_still'),(70,11
  path=A/('textures/block/'+name+'.png')
  if not path.exists():
   im=im.crop((0,0,16,16));im.putalpha(255);im.save(path)
+model('copper_water_pipe_core',[box([5,5,5],[11,11,11],'copper')],dict(copper=copper))
+model('copper_water_pipe_arm',[box([5,5,0],[11,11,5],'copper')],dict(copper=copper))
+model('copper_water_pipe',[box([5,5,0],[11,11,16],'copper'),box([4,4,6],[12,12,10],'copper')],dict(copper=copper))
+for name in ['water_valve','water_outlet']:
+ for opened in [False,True]:
+  body=[box([5,5,0],[11,11,16],'copper')] if name=='water_valve' else [box([5,5,8],[11,11,16],'copper'),box([5,0,5],[11,11,11],'copper')]
+  handle=box([7,12,3],[9,14,13],'wood') if opened else box([3,12,7],[13,14,9],'wood')
+  model(name+('_open' if opened else ''),body+[box([7,10,7],[9,12,9],'copper'),handle],dict(copper=copper,wood=wood))
+sprite('plant_fiber',tint(image('item/string'),(192,181,112)))
+model('fiber_press_basket',[box([1,0,1],[15,3,15],'wood'),box([1,3,1],[3,13,15],'wood'),box([13,3,1],[15,13,15],'wood'),box([3,3,1],[13,11,3],'cloth'),box([3,3,13],[13,11,15],'cloth')],dict(wood=wood,cloth='minecraft:block/white_wool'))
+model('bronze_drive',[box([3,3,6],[13,13,16],'bronze'),box([6,6,0],[10,10,6],'bronze'),box([1,7,1],[15,9,3],'wood'),box([7,1,1],[9,15,3],'wood'),box([2,2,1],[5,5,3],'wood'),box([11,11,1],[14,14,3],'wood'),box([2,11,1],[5,14,3],'wood'),box([11,2,1],[14,5,3],'wood')],dict(bronze='smog:block/bronze_block',wood=wood))
+model('tool_workbench',[box([x,0,z],[x+3,13,z+3],'leg') for x,z in [(1,1),(12,1),(1,12),(12,12)]]+[box([0,13,0],[16,16,16],'wood'),box([1,16,1],[5,18,5],'stone')],dict(leg='minecraft:block/stripped_oak_log',wood=wood,stone='minecraft:block/smooth_stone'))
+for name,tiles in [('firebrick_tiles',True),('carved_firebrick',False)]:
+ im=refractory.copy();d=ImageDraw.Draw(im)
+ if tiles:
+  for x in [0,8]:d.line((x,0,x,15),fill=FIRED[1]+(255,))
+  for y in [0,8]:d.line((0,y,15,y),fill=FIRED[1]+(255,))
+ else:
+  d.rectangle((2,2,13,13),outline=FIRED[1]+(255,));d.rectangle((4,4,11,11),outline=FIRED[4]+(255,));d.line((4,7,11,7),fill=FIRED[2]+(255,))
+ p=A/('textures/block/'+name+'.png')
+ if not p.exists():im.save(p)
+ model(name,[box([0,0,0],[16,16,16],'brick')],dict(brick='smog:block/'+name))
 # Only currently needed GUI images are installed in main resources.
 gui=A/'textures/gui';gui.mkdir(parents=True,exist_ok=True)
 for n in ['slot','structure_preview']:
@@ -219,3 +283,7 @@ for fluid in C['fluids']:
  if fluid['name'].startswith('molten_'):
   im=Image.open(A/('textures/block/'+fluid['name']+'_still.png')).convert('RGBA');im.crop((0,0,16,16)).save(A/('textures/block/'+fluid['name']+'_surface.png'))
 print('Copper models, vanilla GUI and molten surfaces ready.')
+
+# Tool sprites are shape masks shared by all material profiles.
+import subprocess
+subprocess.run([sys.executable,str(ROOT/"tools/generate_tool_templates.py")]+(["--refresh-tool-templates"] if "--refresh-tool-templates" in sys.argv else []),check=True)

@@ -16,7 +16,7 @@ public record BlockIngredient(String value) {
         return value.startsWith("#") ? state.is(tag()) : state.is(block());
     }
     public TagKey<Block> tag() { return ModTags.block(value.substring(1)); }
-    public Block block() { return BuiltInRegistries.BLOCK.getValue(Identifier.parse(value)); }
+    public Block block() { if(value.startsWith("#")){var choices=BuiltInRegistries.BLOCK.getTagOrEmpty(tag()).iterator();if(!choices.hasNext())throw new IllegalStateException("Empty block tag: "+value);return choices.next().value();}return BuiltInRegistries.BLOCK.getValue(Identifier.parse(value)); }
     public List<ItemStack> displayItems() {
         if (!value.startsWith("#")) return block().asItem().getDefaultInstance().isEmpty() ? List.of() : List.of(block().asItem().getDefaultInstance());
         return java.util.stream.StreamSupport.stream(BuiltInRegistries.BLOCK.getTagOrEmpty(tag()).spliterator(), false)

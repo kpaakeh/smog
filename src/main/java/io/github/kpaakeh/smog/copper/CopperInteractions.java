@@ -22,6 +22,21 @@ public final class CopperInteractions {
     private static boolean take(MachineEntity m,Player player,int slot){if(m.getItem(slot).isEmpty())return false;var stack=m.removeItemNoUpdate(slot);player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);m.sync();return true;}
     public static InteractionResult use(ServerLevel level,MachineEntity m,Player player,InteractionHand hand,BlockPos clicked){
         var held=player.getItemInHand(hand);
+        if(Ropeway.handles(m)){
+            if(held.getItem() instanceof RopeLinkItem)return InteractionResult.PASS;
+            if(player.isShiftKeyDown()&&!held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}
+            if(!held.isEmpty()&&put(m,0,held))return InteractionResult.SUCCESS;
+            if(held.isEmpty()){if(take(m,player,3))return InteractionResult.SUCCESS;if(player.isShiftKeyDown()){take(m,player,0);return InteractionResult.SUCCESS;}m.copper.queued=1;m.sync();player.sendOverlayMessage(Component.translatable("message.smog.rope_queued"));return InteractionResult.SUCCESS;}
+        }
+        if(LoadingCrane.handles(m)){
+            if(!held.isEmpty())return InteractionResult.PASS;
+            if(!m.assembled()){player.sendOverlayMessage(Component.translatable("message.smog.multiblock_incomplete"));return InteractionResult.SUCCESS;}
+            if(player.isShiftKeyDown()){m.copper.selection=1-Math.floorMod(m.copper.selection,2);m.copper.work=0;m.copper.queued=0;m.sync();}
+            else LoadingCrane.queue(m);
+            player.sendOverlayMessage(Component.translatable(m.copper.selection%2==0?"message.smog.crane_forward":"message.smog.crane_reverse"));return InteractionResult.SUCCESS;
+        }
+        if(ToolAssembly.handles(m))return ToolAssembly.use(level,m,player,hand);
+        if(player.isShiftKeyDown()&&!held.isEmpty()&&(WaterSupply.handles(m)||ManualWorkshops.handles(m))){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(WaterSupply.handles(m)){
             if(FluidStorageUtil.interactWithFluidStorage(m.processFluid,player,hand))return InteractionResult.SUCCESS;
             if(CopperWorkshops.workshop(m,"hand_water_pump")&&held.isEmpty())player.sendOverlayMessage(Component.translatable(WaterSupply.prime(level,m)?"message.smog.pump_ready":"message.smog.pump_missing_water"));
@@ -55,7 +70,7 @@ public final class CopperInteractions {
             if(FluidStorageUtil.interactWithFluidStorage(m.molten,player,hand))return InteractionResult.SUCCESS;
             if(held.has(DataComponents.COOKING_FUEL)&&put(m,2,held))return InteractionResult.SUCCESS;
             if(CopperWorkshops.melt(held)!=null&&put(m,0,held))return InteractionResult.SUCCESS;
-            if(held.isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.molten_status",ingots(m.copper.copper),ingots(m.copper.tin),ingots(m.copper.bronze),m.copper.heat));return InteractionResult.SUCCESS;}
+            if(held.isEmpty()){var contents=Component.empty();for(int k=0;k<MoltenMetalStorage.NAMES.length;k++)if(m.copper.metal(k)>0){if(!contents.getString().isEmpty())contents.append(" · ");contents.append(Component.translatable("conductor.smog."+MoltenMetalStorage.NAMES[k])).append(": "+ingots(m.copper.metal(k)));}player.sendOverlayMessage(contents.append(" | "+m.copper.heat));return InteractionResult.SUCCESS;}
         }else if(CopperWorkshops.workshop(m,"casting_table")){
             if(CopperWorkshops.mold(held)>=0){take(m,player,1);m.setItem(1,held.split(1));m.copper.work=0;m.sync();return InteractionResult.SUCCESS;}
             if(held.isEmpty()){take(m,player,3);return InteractionResult.SUCCESS;}

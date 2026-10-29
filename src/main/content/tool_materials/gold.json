@@ -1,0 +1,39 @@
+{
+  "id": "gold",
+  "name": {
+    "en_us": "Gold",
+    "ru_ru": "Золото"
+  },
+  "color": "F8D34E",
+  "profiles": {
+    "head": {
+      "durability": 32,
+      "mining_speed": 12,
+      "attack_damage": 0,
+      "harvest_tier": "gold",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 0.85,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 0.9,
+      "shaping": true
+    }
+  },
+  "repair_item": "minecraft:gold_ingot",
+  "molten": "gold",
+  "native_prefix": "golden"
+}

@@ -9,7 +9,11 @@
       "io.github.kpaakeh.smog.test.IndustryTests",
       "io.github.kpaakeh.smog.test.EnergyInteropTests",
       "io.github.kpaakeh.smog.test.ResourceGenerationTests",
-      "io.github.kpaakeh.smog.test.CopperTests"
+      "io.github.kpaakeh.smog.test.CopperTests",
+      "io.github.kpaakeh.smog.test.ToolTests",
+      "io.github.kpaakeh.smog.test.WaterlineTests",
+      "io.github.kpaakeh.smog.test.PressModuleTests",
+      "io.github.kpaakeh.smog.test.LogisticsTests"
     ],
     "fabric-client-gametest": [
       "io.github.kpaakeh.smog.test.ClientFoundationTests"

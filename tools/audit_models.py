@@ -20,7 +20,7 @@ for p in sorted(ROOT.glob('*.json')):
    if min(r[1],s[1])-max(r[0],s[0])>1e-6 and min(r[3],s[3])-max(r[2],s[2])>1e-6:errors.append(f'{p.name}: coincident faces {plane}')
 textures=ROOT.parents[1]/'textures'
 for p in textures.rglob('*.png'):
- if p.parent.name not in ['block','item']:continue
+ if p.relative_to(textures).parts[0] not in ['block','item']:continue
  im=Image.open(p)
  animated=p.with_suffix('.png.mcmeta').is_file()
  if not animated and im.size!=(16,16):errors.append(f'{p.name}: static art must be 16x16, got {im.size}')

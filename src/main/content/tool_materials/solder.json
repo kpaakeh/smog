@@ -1,0 +1,38 @@
+{
+  "id": "solder",
+  "name": {
+    "en_us": "Tin-Lead Solder",
+    "ru_ru": "Припой"
+  },
+  "color": "B7BAC0",
+  "profiles": {
+    "head": {
+      "durability": 45,
+      "mining_speed": 2,
+      "attack_damage": 0,
+      "harvest_tier": "stone",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 0.85,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 0.9,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:solder_ingot",
+  "molten": "solder"
+}

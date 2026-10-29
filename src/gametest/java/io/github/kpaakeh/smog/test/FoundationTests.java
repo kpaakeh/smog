@@ -45,7 +45,7 @@ public class FoundationTests {
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(),true,level.registryAccess());
         for(String tab:List.of("ores","blocks"))h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab)).hasAnyItems(),"Creative tab has contents: "+tab);
-        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),169,"All forms are in ore tab");
+        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),249,"All forms are in ore tab");
         h.succeed();
     }
     @GameTest public void zoneGeometryMovementAndPersistence(GameTestHelper h) {

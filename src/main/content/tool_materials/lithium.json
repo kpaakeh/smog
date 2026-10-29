@@ -1,0 +1,38 @@
+{
+  "id": "lithium",
+  "name": {
+    "en_us": "Lithium",
+    "ru_ru": "Литий"
+  },
+  "color": "C3BED4",
+  "profiles": {
+    "head": {
+      "durability": 35,
+      "mining_speed": 2,
+      "attack_damage": 0,
+      "harvest_tier": "stone",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 0.85,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 0.9,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:lithium_ingot",
+  "molten": "lithium"
+}

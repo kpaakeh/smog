@@ -1,0 +1,38 @@
+{
+  "id": "tungsten",
+  "name": {
+    "en_us": "Tungsten",
+    "ru_ru": "Вольфрам"
+  },
+  "color": "6D7886",
+  "profiles": {
+    "head": {
+      "durability": 1800,
+      "mining_speed": 7,
+      "attack_damage": 5,
+      "harvest_tier": "diamond",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 0.96,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:tungsten_ingot",
+  "molten": "tungsten"
+}

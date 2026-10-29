@@ -1,0 +1,38 @@
+{
+  "id": "constantan",
+  "name": {
+    "en_us": "Constantan",
+    "ru_ru": "Константан"
+  },
+  "color": "B18C77",
+  "profiles": {
+    "head": {
+      "durability": 300,
+      "mining_speed": 5,
+      "attack_damage": 2,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:constantan_ingot",
+  "molten": "constantan"
+}

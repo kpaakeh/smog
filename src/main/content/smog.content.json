@@ -21,7 +21,9 @@
         "minecraft:stone",
         "minecraft:cobblestone",
         "minecraft:bricks",
-        "smog:firebrick_casing"
+        "smog:firebrick_casing",
+        "smog:firebrick_tiles",
+        "smog:carved_firebrick"
       ]
     },
     {
@@ -31,7 +33,9 @@
         "minecraft:stone",
         "minecraft:cobblestone",
         "minecraft:bricks",
-        "smog:firebrick_casing"
+        "smog:firebrick_casing",
+        "smog:firebrick_tiles",
+        "smog:carved_firebrick"
       ]
     },
     {
@@ -39,7 +43,9 @@
       "id": "smog:copper_masonry",
       "values": [
         "minecraft:bricks",
-        "smog:firebrick_casing"
+        "smog:firebrick_casing",
+        "smog:firebrick_tiles",
+        "smog:carved_firebrick"
       ]
     },
     {
@@ -47,7 +53,9 @@
       "id": "smog:copper_masonry",
       "values": [
         "minecraft:bricks",
-        "smog:firebrick_casing"
+        "smog:firebrick_casing",
+        "smog:firebrick_tiles",
+        "smog:carved_firebrick"
       ]
     },
     {
@@ -60,7 +68,8 @@
         "smog:unfired_ingot_mold",
         "smog:unfired_plate_mold",
         "smog:unfired_fitting_mold",
-        "smog:unfired_pipe_mold"
+        "smog:unfired_pipe_mold",
+        "smog:unfired_relief_mold"
       ]
     },
     {
@@ -72,6 +81,93 @@
         "minecraft:pumpkin_seeds",
         "minecraft:melon_seeds",
         "minecraft:torchflower_seeds"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:pickaxes",
+      "values": [
+        "smog:modular_pickaxe",
+        "smog:modular_hammer"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:axes",
+      "values": [
+        "smog:modular_axe"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:shovels",
+      "values": [
+        "smog:modular_shovel"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:hoes",
+      "values": [
+        "smog:modular_hoe"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:enchantable/mining",
+      "values": [
+        "smog:modular_pickaxe",
+        "smog:modular_axe",
+        "smog:modular_shovel",
+        "smog:modular_hoe",
+        "smog:modular_hammer"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:enchantable/mining_loot",
+      "values": [
+        "smog:modular_pickaxe",
+        "smog:modular_axe",
+        "smog:modular_shovel",
+        "smog:modular_hoe",
+        "smog:modular_hammer"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "minecraft:enchantable/durability",
+      "values": [
+        "smog:modular_pickaxe",
+        "smog:modular_axe",
+        "smog:modular_shovel",
+        "smog:modular_hoe",
+        "smog:modular_hammer",
+        "smog:modular_chisel"
+      ]
+    },
+    {
+      "registry": "block",
+      "id": "smog:press_frames",
+      "values": [
+        "smog:press_frame",
+        "smog:bronze_drive"
+      ]
+    },
+    {
+      "registry": "block",
+      "id": "smog:press_baskets",
+      "values": [
+        "smog:press_basket",
+        "smog:fiber_press_basket"
+      ]
+    },
+    {
+      "registry": "item",
+      "id": "smog:fiber_sources",
+      "values": [
+        "minecraft:wheat",
+        "minecraft:vine"
       ]
     }
   ],
@@ -240,6 +336,137 @@
       "model": "smog:block/press_basket",
       "texture": "minecraft:block/oak_planks",
       "tab": "copper_age"
+    },
+    {
+      "name": "firebrick_tiles",
+      "display": "Fireclay Tiles",
+      "display_ru": "Огнеупорные изразцы",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/firebrick_tiles",
+      "texture": "smog:block/firebrick_tiles",
+      "tab": "copper_age"
+    },
+    {
+      "name": "carved_firebrick",
+      "display": "Carved Fireclay",
+      "display_ru": "Резная огнеупорная кладка",
+      "hardness": 2,
+      "mining_level": "wood",
+      "model": "smog:block/carved_firebrick",
+      "texture": "smog:block/carved_firebrick",
+      "tab": "copper_age"
+    },
+    {
+      "name": "copper_water_pipe",
+      "display": "Copper Water Pipe",
+      "display_ru": "Медная водяная труба",
+      "hardness": 1.5,
+      "mining_level": "wood",
+      "model": "smog:block/copper_water_pipe",
+      "texture": "minecraft:block/copper_block",
+      "tab": "copper_age",
+      "pipe": true
+    },
+    {
+      "name": "water_valve",
+      "display": "Water Shutoff Valve",
+      "display_ru": "Водяной запорный кран",
+      "hardness": 1.5,
+      "mining_level": "wood",
+      "model": "smog:block/water_valve",
+      "texture": "minecraft:block/copper_block",
+      "tab": "copper_age",
+      "horizontal": true,
+      "valve": true
+    },
+    {
+      "name": "water_outlet",
+      "display": "Downward Water Outlet",
+      "display_ru": "Вывод воды вниз",
+      "hardness": 1.5,
+      "mining_level": "wood",
+      "model": "smog:block/water_outlet",
+      "texture": "minecraft:block/copper_block",
+      "tab": "copper_age",
+      "horizontal": true,
+      "valve": true
+    },
+    {
+      "name": "fiber_press_basket",
+      "display": "Fiber Press Basket",
+      "display_ru": "Волокнистая корзина пресса",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/fiber_press_basket",
+      "texture": "minecraft:block/oak_planks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "bronze_drive",
+      "display": "Bronze Water Drive",
+      "display_ru": "Бронзовый водяной привод",
+      "hardness": 2,
+      "mining_level": "wood",
+      "horizontal": true,
+      "model": "smog:block/bronze_drive",
+      "texture": "minecraft:block/oak_planks",
+      "tab": "copper_age"
+    },
+    {
+      "name": "closed_crucible_insert",
+      "display": "Closed Crucible Insert",
+      "display_ru": "Закрытая тигельная вставка",
+      "hardness": 3,
+      "mining_level": "wood",
+      "tab": "copper_age",
+      "model": "smog:block/closed_crucible_insert",
+      "texture": "smog:block/firebrick_casing"
+    },
+    {
+      "name": "copper_relief",
+      "display": "Copper Relief Panel",
+      "display_ru": "Медный рельеф",
+      "tab": "copper_age",
+      "texture": "minecraft:block/copper_block",
+      "model": "smog:block/copper_relief",
+      "hardness": 2,
+      "mining_level": "stone",
+      "horizontal": true
+    },
+    {
+      "name": "bronze_relief",
+      "display": "Bronze Relief Panel",
+      "display_ru": "Бронзовый рельеф",
+      "tab": "copper_age",
+      "texture": "minecraft:block/iron_block",
+      "model": "smog:block/bronze_relief",
+      "hardness": 2,
+      "mining_level": "stone",
+      "horizontal": true
+    },
+    {
+      "name": "silver_relief",
+      "display": "Silver Relief Panel",
+      "display_ru": "Серебряный рельеф",
+      "tab": "copper_age",
+      "texture": "minecraft:block/iron_block",
+      "model": "smog:block/silver_relief",
+      "hardness": 2,
+      "mining_level": "stone",
+      "horizontal": true
+    },
+    {
+      "name": "gold_relief",
+      "display": "Gold Relief Panel",
+      "display_ru": "Золотой рельеф",
+      "tab": "copper_age",
+      "texture": "minecraft:block/gold_block",
+      "model": "smog:block/gold_relief",
+      "hardness": 2,
+      "mining_level": "stone",
+      "horizontal": true
     }
   ],
   "ores": [
@@ -643,6 +870,52 @@
       "assembled_model": "smog:block/hand_water_pump",
       "texture": "minecraft:block/bricks",
       "mining_level": "wood"
+    },
+    {
+      "name": "tool_workbench",
+      "display": "Toolmaker Workbench",
+      "display_ru": "Верстак инструментальщика",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/tool_workbench",
+      "assembled_model": "smog:block/tool_workbench",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
+    },
+    {
+      "name": "loading_crane",
+      "display": "Loading Gantry",
+      "display_ru": "Погрузочный кран",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/loading_crane",
+      "assembled_model": "smog:block/loading_crane",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood",
+      "multiblock": "smog:loading_crane"
+    },
+    {
+      "name": "rope_anchor",
+      "display": "Ropeway Anchor and Winch",
+      "display_ru": "Грузовой анкер с лебёдкой",
+      "kind": "COPPER_WORKSHOP",
+      "hardness": 2,
+      "capacity": 1,
+      "transfer_rate": 1,
+      "cost": 0,
+      "work_ticks": 80,
+      "model": "smog:block/rope_anchor",
+      "assembled_model": "smog:block/rope_anchor",
+      "texture": "minecraft:block/bricks",
+      "mining_level": "wood"
     }
   ],
   "multiblocks": [
@@ -1030,19 +1303,19 @@
           "x": -1,
           "y": 1,
           "z": 0,
-          "block": "smog:press_frame"
+          "block": "#smog:press_frames"
         },
         {
           "x": 0,
           "y": 1,
           "z": 0,
-          "block": "smog:press_frame"
+          "block": "#smog:press_frames"
         },
         {
           "x": 1,
           "y": 1,
           "z": 0,
-          "block": "smog:press_frame"
+          "block": "#smog:press_frames"
         },
         {
           "x": -1,
@@ -1054,7 +1327,7 @@
           "x": 0,
           "y": 0,
           "z": 1,
-          "block": "smog:press_basket"
+          "block": "#smog:press_baskets"
         },
         {
           "x": 1,
@@ -1066,17 +1339,102 @@
           "x": -1,
           "y": 1,
           "z": 1,
-          "block": "smog:press_frame"
+          "block": "#smog:press_frames"
         },
         {
           "x": 0,
           "y": 1,
           "z": 1,
-          "block": "smog:press_frame"
+          "block": "#smog:press_frames"
         },
         {
           "x": 1,
           "y": 1,
+          "z": 1,
+          "block": "#smog:press_frames"
+        }
+      ]
+    },
+    {
+      "name": "loading_crane",
+      "display": "Loading Gantry",
+      "display_ru": "Погрузочный кран",
+      "parts": [
+        {
+          "x": -1,
+          "y": -2,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -1,
+          "y": -1,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -1,
+          "y": -2,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -1,
+          "y": -1,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 1,
+          "y": -2,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 0,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 1,
+          "y": -2,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": 1,
+          "y": -1,
+          "z": 1,
+          "block": "smog:workshop_support"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": -1,
+          "y": 0,
+          "z": 1,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "block": "smog:press_frame"
+        },
+        {
+          "x": 1,
+          "y": 0,
           "z": 1,
           "block": "smog:press_frame"
         }
@@ -1169,6 +1527,422 @@
       "tick_delay": 10,
       "infinite": false,
       "bucket_texture": "smog:item/plant_oil_bucket"
+    },
+    {
+      "name": "molten_lead",
+      "display": "Molten Lead",
+      "display_ru": "Расплав: свинец",
+      "color": "857E9C",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_lead_bucket",
+      "tags": [
+        "c:molten_lead"
+      ]
+    },
+    {
+      "name": "molten_zinc",
+      "display": "Molten Zinc",
+      "display_ru": "Расплав: цинк",
+      "color": "B2C0BB",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_zinc_bucket",
+      "tags": [
+        "c:molten_zinc"
+      ]
+    },
+    {
+      "name": "molten_aluminum",
+      "display": "Molten Aluminum",
+      "display_ru": "Расплав: алюминий",
+      "color": "D3DDE0",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_aluminum_bucket",
+      "tags": [
+        "c:molten_aluminum"
+      ]
+    },
+    {
+      "name": "molten_silver",
+      "display": "Molten Silver",
+      "display_ru": "Расплав: серебро",
+      "color": "D5E4ED",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_silver_bucket",
+      "tags": [
+        "c:molten_silver"
+      ]
+    },
+    {
+      "name": "molten_gold",
+      "display": "Molten Gold",
+      "display_ru": "Расплав: золото",
+      "color": "F8C54B",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_gold_bucket",
+      "tags": [
+        "c:molten_gold"
+      ]
+    },
+    {
+      "name": "molten_brass",
+      "display": "Molten Brass",
+      "display_ru": "Расплав: латунь",
+      "color": "D6AF4C",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_brass_bucket",
+      "tags": [
+        "c:molten_brass"
+      ]
+    },
+    {
+      "name": "molten_iron",
+      "display": "Molten Iron",
+      "display_ru": "Расплав: железо",
+      "color": "D8D8D8",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_iron_bucket",
+      "tags": [
+        "c:molten_iron"
+      ]
+    },
+    {
+      "name": "molten_nickel",
+      "display": "Molten Nickel",
+      "display_ru": "Расплав: никель",
+      "color": "A8AA83",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_nickel_bucket",
+      "tags": [
+        "c:molten_nickel"
+      ]
+    },
+    {
+      "name": "molten_manganese",
+      "display": "Molten Manganese",
+      "display_ru": "Расплав: марганец",
+      "color": "78808C",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_manganese_bucket",
+      "tags": [
+        "c:molten_manganese"
+      ]
+    },
+    {
+      "name": "molten_chromium",
+      "display": "Molten Chromium",
+      "display_ru": "Расплав: хром",
+      "color": "8DAAA7",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_chromium_bucket",
+      "tags": [
+        "c:molten_chromium"
+      ]
+    },
+    {
+      "name": "molten_titanium",
+      "display": "Molten Titanium",
+      "display_ru": "Расплав: титан",
+      "color": "8F9FB3",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_titanium_bucket",
+      "tags": [
+        "c:molten_titanium"
+      ]
+    },
+    {
+      "name": "molten_tungsten",
+      "display": "Molten Tungsten",
+      "display_ru": "Расплав: вольфрам",
+      "color": "6D7886",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_tungsten_bucket",
+      "tags": [
+        "c:molten_tungsten"
+      ]
+    },
+    {
+      "name": "molten_molybdenum",
+      "display": "Molten Molybdenum",
+      "display_ru": "Расплав: молибден",
+      "color": "8E9FAB",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_molybdenum_bucket",
+      "tags": [
+        "c:molten_molybdenum"
+      ]
+    },
+    {
+      "name": "molten_uranium",
+      "display": "Molten Uranium",
+      "display_ru": "Расплав: уран",
+      "color": "7F964D",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_uranium_bucket",
+      "tags": [
+        "c:molten_uranium"
+      ]
+    },
+    {
+      "name": "molten_lithium",
+      "display": "Molten Lithium",
+      "display_ru": "Расплав: литий",
+      "color": "C3BED4",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_lithium_bucket",
+      "tags": [
+        "c:molten_lithium"
+      ]
+    },
+    {
+      "name": "molten_steel",
+      "display": "Molten Steel",
+      "display_ru": "Расплав: сталь",
+      "color": "66717B",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_steel_bucket",
+      "tags": [
+        "c:molten_steel"
+      ]
+    },
+    {
+      "name": "molten_cast_iron",
+      "display": "Molten Cast Iron",
+      "display_ru": "Расплав: чугун",
+      "color": "665D59",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_cast_iron_bucket",
+      "tags": [
+        "c:molten_cast_iron"
+      ]
+    },
+    {
+      "name": "molten_wrought_iron",
+      "display": "Molten Wrought Iron",
+      "display_ru": "Расплав: кричное железо",
+      "color": "A4A19A",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_wrought_iron_bucket",
+      "tags": [
+        "c:molten_wrought_iron"
+      ]
+    },
+    {
+      "name": "molten_stainless_steel",
+      "display": "Molten Stainless Steel",
+      "display_ru": "Расплав: нержавеющая сталь",
+      "color": "B5BFC1",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_stainless_steel_bucket",
+      "tags": [
+        "c:molten_stainless_steel"
+      ]
+    },
+    {
+      "name": "molten_tool_steel",
+      "display": "Molten Tool Steel",
+      "display_ru": "Расплав: инструментальная сталь",
+      "color": "69747D",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_tool_steel_bucket",
+      "tags": [
+        "c:molten_tool_steel"
+      ]
+    },
+    {
+      "name": "molten_duralumin",
+      "display": "Molten Duralumin",
+      "display_ru": "Расплав: дюралюминий",
+      "color": "B4C6CF",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_duralumin_bucket",
+      "tags": [
+        "c:molten_duralumin"
+      ]
+    },
+    {
+      "name": "molten_cupronickel",
+      "display": "Molten Cupronickel",
+      "display_ru": "Расплав: мельхиор",
+      "color": "B2B8AB",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_cupronickel_bucket",
+      "tags": [
+        "c:molten_cupronickel"
+      ]
+    },
+    {
+      "name": "molten_constantan",
+      "display": "Molten Constantan",
+      "display_ru": "Расплав: константан",
+      "color": "B18C77",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_constantan_bucket",
+      "tags": [
+        "c:molten_constantan"
+      ]
+    },
+    {
+      "name": "molten_invar",
+      "display": "Molten Invar",
+      "display_ru": "Расплав: инвар",
+      "color": "9AABA4",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_invar_bucket",
+      "tags": [
+        "c:molten_invar"
+      ]
+    },
+    {
+      "name": "molten_electrum",
+      "display": "Molten Electrum",
+      "display_ru": "Расплав: электрум",
+      "color": "E6D58E",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_electrum_bucket",
+      "tags": [
+        "c:molten_electrum"
+      ]
+    },
+    {
+      "name": "molten_nichrome",
+      "display": "Molten Nichrome",
+      "display_ru": "Расплав: нихром",
+      "color": "B9AD9F",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_nichrome_bucket",
+      "tags": [
+        "c:molten_nichrome"
+      ]
+    },
+    {
+      "name": "molten_solder",
+      "display": "Molten Tin-Lead Solder",
+      "display_ru": "Расплав: припой",
+      "color": "B7BAC0",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_solder_bucket",
+      "tags": [
+        "c:molten_solder"
+      ]
+    },
+    {
+      "name": "molten_tungsten_steel",
+      "display": "Molten Tungsten Steel",
+      "display_ru": "Расплав: вольфрамовая сталь",
+      "color": "535E6C",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_tungsten_steel_bucket",
+      "tags": [
+        "c:molten_tungsten_steel"
+      ]
+    },
+    {
+      "name": "molten_titanium_alloy",
+      "display": "Molten Titanium Alloy",
+      "display_ru": "Расплав: титановый сплав",
+      "color": "A9B9CB",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_titanium_alloy_bucket",
+      "tags": [
+        "c:molten_titanium_alloy"
+      ]
+    },
+    {
+      "name": "molten_nickel_superalloy",
+      "display": "Molten Nickel Superalloy",
+      "display_ru": "Расплав: никелевый жаропрочный сплав",
+      "color": "B4A385",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_nickel_superalloy_bucket",
+      "tags": [
+        "c:molten_nickel_superalloy"
+      ]
+    },
+    {
+      "name": "molten_aluminum_bronze",
+      "display": "Molten Aluminum Bronze",
+      "display_ru": "Расплав: алюминиевая бронза",
+      "color": "BFA35E",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_aluminum_bronze_bucket",
+      "tags": [
+        "c:molten_aluminum_bronze"
+      ]
+    },
+    {
+      "name": "molten_netherite",
+      "display": "Molten Netherite",
+      "display_ru": "Расплав: незерит",
+      "color": "655C63",
+      "tick_delay": 30,
+      "infinite": false,
+      "water_like": false,
+      "bucket_texture": "smog:item/molten_netherite_bucket",
+      "tags": [
+        "c:molten_netherite"
+      ]
     }
   ],
   "items": [
@@ -1329,6 +2103,75 @@
       "display": "Field Journal",
       "display_ru": "Полевой журнал",
       "tab": "copper_age"
+    },
+    {
+      "name": "stone_work_hammer",
+      "display": "Stone Working Hammer",
+      "display_ru": "Каменный рабочий молот",
+      "tab": "copper_age"
+    },
+    {
+      "name": "plant_fiber",
+      "display": "Plant Fiber",
+      "display_ru": "Растительное волокно",
+      "tab": "copper_age"
+    },
+    {
+      "name": "handcart",
+      "kind": "handcart",
+      "display": "Workshop Handcart",
+      "display_ru": "Грузовая тележка",
+      "tab": "copper_age",
+      "model": "smog:block/handcart"
+    },
+    {
+      "name": "freight_rope",
+      "kind": "rope",
+      "display": "Freight Rope",
+      "display_ru": "Грузовой канат",
+      "tab": "copper_age"
+    },
+    {
+      "name": "molding_sand",
+      "display": "Molding Sand",
+      "display_ru": "Формовочная смесь",
+      "tab": "copper_age"
+    },
+    {
+      "name": "relief_pattern",
+      "display": "Wooden Relief Pattern",
+      "display_ru": "Деревянная модель рельефа",
+      "tab": "copper_age"
+    },
+    {
+      "name": "wax_relief_model",
+      "display": "Wax Relief Model",
+      "display_ru": "Восковая модель рельефа",
+      "tab": "copper_age"
+    },
+    {
+      "name": "sand_relief_mold",
+      "display": "Sand Relief Mold",
+      "display_ru": "Песчаная форма рельефа",
+      "tab": "copper_age"
+    },
+    {
+      "name": "unfired_relief_mold",
+      "display": "Unfired Investment Mold",
+      "display_ru": "Сырая оболочковая форма",
+      "tab": "copper_age"
+    },
+    {
+      "name": "relief_mold",
+      "display": "Investment Relief Mold",
+      "display_ru": "Оболочковая форма рельефа",
+      "tab": "copper_age"
+    },
+    {
+      "name": "ceramic_core",
+      "display": "Ceramic Casting Core",
+      "display_ru": "Керамический литейный стержень",
+      "tab": "copper_age"
     }
   ],
   "alloys": [
@@ -1349,6 +2192,133 @@
       "material_ru": "бронзы",
       "color": "B8874D",
       "mining_level": "stone"
+    },
+    {
+      "name": "brass",
+      "material": "Brass",
+      "material_ru": "латуни",
+      "color": "CDA947",
+      "mining_level": "stone"
+    },
+    {
+      "name": "cast_iron",
+      "material": "Cast Iron",
+      "material_ru": "чугуна",
+      "color": "665D59",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "wrought_iron",
+      "material": "Wrought Iron",
+      "material_ru": "кричного железа",
+      "color": "A4A19A",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "stainless_steel",
+      "material": "Stainless Steel",
+      "material_ru": "нержавеющей стали",
+      "color": "B5BFC1",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "tool_steel",
+      "material": "Tool Steel",
+      "material_ru": "инструментальной стали",
+      "color": "69747D",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "duralumin",
+      "material": "Duralumin",
+      "material_ru": "дюралюминия",
+      "color": "B4C6CF",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "cupronickel",
+      "material": "Cupronickel",
+      "material_ru": "мельхиора",
+      "color": "B2B8AB",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "constantan",
+      "material": "Constantan",
+      "material_ru": "константана",
+      "color": "B18C77",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "invar",
+      "material": "Invar",
+      "material_ru": "инвара",
+      "color": "9AABA4",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "electrum",
+      "material": "Electrum",
+      "material_ru": "электрума",
+      "color": "E6D58E",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "nichrome",
+      "material": "Nichrome",
+      "material_ru": "нихрома",
+      "color": "B9AD9F",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "solder",
+      "material": "Tin-Lead Solder",
+      "material_ru": "оловянно-свинцового припоя",
+      "color": "B7BAC0",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "tungsten_steel",
+      "material": "Tungsten Steel",
+      "material_ru": "вольфрамовой стали",
+      "color": "535E6C",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "titanium_alloy",
+      "material": "Titanium Alloy",
+      "material_ru": "титанового сплава",
+      "color": "A9B9CB",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "nickel_superalloy",
+      "material": "Nickel Superalloy",
+      "material_ru": "никелевого жаропрочного сплава",
+      "color": "B4A385",
+      "mining_level": "iron",
+      "planned": true
+    },
+    {
+      "name": "aluminum_bronze",
+      "material": "Aluminum Bronze",
+      "material_ru": "алюминиевой бронзы",
+      "color": "BFA35E",
+      "mining_level": "iron",
+      "planned": true
     }
   ],
   "metals": [
@@ -1568,6 +2538,15 @@
           ],
           "min": 0,
           "max": 1331
+        },
+        {
+          "name": "closed_insert",
+          "block": "smog:closed_crucible_insert",
+          "zones": [
+            "wall"
+          ],
+          "min": 0,
+          "max": 1
         }
       ]
     },
@@ -2263,6 +3242,550 @@
           "count": 1
         }
       }
+    },
+    {
+      "name": "stone_work_hammer",
+      "unlock": "minecraft:cobblestone",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "CCC",
+          " S ",
+          " S "
+        ],
+        "key": {
+          "C": "minecraft:cobblestone",
+          "S": "minecraft:stick"
+        },
+        "result": {
+          "id": "smog:stone_work_hammer",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "tool_workbench",
+      "unlock": "minecraft:oak_planks",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP",
+          "CSC",
+          "P P"
+        ],
+        "key": {
+          "P": "minecraft:oak_planks",
+          "C": "smog:copper_fitting",
+          "S": "minecraft:crafting_table"
+        },
+        "result": {
+          "id": "smog:tool_workbench",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "wooden_handle",
+      "unlock": "minecraft:stick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "S",
+          "S"
+        ],
+        "key": {
+          "S": "minecraft:stick"
+        },
+        "result": {
+          "id": "smog:wooden_handle",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "short_handle",
+      "unlock": "minecraft:stick",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:stick"
+        ],
+        "result": {
+          "id": "smog:short_handle",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "light_handle",
+      "unlock": "minecraft:bamboo",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:bamboo",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:light_handle",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "reinforced_handle",
+      "unlock": "smog:wooden_handle",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:wooden_handle",
+          "smog:copper_fitting",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:reinforced_handle",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "hollow_copper_handle",
+      "unlock": "smog:copper_pipe_part",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:copper_pipe_part",
+          "smog:copper_fitting",
+          "smog:ceramic_core"
+        ],
+        "result": {
+          "id": "smog:hollow_copper_handle",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "cord_binding",
+      "unlock": "minecraft:string",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:string",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:cord_binding",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "leather_binding",
+      "unlock": "minecraft:leather",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:leather"
+        ],
+        "result": {
+          "id": "smog:leather_binding",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "copper_clamp",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:copper_fitting"
+        ],
+        "result": {
+          "id": "smog:copper_clamp",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "bronze_clamp",
+      "unlock": "smog:bronze_fitting",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:bronze_fitting"
+        ],
+        "result": {
+          "id": "smog:bronze_clamp",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "fiber_wrap",
+      "unlock": "minecraft:string",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:string",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:fiber_wrap",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "leather_wrap",
+      "unlock": "minecraft:leather",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:leather",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:leather_wrap",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "wool_wrap",
+      "unlock": "minecraft:white_wool",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:white_wool",
+          "minecraft:string"
+        ],
+        "result": {
+          "id": "smog:wool_wrap",
+          "count": 3
+        }
+      }
+    },
+    {
+      "name": "copper_water_pipe",
+      "unlock": "smog:copper_pipe_part",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP"
+        ],
+        "key": {
+          "P": "smog:copper_pipe_part"
+        },
+        "result": {
+          "id": "smog:copper_water_pipe",
+          "count": 6
+        }
+      }
+    },
+    {
+      "name": "water_valve",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " F ",
+          "PCP"
+        ],
+        "key": {
+          "F": "smog:copper_fitting",
+          "P": "smog:copper_pipe_part",
+          "C": "smog:copper_plate"
+        },
+        "result": {
+          "id": "smog:water_valve",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "water_outlet",
+      "unlock": "smog:copper_pipe_part",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PF",
+          " P"
+        ],
+        "key": {
+          "P": "smog:copper_pipe_part",
+          "F": "smog:copper_fitting"
+        },
+        "result": {
+          "id": "smog:water_outlet",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "fiber_press_basket",
+      "unlock": "minecraft:string",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "SSS",
+          "SBS",
+          "SSS"
+        ],
+        "key": {
+          "S": "minecraft:string",
+          "B": "smog:press_basket"
+        },
+        "result": {
+          "id": "smog:fiber_press_basket",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "bronze_drive",
+      "unlock": "smog:bronze_ingot",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BFB",
+          "PSP",
+          "BFB"
+        ],
+        "key": {
+          "B": "smog:bronze_ingot",
+          "F": "smog:bronze_fitting",
+          "P": "smog:bronze_pipe_part",
+          "S": "minecraft:stick"
+        },
+        "result": {
+          "id": "smog:bronze_drive",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "fiber_string",
+      "unlock": "smog:plant_fiber",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:plant_fiber",
+          "smog:plant_fiber"
+        ],
+        "result": {
+          "id": "minecraft:string",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "fiber_binding",
+      "unlock": "smog:plant_fiber",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:plant_fiber",
+          "smog:plant_fiber"
+        ],
+        "result": {
+          "id": "smog:cord_binding",
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "handcart",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PCP",
+          "FWF",
+          "P P"
+        ],
+        "key": {
+          "P": "#minecraft:planks",
+          "C": "minecraft:chest",
+          "F": "smog:copper_fitting",
+          "W": "smog:copper_plate"
+        },
+        "result": {
+          "id": "smog:handcart",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "loading_crane",
+      "unlock": "smog:copper_fitting",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP",
+          "FCF",
+          " S "
+        ],
+        "key": {
+          "P": "#minecraft:planks",
+          "F": "smog:copper_fitting",
+          "C": "smog:copper_plate",
+          "S": "minecraft:string"
+        },
+        "result": {
+          "id": "smog:loading_crane",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "closed_crucible_insert",
+      "unlock": "smog:firebrick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BBB",
+          "BCB",
+          "BBB"
+        ],
+        "key": {
+          "B": "smog:firebrick",
+          "C": "minecraft:clay_ball"
+        },
+        "result": {
+          "id": "smog:closed_crucible_insert",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "freight_rope",
+      "unlock": "minecraft:string",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "SSS",
+          "SSS"
+        ],
+        "key": {
+          "S": "minecraft:string"
+        },
+        "result": {
+          "id": "smog:freight_rope",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "rope_anchor",
+      "unlock": "minecraft:string",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "PPP",
+          "FCF",
+          "PSP"
+        ],
+        "key": {
+          "P": "#minecraft:planks",
+          "F": "smog:copper_fitting",
+          "C": "smog:copper_plate",
+          "S": "minecraft:string"
+        },
+        "result": {
+          "id": "smog:rope_anchor",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "molding_sand",
+      "unlock": "minecraft:sand",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:sand",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:molding_sand",
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "relief_pattern",
+      "unlock": "#minecraft:planks",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "#minecraft:planks",
+          "minecraft:stick"
+        ],
+        "result": {
+          "id": "smog:relief_pattern",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "wax_relief_model",
+      "unlock": "smog:relief_pattern",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:relief_pattern",
+          "minecraft:honeycomb"
+        ],
+        "result": {
+          "id": "smog:wax_relief_model",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "sand_relief_mold",
+      "unlock": "smog:relief_pattern",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:relief_pattern",
+          "smog:molding_sand"
+        ],
+        "result": {
+          "id": "smog:sand_relief_mold",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "unfired_relief_mold",
+      "unlock": "smog:wax_relief_model",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:wax_relief_model",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:unfired_relief_mold",
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "ceramic_core",
+      "unlock": "minecraft:brick",
+      "data": {
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "minecraft:brick",
+          "minecraft:clay_ball"
+        ],
+        "result": {
+          "id": "smog:ceramic_core",
+          "count": 4
+        }
+      }
     }
   ],
   "firing": [
@@ -2293,6 +3816,10 @@
     {
       "input": "smog:unfired_firebrick",
       "output": "smog:firebrick"
+    },
+    {
+      "input": "smog:unfired_relief_mold",
+      "output": "smog:relief_mold"
     }
   ],
   "translations": {
@@ -2323,7 +3850,7 @@
       "message.smog.mold_selected": "Selected: %s",
       "jei.smog.guide.hearth": "Open hearth from 3x3x3 to 11x11x11. Interior must be empty: no crucibles or other blocks. Continuous floor and walls form a bowl. One Smog firebox on a floor or wall face, one to four wall spouts and optional air intakes. Functional components cannot occupy edges/corners. Controller anchors the front wall above floor. Molten metal remains visible in the chamber after assembly. Each interior cell stores eight ingots. Configure to assemble; sneak-click controller for optional GUI.",
       "jei.smog.guide.kiln": "Closed shell 3–5 wide/deep, 3–5 high. Empty chamber, one floor firebox and one or two roof vents. Configure to assemble. Load fuel and unfired ceramics by hand; empty-hand click collects output. Batch size 8–64 depends on chamber.",
-      "jei.smog.guide.casting": "Attach a faucet outside a wall fluid port and open it. Place table directly below faucet, or route channels downhill beneath it. Click with mold to install; sneak empty-hand click removes mold. Empty-hand click collects output. Bare wall port never pours.",
+      "jei.smog.guide.casting": "Attach a faucet outside a wall fluid port and open it. Place table directly below faucet, or route channels downhill beneath it. Click with mold to install; sneak empty-hand click removes mold. Empty-hand click collects output. Bare wall port never pours. Sand and investment relief molds are single use. Fire the investment shell before casting. A relief uses and returns exactly one ingot.",
       "jei.smog.guide.pottery": "Sneak empty-hand click selects a visible product. Click with clay or tempered clay to make up to eight. Empty-hand click collects output. Fire raw ceramics in a furnace or ceramic kiln. Sneak-click with an item opens the optional detailed GUI.",
       "jei.smog.guide.bellows": "Fit an air nozzle outside a formed hearth air port, open it and place hand bellows beside it. Right-click bellows to assist up to eight ingots. Rotate only with sneak-right-click configurator.",
       "jei.smog.guide.crucible": "Separate ceramic vessel. Do not install it inside the casting hearth: its chamber must be completely empty. Hearth capacity now comes from chamber dimensions, not crucibles.",
@@ -2366,7 +3893,7 @@
       "message.smog.pump_missing_water": "Place the pump above a water source.",
       "message.smog.water_supply": "Water: %s / 8000 mB. Supplies adjacent workshops.",
       "message.smog.lubricated": "Press lubricated: the next 8 batches work faster.",
-      "jei.smog.guide.water": "The tank stores 8 buckets and supplies an adjacent assembled trough. Place the hand pump above a water source; one action supplies up to 4 buckets to adjacent tanks or troughs. Repeated clicks do not accelerate pumping. Supports Fabric fluid storage, buckets and other mods' pipes in loaded chunks.",
+      "jei.smog.guide.water": "Tank: 8 buckets. Prime the pump above a water source for 4 buckets. Connect copper water pipes; a closed valve stops the line. Open downward outlets feed a trough or compatible tank below. Empty-hand use toggles valves/outlets; sneak-configure rotates them. Limited to 16 blocks, 256 nodes and loaded chunks. Buckets remain an alternative.",
       "message.smog.journal_empty": "No records. Use the journal on an exposed ore or deposit.",
       "message.smog.journal_entry": "%s/%s: %s at %s, %s, %s (%s)",
       "message.smog.journal_rejected": "Inspect a new exposed resource block. The journal holds up to 32 records.",
@@ -2385,7 +3912,83 @@
       "advancements.smog.copper.survey.title": "Field observations",
       "advancements.smog.copper.survey.description": "Take a journal and record personally inspected resources.",
       "advancements.smog.copper.bronze.title": "Ready for moving parts",
-      "advancements.smog.copper.bronze.description": "Combine 3 parts copper and 1 part tin to prepare for mechanization."
+      "advancements.smog.copper.bronze.description": "Combine 3 parts copper and 1 part tin to prepare for mechanization.",
+      "tool.smog.unconfigured": "Assemble this tool from parts at the workbench.",
+      "tool.smog.broken": "Head worn out. Assembly retained for repair.",
+      "tool.smog.durability": "Durability: %s / %s",
+      "tool.smog.part_head": "Head: %s",
+      "tool.smog.part_handle": "Handle: %s",
+      "tool.smog.part_binding": "Binding: %s",
+      "tool.smog.part_wrap": "Wrap: %s",
+      "tool.smog.working": "Working. Parts are temporarily secured.",
+      "tool.smog.assembly_help": "Provide a finished head, compatible handle and binding. Use a hammer to start; sneak with hammer to disassemble.",
+      "tool.smog.preview": "Result: %s | Durability: %s. Start with a working hammer.",
+      "jei.smog.copper.tools": "Head sets harvest tier; handle and binding adjust speed and life. Start with a hammer.",
+      "jei.smog.guide.tools": "Cast and hammer-finish a head on an empty workbench. Add a compatible handle and binding, optionally a wrap. One hammer action starts assembly. Sneak with hammer to disassemble a mounted tool, retaining head wear and enchantments. New heads carry only their own enchantments. A matching ingot repairs a quarter of durability. Sneak-use an item for the optional menu.",
+      "tool.smog.working_short": "Assembly in progress",
+      "tool.smog.ready_short": "Start with a hammer",
+      "tool.smog.missing_parts": "Add compatible parts",
+      "tool.smog.tier": "Head harvest level: %s",
+      "tool.smog.speed": "Working speed: %s",
+      "jei.smog.copper.fiber_pressing": "8 fibrous plants → 4 fiber. Requires the fiber basket.",
+      "jei.smog.guide.drive": "Replace an upper press-frame block with a bronze drive. Flowing water must touch the front impeller; a still source does not power it. The press automatically queues loaded batches while flow, ingredients and output space are available; manual use remains possible without flow. The same drive next to bellows operates them periodically. Sneak-configure to rotate. This is mechanical power, no FE is generated.",
+      "tool.smog.profile_head": "Head life: %s | Mining speed: %s",
+      "tool.smog.profile_support": "Speed ×%s | Life ×%s",
+      "tool.smog.finish_cast": "Finish the casting with a working hammer.",
+      "tool.smog.selected_schema": "Template: %s. Sneak-use an empty bench to cycle.",
+      "jei.smog.copper.shaping": "Direct shaping costs more metal than casting. Select the template and use a working hammer.",
+      "message.smog.cart_busy": "Another player is pulling this cart",
+      "message.smog.cart_released": "Cart parked",
+      "message.smog.cart_pulling": "Pulling cart · Sneak + use to park",
+      "message.smog.crane_forward": "Loading batch: front bay → rear bay · Sneak + use to reverse",
+      "message.smog.crane_reverse": "Loading batch: rear bay → front bay · Sneak + use to reverse",
+      "conductor.smog.lead": "Lead",
+      "conductor.smog.zinc": "Zinc",
+      "conductor.smog.aluminum": "Aluminum",
+      "conductor.smog.silver": "Silver",
+      "conductor.smog.gold": "Gold",
+      "conductor.smog.brass": "Brass",
+      "role.smog.closed_insert": "Closed crucible insert",
+      "gui.smog.copper.status_9": "Requires a compatible insert or temperature range",
+      "message.smog.rope_first": "First anchor selected · Use on the other anchor",
+      "message.smog.rope_linked": "Ropeway linked · Load cargo, then use empty-handed",
+      "message.smog.rope_invalid": "Clear span up to 24 blocks required; anchors must be free",
+      "message.smog.rope_unlinked": "Ropeway disconnected; travelling cargo remains in its anchor",
+      "message.smog.rope_queued": "One cargo batch queued",
+      "jei.smog.guide.handcart": "54 ordinary slots. Use to open cargo; sneak + use to pull or park. Prepare a road. Disconnects beyond 6 blocks. Cargo persists and drops on destruction.",
+      "jei.smog.guide.crane": "Fixed gantry. Two bays are two blocks below its controller: directly below and two blocks into the structure. Place containers or park a cart there. Use orders up to 64 items in 4 seconds; sneak reverses direction. A flowing-water bronze drive next to the controller automates it.",
+      "jei.smog.guide.ropeway": "Connect two anchors with freight rope across a clear, loaded span up to 24 blocks. Insert items and use empty-handed to send one stack. Take delivered items with use; sneak empty-handed retrieves input. Hoppers work. Sneak with rope disconnects without losing cargo.",
+      "jei.smog.guide.closed_insert": "Install in a flat hearth wall and configure the structure. Allows hot zinc processing and automatic brass alloying at 3 copper to 1 zinc. Open zinc remelting needs low heat. Ready aluminum needs refractory lining; bauxite cannot be reduced by this process.",
+      "jei.smog.copper.brass_alloy": "Closed insert · Cu:Zn = 3:1",
+      "tool.smog.shaping_cost": "Input: %s · Yield: %s",
+      "conductor.smog.copper": "Copper",
+      "conductor.smog.tin": "Tin",
+      "conductor.smog.iron": "Iron",
+      "conductor.smog.nickel": "Nickel",
+      "conductor.smog.manganese": "Manganese",
+      "conductor.smog.chromium": "Chromium",
+      "conductor.smog.titanium": "Titanium",
+      "conductor.smog.tungsten": "Tungsten",
+      "conductor.smog.molybdenum": "Molybdenum",
+      "conductor.smog.uranium": "Uranium",
+      "conductor.smog.lithium": "Lithium",
+      "conductor.smog.steel": "Steel",
+      "conductor.smog.cast_iron": "Cast Iron",
+      "conductor.smog.wrought_iron": "Wrought Iron",
+      "conductor.smog.stainless_steel": "Stainless Steel",
+      "conductor.smog.tool_steel": "Tool Steel",
+      "conductor.smog.duralumin": "Duralumin",
+      "conductor.smog.cupronickel": "Cupronickel",
+      "conductor.smog.constantan": "Constantan",
+      "conductor.smog.invar": "Invar",
+      "conductor.smog.electrum": "Electrum",
+      "conductor.smog.nichrome": "Nichrome",
+      "conductor.smog.solder": "Tin-Lead Solder",
+      "conductor.smog.tungsten_steel": "Tungsten Steel",
+      "conductor.smog.titanium_alloy": "Titanium Alloy",
+      "conductor.smog.nickel_superalloy": "Nickel Superalloy",
+      "conductor.smog.aluminum_bronze": "Aluminum Bronze",
+      "conductor.smog.netherite": "Netherite"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -2414,7 +4017,7 @@
       "message.smog.mold_selected": "Выбрано: %s",
       "jei.smog.guide.hearth": "Открытый очаг от 3×3×3 до 11×11×11. Внутри только воздух: тигли и другие блоки не нужны и мешают сборке. Пол и стены образуют цельную чашу. Одна топка Smog внутри грани пола или стены (не на рёбрах), от одного до четырёх жидкостных портов и необязательные воздушные порты в стенах. Компоненты нельзя ставить на рёбрах и в углах; там только кладка. Контроллер на передней стене над полом. Металл виден в свободной камере после сборки, уровень зависит от заполнения. На каждый внутренний блок пространства приходится 8 слитков ёмкости. Настройщик собирает очаг; Shift+ПКМ контроллера открывает подробный интерфейс.",
       "jei.smog.guide.kiln": "Закрытая оболочка от 3 до 5 × от 3 до 5, высота от 3 до 5. Внутренняя камера пустая. Контроллер на передней стене над полом, одна топка Smog в полу и одна-две вытяжки в крыше. Стены кирпичные или огнеупорные. Соберите настройщиком. Загрузите сырую керамику и топливо рукой; ПКМ пустой рукой забирает результат. Камера определяет партию от 8 до 64 изделий. Обычный обжиг в ванильной печи также доступен.",
-      "jei.smog.guide.casting": "К стеновому жидкостному порту прикрепите краник снаружи. Откройте его ПКМ, стол поставьте непосредственно под краником либо подведите желоб вниз от него. ПКМ формой ставит форму, Shift+ПКМ пустой рукой снимает. Обычный ПКМ забирает отливку. Голый порт сам не льёт металл.",
+      "jei.smog.guide.casting": "К стеновому жидкостному порту прикрепите краник снаружи. Откройте его ПКМ, стол поставьте непосредственно под краником либо подведите желоб вниз от него. ПКМ формой ставит форму, Shift+ПКМ пустой рукой снимает. Обычный ПКМ забирает отливку. Голый порт сам не льёт металл. Песчаная и оболочковая формы рельефа расходуются на одну отливку. Модель из дерева и воска задаёт мотив; оболочку сначала обожги. Рельеф требует один слиток и возвращает ровно столько же при переплавке.",
       "jei.smog.guide.pottery": "Shift+ПКМ пустой рукой выбирает изделие: оно видно на столе, название над хотбаром. ПКМ глиной или печной массой загружает материал и делает партию до восьми штук. ПКМ пустой рукой забирает результат. Сырые формы и тигли обжигаются в обычной печи или печи обжига. Печная масса: четыре глиняных шарика и песок. Shift+ПКМ с предметом открывает дополнительный интерфейс.",
       "jei.smog.guide.bellows": "Воздушный порт ставится в стенке. Снаружи прикрепите к нему воздушную насадку, откройте её ПКМ и поставьте рядом меха. ПКМ по мехам даёт нагнетание для партии до восьми слитков. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.crucible": "Отдельное керамическое изделие. В литейный очаг больше не устанавливается: камера очага должна быть полностью пустой. Вместимость очага определяется размерами свободного пространства, а не тиглями.",
@@ -2457,7 +4060,7 @@
       "message.smog.pump_missing_water": "Поместите помпу над источником воды.",
       "message.smog.water_supply": "Вода: %s / 8000 мВ. Передача соседним установкам.",
       "message.smog.lubricated": "Пресс смазан: ускорение следующих 8 партий.",
-      "jei.smog.guide.water": "Резервуар хранит 8 вёдер воды и подаёт её соседнему собранному лотку. Ручная помпа ставится над источником воды: одно нажатие подаёт до 4 вёдер в соседний резервуар или лоток. Частые клики не ускоряют подачу. Поддерживаются Fabric Fluid Storage, вёдра и трубы других модов; работа только в загруженных чанках.",
+      "jei.smog.guide.water": "Резервуар хранит 8 вёдер. Помпа над источником воды запускается одним нажатием на 4 ведра. Соедините их медными водяными трубами; запорный кран перекрывает линию. Открытый вывод воды направляется вниз в лоток или совместимый бак. ПКМ пустой рукой открывает кран/вывод; Shift+настройщик поворачивает. Линия ограничена 16 блоками от источника, 256 узлами и загруженными чанками. Вёдра остаются альтернативой.",
       "message.smog.journal_empty": "Записей нет. Осмотрите журналом открытый рудный блок или залежь.",
       "message.smog.journal_entry": "%s/%s: %s — %s, %s, %s (%s)",
       "message.smog.journal_rejected": "Нужен открытый ресурсный блок и новая точка. Журнал хранит до 32 записей.",
@@ -2476,7 +4079,449 @@
       "advancements.smog.copper.survey.title": "Полевые наблюдения",
       "advancements.smog.copper.survey.description": "Возьмите журнал и запишите координаты открытой руды.",
       "advancements.smog.copper.bronze.title": "Для движущихся деталей",
-      "advancements.smog.copper.bronze.description": "Смешайте 3 части меди и 1 часть олова. Это подготовка к механизации."
+      "advancements.smog.copper.bronze.description": "Смешайте 3 части меди и 1 часть олова. Это подготовка к механизации.",
+      "tool.smog.unconfigured": "Сначала соберите инструмент из частей на верстаке.",
+      "tool.smog.broken": "Головка изношена. Сборка сохранена для ремонта.",
+      "tool.smog.durability": "Ресурс: %s / %s",
+      "tool.smog.part_head": "Головка: %s",
+      "tool.smog.part_handle": "Рукоять: %s",
+      "tool.smog.part_binding": "Крепление: %s",
+      "tool.smog.part_wrap": "Обмотка: %s",
+      "tool.smog.working": "Работа идёт. Части временно закреплены.",
+      "tool.smog.assembly_help": "Нужны доведённая головка, подходящая рукоять и крепление. Запуск молотом; Shift+молот — разборка.",
+      "tool.smog.preview": "Результат: %s | Ресурс: %s. Запуск рабочим молотом.",
+      "jei.smog.copper.tools": "Головка задаёт добычу; рукоять и крепление — темп и ресурс. Запуск молотом.",
+      "jei.smog.guide.tools": "Отлейте головку, доведите рабочим молотом на пустом столе. Затем внесите рукоять и крепление, обмотка необязательна. Запуск одним ПКМ молотом. Shift+молот разбирает помещённый инструмент, сохраняя износ головки и её чары. Новая головка получает только собственные чары. Слиток соответствующего металла чинит четверть ресурса. Shift+ПКМ предметом открывает необязательный интерфейс.",
+      "tool.smog.working_short": "Идёт сборка",
+      "tool.smog.ready_short": "Запуск: рабочим молотом",
+      "tool.smog.missing_parts": "Добавьте детали",
+      "tool.smog.tier": "Уровень головки: %s",
+      "tool.smog.speed": "Скорость работы: %s",
+      "jei.smog.copper.fiber_pressing": "8 растительного сырья → 4 волокна. Требуется волокнистая корзина.",
+      "jei.smog.guide.drive": "Замените любой верхний блок рамы пресса бронзовым приводом. Перед лопастями должна течь вода: неподвижный источник сам по себе привод не вращает. Пресс сам ставит полные партии в очередь, пока есть поток, сырьё и место. Без потока остаётся ручной запуск. Тот же привод рядом с мехами периодически запускает их. Поворот — Shift+ПКМ настройщиком. Это механическая передача, FE не вырабатывается.",
+      "tool.smog.profile_head": "Ресурс головки: %s | Скорость: %s",
+      "tool.smog.profile_support": "Скорость ×%s | Ресурс ×%s",
+      "tool.smog.finish_cast": "Доведите отливку рабочим молотом.",
+      "tool.smog.selected_schema": "Схема: %s. Shift+ПКМ по пустому столу — следующая.",
+      "jei.smog.copper.shaping": "Прямая обработка слитков дороже литья. Выберите схему и ударьте рабочим молотом.",
+      "message.smog.cart_busy": "Тележку уже тянет другой игрок",
+      "message.smog.cart_released": "Тележка оставлена на месте",
+      "message.smog.cart_pulling": "Тянем тележку · Shift + ПКМ — отпустить",
+      "message.smog.crane_forward": "Партия: передняя площадка → задняя · Shift + ПКМ — сменить направление",
+      "message.smog.crane_reverse": "Партия: задняя площадка → передняя · Shift + ПКМ — сменить направление",
+      "conductor.smog.lead": "Свинец",
+      "conductor.smog.zinc": "Цинк",
+      "conductor.smog.aluminum": "Алюминий",
+      "conductor.smog.silver": "Серебро",
+      "conductor.smog.gold": "Золото",
+      "conductor.smog.brass": "Латунь",
+      "role.smog.closed_insert": "Закрытая тигельная вставка",
+      "gui.smog.copper.status_9": "Нужна совместимая вставка или допустимый нагрев",
+      "message.smog.rope_first": "Первый анкер выбран · Нажми по второму анкеру",
+      "message.smog.rope_linked": "Переправа соединена · Загрузи груз и нажми пустой рукой",
+      "message.smog.rope_invalid": "Нужен свободный пролёт до 24 блоков и два незанятых анкера",
+      "message.smog.rope_unlinked": "Переправа отключена; груз сохранён в своём анкере",
+      "message.smog.rope_queued": "Заказана перевозка одной партии",
+      "jei.smog.guide.handcart": "54 слота для обычных предметов. ПКМ открывает груз, Shift + ПКМ берёт тележку за рукоять или отпускает. Тяни её по подготовленной дороге; при удалении игрока дальше 6 блоков тележка остаётся на месте. Содержимое сохраняется и выпадает при разрушении.",
+      "jei.smog.guide.crane": "Фиксированный кран: четыре пары стоек и верхняя перекладина. Две грузовые позиции находятся на два блока ниже контроллера: прямо под ним и на два блока вглубь схемы. Поставь там контейнеры или припаркуй тележку. ПКМ заказывает перенос до 64 предметов за 4 секунды, Shift + ПКМ меняет направление. Бронзовый водяной привод рядом с контроллером автоматизирует перенос.",
+      "jei.smog.guide.ropeway": "Два анкера с лебёдками и грузовой канат образуют переправу до 24 блоков. Канатом нажми по первому и второму анкеру; пролёт должен быть свободен и загружен. Загрузи обычные предметы и нажми пустой рукой: каретка перевезёт до стака. ПКМ забирает доставленное, Shift + пустая рука возвращает загрузку. Воронки доступны. Shift + канат отсоединяет линию без потери груза.",
+      "jei.smog.guide.closed_insert": "Поставь вставку в плоскую стенку очага и собери структуру настройщиком. Она позволяет работать с цинком при высоком нагреве и получать латунь из трёх частей меди и одной цинка. В открытой конфигурации цинк переплавляется только в низком диапазоне нагрева. Готовый алюминий требует огнеупорной футеровки; боксит этим способом не восстанавливается.",
+      "jei.smog.copper.brass_alloy": "Закрытая вставка · Cu:Zn = 3:1",
+      "tool.smog.shaping_cost": "Материал: %s · Выход: %s",
+      "conductor.smog.copper": "Медь",
+      "conductor.smog.tin": "Олово",
+      "conductor.smog.iron": "Железо",
+      "conductor.smog.nickel": "Никель",
+      "conductor.smog.manganese": "Марганец",
+      "conductor.smog.chromium": "Хром",
+      "conductor.smog.titanium": "Титан",
+      "conductor.smog.tungsten": "Вольфрам",
+      "conductor.smog.molybdenum": "Молибден",
+      "conductor.smog.uranium": "Уран",
+      "conductor.smog.lithium": "Литий",
+      "conductor.smog.steel": "Сталь",
+      "conductor.smog.cast_iron": "Чугун",
+      "conductor.smog.wrought_iron": "Кричное железо",
+      "conductor.smog.stainless_steel": "Нержавеющая сталь",
+      "conductor.smog.tool_steel": "Инструментальная сталь",
+      "conductor.smog.duralumin": "Дюралюминий",
+      "conductor.smog.cupronickel": "Мельхиор",
+      "conductor.smog.constantan": "Константан",
+      "conductor.smog.invar": "Инвар",
+      "conductor.smog.electrum": "Электрум",
+      "conductor.smog.nichrome": "Нихром",
+      "conductor.smog.solder": "Припой",
+      "conductor.smog.tungsten_steel": "Вольфрамовая сталь",
+      "conductor.smog.titanium_alloy": "Титановый сплав",
+      "conductor.smog.nickel_superalloy": "Никелевый жаропрочный сплав",
+      "conductor.smog.aluminum_bronze": "Алюминиевая бронза",
+      "conductor.smog.netherite": "Незерит"
     }
-  }
+  },
+  "workshop_modules": [
+    {
+      "controller": "smog:lever_press",
+      "roles": [
+        {
+          "name": "basket",
+          "positions": [
+            [
+              0,
+              0,
+              1
+            ]
+          ],
+          "modes": {
+            "smog:press_basket": "oil",
+            "smog:fiber_press_basket": "fiber"
+          }
+        },
+        {
+          "name": "drive",
+          "positions": [
+            [
+              -1,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              -1,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "modes": {
+            "smog:press_frame": "manual",
+            "smog:bronze_drive": "hydraulic"
+          }
+        }
+      ]
+    }
+  ],
+  "casting_forms": [
+    {
+      "item": "smog:sand_relief_mold",
+      "units": 9000,
+      "single_use": true,
+      "outputs": {
+        "copper": "smog:copper_relief",
+        "bronze": "smog:bronze_relief",
+        "silver": "smog:silver_relief",
+        "gold": "smog:gold_relief"
+      }
+    },
+    {
+      "item": "smog:relief_mold",
+      "units": 9000,
+      "single_use": true,
+      "outputs": {
+        "copper": "smog:copper_relief",
+        "bronze": "smog:bronze_relief",
+        "silver": "smog:silver_relief",
+        "gold": "smog:gold_relief"
+      }
+    }
+  ],
+  "casting_metals": [
+    {
+      "id": "copper",
+      "working_heat": 600,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "tin",
+      "working_heat": 260,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "bronze",
+      "working_heat": 580,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "lead",
+      "working_heat": 350,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "zinc",
+      "working_heat": 460,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 560
+    },
+    {
+      "id": "aluminum",
+      "working_heat": 520,
+      "lining": true,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "silver",
+      "working_heat": 580,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "gold",
+      "working_heat": 600,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "brass",
+      "working_heat": 580,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "iron",
+      "working_heat": 1500,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "nickel",
+      "working_heat": 1450,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "manganese",
+      "working_heat": 1250,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "chromium",
+      "working_heat": 1900,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "titanium",
+      "working_heat": 1700,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "tungsten",
+      "working_heat": 3400,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "molybdenum",
+      "working_heat": 2650,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "uranium",
+      "working_heat": 1140,
+      "lining": false,
+      "closed": true,
+      "controlled_atmosphere": true,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "lithium",
+      "working_heat": 220,
+      "lining": false,
+      "closed": true,
+      "controlled_atmosphere": true,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "steel",
+      "working_heat": 1450,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "cast_iron",
+      "working_heat": 1200,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "wrought_iron",
+      "working_heat": 1500,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "stainless_steel",
+      "working_heat": 1450,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "tool_steel",
+      "working_heat": 1450,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "duralumin",
+      "working_heat": 550,
+      "lining": true,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "cupronickel",
+      "working_heat": 1200,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "constantan",
+      "working_heat": 1250,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "invar",
+      "working_heat": 1450,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "electrum",
+      "working_heat": 580,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "nichrome",
+      "working_heat": 1400,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "solder",
+      "working_heat": 270,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "tungsten_steel",
+      "working_heat": 1700,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "titanium_alloy",
+      "working_heat": 1700,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "nickel_superalloy",
+      "working_heat": 1400,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "aluminum_bronze",
+      "working_heat": 600,
+      "lining": true,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    },
+    {
+      "id": "netherite",
+      "working_heat": 2200,
+      "lining": false,
+      "closed": false,
+      "controlled_atmosphere": false,
+      "open_max_heat": 10000
+    }
+  ]
 }

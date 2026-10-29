@@ -1,0 +1,17 @@
+{
+  "id": "cord",
+  "name": {
+    "en_us": "Cord",
+    "ru_ru": "Верёвка"
+  },
+  "color": "CAB891",
+  "profiles": {
+    "binding": {
+      "forms": [
+        "binding"
+      ],
+      "durability_multiplier": 1
+    }
+  },
+  "repair_ingredient": "minecraft:string"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "cast_iron",
+  "name": {
+    "en_us": "Cast Iron",
+    "ru_ru": "Чугун"
+  },
+  "color": "665D59",
+  "profiles": {
+    "head": {
+      "durability": 300,
+      "mining_speed": 4,
+      "attack_damage": 3,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:cast_iron_ingot",
+  "molten": "cast_iron"
+}

@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 public final class MoltenRendering {
     public record Surface(float x,float y,float z,float width,float depth,int metal,boolean hot){}
     public record Stream(float x,float y,float z,float height,int metal){}
-    private static net.minecraft.resources.Identifier surface(int kind){return ModBlocks.id("textures/block/"+(kind==3?"workshop_water":kind==4?"plant_oil":"molten_"+new String[]{"copper","tin","bronze"}[kind])+"_surface.png");}
+    private static net.minecraft.resources.Identifier surface(int kind){return ModBlocks.id("textures/block/"+(kind==-1?"workshop_water":kind==-2?"plant_oil":"molten_"+io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES[kind])+"_surface.png");}
     public static void submit(List<Surface> surfaces,PoseStack pose,SubmitNodeCollector collector,int light){
         for(var s:surfaces)collector.submitCustomGeometry(pose,RenderTypes.entitySolid(surface(s.metal)),(matrix,vertices)->{
             int color=s.hot?0xFFFFFFFF:0xFF777777,brightness=s.hot?net.minecraft.util.LightCoordsUtil.FULL_BRIGHT:light;

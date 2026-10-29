@@ -1,0 +1,38 @@
+{
+  "id": "lead",
+  "name": {
+    "en_us": "Lead",
+    "ru_ru": "Свинец"
+  },
+  "color": "77748F",
+  "profiles": {
+    "head": {
+      "durability": 70,
+      "mining_speed": 2,
+      "attack_damage": 1,
+      "harvest_tier": "stone",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 0.96,
+      "durability_multiplier": 0.85,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 0.9,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:lead_ingot",
+  "molten": "lead"
+}

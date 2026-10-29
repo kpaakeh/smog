@@ -1,0 +1,38 @@
+{
+  "id": "zinc",
+  "name": {
+    "en_us": "Zinc",
+    "ru_ru": "Цинк"
+  },
+  "color": "B4B99D",
+  "profiles": {
+    "head": {
+      "durability": 100,
+      "mining_speed": 3.5,
+      "attack_damage": 1,
+      "harvest_tier": "stone",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:zinc_ingot",
+  "molten": "zinc"
+}

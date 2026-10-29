@@ -1,0 +1,38 @@
+{
+  "id": "cupronickel",
+  "name": {
+    "en_us": "Cupronickel",
+    "ru_ru": "Мельхиор"
+  },
+  "color": "B2B8AB",
+  "profiles": {
+    "head": {
+      "durability": 350,
+      "mining_speed": 6,
+      "attack_damage": 2,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:cupronickel_ingot",
+  "molten": "cupronickel"
+}

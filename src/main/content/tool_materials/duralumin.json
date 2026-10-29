@@ -1,0 +1,38 @@
+{
+  "id": "duralumin",
+  "name": {
+    "en_us": "Duralumin",
+    "ru_ru": "Дюралюминий"
+  },
+  "color": "B4C6CF",
+  "profiles": {
+    "head": {
+      "durability": 350,
+      "mining_speed": 7,
+      "attack_damage": 2,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:duralumin_ingot",
+  "molten": "duralumin"
+}

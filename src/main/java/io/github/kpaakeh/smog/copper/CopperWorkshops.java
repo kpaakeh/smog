@@ -25,20 +25,36 @@ public final class CopperWorkshops {
     public static List<RecipePreview> recipes(){
         List<RecipePreview> result=new ArrayList<>();
         result.add(new RecipePreview("washing_trough",List.of(new ItemStack(Items.RAW_COPPER,8),new ItemStack(Items.WATER_BUCKET)),ItemStack.EMPTY,new ItemStack(item("smog:copper_concentrate"),5),"jei.smog.copper.washing"));
-        for(String seed:List.of("wheat_seeds","beetroot_seeds","pumpkin_seeds","melon_seeds","torchflower_seeds"))result.add(new RecipePreview("lever_press",List.of(new ItemStack(item("minecraft:"+seed),8)),ItemStack.EMPTY,new ItemStack(item("smog:seed_cake")),"jei.smog.copper.pressing"));
+        for(var seed:BuiltInRegistries.ITEM)if(seed.getDefaultInstance().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ModBlocks.id("oil_seeds"))))result.add(new RecipePreview("lever_press",List.of(new ItemStack(seed,8)),ItemStack.EMPTY,new ItemStack(item("smog:seed_cake")),"jei.smog.copper.pressing"));
+        for(var part:ToolDefinitions.parts())if(part.cast()){
+            var input=new ItemStack(item(part.item().toString()));result.add(new RecipePreview("tool_workbench",List.of(input),new ItemStack(item("smog:stone_work_hammer")),ToolParts.finish(input),"jei.smog.copper.tools"));
+        }
+        for(var schema:ToolDefinitions.templates())for(String material:ToolDefinitions.parts().stream().filter(p->p.form().category().equals("head")).map(p->p.material().id()).distinct().toList()){
+            var assembled=ToolParts.example(schema,material);if(assembled.isEmpty())continue;var inputs=ToolParts.components(assembled).stream().filter(s->!s.isEmpty()).toList();result.add(new RecipePreview("tool_workbench",inputs,new ItemStack(item("smog:stone_work_hammer")),assembled,"jei.smog.copper.tools"));
+        }
+        for(var candidate:BuiltInRegistries.ITEM){var input=candidate.getDefaultInstance();if(ToolParts.nativeSource(input)!=null)result.add(new RecipePreview("tool_workbench",List.of(input),new ItemStack(item("smog:stone_work_hammer")),ToolParts.finish(input),"jei.smog.copper.tools"));}
+        for(var candidate:ToolParts.repairIngredients()){var input=new ItemStack(candidate,64);for(var part:ToolParts.shapingChoices(input)){var shaped=ToolParts.shaping(input,part);result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(candidate,shaped.count())),new ItemStack(item("smog:stone_work_hammer")),shaped.result(),"jei.smog.copper.shaping"));}}
+        for(var source:BuiltInRegistries.ITEM)if(source.getDefaultInstance().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ModBlocks.id("fiber_sources"))))result.add(new RecipePreview("lever_press",List.of(new ItemStack(source,8)),new ItemStack(item("smog:fiber_press_basket")),new ItemStack(item("smog:plant_fiber"),4),"jei.smog.copper.fiber_pressing"));
         for(var recipe:POTTERY)result.add(new RecipePreview("potter_table",List.of(new ItemStack(item(recipe.input),recipe.count)),ItemStack.EMPTY,new ItemStack(item(recipe.output),recipe.outputCount),"jei.smog.copper.pottery"));
-        for(int metal=0;metal<3;metal++)for(int mold=0;mold<4;mold++){
+        for(int metal=0;metal<MoltenMetalStorage.NAMES.length;metal++)for(int mold=0;mold<MOLDS.length;mold++){
             var cast=castResult(metal,mold);if(cast.isEmpty())continue;
-            result.add(new RecipePreview("casting_table",List.of(new ItemStack(item((metal==0?"minecraft:":"smog:")+METALS[metal]+"_ingot"),mold==3?2:1)),new ItemStack(item("smog:"+new String[]{"ingot_mold","plate_mold","fitting_mold","pipe_mold"}[mold])),cast,"jei.smog.copper.casting"));
+            result.add(new RecipePreview("casting_table",List.of(new ItemStack(item(namespace(metal)+MoltenMetalStorage.NAMES[metal]+"_ingot"),Math.max(1,(castCost(metal,mold)+8999)/9000))),new ItemStack(item("smog:"+MOLDS[mold])),cast,"jei.smog.copper.casting"));
         }
         for(var firing:FIRING)result.add(new RecipePreview("ceramic_kiln",List.of(new ItemStack(item(firing.input),8)),ItemStack.EMPTY,new ItemStack(item(firing.output),8),"jei.smog.copper.firing"));
-        for(var candidate:BuiltInRegistries.ITEM){var stack=candidate.getDefaultInstance();var amount=melt(stack);if(amount!=null)result.add(new RecipePreview("copper_hearth",List.of(stack),ItemStack.EMPTY,new ItemStack(item("smog:molten_"+METALS[amount[0]]+"_bucket")),"jei.smog.copper.melting"));}
-        result.add(new RecipePreview("copper_hearth",List.of(new ItemStack(Items.COPPER_INGOT,3),new ItemStack(item("smog:tin_ingot"))),ItemStack.EMPTY,new ItemStack(item("smog:bronze_ingot"),4),"jei.smog.copper.alloy"));return List.copyOf(result);
+        for(var candidate:BuiltInRegistries.ITEM){var stack=candidate.getDefaultInstance();var amount=melt(stack);if(amount!=null)result.add(new RecipePreview("copper_hearth",List.of(stack),ItemStack.EMPTY,new ItemStack(item("smog:molten_"+MoltenMetalStorage.NAMES[amount[0]]+"_bucket")),"jei.smog.copper.melting"));}
+        result.add(new RecipePreview("copper_hearth",List.of(new ItemStack(Items.COPPER_INGOT,3),new ItemStack(item("smog:tin_ingot"))),ItemStack.EMPTY,new ItemStack(item("smog:bronze_ingot"),4),"jei.smog.copper.alloy"));result.add(new RecipePreview("copper_hearth",List.of(new ItemStack(Items.COPPER_INGOT,3),new ItemStack(item("smog:zinc_ingot"))),new ItemStack(item("smog:closed_crucible_insert")),new ItemStack(item("smog:brass_ingot"),4),"jei.smog.copper.brass_alloy"));return List.copyOf(result);
     }
-    private static final String[] METALS={"copper","tin","bronze"};
+    public static int meltingHeat(int metal){return MetalProcessing.conditions(metal).heat();}
+    private static String namespace(int metal){String n=MoltenMetalStorage.NAMES[metal];return java.util.Set.of("copper","iron","gold","netherite").contains(n)?"minecraft:":"smog:";}
+    public static boolean closed(MachineEntity m){return m.complexRoles().getOrDefault("closed_insert",0)>0;}
+    public static boolean compatible(MachineEntity m,int metal){return MetalProcessing.compatible(m,metal);}
+    private record ExtraForm(String item,int units,boolean singleUse,java.util.Map<String,String> outputs){}
+    private static final List<ExtraForm> EXTRA_FORMS=new ArrayList<>();
     public static void initialize(){
         try(var stream=CopperWorkshops.class.getResourceAsStream("/smog.content.json")){
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
+            if(root.has("casting_forms"))for(var value:root.getAsJsonArray("casting_forms")){var o=value.getAsJsonObject();var outputs=new java.util.LinkedHashMap<String,String>();o.getAsJsonObject("outputs").entrySet().forEach(e->outputs.put(e.getKey(),e.getValue().getAsString()));EXTRA_FORMS.add(new ExtraForm(o.get("item").getAsString(),o.get("units").getAsInt(),o.get("single_use").getAsBoolean(),outputs));}
+            MOLDS=java.util.stream.Stream.concat(java.util.Arrays.stream(MOLDS),EXTRA_FORMS.stream().map(f->f.item().replace("smog:",""))).toArray(String[]::new);
             if(root.has("firing"))for(var entry:root.getAsJsonArray("firing")){var o=entry.getAsJsonObject();FIRING.add(new Pottery(o.get("input").getAsString(),1,o.get("output").getAsString(),1));}
             if(root.has("pottery"))for(var entry:root.getAsJsonArray("pottery")){var o=entry.getAsJsonObject();POTTERY.add(new Pottery(o.get("input").getAsString(),o.get("count").getAsInt(),o.get("output").getAsString(),o.has("output_count")?o.get("output_count").getAsInt():1));}
         }catch(IOException e){throw new IllegalStateException(e);}
@@ -48,6 +64,8 @@ public final class CopperWorkshops {
     public static boolean workshop(MachineEntity m,String name){return m.machineId().getPath().equals(name);}
     private static void output(MachineEntity m,ItemStack result){var old=m.getItem(3);if(old.isEmpty())m.setItem(3,result.copy());else {old.grow(result.getCount());m.setChanged();}}
     public static boolean accepts(MachineEntity m,int slot,ItemStack stack){
+        if(Ropeway.handles(m))return slot==0;
+        if(LoadingCrane.handles(m))return false;
         if(WaterSupply.handles(m))return false;
         if(ManualWorkshops.handles(m))return slot==0&&ManualWorkshops.accepts(m,stack);
         if(slot==3)return false;
@@ -64,9 +82,13 @@ public final class CopperWorkshops {
         var shape=m.complexShape();return shape==null?0:shape.internalVolume(false)*8*MoltenMetalStorage.INGOT;
     }
     public static int threshold(MachineEntity m){return workshop(m,"ceramic_kiln")?400:capacity(m)>64*U?800:600;}
-    public static int data(MachineEntity m,int index){var s=m.copper;return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?100:workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 14->WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
+    public static int data(MachineEntity m,int index){var s=m.copper;return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?100:workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
     public static void tick(ServerLevel level,MachineEntity m){
-        if(WaterSupply.handles(m))WaterSupply.tick(level,m);
+        if(workshop(m,"hand_bellows")&&level.getGameTime()%40==0&&BronzeDrive.connected(m))pump(level,m);
+        if(Ropeway.handles(m))Ropeway.tick(level,m);
+        else if(LoadingCrane.handles(m))LoadingCrane.tick(level,m);
+        else if(ToolAssembly.handles(m))ToolAssembly.tick(level,m);
+        else if(WaterSupply.handles(m))WaterSupply.tick(level,m);
         else if(ManualWorkshops.handles(m))ManualWorkshops.tick(level,m);
         else if(workshop(m,"copper_hearth"))hearth(level,m);
         else if(workshop(m,"casting_table"))casting(level,m);
@@ -83,10 +105,12 @@ public final class CopperWorkshops {
     // Metal identity and quarter-ingot amount of one input item. No remelting bonus.
     public static int[] melt(ItemStack stack){
         if(stack.isEmpty())return null;
+        if(stack.getItem() instanceof ModularToolItem||ToolDefinitions.part(stack)!=null)return ToolParts.melt(stack);
         if(is(stack,"smog:copper_concentrate"))return new int[]{0,2*MoltenMetalStorage.INGOT};
-        if(is(stack,"smog:metal_residue")){var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();int kind=data.getIntOr("metal",-1),amount=data.getIntOr("units",0);return kind>=0&&kind<3&&amount>0&&amount<MoltenMetalStorage.INGOT?new int[]{kind,amount}:null;}
-        for(int k=0;k<3;k++){
-            String n=METALS[k],ns=k==0?"minecraft:":"smog:";
+        if(is(stack,"smog:metal_residue")){var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();int kind=data.getIntOr("metal",-1),amount=data.getIntOr("units",0);return kind>=0&&kind<MoltenMetalStorage.NAMES.length&&amount>0&&amount<MoltenMetalStorage.INGOT?new int[]{kind,amount}:null;}
+        for(int k=0;k<MoltenMetalStorage.NAMES.length;k++){
+            String n=MoltenMetalStorage.NAMES[k],ns=namespace(k);
+            if(is(stack,"smog:"+n+"_relief"))return new int[]{k,MoltenMetalStorage.INGOT};
             if(tagged(stack,"c:nuggets/"+n)||is(stack,ns+n+"_nugget"))return new int[]{k,1000};
             if(tagged(stack,"c:dusts/"+n))return new int[]{k,4*U};
             if(tagged(stack,"c:ingots/"+n)||is(stack,ns+n+"_ingot"))return new int[]{k,4*U};
@@ -94,7 +118,7 @@ public final class CopperWorkshops {
             if(tagged(stack,"c:plates/"+n)||is(stack,"smog:"+n+"_plate"))return new int[]{k,4*U};
             if(is(stack,"smog:"+n+"_fitting"))return new int[]{k,1*U};
             if(is(stack,"smog:"+n+"_pipe_part"))return new int[]{k,2*U};
-            if(k<2){
+            if(k<2||k==3){
                 if(tagged(stack,"c:crushed_ores/"+n)||tagged(stack,"c:ore_shards/"+n))return new int[]{k,4*U};
                 if(tagged(stack,"c:raw_materials/"+n)||is(stack,ns+"raw_"+n))return new int[]{k,4*U};
                 if(tagged(stack,"c:storage_blocks/raw_"+n)||is(stack,ns+"raw_"+n+"_block"))return new int[]{k,36*U};
@@ -103,7 +127,7 @@ public final class CopperWorkshops {
         return null;
     }
     private static boolean tagged(ItemStack stack,String tag){return stack.is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,Identifier.parse(tag)));}
-    public static void alloy(MachineEntity m){var s=m.copper;if(!m.assembled()||s.heat<threshold(m))return;int batches=Math.min(s.copper/3,s.tin);if(batches>0){s.copper-=batches*3;s.tin-=batches;s.bronze+=batches*4;m.setChanged();}}
+    public static void alloy(MachineEntity m){var s=m.copper;if(!m.assembled()||s.heat<threshold(m))return;int batches=Math.min(s.copper/3,s.tin);if(batches>0){s.copper-=batches*3;s.tin-=batches;s.bronze+=batches*4;m.setChanged();}if(closed(m)){int brass=Math.min(s.copper/3,s.metal(4));if(brass>0){s.copper-=brass*3;s.metal(4,s.metal(4)-brass);s.metal(8,s.metal(8)+brass*4);m.setChanged();}}}
     private static boolean working(MachineEntity m,String key,int ticks,int step){var s=m.copper;if(!s.workKey.equals(key)){s.work=0;s.workKey=key;}s.work+=step;m.setChanged();return s.work>=ticks;}
     private static void hearth(ServerLevel level,MachineEntity m){var s=m.copper;
         net.minecraft.world.entity.item.ItemEntity worldInput=null;
@@ -112,17 +136,23 @@ public final class CopperWorkshops {
             if(local.getX()>bounds.minX()&&local.getX()<bounds.maxX()&&local.getZ()>0&&local.getZ()<bounds.maxZ()&&local.getY()>=0&&local.getY()<=bounds.maxY()+1&&melt(entity.getItem())!=null){worldInput=entity;break;}}
         }
         var input=worldInput==null?m.getItem(0):worldInput.getItem();var recipe=melt(input);
-        heat(level,m,recipe!=null||s.total()>0);alloy(m);
+        if(recipe!=null&&!compatible(m,recipe[0])){s.status=9;s.work=0;heat(level,m,false);return;}
+        if(recipe!=null&&recipe[0]==4&&!closed(m)&&s.heat>=500){s.burn=0;if(level.getGameTime()%20==0)s.heat=Math.max(0,s.heat-1);}else heat(level,m,recipe!=null||s.total()>0);alloy(m);
         if(recipe==null){s.work=0;s.status=2;return;}
         if(s.total()+recipe[1]>capacity(m)){s.status=5;return;}
-        if(s.heat<threshold(m)){s.status=s.burn==0?3:4;return;}
+        if(!MetalProcessing.safe(m,recipe[0])){s.status=9;return;}
+        if(s.heat<meltingHeat(recipe[0])){s.status=s.burn==0?3:4;return;}
         s.status=0;
         if(working(m,BuiltInRegistries.ITEM.getKey(input.getItem()).toString(),80,s.air>0?2:1)){
             input.shrink(1);if(worldInput!=null&&input.isEmpty())worldInput.discard();s.metal(recipe[0],s.metal(recipe[0])+recipe[1]);s.work=0;if(s.air>0)s.air=Math.max(0,s.air-(recipe[1]+4*U-1)/(4*U));m.setChanged();
         }
     }
-    public static int mold(ItemStack stack){for(int i=0;i<4;i++)if(is(stack,"smog:"+new String[]{"ingot_mold","plate_mold","fitting_mold","pipe_mold"}[i]))return i;return -1;}
-    private static ItemStack castResult(int metal,int mold){String n=METALS[metal];if(metal==1&&mold>=2)return ItemStack.EMPTY;return switch(mold){case 0->new ItemStack(item((metal==0?"minecraft:":"smog:")+n+"_ingot"));case 1->new ItemStack(item("smog:"+n+"_plate"));case 2->new ItemStack(item("smog:"+n+"_fitting"),4);case 3->new ItemStack(item("smog:"+n+"_pipe_part"),4);default->ItemStack.EMPTY;};}
+    public static String[] MOLDS=java.util.stream.Stream.concat(java.util.stream.Stream.of("ingot_mold","plate_mold","fitting_mold","pipe_mold"),ToolDefinitions.headForms().stream().map(f->f.id().replaceFirst("_head$","_mold"))).toArray(String[]::new);
+    private static int extraForm(int mold){return mold-4-ToolDefinitions.headForms().size();}
+    public static int castCost(int mold){if(extraForm(mold)>=0)return EXTRA_FORMS.get(extraForm(mold)).units();return mold>=4?ToolDefinitions.headForms().get(mold-4).metalUnits():(mold==3?8:4)*U;}
+    public static int castCost(int metal,int mold){if(mold>=4&&extraForm(mold)<0){var part=ToolDefinitions.find(MoltenMetalStorage.NAMES[metal],ToolDefinitions.headForms().get(mold-4).id(),true);if(part!=null)return ToolParts.units(part);}return castCost(mold);}
+    public static int mold(ItemStack stack){for(int i=0;i<MOLDS.length;i++)if(is(stack,"smog:"+MOLDS[i]))return i;return -1;}
+    private static ItemStack castResult(int metal,int mold){String n=MoltenMetalStorage.NAMES[metal];if(extraForm(mold)>=0){String output=EXTRA_FORMS.get(extraForm(mold)).outputs().get(n);return output==null?ItemStack.EMPTY:new ItemStack(item(output));}if(mold>=4){var part=ToolDefinitions.find(n,ToolDefinitions.headForms().get(mold-4).id(),true);return part==null?ItemStack.EMPTY:new ItemStack(item(part.item().toString()));}if(metal>2&&mold>0)return ItemStack.EMPTY;if(metal==1&&mold>=2)return ItemStack.EMPTY;return switch(mold){case 0->new ItemStack(item(namespace(metal)+n+"_ingot"));case 1->new ItemStack(item("smog:"+n+"_plate"));case 2->new ItemStack(item("smog:"+n+"_fitting"),4);case 3->new ItemStack(item("smog:"+n+"_pipe_part"),4);default->ItemStack.EMPTY;};}
     private static MachineEntity source(ServerLevel level,BlockPos table){
         record Node(BlockPos pos,int distance){}var queue=new ArrayDeque<Node>();Set<BlockPos> visited=new HashSet<>();queue.add(new Node(table,0));
         while(!queue.isEmpty()&&visited.size()<128){var node=queue.removeFirst();if(node.distance>8)continue;
@@ -136,14 +166,15 @@ public final class CopperWorkshops {
         }return null;
     }
     private static void casting(ServerLevel level,MachineEntity m){var s=m.copper;int mold=mold(m.getItem(1));if(mold<0){s.work=0;s.status=6;return;}
-        int metal=Math.floorMod(s.selection,3),cost=(mold==3?8:4)*U;var source=source(level,m.getBlockPos());
+        int metal=Math.floorMod(s.selection,MoltenMetalStorage.NAMES.length),cost=castCost(metal,mold);var source=source(level,m.getBlockPos());
         if(source==null){s.status=8;return;}
-        if(source.copper.metal(metal)<cost||castResult(metal,mold).isEmpty()){boolean available=false;for(int k:new int[]{2,0,1})if(source.copper.metal(k)>=cost&&!castResult(k,mold).isEmpty()){metal=k;available=true;break;}if(!available){s.status=8;return;}}
-        var result=castResult(metal,mold);if(!m.canOutput(result)){s.status=5;return;}s.selection=metal;
-        if(source.copper.heat<threshold(source)){s.status=4;return;}
+        if(source.copper.metal(metal)<cost||castResult(metal,mold).isEmpty()){boolean available=false;for(int k=0;k<MoltenMetalStorage.NAMES.length;k++)if(source.copper.metal(k)>=castCost(k,mold)&&!castResult(k,mold).isEmpty()){metal=k;available=true;break;}if(!available){s.status=8;return;}}
+        cost=castCost(metal,mold);var result=castResult(metal,mold);if(!m.canOutput(result)){s.status=5;return;}s.selection=metal;
+        if(!MetalProcessing.safe(source,metal)){s.status=9;return;}
+        if(source.copper.heat<meltingHeat(metal)){s.status=4;return;}
         s.status=7;
         if(working(m,metal+":"+mold,100,1)&&level.getGameTime()-source.copper.lastPour>=10){
-            source.copper.metal(metal,source.copper.metal(metal)-cost);source.copper.lastPour=level.getGameTime();source.sync();output(m,result);s.work=0;s.status=0;m.sync();
+            source.copper.metal(metal,source.copper.metal(metal)-cost);source.copper.lastPour=level.getGameTime();source.sync();output(m,result);if(extraForm(mold)>=0&&EXTRA_FORMS.get(extraForm(mold)).singleUse())m.getItem(1).shrink(1);s.work=0;s.status=0;m.sync();
         }
     }
     private static void kiln(ServerLevel level,MachineEntity m){var s=m.copper;var input=m.getItem(0);
@@ -156,8 +187,8 @@ public final class CopperWorkshops {
         if(!m.canOutput(result)){s.status=5;return;}if(s.heat<threshold(m)){s.status=s.burn==0?3:4;return;}s.status=0;
         if(working(m,BuiltInRegistries.ITEM.getKey(input.getItem()).toString(),200,1)){input.shrink(batch);output(m,result);s.work=0;}
     }
-    public static boolean button(MachineEntity m,int id){var s=m.copper;if(ManualWorkshops.handles(m)){if(id==22&&m.assembled()){ManualWorkshops.queue(m);return true;}return false;}
-        if(id==20||id==21){int max=workshop(m,"potter_table")?POTTERY.size():3;s.selection=Math.floorMod(s.selection+(id==20?-1:1),Math.max(1,max));s.work=0;m.setChanged();return true;}
+    public static boolean button(MachineEntity m,int id){if(ToolAssembly.handles(m))return ToolAssembly.button(m,id);var s=m.copper;if(ManualWorkshops.handles(m)){if(id==22&&m.assembled()){ManualWorkshops.queue(m);return true;}return false;}
+        if(id==20||id==21){int max=workshop(m,"potter_table")?POTTERY.size():MoltenMetalStorage.NAMES.length;s.selection=Math.floorMod(s.selection+(id==20?-1:1),Math.max(1,max));s.work=0;m.setChanged();return true;}
         if(id==22&&workshop(m,"potter_table")&&!POTTERY.isEmpty()){
             var recipe=POTTERY.get(Math.floorMod(s.selection,POTTERY.size()));var input=m.getItem(0);
             if(!is(input,recipe.input)||input.getCount()<recipe.count){s.status=2;return true;}
@@ -176,7 +207,7 @@ public final class CopperWorkshops {
         }return false;
     }
     public static void dropMetal(ServerLevel level,MachineEntity m){if(!workshop(m,"copper_hearth"))return;
-        for(int kind=0;kind<3;kind++){int units=m.copper.metal(kind);while(units>=MoltenMetalStorage.INGOT){int ingots=Math.min(64,units/MoltenMetalStorage.INGOT);Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,new ItemStack(item((kind==0?"minecraft:":"smog:")+METALS[kind]+"_ingot"),ingots));units-=ingots*MoltenMetalStorage.INGOT;}
+        for(int kind=0;kind<MoltenMetalStorage.NAMES.length;kind++){int units=m.copper.metal(kind);while(units>=MoltenMetalStorage.INGOT){int ingots=Math.min(64,units/MoltenMetalStorage.INGOT);Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,new ItemStack(item(namespace(kind)+MoltenMetalStorage.NAMES[kind]+"_ingot"),ingots));units-=ingots*MoltenMetalStorage.INGOT;}
             if(units>0){var residue=new ItemStack(item("smog:metal_residue"));var data=new net.minecraft.nbt.CompoundTag();data.putInt("metal",kind);data.putInt("units",units);residue.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,residue);}m.copper.metal(kind,0);}
     }
 }

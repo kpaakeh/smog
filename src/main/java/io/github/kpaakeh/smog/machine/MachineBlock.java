@@ -38,6 +38,9 @@ public class MachineBlock extends Block implements EntityBlock {
         }
         return net.minecraft.world.InteractionResult.PASS;
     }
+    @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state,net.minecraft.world.level.BlockGetter level,BlockPos pos,net.minecraft.world.phys.shapes.CollisionContext context){
+        var shape=io.github.kpaakeh.smog.copper.WorkshopShapes.shape(machineId.getPath(),state.getValue(FACING));return shape==null?super.getShape(state,level,pos,context):shape;
+    }
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()); }
     @Override protected BlockState rotate(BlockState state, Rotation rotation) { return state.setValue(FACING, rotation.rotate(state.getValue(FACING))); }
     @Override protected BlockState mirror(BlockState state, Mirror mirror) { return rotate(state, mirror.getRotation(state.getValue(FACING))); }

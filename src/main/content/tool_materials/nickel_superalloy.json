@@ -1,0 +1,38 @@
+{
+  "id": "nickel_superalloy",
+  "name": {
+    "en_us": "Nickel Superalloy",
+    "ru_ru": "Никелевый жаропрочный сплав"
+  },
+  "color": "B4A385",
+  "profiles": {
+    "head": {
+      "durability": 1200,
+      "mining_speed": 7.5,
+      "attack_damage": 4,
+      "harvest_tier": "diamond",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:nickel_superalloy_ingot",
+  "molten": "nickel_superalloy"
+}

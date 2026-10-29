@@ -1,0 +1,568 @@
+{
+  "forms": [
+    {
+      "id": "pickaxe_head",
+      "category": "head",
+      "name": {
+        "en_us": "Pickaxe Head",
+        "ru_ru": "Головка кирки"
+      },
+      "mining_tag": "minecraft:mineable/pickaxe",
+      "source_texture": "minecraft:item/iron_pickaxe",
+      "native_suffix": "pickaxe",
+      "head_region": [
+        4,
+        0,
+        16,
+        10
+      ],
+      "material_units": 27000
+    },
+    {
+      "id": "axe_head",
+      "category": "head",
+      "name": {
+        "en_us": "Axe Head",
+        "ru_ru": "Головка топора"
+      },
+      "mining_tag": "minecraft:mineable/axe",
+      "source_texture": "minecraft:item/iron_axe",
+      "native_suffix": "axe",
+      "head_region": [
+        7,
+        0,
+        16,
+        10
+      ],
+      "material_units": 27000
+    },
+    {
+      "id": "shovel_head",
+      "category": "head",
+      "name": {
+        "en_us": "Shovel Head",
+        "ru_ru": "Головка лопаты"
+      },
+      "mining_tag": "minecraft:mineable/shovel",
+      "source_texture": "minecraft:item/iron_shovel",
+      "native_suffix": "shovel",
+      "head_region": [
+        8,
+        0,
+        16,
+        9
+      ],
+      "material_units": 9000
+    },
+    {
+      "id": "hoe_head",
+      "category": "head",
+      "name": {
+        "en_us": "Hoe Head",
+        "ru_ru": "Головка мотыги"
+      },
+      "mining_tag": "minecraft:mineable/hoe",
+      "source_texture": "minecraft:item/iron_hoe",
+      "native_suffix": "hoe",
+      "head_region": [
+        5,
+        0,
+        16,
+        9
+      ],
+      "material_units": 18000
+    },
+    {
+      "id": "hammer_head",
+      "category": "head",
+      "name": {
+        "en_us": "Hammer Head",
+        "ru_ru": "Головка молота"
+      },
+      "mining_tag": "minecraft:mineable/pickaxe",
+      "prototype_shape": "hammer",
+      "material_units": 27000
+    },
+    {
+      "id": "chisel_head",
+      "category": "head",
+      "name": {
+        "en_us": "Chisel Head",
+        "ru_ru": "Головка резца"
+      },
+      "prototype_shape": "chisel",
+      "material_units": 9000
+    },
+    {
+      "id": "standard_handle",
+      "category": "handle",
+      "variant": "standard",
+      "name": {
+        "en_us": "Standard Handle",
+        "ru_ru": "Обычная рукоять"
+      },
+      "aliases": {
+        "wood": "wooden_handle"
+      },
+      "prototype_shape": "wooden_handle",
+      "material_units": 4500
+    },
+    {
+      "id": "light_handle",
+      "category": "handle",
+      "variant": "light",
+      "name": {
+        "en_us": "Light Handle",
+        "ru_ru": "Лёгкая рукоять"
+      },
+      "aliases": {
+        "wood": "light_handle"
+      },
+      "prototype_shape": "light_handle",
+      "material_units": 4500
+    },
+    {
+      "id": "reinforced_handle",
+      "category": "handle",
+      "variant": "reinforced",
+      "name": {
+        "en_us": "Reinforced Handle",
+        "ru_ru": "Усиленная рукоять"
+      },
+      "aliases": {
+        "wood": "reinforced_handle"
+      },
+      "prototype_shape": "reinforced_handle",
+      "material_units": 9000
+    },
+    {
+      "id": "short_handle",
+      "category": "handle",
+      "variant": "short",
+      "name": {
+        "en_us": "Short Handle",
+        "ru_ru": "Короткая рукоять"
+      },
+      "aliases": {
+        "wood": "short_handle"
+      },
+      "prototype_shape": "short_handle",
+      "material_units": 2250
+    },
+    {
+      "id": "hollow_handle",
+      "category": "handle",
+      "variant": "hollow",
+      "name": {
+        "en_us": "Hollow Handle",
+        "ru_ru": "Полая рукоять"
+      },
+      "aliases": {
+        "copper": "hollow_copper_handle"
+      },
+      "prototype_shape": "hollow_copper_handle",
+      "material_units": 6750
+    },
+    {
+      "id": "binding",
+      "category": "binding",
+      "name": {
+        "en_us": "Binding",
+        "ru_ru": "Крепление"
+      },
+      "aliases": {
+        "cord": "cord_binding",
+        "leather": "leather_binding"
+      },
+      "prototype_shape": "cord_binding",
+      "material_units": 9000
+    },
+    {
+      "id": "wrap",
+      "category": "wrap",
+      "name": {
+        "en_us": "Grip Wrap",
+        "ru_ru": "Обмотка"
+      },
+      "aliases": {
+        "fiber": "fiber_wrap",
+        "leather": "leather_wrap",
+        "wool": "wool_wrap"
+      },
+      "prototype_shape": "fiber_wrap",
+      "material_units": 4500
+    },
+    {
+      "id": "clamp",
+      "category": "binding",
+      "name": {
+        "en_us": "Clamp",
+        "ru_ru": "Хомут"
+      },
+      "aliases": {
+        "copper": "copper_clamp",
+        "bronze": "bronze_clamp"
+      },
+      "prototype_shape": "copper_clamp",
+      "material_units": 2250
+    }
+  ],
+  "templates": [
+    {
+      "id": "pickaxe",
+      "behavior": "pickaxe",
+      "name": {
+        "en_us": "Pickaxe",
+        "ru_ru": "Кирка"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "pickaxe_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "light_handle",
+            "reinforced_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "axe",
+      "behavior": "axe",
+      "name": {
+        "en_us": "Axe",
+        "ru_ru": "Топор"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "axe_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "light_handle",
+            "reinforced_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "shovel",
+      "behavior": "shovel",
+      "name": {
+        "en_us": "Shovel",
+        "ru_ru": "Лопата"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "shovel_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "light_handle",
+            "reinforced_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "hoe",
+      "behavior": "hoe",
+      "name": {
+        "en_us": "Hoe",
+        "ru_ru": "Мотыга"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "hoe_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "light_handle",
+            "reinforced_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "hammer",
+      "behavior": "hammer",
+      "name": {
+        "en_us": "Hammer",
+        "ru_ru": "Молот"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "hammer_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "light_handle",
+            "reinforced_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "chisel",
+      "behavior": "chisel",
+      "name": {
+        "en_us": "Chisel",
+        "ru_ru": "Резец"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "chisel_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "short_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "mattock",
+      "behavior": "pickaxe",
+      "name": {
+        "en_us": "Mining Mattock",
+        "ru_ru": "Горная киркомотыга"
+      },
+      "parts": [
+        {
+          "id": "pick",
+          "category": "head",
+          "forms": [
+            "pickaxe_head"
+          ],
+          "primary": true,
+          "offset": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "axe",
+          "category": "head",
+          "forms": [
+            "axe_head"
+          ],
+          "offset": [
+            -3,
+            1,
+            0.1
+          ]
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "reinforced_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    }
+  ],
+  "base_display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        -90,
+        55
+      ],
+      "translation": [
+        0,
+        4.0,
+        0.5
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        -55
+      ],
+      "translation": [
+        0,
+        4.0,
+        0.5
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        -90,
+        25
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        -25
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    }
+  }
+}

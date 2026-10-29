@@ -178,3 +178,8 @@ Added fixed 3x1x2 washing line: 8 raw copper + bucket water -> 5 concentrate, ea
 Added eight-bucket local water tank and finite manual pump above a source. Loaded adjacent compatible sinks only, no chunk loading or automatic infinite priming. Added field journal with 32 directly inspected resource records (dimension/world coordinates/material), item-bound custom data, duplicate prevention and browsing; no hidden-ore scan. Added seven informational copper advancements with no recipe gates or chat announcements. Modular JSON block assets retain 16px/block scale; separate layouts remove unused form/fuel slots from manual workshops and all slots from water supplies.
 
 Validation: 30 server GameTests passed; isolated real client scene with JEI passed and ten screenshots inspected, including liquid visible in assembled open hearth from overhead. All six JEI categories nonempty. 26 models/3416 faces audited without UV/coincident-face errors; 246 active PNGs, no missing/unused assets. Player ore artwork untouched. Full copper era is not complete: component tools, physical multi-metal process conditions, mold expansion, interchangeable press modules, local own pipes, carts/cranes/rope transport and mechanical drive remain tracked in COPPER_AGE_IMPLEMENTATION.md. Design files supplied by another chat remain unmodified and untracked.
+
+## 2026-10-29 — Workshop and smeltery descriptive reference
+
+Saved the previous Russian gameplay/visual explanation and an expanded smeltery walkthrough in docs/MODULAR_WORKSHOP_REFERENCE.md. Covers structure, fuel, parallel melting, fluid selection, automatic alloys, molds, casting, cooling, recycling and automation. Descriptive reference only; no gameplay changes. Product and author names omitted as requested.
+

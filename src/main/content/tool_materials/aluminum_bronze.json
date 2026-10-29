@@ -1,0 +1,38 @@
+{
+  "id": "aluminum_bronze",
+  "name": {
+    "en_us": "Aluminum Bronze",
+    "ru_ru": "Алюминиевая бронза"
+  },
+  "color": "BFA35E",
+  "profiles": {
+    "head": {
+      "durability": 450,
+      "mining_speed": 6.5,
+      "attack_damage": 3,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:aluminum_bronze_ingot",
+  "molten": "aluminum_bronze"
+}

@@ -15,9 +15,10 @@ public final class MachineMenu extends AbstractContainerMenu {
         super(layout.type,id);this.layout=layout;this.container=container;this.data=data;
         checkContainerSize(container,layout.inventorySize);checkContainerDataCount(data,DATA_SIZE);
         for(var position:layout.slots)addSlot(new Slot(container,position.index(),position.x(),position.y()) {
+            @Override public boolean mayPickup(Player player){return !(container instanceof MachineEntity machine&&io.github.kpaakeh.smog.copper.ToolAssembly.handles(machine)&&machine.copper.queued>0);}
             @Override public boolean mayPlace(ItemStack stack) { return !position.output() && container.canPlaceItem(position.index(),stack); }
         });
-        addStandardInventorySlots(inventory,8,108);addDataSlots(data);
+        addStandardInventorySlots(inventory,8,layout.height-82);addDataSlots(data);
     }
     public int energy() { return (data.get(2)&65535)|((data.get(3)&65535)<<16); }
     public int capacity() { return (data.get(4)&65535)|((data.get(5)&65535)<<16); }

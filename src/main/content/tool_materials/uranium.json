@@ -1,0 +1,38 @@
+{
+  "id": "uranium",
+  "name": {
+    "en_us": "Uranium",
+    "ru_ru": "Уран"
+  },
+  "color": "7F964D",
+  "profiles": {
+    "head": {
+      "durability": 220,
+      "mining_speed": 4,
+      "attack_damage": 2,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 0.96,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:uranium_ingot",
+  "molten": "uranium"
+}

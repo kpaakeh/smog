@@ -1,0 +1,38 @@
+{
+  "id": "electrum",
+  "name": {
+    "en_us": "Electrum",
+    "ru_ru": "Электрум"
+  },
+  "color": "E6D58E",
+  "profiles": {
+    "head": {
+      "durability": 110,
+      "mining_speed": 10,
+      "attack_damage": 1,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:electrum_ingot",
+  "molten": "electrum"
+}

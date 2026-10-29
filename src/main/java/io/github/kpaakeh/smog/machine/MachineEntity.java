@@ -56,7 +56,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         if(!strikes.add(id))return false;
         if(strikes.size()>128)strikes.remove(strikes.iterator().next());setChanged();return true;
     }
-    public MachineEntity(Identifier id,BlockPos pos,BlockState state) { super(Machines.get(id).entityType(),pos,state);machineId=id; }
+    public MachineEntity(Identifier id,BlockPos pos,BlockState state) { super(Machines.get(id).entityType(),pos,state);machineId=id;if(id.getPath().equals("tool_workbench"))items=NonNullList.withSize(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),ItemStack.EMPTY); }
     public Identifier machineId() { return machineId; }
     public MachineSpec spec() { return Machines.get(machineId).spec(); }
     public int progress() { return progress; }
@@ -106,7 +106,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
             }
             assemblyDetail=best==null?"":best.detail();return false;
         }
-        if(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)){
+        if((io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))){
             if(clickedPart!=null&&!clickedPart.equals(worldPosition)&&structure().parts().entrySet().stream().noneMatch(e->!e.getValue().value().equals("minecraft:air")&&worldPosition.offset(e.getKey().rotate(rotation())).equals(clickedPart)))return false;
             if(structure().check(server,worldPosition,rotation())!=MultiblockDefinition.Result.COMPLETE||!claimManual(server))return false;
         }
@@ -159,12 +159,14 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         var definition=structure();
         // An unloaded structure pauses; a missing part dismantles it until configured again.
         var result=definition==null?MultiblockDefinition.Result.INCOMPLETE:definition.check(server,worldPosition,rotation());
-        if(result==MultiblockDefinition.Result.COMPLETE&&io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)&&!claimManual(server)){disassemble();return false;}
+        if(result==MultiblockDefinition.Result.COMPLETE&&(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))&&!claimManual(server)){disassemble();return false;}
         if(result==MultiblockDefinition.Result.INCOMPLETE)disassemble();
         return result==MultiblockDefinition.Result.COMPLETE;
     }
     public void serverTick() {
         if(!(level instanceof ServerLevel server))return;
+        if(machineId.getPath().equals("tool_workbench")&&!getItem(5).isEmpty()&&!io.github.kpaakeh.smog.copper.ToolAssembly.canMount(getItem(5))){var preserved=removeItemNoUpdate(5);copper.queued=0;copper.work=0;Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
+        if(machineId.getPath().equals("tool_workbench"))for(int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize();slot<items.size();slot++)if(!items.get(slot).isEmpty()){var extra=items.get(slot);items.set(slot,ItemStack.EMPTY);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}
         if(spec().kind()!=MachineSpec.Kind.COPPER_WORKSHOP)EnergyNetwork.track(this);
         if(!validate(server) || !enabled)return;
         switch(spec().kind()) {
@@ -273,6 +275,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     @Override protected void setItems(NonNullList<ItemStack> value) { items=value; }
     @Override public int getContainerSize() { return items.size(); }
     @Override public boolean canPlaceItem(int slot,ItemStack stack) {
+        if(io.github.kpaakeh.smog.copper.ToolAssembly.handles(this))return copper.queued==0&&io.github.kpaakeh.smog.copper.ToolAssembly.accepts(this,slot,stack);
         if(spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP)return io.github.kpaakeh.smog.copper.CopperWorkshops.accepts(this,slot,stack);
         return spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?slot==2&&stack.has(net.minecraft.core.component.DataComponents.COOKING_FUEL)
             :!spec().source()&&!spec().relay()&&slot==0;
@@ -290,14 +293,14 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         @Override public void set(int index,int value) {}
     };
     @Override protected AbstractContainerMenu createMenu(int id,Inventory inventory) {
-        var layout=GuiLayouts.get(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)?"manual_workshop":io.github.kpaakeh.smog.copper.WaterSupply.handles(this)?"water_supply":spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
+        var layout=GuiLayouts.get(io.github.kpaakeh.smog.copper.ToolAssembly.handles(this)?"tool_workbench":(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))?"manual_workshop":io.github.kpaakeh.smog.copper.WaterSupply.handles(this)?"water_supply":spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
     }
     @Override public void preRemoveSideEffects(BlockPos pos,BlockState state) {
         super.preRemoveSideEffects(pos,state);
         if(level instanceof ServerLevel server){ComplexFormationData.get(server).release(worldPosition);io.github.kpaakeh.smog.copper.CopperWorkshops.dropMetal(server,this);Containers.dropContents(server,worldPosition,this);}
     }
     @Override protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);ContainerHelper.saveAllItems(output,items);
+        super.saveAdditional(output);output.putInt("inventory_size",items.size());ContainerHelper.saveAllItems(output,items);
         output.putInt("progress",progress);output.putInt("energy",energy);output.putInt("burn_ticks",burnTicks);output.putInt("burn_total",burnTotal);output.putBoolean("enabled",enabled);
         output.store("strikes",com.mojang.serialization.Codec.STRING.listOf(),List.copyOf(strikes));
         output.putInt("output_limit",outputLimit);copper.save(output);
@@ -306,7 +309,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket(){return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);}
     @Override public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries){return saveCustomOnly(registries);}
     @Override protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);items=NonNullList.withSize(4,ItemStack.EMPTY);ContainerHelper.loadAllItems(input,items);
+        super.loadAdditional(input);items=NonNullList.withSize(machineId.getPath().equals("tool_workbench")?Math.max(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),Math.clamp(input.getIntOr("inventory_size",256),6,256)):4,ItemStack.EMPTY);ContainerHelper.loadAllItems(input,items);
         progress=Math.max(0,input.getIntOr("progress",0));energy=Math.clamp(input.getIntOr("energy",0),0,capacity());
         burnTicks=Math.max(0,input.getIntOr("burn_ticks",0));burnTotal=Math.max(burnTicks,input.getIntOr("burn_total",0));enabled=input.getBooleanOr("enabled",true);
         processingItem=items.get(0).getItem();copper.load(input);

@@ -1,0 +1,31 @@
+{
+  "id": "wood",
+  "name": {
+    "en_us": "Wood",
+    "ru_ru": "Древесина"
+  },
+  "color": "B8884A",
+  "profiles": {
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "light_handle",
+        "reinforced_handle",
+        "short_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1,
+      "variants": {
+        "light": {
+          "speed_multiplier": 1.08,
+          "durability_multiplier": 0.85
+        },
+        "reinforced": {
+          "speed_multiplier": 0.97,
+          "durability_multiplier": 1.15
+        }
+      }
+    }
+  },
+  "repair_ingredient": "#minecraft:planks"
+}

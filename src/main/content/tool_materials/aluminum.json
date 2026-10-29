@@ -1,0 +1,38 @@
+{
+  "id": "aluminum",
+  "name": {
+    "en_us": "Aluminum",
+    "ru_ru": "Алюминий"
+  },
+  "color": "C5CDD3",
+  "profiles": {
+    "head": {
+      "durability": 180,
+      "mining_speed": 6,
+      "attack_damage": 2,
+      "harvest_tier": "iron",
+      "casting": true,
+      "shaping": true,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": true
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": true
+    }
+  },
+  "repair_item": "smog:aluminum_ingot",
+  "molten": "aluminum"
+}

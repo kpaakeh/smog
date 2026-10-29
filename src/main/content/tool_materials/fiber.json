@@ -1,0 +1,18 @@
+{
+  "id": "fiber",
+  "name": {
+    "en_us": "Plant Fiber",
+    "ru_ru": "Растительное волокно"
+  },
+  "color": "C0B78B",
+  "profiles": {
+    "wrap": {
+      "forms": [
+        "wrap"
+      ],
+      "speed_multiplier": 1.03,
+      "durability_multiplier": 1.02
+    }
+  },
+  "repair_ingredient": "smog:plant_fiber"
+}

@@ -24,19 +24,43 @@ public final class WaterSupply {
                 m.copper.processFluid+=amount;m.copper.pumpBudget-=amount;
             }
         }
-        int budget=Math.min(8100,m.copper.processFluid);
-        for(var side:Direction.values()){
-            if(budget<=0)break;var pos=m.getBlockPos().relative(side);if(!level.hasChunkAt(pos))continue;
-            if(level.getBlockEntity(pos) instanceof MachineEntity other){
-                if(CopperWorkshops.workshop(other,"hand_water_pump")||CopperWorkshops.workshop(other,"water_tank")&&!CopperWorkshops.workshop(m,"hand_water_pump"))continue;
+        transfer(level,m,8100);m.sync();
+    }
+    public static boolean connects(net.minecraft.world.level.LevelReader level,net.minecraft.core.BlockPos pos){
+        if(!level.hasChunkAt(pos))return false;var state=level.getBlockState(pos);String name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
+        if(state.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet"))return true;
+        if(level.getBlockEntity(pos) instanceof MachineEntity machine)return handles(machine)||CopperWorkshops.workshop(machine,"washing_trough");
+        return level instanceof ServerLevel server&&FluidStorage.SIDED.find(server,pos,null)!=null;
+    }
+    private record Sink(net.fabricmc.fabric.api.transfer.v1.storage.Storage<net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant> storage,net.minecraft.core.BlockPos outlet){}
+    private static java.util.List<Sink> sinks(ServerLevel level,MachineEntity source){
+        var result=new java.util.ArrayList<Sink>();var queue=new java.util.ArrayDeque<net.minecraft.core.BlockPos>();var seen=new java.util.HashSet<net.minecraft.core.BlockPos>();var start=source.getBlockPos();queue.add(start);seen.add(start);
+        while(!queue.isEmpty()&&seen.size()<=256){
+            var current=queue.removeFirst();var state=level.getBlockState(current);String currentName=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
+            if(currentName.equals("smog:water_outlet")){
+                if(state.getValue(WorkshopPartBlock.OPEN)&&level.hasChunkAt(current.below())){var storage=FluidStorage.SIDED.find(level,current.below(),Direction.UP);if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,current));}continue;
             }
-            var sink=FluidStorage.SIDED.find(level,pos,side.getOpposite());if(sink==null||sink==m.processFluid)continue;
+            if(currentName.equals("smog:water_valve")&&!state.getValue(WorkshopPartBlock.OPEN))continue;
+            for(var side:Direction.values()){
+                if(currentName.equals("smog:water_valve")&&side.getAxis()!=state.getValue(WorkshopPartBlock.FACING).getAxis())continue;
+                var pos=current.relative(side);if(!level.hasChunkAt(pos)||Math.abs(pos.getX()-start.getX())>16||Math.abs(pos.getY()-start.getY())>16||Math.abs(pos.getZ()-start.getZ())>16||!seen.add(pos))continue;
+                var next=level.getBlockState(pos);String name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(next.getBlock()).toString();
+                if(name.equals("smog:water_valve")&&side.getAxis()!=next.getValue(WorkshopPartBlock.FACING).getAxis())continue;
+                if(name.equals("smog:water_outlet")&&side!=next.getValue(WorkshopPartBlock.FACING))continue;
+                if(next.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet")){queue.add(pos);continue;}
+                if(level.getBlockEntity(pos) instanceof MachineEntity other&&(CopperWorkshops.workshop(other,"hand_water_pump")||CopperWorkshops.workshop(other,"water_tank")&&!CopperWorkshops.workshop(source,"hand_water_pump")))continue;
+                var storage=FluidStorage.SIDED.find(level,pos,side.getOpposite());if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,null));
+            }
+        }return result;
+    }
+    public static int transfer(ServerLevel level,MachineEntity source,int limit){
+        int budget=Math.min(limit,source.copper.processFluid),total=0;if(budget<=0)return 0;
+        for(var sink:sinks(level,source)){
+            if(budget<=0)break;
             try(var tx=Transaction.openOuter()){
-                long accepted=sink.insert(m.processFluid.resource(),budget,tx);
-                long removed=m.processFluid.extract(m.processFluid.resource(),accepted,tx);
-                if(accepted==removed){tx.commit();budget-=accepted;}
+                long accepted=sink.storage.insert(source.processFluid.resource(),budget,tx);long removed=source.processFluid.extract(source.processFluid.resource(),accepted,tx);
+                if(accepted==removed&&accepted>0){tx.commit();budget-=accepted;total+=accepted;if(sink.outlet!=null)level.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH,sink.outlet.getX()+.5,sink.outlet.getY()+.1,sink.outlet.getZ()+.5,3,.04,.2,.04,0);}
             }
-        }
-        m.sync();
+        }return total;
     }
 }

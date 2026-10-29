@@ -28,7 +28,7 @@ public final class WorkshopPartBlock extends Block {
         return defaultBlockState().setValue(FACING,context.getHorizontalDirection().getOpposite());
     }
     @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,net.minecraft.world.phys.BlockHitResult hit){
-        if(!attachment())return InteractionResult.PASS;
+        if(!attachment()&&!partName().equals("water_valve")&&!partName().equals("water_outlet"))return InteractionResult.PASS;
         if(!level.isClientSide()){boolean open=!state.getValue(OPEN);level.setBlock(pos,state.setValue(OPEN,open),Block.UPDATE_ALL);player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(open?"message.smog.valve_open":"message.smog.valve_closed"));}
         return InteractionResult.SUCCESS;
     }
@@ -37,7 +37,7 @@ public final class WorkshopPartBlock extends Block {
     @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state,net.minecraft.world.level.BlockGetter level,BlockPos pos,net.minecraft.world.phys.shapes.CollisionContext context){
         var name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath();
         if(name.equals("ceramic_crucible")||name.equals("large_ceramic_crucible")){double lo=name.startsWith("large")?0:2,hi=16-lo;return net.minecraft.world.phys.shapes.Shapes.or(box(lo,0,lo,hi,3,hi),box(lo,3,lo,lo+2,14,hi),box(hi-2,3,lo,hi,14,hi),box(lo+2,3,lo,hi-2,14,lo+2),box(lo+2,3,hi-2,hi-2,14,hi));}
-        return super.getShape(state,level,pos,context);
+        var shape=WorkshopShapes.shape(name,state.getValue(FACING));return shape==null?super.getShape(state,level,pos,context):shape;
     }
     @Override protected InteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,InteractionHand hand,net.minecraft.world.phys.BlockHitResult hit){
         if(stack.getItem() instanceof ConfiguratorItem tool)return tool.useOn(new net.minecraft.world.item.context.UseOnContext(player,hand,hit));

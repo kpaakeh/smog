@@ -1,0 +1,18 @@
+{
+  "id": "wool",
+  "name": {
+    "en_us": "Wool",
+    "ru_ru": "Шерсть"
+  },
+  "color": "E6E6E8",
+  "profiles": {
+    "wrap": {
+      "forms": [
+        "wrap"
+      ],
+      "speed_multiplier": 1.02,
+      "durability_multiplier": 1
+    }
+  },
+  "repair_ingredient": "#minecraft:wool"
+}

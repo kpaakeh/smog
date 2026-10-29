@@ -1,0 +1,38 @@
+{
+  "id": "molybdenum",
+  "name": {
+    "en_us": "Molybdenum",
+    "ru_ru": "Молибден"
+  },
+  "color": "8E9FAB",
+  "profiles": {
+    "head": {
+      "durability": 1000,
+      "mining_speed": 7,
+      "attack_damage": 4,
+      "harvest_tier": "diamond",
+      "casting": true,
+      "shaping": false,
+      "shaping_extra_units": 9000
+    },
+    "handle": {
+      "forms": [
+        "standard_handle",
+        "short_handle",
+        "hollow_handle"
+      ],
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "shaping": false
+    },
+    "binding": {
+      "forms": [
+        "clamp"
+      ],
+      "durability_multiplier": 1.08,
+      "shaping": false
+    }
+  },
+  "repair_item": "smog:molybdenum_ingot",
+  "molten": "molybdenum"
+}

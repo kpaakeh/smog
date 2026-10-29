@@ -27,7 +27,12 @@ public final class ModCreativeTabs {
             ModItems.all().stream().filter(e->e.tab().equals("copper_age")).forEach(e->copper.add(e.item()));
             ModFluids.all().stream().filter(f->f.name.equals("plant_oil")).forEach(f->copper.add(f.bucket));
             ModAlloys.all().stream().filter(e->e.name().equals("bronze")).forEach(e->copper.addAll(e.contents()));
-            Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id("copper_age"),FabricCreativeModeTab.builder().title(Component.translatable("itemGroup.smog.copper_age")).icon(()->Items.COPPER_INGOT.getDefaultInstance()).displayItems((parameters,output)->copper.forEach(output::accept)).build());
+            Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id("copper_age"),FabricCreativeModeTab.builder().title(Component.translatable("itemGroup.smog.copper_age")).icon(()->Items.COPPER_INGOT.getDefaultInstance()).displayItems((parameters,output)->copper.forEach(value->{
+                if(value instanceof io.github.kpaakeh.smog.copper.ModularToolItem){
+                    var schema=io.github.kpaakeh.smog.copper.ToolDefinitions.template(BuiltInRegistries.ITEM.getKey((Item)value).getPath().replace("modular_",""));
+                    for(String material:io.github.kpaakeh.smog.copper.ToolDefinitions.parts().stream().filter(p->p.form().category().equals("head")).map(p->p.material().id()).distinct().toList()){var example=io.github.kpaakeh.smog.copper.ToolParts.example(schema,material);if(!example.isEmpty())output.accept(example);}
+                }else output.accept(value);
+            })).build());
         }
         // Catalog ownership is explicit: test fixtures and late registrations cannot leak into tabs.
         List<net.minecraft.world.level.block.Block> blocks=new ArrayList<>();

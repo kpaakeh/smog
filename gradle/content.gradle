@@ -4,10 +4,49 @@ import groovy.json.JsonSlurper
 // The catalog is the single source for registration and generated resources.
 abstract class GenerateSmogContent extends DefaultTask {
     @InputFile abstract RegularFileProperty getCatalogFile()
+    @InputDirectory abstract DirectoryProperty getToolMaterialsDirectory()
+    @InputFile abstract RegularFileProperty getToolTemplatesFile()
     @OutputDirectory abstract DirectoryProperty getTargetDirectory()
     @javax.inject.Inject abstract FileSystemOperations getFileSystem()
     @TaskAction void generate() {
         def root = new JsonSlurper().parse(catalogFile.get().asFile)
+        def materialData=[materials:toolMaterialsDirectory.get().asFile.listFiles().findAll { it.isFile()&&it.name.endsWith('.json') }.sort { it.name }.collect { new JsonSlurper().parse(it) }]
+        def materialIds=new HashSet<String>()
+        materialData.materials.each { material ->
+            if (!(material.id instanceof String) || !(material.id ==~ /[a-z0-9_]+/)) throw new GradleException("Invalid tool material id: ${material.id}")
+            if (!materialIds.add(material.id)) throw new GradleException("Duplicate tool material id: ${material.id}")
+        }
+        def templateData=new JsonSlurper().parse(toolTemplatesFile.get().asFile)
+        root.tool_materials=materialData.materials;root.tool_forms=templateData.forms;root.tool_templates=templateData.templates.collect { schema ->
+            def copy=new LinkedHashMap(schema);copy.parts=[]
+            schema.parts.each { role -> int copies=role.containsKey('count')?role.count:1;if(copies<1||copies>254)throw new GradleException('Invalid tool part count');(0..<copies).each { number -> def expanded=new LinkedHashMap(role);expanded.remove('count');expanded.id=copies==1?role.id:"${role.id}_${number+1}";copy.parts.add(expanded) } }
+            if(copy.parts.size()>254)throw new GradleException('Tool exceeds native component container limit')
+            copy
+        };root.tool_parts=[:]
+        root.tool_materials.each { material -> root.tool_forms.each { form ->
+            def profile=material.profiles[form.category]
+            if(profile!=null&&(!profile.containsKey('forms')||form.id in profile.forms)) {
+                def variants=[false];if(form.category=='head'&&profile.casting)variants.add(true)
+                variants.each { cast ->
+                    def partName=cast?"${material.id}_cast_${form.id}":form.aliases?.get(material.id)?:"${material.id}_${form.id}"
+                    root.tool_parts["smog:$partName"]=[material:material.id,form:form.id,cast:cast]
+                    root.items.add([name:partName,kind:'tool_part',display:"${material.name.en_us}: ${cast?'Casting - ':''}${form.name.en_us}",display_ru:"${material.name.ru_ru}: ${cast?'Отливка — ':''}${form.name.ru_ru}",tab:'copper_age'])
+                }
+            }
+        } }
+        root.tool_forms.findAll { it.category=='head' }.each { form ->
+            def moldName=form.id.replaceFirst(/_head$/,'_mold')
+            [false,true].each { raw -> root.items.add([name:(raw?'unfired_':'')+moldName,kind:'tool_mold',form:form.id,raw:raw,display:(raw?'Unfired mold: ':'Mold: ')+form.name.en_us,display_ru:(raw?'Сырая форма: ':'Форма: ')+form.name.ru_ru,tab:'copper_age']) }
+            root.pottery.add([input:'minecraft:clay_ball',count:form.mold_clay ?: 3,output:"smog:unfired_$moldName"])
+            root.firing.add([input:"smog:unfired_$moldName",output:"smog:$moldName"])
+            root.tags.find { it.registry=='item'&&it.id=='c:unfired_ceramics' }.values.add("smog:unfired_$moldName")
+        }
+        root.tool_templates.each { schema ->
+            def memberships=['minecraft:enchantable/durability']
+            def miningForms=schema.parts.findAll { it.category=='head' }.collectMany { role -> root.tool_forms.findAll { form -> form.category=='head'&&(!role.forms||form.id in role.forms)&&form.mining_tag } }
+            if(miningForms){memberships.addAll(['minecraft:enchantable/mining','minecraft:enchantable/mining_loot']);miningForms.each { form -> def family=form.mining_tag.split('/').last();memberships.add('minecraft:'+['pickaxe':'pickaxes','axe':'axes','shovel':'shovels','hoe':'hoes'].get(family,'pickaxes')) }}
+            root.items.add([name:"modular_${schema.id}",kind:'modular_tool',template:schema.id,display:"Assembled ${schema.name.en_us}",display_ru:"Составной инструмент: ${schema.name.ru_ru}",tags:memberships.unique(),tab:'copper_age'])
+        }
         def directory = targetDirectory.get().asFile
         fileSystem.delete { delete(directory) }
         def write = { String path, Object value ->
@@ -33,7 +72,7 @@ abstract class GenerateSmogContent extends DefaultTask {
         def en = [:]; def ru = [:]
         def item = { String name, String english, String russian, List memberships ->
             claim(name)
-            write("assets/smog/models/item/${name}.json", [parent:'minecraft:item/generated',textures:[layer0:"smog:item/$name"]])
+            if(!(root.items ?: []).any { it.name==name && it.model })write("assets/smog/models/item/${name}.json", [parent:'minecraft:item/generated',textures:[layer0:"smog:item/$name"]])
             write("assets/smog/items/${name}.json", [model:[type:'minecraft:model',model:"smog:item/$name"]])
             en["item.smog.$name"] = english; ru["item.smog.$name"] = russian
             memberships.each { t -> tag('item', t, "smog:$name") }
@@ -76,7 +115,13 @@ abstract class GenerateSmogContent extends DefaultTask {
                     }
                 }
             }
-            write("assets/smog/blockstates/${name}.json", [variants:variants])
+            if(entry.pipe){
+                def parts=[[apply:[model:"smog:block/${name}_core"]]]
+                [north:[0,0],east:[0,90],south:[0,180],west:[0,270],up:[270,0],down:[90,0]].each { direction,angles ->
+                    parts.add([when:[(direction):'true'],apply:[model:"smog:block/${name}_arm",x:angles[0],y:angles[1]]])
+                }
+                write("assets/smog/blockstates/${name}.json",[multipart:parts])
+            }else write("assets/smog/blockstates/${name}.json", [variants:variants])
             write("assets/smog/items/${name}.json", [model:[type:'minecraft:model', model:baseModel]])
             def drop = entry.drop ?: id
             validId(drop)
@@ -197,6 +242,29 @@ abstract class GenerateSmogContent extends DefaultTask {
         (root.items ?: []).each { entry ->
             item(entry.name,entry.display ?: entry.name,entry.display_ru ?: entry.name,entry.tags ?: [])
             if(entry.model)write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:entry.model]])
+            if(entry.kind=='tool_mold')write("assets/smog/models/item/${entry.name}.json",[parent:'minecraft:item/generated',textures:[layer0:"smog:item/tool_molds/${entry.raw?'unfired_':''}${entry.form}"]])
+            if(entry.kind=='tool_part') {
+                def metadata=root.tool_parts["smog:${entry.name}"];def material=root.tool_materials.find { it.id==metadata.material };def form=root.tool_forms.find { it.id==metadata.form };def texture=(metadata.cast?'cast_':'')+form.id
+                write("assets/smog/models/item/tool_forms/${texture}.json",[parent:'minecraft:item/handheld',textures:[layer0:"smog:item/tool_forms/$texture"]])
+                write("assets/smog/models/item/${entry.name}.json",[parent:"smog:item/tool_forms/$texture"])
+                write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:model',model:"smog:item/${entry.name}",tints:[[type:'minecraft:custom_model_data',index:0,default:Integer.parseInt(material.color.replace('#',''),16)]]]])
+            }
+            if(entry.kind=='modular_tool') {
+                def schema=root.tool_templates.find { it.id==entry.template };def layers=[]
+                schema.parts.eachWithIndex { role,partIndex ->
+                    def options=[]
+                    root.tool_forms.findAll { form -> form.category==role.category&&(!role.forms||form.id in role.forms) }.each { form ->
+                        def layerModel="tool_layers/${schema.id}_${role.id}_${form.id}";def offset=role.offset?:[0,0,0];def visualGroup=form.category in ['binding','wrap']?'tool_overlays':'tool_forms'
+                        if(visualGroup=='tool_overlays')write("assets/smog/models/item/tool_overlays/${form.id}.json",[parent:'minecraft:item/handheld',textures:[layer0:"smog:item/tool_overlays/${form.id}"]])
+                        def display=[:];['gui','ground','fixed','firstperson_righthand','firstperson_lefthand','thirdperson_righthand','thirdperson_lefthand'].each { context -> def base=templateData.base_display?.get(context)?:[:];def position=base.translation?:[0,0,0];def scale=base.scale?:[1,1,1];display[context]=[rotation:base.rotation?:[0,0,0],translation:(0..<3).collect { axis -> position[axis]+offset[axis] },scale:scale.collect { it*(schema.render_scale?:1) }] }
+                        write("assets/smog/models/item/${layerModel}.json",[parent:"smog:item/${visualGroup}/${form.id}",display:display])
+                        options.add([when:form.id,model:[type:'minecraft:model',model:"smog:item/$layerModel",tints:[[type:'minecraft:custom_model_data',index:partIndex,default:0xFFFFFF]]]])
+                    }
+                    layers.add([type:'minecraft:select',property:'minecraft:custom_model_data',index:partIndex,cases:options,fallback:[type:'minecraft:empty']])
+                }
+                write("assets/smog/models/item/${entry.name}.json",[parent:'minecraft:item/generated',textures:[layer0:'smog:item/tool_forms/pickaxe_head']])
+                write("assets/smog/items/${entry.name}.json",[model:[type:'minecraft:composite',models:layers]])
+            }
         }
         root.machines.each { block(it, it.name, it.texture, true) }
         (root.crafting ?: []).each { entry -> recipe(entry.name,entry.data,entry.unlock) }
@@ -259,6 +327,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             en["multiblock.smog.${entry.name}"] = entry.display ?: entry.name
             ru["multiblock.smog.${entry.name}"] = entry.display_ru ?: entry.display ?: entry.name
         }
+        root.tool_templates.each { schema -> en["tool.smog.template.${schema.id}"]=schema.name.en_us;ru["tool.smog.template.${schema.id}"]=schema.name.ru_ru }
         en.putAll(root.translations?.en_us ?: [:]);ru.putAll(root.translations?.ru_ru ?: [:]);
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
@@ -268,6 +337,8 @@ def catalogFile = layout.projectDirectory.file('src/main/content/smog.content.js
 def generatedContent = layout.buildDirectory.dir('generated/smog-content')
 tasks.register('generateContent', GenerateSmogContent) {
     it.catalogFile.set(catalogFile)
+    it.toolMaterialsDirectory.set(layout.projectDirectory.dir('src/main/content/tool_materials'))
+    it.toolTemplatesFile.set(layout.projectDirectory.file('src/main/content/tool_templates.json'))
     it.targetDirectory.set(generatedContent)
 }
 sourceSets.main.resources.srcDir(generatedContent)
