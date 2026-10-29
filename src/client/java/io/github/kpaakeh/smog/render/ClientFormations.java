@@ -36,6 +36,7 @@ public final class ClientFormations {
         Set<BlockPos> next = new HashSet<>(), centers = new HashSet<>();
         LOADED.removeIf(MachineEntity::isRemoved);
         for (MachineEntity machine : LOADED) {
+            if(machine.complexDefinition()!=null)continue;
             var structure = machine.structure();
             if (machine.getLevel() != level || structure == null || !machine.assembled()) continue;
             BlockPos origin = machine.getBlockPos(); Rotation rotation = rotation(machine);

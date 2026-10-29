@@ -27,7 +27,8 @@ public final class ContentCatalog {
             for (var value : root.getAsJsonArray("blocks")) {
                 var o = value.getAsJsonObject(); var properties=BlockBehaviour.Properties.of().strength(hardness(o)).noOcclusion().lightLevel(state->o.has("light")?o.get("light").getAsInt():0).requiresCorrectToolForDrops();
                 if(o.get("name").getAsString().equals("casting_faucet"))properties.dynamicShape();
-                if(o.has("pipe")&&o.get("pipe").getAsBoolean())ModBlocks.register(o.get("name").getAsString(),io.github.kpaakeh.smog.copper.WaterPipeBlock::new,properties,true);
+                if(o.get("name").getAsString().equals("smeltery_item_port"))ModBlocks.register("smeltery_item_port",io.github.kpaakeh.smog.copper.SmelteryItemPortBlock::new,properties,true);
+                else if(o.has("pipe")&&o.get("pipe").getAsBoolean())ModBlocks.register(o.get("name").getAsString(),io.github.kpaakeh.smog.copper.WaterPipeBlock::new,properties,true);
                 else if(o.has("hollow_crucible")||o.has("horizontal")&&o.get("horizontal").getAsBoolean())ModBlocks.register(o.get("name").getAsString(),io.github.kpaakeh.smog.copper.WorkshopPartBlock::new,properties,true);
                 else ModBlocks.register(o.get("name").getAsString(),properties);
             }

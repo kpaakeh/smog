@@ -30,7 +30,7 @@ public final class MoltenRendering {
             }
         });
     }
-    private static void quad(VertexConsumer out,PoseStack.Pose pose,float[][] points,float width,float height,int light){float[][] uv={{0,0},{0,height},{width,height},{width,0}};for(int n=0;n<4;n++)vertex(out,pose,points[n][0],points[n][1],points[n][2],uv[n][0],uv[n][1],-1,light);}
+    private static void quad(VertexConsumer out,PoseStack.Pose pose,float[][] p,float width,float height,int light){float[][] uv={{0,0},{0,height},{width,height},{width,0}};float ax=p[3][0]-p[0][0],ay=p[3][1]-p[0][1],az=p[3][2]-p[0][2],bx=p[2][0]-p[3][0],by=p[2][1]-p[3][1],bz=p[2][2]-p[3][2];float nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx,length=(float)Math.sqrt(nx*nx+ny*ny+nz*nz);if(length==0)return;for(int n:new int[]{0,3,2,1})out.addVertex(pose,p[n][0],p[n][1],p[n][2]).setColor(-1).setUv(uv[n][0],uv[n][1]).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose,nx/length,ny/length,nz/length);}
     public static void submitStreams(List<Stream> streams,PoseStack pose,SubmitNodeCollector collector){
         for(var s:streams)collector.submitCustomGeometry(pose,RenderTypes.entitySolid(surface(s.metal)),(matrix,out)->{
             float r=.0625f,bottom=s.y-s.height;int light=net.minecraft.util.LightCoordsUtil.FULL_BRIGHT;

@@ -44,17 +44,6 @@ public final class SmogJeiPlugin implements IModPlugin {
             if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
         }
         registration.addRecipes(TYPE, pages);
-        java.util.Map<String,String> guides=java.util.Map.ofEntries(
-            java.util.Map.entry("copper_water_pipe","water"),java.util.Map.entry("water_valve","water"),java.util.Map.entry("water_outlet","water"),java.util.Map.entry("smeltery_fuel_tank","fuel_tank"),java.util.Map.entry("casting_basin","basin"),java.util.Map.entry("smeltery_glass","hearth"),java.util.Map.entry("loading_crane","crane"),java.util.Map.entry("rope_anchor","ropeway"),java.util.Map.entry("closed_crucible_insert","closed_insert"),java.util.Map.entry("bronze_drive","drive"),java.util.Map.entry("fiber_press_basket","pressing"),java.util.Map.entry("tool_workbench","tools"),java.util.Map.entry("water_tank","water"),java.util.Map.entry("hand_water_pump","water"),java.util.Map.entry("washing_trough","washing"),java.util.Map.entry("lever_press","pressing"),java.util.Map.entry("copper_hearth","hearth"),java.util.Map.entry("ceramic_kiln","kiln"),java.util.Map.entry("casting_table","casting"),java.util.Map.entry("potter_table","pottery"),java.util.Map.entry("hand_bellows","bellows"),java.util.Map.entry("ceramic_crucible","crucible"),java.util.Map.entry("large_ceramic_crucible","crucible"),java.util.Map.entry("solid_firebox","firebox"),java.util.Map.entry("casting_faucet","spout"),java.util.Map.entry("air_nozzle","bellows"),java.util.Map.entry("casting_spout","spout"),java.util.Map.entry("casting_channel","spout"),java.util.Map.entry("air_intake","bellows"),java.util.Map.entry("kiln_vent","kiln"),java.util.Map.entry("firebrick_casing","lining"));
-        guides.forEach((id,guide)->registration.addIngredientInfo(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(ModBlocks.id(id)),Component.translatable("jei.smog.guide."+guide)));
-        for(var entry:io.github.kpaakeh.smog.registry.ModItems.all())if(entry.tab().equals("copper_age")){
-            String name=net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(entry.item()).getPath();String guide=name.equals("fluid_canister")?"canister":name.equals("handcart")?"handcart":name.equals("freight_rope")?"ropeway":name.contains("_head")||name.contains("handle")||name.contains("binding")||name.contains("_clamp")||name.contains("_wrap")||name.startsWith("modular_")||name.equals("stone_work_hammer")?"tools":name.equals("field_journal")?"survey":name.equals("copper_concentrate")?"washing":java.util.Set.of("seed_cake","plant_oil_bottle","waxed_cord","lubricating_compound").contains(name)?"pressing":name.contains("mold")?"molds":name.equals("configurator")?"configurator":name.equals("metal_residue")?"residue":name.startsWith("unfired")||name.contains("clay")||name.contains("firebrick")?"pottery":"parts";
-            registration.addIngredientInfo(entry.item(),Component.translatable("jei.smog.guide."+guide));
-        }
-        io.github.kpaakeh.smog.registry.ModAlloys.all().stream().filter(a->a.name().equals("bronze")).forEach(a->a.contents().forEach(item->registration.addIngredientInfo(item,Component.translatable("jei.smog.guide.bronze"))));
-        registration.addIngredientInfo(net.minecraft.world.item.Items.BLAZE_POWDER,Component.translatable("jei.smog.guide.fuel_tank"));
-        registration.addIngredientInfo(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(ModBlocks.id("blazing_fuel_bucket")),Component.translatable("jei.smog.guide.fuel_tank"));
-        for(var fluid:io.github.kpaakeh.smog.fluid.ModFluids.all())if(fluid.name.startsWith("molten_"))registration.addIngredientInfo(fluid.bucket,Component.translatable("jei.smog.guide.molten"));
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))CopperCategory.TYPES.forEach((machine,type)->registration.addRecipes(type,io.github.kpaakeh.smog.copper.CopperWorkshops.recipes().stream().filter(recipe->recipe.machine().equals(machine)).toList()));
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER))registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
@@ -71,7 +60,7 @@ public final class SmogJeiPlugin implements IModPlugin {
         @Override public IRecipeType<Page> getRecipeType() { return TYPE; }
         @Override public Component getTitle() { return Component.translatable("jei.smog.multiblocks"); }
         @Override public int getWidth() { return 170; }
-        @Override public int getHeight() { return 225; }
+        @Override public int getHeight() { return 154; }
         @Override public IDrawable getIcon() { return icon; }
         @Override public void setRecipe(IRecipeLayoutBuilder builder, Page page, IFocusGroup focuses) {
             builder.addOutputSlot(150,0).add(page.controller());
@@ -90,8 +79,6 @@ public final class SmogJeiPlugin implements IModPlugin {
             var preview=new StructurePreviewWidget(page);
             builder.addWidget(preview);builder.addInputHandler(preview);
             var complex=io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(page.controller()));
-            if(complex!=null)builder.addText(Component.translatable("jei.smog.size_range",complex.minWidth(),complex.maxWidth()),166,12).setPosition(2,154);
-            if(complex!=null)builder.addText(Component.translatable("jei.smog.structure."+complex.controller().getPath()),166,54).setPosition(2,169);
             var b=page.structure().bounds();
             builder.addText(Component.translatable("multiblock."+page.structure().id().getNamespace()+"."+page.structure().id().getPath()),146,12).setPosition(2,0);
             builder.addText(Component.literal(b.width()+" x "+b.height()+" x "+b.depth()),140,10).setPosition(2,14);

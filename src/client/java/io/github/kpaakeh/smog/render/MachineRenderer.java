@@ -53,6 +53,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         }
         state.complexParts=java.util.List.of();
         extractWorkshop(machine,state);
+        if(machine.complexDefinition()!=null){state.formed=false;return;}
         state.formed = machine.structure() != null && machine.assembled() && ClientFormations.controller(machine.getBlockPos());
         if (!state.formed) return;
         if(machine.complexDefinition()!=null||(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(machine))){
@@ -86,7 +87,9 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             if(storage.total()>0){
                 float bottom=.015f;var order=new java.util.ArrayList<Integer>();int selected=io.github.kpaakeh.smog.copper.Smeltery.selected(machine);if(storage.metal(selected)>0)order.add(selected);for(int metal=0;metal<io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length;metal++)if(metal!=selected&&storage.metal(metal)>0)order.add(metal);
                 for(int metal:order){float height=(shape.height()-1-.065f)*storage.metal(metal)/Math.max(capacity,(float)storage.total());
-                    var surface=chamberSurface(bounds.minX()+1+.012f,bottom,1.012f,shape.width()-2-.024f,shape.depth()-2-.024f,metal,true,machine.rotation());layers.add(new MoltenRendering.Layer(surface.x(),bottom,surface.z(),surface.width(),height,surface.depth(),metal));bottom+=height;
+                    var first=new net.minecraft.core.BlockPos(bounds.minX()+1,0,1).rotate(machine.rotation());var last=new net.minecraft.core.BlockPos(bounds.maxX()-1,0,shape.depth()-2).rotate(machine.rotation());
+                    float left=Math.min(first.getX(),last.getX())+.012f,front=Math.min(first.getZ(),last.getZ())+.012f,width=Math.abs(last.getX()-first.getX())+1-.024f,depth=Math.abs(last.getZ()-first.getZ())+1-.024f;
+                    layers.add(new MoltenRendering.Layer(left,bottom,front,width,height,depth,metal));bottom+=height;
                 }
             }
             var shownFlow=new java.util.HashSet<net.minecraft.core.BlockPos>();

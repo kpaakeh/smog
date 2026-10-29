@@ -17,7 +17,7 @@ import net.minecraft.world.item.*;
 
 /** A hollow alloying furnace with independent jobs, source-owned fluid selection and physical fuel tanks. */
 public final class Smeltery {
-    public static final int MAX_WORKERS=81,INVENTORY_SIZE=88;
+    public static final int MAX_WORKERS=81,PAGE_SIZE=27,INVENTORY_SIZE=88;
     public static final int META=20,METALS=40,PROGRESS=296,STATUS=377;
     public static final int PREVIOUS=30,NEXT=31,MODE=32,SELECT=100,CURSOR_DRAIN=400,CURSOR_FUEL_IN=700,CURSOR_FUEL_OUT=701;
     public record Fuel(String fluid,int heat,int speed,int cost){}
@@ -53,8 +53,8 @@ public final class Smeltery {
         var fluid=ContainerItemContext.ofSingleSlot(slot).find(FluidStorage.ITEM);if(fluid==null)return false;
         try(var tx=Transaction.openOuter()){
             long moved=empty?StorageUtil.move(fluid,m.molten,v->MoltenMetalStorage.kind(v)>=0,Long.MAX_VALUE,tx):StorageUtil.move(m.molten,fluid,v->MoltenMetalStorage.kind(v)==selected(m),Long.MAX_VALUE,tx);
-            if(moved==0)return false;var result=slot.getResource().toStack((int)slot.getAmount());var output=m.getItem(5);
-            if(!result.isEmpty()&&(!output.isEmpty()&&(!ItemStack.isSameItemSameComponents(output,result)||output.getCount()+result.getCount()>output.getMaxStackSize())))return false;
+            if(moved==0)return false;var result=slot.getResource().toStack((int)slot.getAmount());var output=m.getItem(5);if(!result.isEmpty()&&result.getCount()>m.getMaxStackSize(result))return false;
+            if(!result.isEmpty()&&(!output.isEmpty()&&(!ItemStack.isSameItemSameComponents(output,result)||output.getCount()+result.getCount()>m.getMaxStackSize(result))))return false;
             tx.commit();input.shrink(1);if(!result.isEmpty()){if(output.isEmpty())m.setItem(5,result);else output.grow(result.getCount());}m.sync();return true;
         }
     }
@@ -87,7 +87,7 @@ public final class Smeltery {
     private static void worldInputs(ServerLevel level,MachineEntity m){
         if(level.getGameTime()%5!=0||m.complexShape()==null)return;var shape=m.complexShape();var bounds=shape.bounds();var inverse=switch(m.rotation()){case CLOCKWISE_90->net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90;case COUNTERCLOCKWISE_90->net.minecraft.world.level.block.Rotation.CLOCKWISE_90;default->m.rotation();};
         for(var entity:level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(m.getBlockPos()).inflate(11))){var local=entity.blockPosition().subtract(m.getBlockPos()).rotate(inverse);var stack=entity.getItem();if(local.getX()<=bounds.minX()||local.getX()>=bounds.maxX()||local.getZ()<1||local.getZ()>=shape.depth()-1||local.getY()<0||local.getY()>=shape.height()-1||CopperWorkshops.melt(stack)==null)continue;
-            for(int n=0;n<workers(m)&&!stack.isEmpty();n++){int slot=slot(n);var old=m.getItem(slot);if(!old.isEmpty()&&!ItemStack.isSameItemSameComponents(old,stack))continue;int amount=Math.min(stack.getCount(),stack.getMaxStackSize()-old.getCount());if(amount<=0)continue;if(old.isEmpty())m.setItem(slot,stack.copyWithCount(amount));else old.grow(amount);stack.shrink(amount);m.setChanged();}if(stack.isEmpty())entity.discard();}
+            for(int n=0;n<workers(m)&&!stack.isEmpty();n++){int slot=slot(n);var old=m.getItem(slot);if(!old.isEmpty()&&!ItemStack.isSameItemSameComponents(old,stack))continue;int amount=Math.min(stack.getCount(),1-old.getCount());if(amount<=0)continue;if(old.isEmpty())m.setItem(slot,stack.copyWithCount(amount));else old.grow(amount);stack.shrink(amount);m.setChanged();}if(stack.isEmpty())entity.discard();}
     }
     public static void tick(ServerLevel level,MachineEntity m){
         worldInputs(level,m);

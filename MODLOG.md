@@ -193,3 +193,11 @@ Artist faucet models and PNGs preserved. Collision derives from closed/open JSON
 
 Independent read-only review identified and resolved shape pickup bypass, cold-fuel bypass, bucket-remainder duplication, stale fuel capability access, cast snapshot dependence and inaccurate JEI volume/variant previews. Native sources confirmed all54 cart slots persist and native preRemove empties original inventory stacks; removed redundant second item-drop loop. User requested no game or automated tests, so validation is compilation/build with check excluded. Gameplay/visual verification remains for the user.
 
+## 2026-10-29 — Smeltery feedback, 0.10.1
+
+Applied all ten user adjustments and enlarged worker pages to27 (3x9). Removed slot-count caption, fluid hover hints, verbose JEI information pages/card descriptions and right-click GUI extraction (including server actions). Volumes display integer mB without rounding stored Fabric units. Melter slots enforce one item via native container/GUI/Fabric capacities, world intake and manual loading; existing stacks redistribute or drop overflow without deletion.
+
+Fluid/air/item ports accept zero to any physically available number. Added optional item intake port: native WorldlyContainerHolder for hoppers and insertion-only transactional Fabric storage, directly mapped to the owning furnace. Cached access rejects removed/replaced ports and unloaded owners. Added native brick/wood input face and recipe.
+
+Complex modular shells retain their ordinary chunk models/BEs; no hidden constituent or replacement composite/assembled model. Fixed inverted molten-volume winding/normals, derived/clipped bounds from actual rotated chamber cells, and kept the selected-fluid marker inside its GUI tank. Fixed legacy structures retain their existing rendering. Artist faucet geometry and existing texture files preserved. Build only with check excluded; no game or tests launched.
+

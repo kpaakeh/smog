@@ -38,7 +38,7 @@ public final class GuiLayouts {
     public static Layout get(String id) { return Objects.requireNonNull(VALUES.get(id),id); }
     public static Collection<Layout> all() { return List.copyOf(VALUES.values()); }
     public static void initialize() {
-        var meltSlots=new ArrayList<SlotPosition>();for(int n=0;n<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS;n++)meltSlots.add(new SlotPosition(io.github.kpaakeh.smog.copper.Smeltery.slot(n),8+(n%3)*18,28+((n%9)/3)*22,false));
+        var meltSlots=new ArrayList<SlotPosition>();for(int n=0;n<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS;n++)meltSlots.add(new SlotPosition(io.github.kpaakeh.smog.copper.Smeltery.slot(n),8+(n%3)*18,28+((n%io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE)/3)*20,false));
         meltSlots.add(new SlotPosition(2,220,112,false));meltSlots.add(new SlotPosition(4,190,37,false));meltSlots.add(new SlotPosition(5,190,91,true));register("smeltery",248,244,meltSlots,ModBlocks.id("textures/gui/copper_workshop.png"));
         var toolSlots=new ArrayList<SlotPosition>();int count=io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts(),extraRows=(count-1)/9;
         for(int i=0;i<count;i++)toolSlots.add(new SlotPosition(io.github.kpaakeh.smog.copper.ToolDefinitions.slot(i),8+(i%9)*18,36+(i/9)*18,false));

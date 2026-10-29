@@ -100,9 +100,10 @@ abstract class GenerateSmogContent extends DefaultTask {
             def variants = ['':[model:baseModel]]
             if(entry.horizontal){variants=[:];[north:0,east:90,south:180,west:270].each { facing,rotation -> if(entry.valve){variants["facing=$facing,open=false"]=[model:baseModel,y:rotation];variants["facing=$facing,open=true"]=[model:"smog:block/${name}_open",y:rotation]}else variants["facing=$facing"]=[model:baseModel,y:rotation] }}
             if (machine) {
+                boolean modular=(root.complex_multiblocks ?: []).any { it.controller=="smog:$name" }
                 def assembled = entry.assembled_model ?: "smog:block/${name}_assembled"
                 validId(assembled)
-                if (!entry.assembled_model) write("assets/smog/models/block/${name}_assembled.json", [parent:'minecraft:block/cube_all', textures:[all:entry.assembled_texture ?: texture]])
+                if (!modular && !entry.assembled_model) write("assets/smog/models/block/${name}_assembled.json", [parent:'minecraft:block/cube_all', textures:[all:entry.assembled_texture ?: texture]])
                 variants = [:]
                 if(entry.kind == 'CONNECTOR') {
                     [up:[0,0],down:[180,0],north:[90,0],east:[90,90],south:[90,180],west:[90,270]].each { attachment,angles ->
@@ -113,7 +114,7 @@ abstract class GenerateSmogContent extends DefaultTask {
                         if(entry.kind == 'GENERATOR_CONTROLLER') ['none','solar','lightning','thermal','flow','wind','steam','geothermal'].each { kind ->
                             variants["assembled=$built,facing=$facing,generator=$kind"] = [model:built && kind != 'none' ? "smog:block/generator_$kind" : baseModel,y:rotation]
                         }
-                        else variants["assembled=$built,facing=$facing"] = [model:built ? assembled : baseModel, y:rotation]
+                        else variants["assembled=$built,facing=$facing"] = [model:built && !modular ? assembled : baseModel, y:rotation]
                     }
                 }
             }

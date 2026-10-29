@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.level.block.state.properties.*;
 
 /** Movable ports and channels have an editable direction, independent of controller location. */
-public final class WorkshopPartBlock extends Block {
+public class WorkshopPartBlock extends Block {
     public static final BooleanProperty OPEN=BlockStateProperties.OPEN;
     public static final EnumProperty<Direction> FACING=BlockStateProperties.HORIZONTAL_FACING;
     public WorkshopPartBlock(Properties properties){super(properties);registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH).setValue(OPEN,false));}

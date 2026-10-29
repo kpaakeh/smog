@@ -486,6 +486,17 @@
       "model": "smog:block/smeltery_glass",
       "hardness": 2,
       "mining_level": "wood"
+    },
+    {
+      "name": "smeltery_item_port",
+      "display": "Smeltery Item Input Port",
+      "display_ru": "Предметный порт плавильни",
+      "tab": "copper_age",
+      "hardness": 3,
+      "mining_level": "wood",
+      "texture": "smog:block/refractory_bricks",
+      "model": "smog:block/smeltery_item_port",
+      "horizontal": true
     }
   ],
   "ores": [
@@ -2631,8 +2642,8 @@
           "zones": [
             "wall"
           ],
-          "min": 1,
-          "max": 4
+          "min": 0,
+          "max": 2147483647
         },
         {
           "name": "air",
@@ -2641,7 +2652,7 @@
             "wall"
           ],
           "min": 0,
-          "max": 4
+          "max": 2147483647
         },
         {
           "name": "lining",
@@ -2661,6 +2672,16 @@
           ],
           "min": 0,
           "max": 1
+        },
+        {
+          "name": "items",
+          "block": "smog:smeltery_item_port",
+          "zones": [
+            "wall",
+            "floor"
+          ],
+          "min": 0,
+          "max": 2147483647
         }
       ]
     },
@@ -3979,6 +4000,26 @@
           "count": 1
         }
       }
+    },
+    {
+      "name": "smeltery_item_port",
+      "unlock": "smog:firebrick",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "BBB",
+          "BCB",
+          "BBB"
+        ],
+        "key": {
+          "B": "smog:firebrick",
+          "C": "minecraft:chest"
+        },
+        "result": {
+          "id": "smog:smeltery_item_port",
+          "count": 1
+        }
+      }
     }
   ],
   "firing": [
@@ -4205,7 +4246,8 @@
       "jei.smog.guide.basin": "Cast one metal storage block from nine ingots of fluid, without a mold. Fill under a faucet or via compatible Fabric fluid pipes. Filling and cooling are distinct world-visible stages.",
       "jei.smog.guide.canister": "Eight-bucket single-fluid canister, exact Fabric units, standard FluidStorage.ITEM support. The smeltery GUI has input/output container slots and automatic/empty/fill modes. Left click a tank region to empty a carried container, right click to fill. Breaking a partially filled casting vessel or fuel tank returns residual amounts without rounding.",
       "gui.smog.copper.status_11": "Needs a larger structure; input may be retrieved",
-      "gui.smog.smeltery.capacity": "Tank: %s / %s ingots"
+      "gui.smog.smeltery.capacity": "Tank: %s / %s ingots",
+      "role.smog.items": "Item input"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -4396,7 +4438,8 @@
       "jei.smog.guide.basin": "Глубокая ёмкость отливает металлический блок из 9 слитков расплава. Форма не нужна. Поставь под краном, выбери расплав в плавильне и открой кран. Заливка и охлаждение видны в мире. Можно подать металл трубой другого мода; принимается только совместимый металл текущей отливки.",
       "jei.smog.guide.canister": "Канистра хранит до 8 вёдер одной обычной жидкости с точностью до единицы Fabric. Поддерживает стандартный FluidStorage.ITEM: совместимые трубы, машины, топливные баки и GUI. В плавильне есть вход/выход ёмкостей и три режима: авто, опорожнение, наполнение. Слой расплава на курсоре: ЛКМ выбирает/опорожняет ёмкость, ПКМ наполняет; топливная шкала работает с баком. При разрушении формы или топливного бака неполное количество не округляется и возвращается в канистре.",
       "gui.smog.copper.status_11": "Нужно больше рабочих мест; предмет можно забрать",
-      "gui.smog.smeltery.capacity": "Резервуар: %s / %s слитков"
+      "gui.smog.smeltery.capacity": "Резервуар: %s / %s слитков",
+      "role.smog.items": "Подача предметов"
     }
   },
   "workshop_modules": [

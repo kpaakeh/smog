@@ -16,7 +16,7 @@ public final class CopperInteractions {
     private static boolean put(MachineEntity m,int slot,ItemStack held){
         if(held.isEmpty()||!m.canPlaceItem(slot,held))return false;var old=m.getItem(slot);
         if(!old.isEmpty()&&!ItemStack.isSameItemSameComponents(old,held))return false;
-        int count=Math.min(held.getCount(),held.getMaxStackSize()-(old.isEmpty()?0:old.getCount()));if(count==0)return false;
+        int count=Math.min(held.getCount(),Math.min(held.getMaxStackSize(),m.getMaxStackSize(held))-(old.isEmpty()?0:old.getCount()));if(count<=0)return false;
         if(old.isEmpty())m.setItem(slot,held.split(count));else {old.grow(count);held.shrink(count);}m.sync();return true;
     }
     private static boolean take(MachineEntity m,Player player,int slot){if(m.getItem(slot).isEmpty())return false;var stack=m.removeItemNoUpdate(slot);player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);m.sync();return true;}

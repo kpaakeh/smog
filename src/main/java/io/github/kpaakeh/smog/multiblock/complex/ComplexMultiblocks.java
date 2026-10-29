@@ -25,6 +25,18 @@ public final class ComplexMultiblocks {
         result.sort(Comparator.comparingDouble(m->m.getBlockPos().distSqr(part)));return result;
     }
     public static void initializeInteractions(){
+        net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.registerForBlocks((level,pos,state,entity,side)->{
+            if(!(level instanceof net.minecraft.server.level.ServerLevel server))return null;var m=owner(server,pos);if(m==null||!io.github.kpaakeh.smog.copper.Smeltery.handles(m))return null;
+            var inputs=new ArrayList<net.fabricmc.fabric.api.transfer.v1.storage.Storage<net.fabricmc.fabric.api.transfer.v1.item.ItemVariant>>();
+            for(int n=0;n<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS;n++){final int slot=io.github.kpaakeh.smog.copper.Smeltery.slot(n);inputs.add(new net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage(){
+                protected net.minecraft.world.item.ItemStack getStack(){return m.getItem(slot);}protected void setStack(net.minecraft.world.item.ItemStack stack){m.setItem(slot,stack);}
+                protected int getCapacity(net.fabricmc.fabric.api.transfer.v1.item.ItemVariant variant){return io.github.kpaakeh.smog.copper.Smeltery.worker(slot)<io.github.kpaakeh.smog.copper.Smeltery.workers(m)?1:0;}
+                protected boolean canInsert(net.fabricmc.fabric.api.transfer.v1.item.ItemVariant variant){return !m.isRemoved()&&m.assembled()&&server.hasChunkAt(pos)&&server.getBlockState(pos).getBlock() instanceof io.github.kpaakeh.smog.copper.SmelteryItemPortBlock&&server.hasChunkAt(m.getBlockPos())&&m.getBlockPos().equals(ComplexFormationData.get(server).owner(pos))&&m.canPlaceItem(slot,variant.toStack());}
+                protected boolean canExtract(net.fabricmc.fabric.api.transfer.v1.item.ItemVariant variant){return false;}
+                protected void onFinalCommit(){m.sync();}
+            });}return new net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage<>(inputs);
+        },net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("smeltery_item_port")));
+
         net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlocks((level,pos,state,entity,side)->{
             if(!(level instanceof net.minecraft.server.level.ServerLevel server))return null;var m=owner(server,pos);return m!=null&&io.github.kpaakeh.smog.copper.CopperWorkshops.workshop(m,"copper_hearth")?m.molten:null;
         },net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("casting_spout")));

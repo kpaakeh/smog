@@ -172,7 +172,9 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         if(machineId.getPath().equals("tool_workbench")&&!getItem(5).isEmpty()&&!io.github.kpaakeh.smog.copper.ToolAssembly.canMount(getItem(5))){var preserved=removeItemNoUpdate(5);copper.queued=0;copper.work=0;Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
         if(machineId.getPath().equals("tool_workbench"))for(int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize();slot<items.size();slot++)if(!items.get(slot).isEmpty()){var extra=items.get(slot);items.set(slot,ItemStack.EMPTY);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}
         if(io.github.kpaakeh.smog.copper.Smeltery.handles(this)){
-            for(int slot=0;slot<items.size();slot++)if((slot==1||slot==3||slot==6||slot==7||slot>=io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE)&&!items.get(slot).isEmpty()){var preserved=removeItemNoUpdate(slot);if(slot==3&&items.get(5).isEmpty())items.set(5,preserved);else Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
+            for(int n=0;n<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS;n++){var old=items.get(io.github.kpaakeh.smog.copper.Smeltery.slot(n));if(old.getCount()<=1)continue;var extra=old.copyWithCount(old.getCount()-1);old.setCount(1);for(int other=0;other<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS&&!extra.isEmpty();other++){int target=io.github.kpaakeh.smog.copper.Smeltery.slot(other);if(items.get(target).isEmpty())items.set(target,extra.split(1));}if(!extra.isEmpty())Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}
+            for(int slot:new int[]{2,4,5}){var old=items.get(slot);if(old.getCount()>1){var extra=old.copyWithCount(old.getCount()-1);old.setCount(1);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}}
+            for(int slot=0;slot<items.size();slot++)if((slot==1||slot==3||slot==6||slot==7||slot>=io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE)&&!items.get(slot).isEmpty()){var preserved=removeItemNoUpdate(slot);if(slot==3&&items.get(5).isEmpty()){items.set(5,preserved.split(1));if(!preserved.isEmpty())Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);}else Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
         }
         if(spec().kind()!=MachineSpec.Kind.COPPER_WORKSHOP)EnergyNetwork.track(this);
         if(!validate(server) || !enabled)return;
@@ -193,7 +195,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         if(duration<=0)return 0;
         var remainder=fuel.getItem().getCraftingRemainder();ItemStack rest=remainder==null?ItemStack.EMPTY:remainder.create();
         int resultSlot=io.github.kpaakeh.smog.copper.Smeltery.handles(this)?5:3;var previous=items.get(resultSlot);
-        if(!rest.isEmpty()&&!previous.isEmpty()&&(!ItemStack.isSameItemSameComponents(previous,rest)||previous.getCount()+rest.getCount()>previous.getMaxStackSize()))return 0;
+        if(!rest.isEmpty()&&!previous.isEmpty()&&(!ItemStack.isSameItemSameComponents(previous,rest)||previous.getCount()+rest.getCount()>getMaxStackSize(rest)))return 0;
         fuel.shrink(1);if(!rest.isEmpty()){if(previous.isEmpty())items.set(resultSlot,rest);else previous.grow(rest.getCount());}setChanged();return duration;
     }
     private void tickFuel(ServerLevel server) {
@@ -281,6 +283,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     @Override protected Component getDefaultName() { return getBlockState().getBlock().getName(); }
     @Override protected NonNullList<ItemStack> getItems() { return items; }
     @Override protected void setItems(NonNullList<ItemStack> value) { items=value; }
+    @Override public int getMaxStackSize(){return machineId!=null&&io.github.kpaakeh.smog.copper.Smeltery.handles(this)?1:64;}
     @Override public int getContainerSize() { return items.size(); }
     @Override public boolean canPlaceItem(int slot,ItemStack stack) {
         if(io.github.kpaakeh.smog.copper.ToolAssembly.handles(this))return copper.queued==0&&io.github.kpaakeh.smog.copper.ToolAssembly.accepts(this,slot,stack);
@@ -301,7 +304,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         @Override public void set(int index,int value) {}
     };
     @Override protected AbstractContainerMenu createMenu(int id,Inventory inventory) {
-        if(io.github.kpaakeh.smog.copper.Smeltery.handles(this))smeltery.page=Math.clamp(smeltery.page,0,Math.max(0,(io.github.kpaakeh.smog.copper.Smeltery.visibleWorkers(this)-1)/9));
+        if(io.github.kpaakeh.smog.copper.Smeltery.handles(this))smeltery.page=Math.clamp(smeltery.page,0,Math.max(0,(io.github.kpaakeh.smog.copper.Smeltery.visibleWorkers(this)-1)/io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE));
         var layout=GuiLayouts.get(io.github.kpaakeh.smog.copper.Smeltery.handles(this)?"smeltery":io.github.kpaakeh.smog.copper.Smeltery.vessel(this)?machineId.getPath():io.github.kpaakeh.smog.copper.ToolAssembly.handles(this)?"tool_workbench":(io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))?"manual_workshop":io.github.kpaakeh.smog.copper.WaterSupply.handles(this)?"water_supply":spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?"copper_workshop":spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER||spec().kind()==MachineSpec.Kind.TRANSFORMER?"environment":spec().source()?"generator":"processor");return new MachineMenu(layout,id,inventory,this,data);
     }
     @Override public void preRemoveSideEffects(BlockPos pos,BlockState state) {
