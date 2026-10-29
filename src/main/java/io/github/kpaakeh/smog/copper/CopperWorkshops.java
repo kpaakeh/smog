@@ -70,6 +70,7 @@ public final class CopperWorkshops {
     private static Item item(String id){return BuiltInRegistries.ITEM.getValue(Identifier.parse(id));}
     public static boolean is(ItemStack stack,String id){return !stack.isEmpty()&&BuiltInRegistries.ITEM.containsKey(Identifier.parse(id))&&stack.is(item(id));}
     public static boolean workshop(MachineEntity m,String name){return m.machineId().getPath().equals(name);}
+    private static int outputSpace(MachineEntity m,ItemStack result){var old=m.getItem(3);int maximum=Math.min(m.getMaxStackSize(result),result.getMaxStackSize());return old.isEmpty()?maximum:ItemStack.isSameItemSameComponents(old,result)?Math.max(0,maximum-old.getCount()):0;}
     private static void output(MachineEntity m,ItemStack result){var old=m.getItem(3);if(old.isEmpty())m.setItem(3,result.copy());else {old.grow(result.getCount());m.setChanged();}}
     public static boolean accepts(MachineEntity m,int slot,ItemStack stack){
         if(Smeltery.fuelTank(m))return false;
@@ -94,7 +95,7 @@ public final class CopperWorkshops {
         var shape=m.complexShape();return shape==null?0:shape.internalVolume(false)*8*MoltenMetalStorage.INGOT;
     }
     public static int threshold(MachineEntity m){return workshop(m,"ceramic_kiln")?400:capacity(m)>64*U?800:600;}
-    public static int data(MachineEntity m,int index){var s=m.copper;if(Smeltery.handles(m)&&index>=20)return Smeltery.data(m,index);return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?100:workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->workshop(m,"casting_basin")?1:ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
+    public static int data(MachineEntity m,int index){var s=m.copper;if(Smeltery.handles(m)&&index>=20)return Smeltery.data(m,index);if(Smeltery.vessel(m)&&index>=20)return CastingProcesses.data(m,index);return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?100:workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->workshop(m,"casting_basin")?1:ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
     public static void tick(ServerLevel level,MachineEntity m){
         if(workshop(m,"hand_bellows")&&level.getGameTime()%40==0&&BronzeDrive.connected(m))pump(level,m);
         if(Ropeway.handles(m))Ropeway.tick(level,m);
@@ -131,7 +132,7 @@ public final class CopperWorkshops {
             if(tagged(stack,"c:plates/"+n)||is(stack,"smog:"+n+"_plate"))return new int[]{k,4*U};
             if(is(stack,"smog:"+n+"_fitting"))return new int[]{k,1*U};
             if(is(stack,"smog:"+n+"_pipe_part"))return new int[]{k,2*U};
-            if(k<2||k==3){
+            if(Set.of("copper","tin","lead").contains(n)){
                 if(tagged(stack,"c:crushed_ores/"+n)||tagged(stack,"c:ore_shards/"+n))return new int[]{k,4*U};
                 if(tagged(stack,"c:raw_materials/"+n)||is(stack,ns+"raw_"+n))return new int[]{k,4*U};
                 if(tagged(stack,"c:storage_blocks/raw_"+n)||is(stack,ns+"raw_"+n+"_block"))return new int[]{k,36*U};
@@ -151,14 +152,16 @@ public final class CopperWorkshops {
     public static boolean singleUse(ItemStack mold){return BuiltInRegistries.ITEM.getKey(mold.getItem()).getPath().startsWith("sand_")||singleUse(mold(mold));}
     public static int mold(ItemStack stack){String name=BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();if(BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("smog")&&MOLD_VARIANTS.containsKey(name)){String base=MOLD_VARIANTS.get(name);for(int i=0;i<MOLDS.length;i++)if(MOLDS[i].equals(base))return i;}for(int i=0;i<MOLDS.length;i++)if(is(stack,"smog:"+MOLDS[i]))return i;return -1;}
     public static ItemStack castResult(int metal,int mold){String n=MoltenMetalStorage.NAMES[metal];if(extraForm(mold)>=0){String output=EXTRA_FORMS.get(extraForm(mold)).outputs().get(n);return output==null?ItemStack.EMPTY:new ItemStack(item(output));}if(mold>=4){var part=ToolDefinitions.find(n,ToolDefinitions.headForms().get(mold-4).id(),true);return part==null?ItemStack.EMPTY:new ItemStack(item(part.item().toString()));}if(metal>2&&mold>0)return ItemStack.EMPTY;if(metal==1&&mold>=2)return ItemStack.EMPTY;return switch(mold){case 0->new ItemStack(item(namespace(metal)+n+"_ingot"));case 1->new ItemStack(item("smog:"+n+"_plate"));case 2->new ItemStack(item("smog:"+n+"_fitting"),4);case 3->new ItemStack(item("smog:"+n+"_pipe_part"),4);default->ItemStack.EMPTY;};}
-    public static MachineEntity source(ServerLevel level,BlockPos table){
+    public record PourRoute(MachineEntity source,BlockPos port){}
+    public static MachineEntity source(ServerLevel level,BlockPos table){var route=route(level,table);return route==null?null:route.source();}
+    public static PourRoute route(ServerLevel level,BlockPos table){
         record Node(BlockPos pos,int distance){}var queue=new ArrayDeque<Node>();Set<BlockPos> visited=new HashSet<>();queue.add(new Node(table,0));
         while(!queue.isEmpty()&&visited.size()<128){var node=queue.removeFirst();if(node.distance>8)continue;
             for(var side:Direction.values()){if(side==Direction.DOWN)continue;var pos=node.pos.relative(side);if(!visited.add(pos)||!level.hasChunkAt(pos))continue;var state=level.getBlockState(pos);
                 if(side==Direction.UP&&state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_faucet")))&&state.getValue(WorkshopPartBlock.OPEN)){
                     var port=pos.relative(state.getValue(WorkshopPartBlock.FACING).getOpposite());if(!level.hasChunkAt(port)||!level.getBlockState(port).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_spout"))))continue;
                     var owner=ComplexFormationData.get(level).owner(port);
-                    if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&workshop(m,"copper_hearth")&&m.assembled())return m;
+                    if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&workshop(m,"copper_hearth")&&m.assembled())return new PourRoute(m,port.immutable());
                 }else if(state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_channel"))))queue.add(new Node(pos,node.distance+1));
             }
         }return null;
@@ -167,10 +170,10 @@ public final class CopperWorkshops {
         var match=level.recipeAccess().getRecipeFor(RecipeType.SMELTING,new SingleRecipeInput(input),level);
         // A ceramic kiln is deliberately not a universal ore smelter.
         boolean ceramic=tagged(input,"c:unfired_ceramics");
-        heat(level,m,ceramic&&match.isPresent());if(!ceramic||match.isEmpty()){s.work=0;s.status=2;return;}
+        if(!ceramic||match.isEmpty()){heat(level,m,false);s.work=0;s.status=2;return;}
         int batch=Math.min(input.getCount(),Math.max(8,m.complexShape().internalVolume(true)*8));var result=match.get().value().assemble(new SingleRecipeInput(input));
-        batch=Math.min(batch,result.getMaxStackSize()/Math.max(1,result.getCount()));result.setCount(result.getCount()*batch);
-        if(!m.canOutput(result)){s.status=5;return;}if(s.heat<threshold(m)){s.status=s.burn==0?3:4;return;}s.status=0;
+        batch=Math.min(batch,outputSpace(m,result)/Math.max(1,result.getCount()));if(batch<=0){heat(level,m,false);s.status=5;return;}result.setCount(result.getCount()*batch);
+        if(!m.canOutput(result)){heat(level,m,false);s.status=5;return;}heat(level,m,true);if(s.heat<threshold(m)){s.status=s.burn==0?3:4;return;}s.status=0;
         if(working(m,BuiltInRegistries.ITEM.getKey(input.getItem()).toString(),200,1)){input.shrink(batch);output(m,result);s.work=0;}
     }
     public static boolean button(MachineEntity m,int id){if(Smeltery.vessel(m))return false;if(ToolAssembly.handles(m))return ToolAssembly.button(m,id);var s=m.copper;if(ManualWorkshops.handles(m)){if(id==22&&m.assembled()){ManualWorkshops.queue(m);return true;}return false;}
@@ -178,7 +181,7 @@ public final class CopperWorkshops {
         if(id==22&&workshop(m,"potter_table")&&!POTTERY.isEmpty()){
             var recipe=POTTERY.get(Math.floorMod(s.selection,POTTERY.size()));var input=m.getItem(0);
             if(!is(input,recipe.input)||input.getCount()<recipe.count){s.status=2;return true;}
-            int batch=Math.min(8,input.getCount()/recipe.count);var result=new ItemStack(item(recipe.output),recipe.outputCount*batch);
+            var result=new ItemStack(item(recipe.output),recipe.outputCount);int batch=Math.min(Math.min(8,input.getCount()/recipe.count),outputSpace(m,result)/recipe.outputCount);if(batch<=0){s.status=5;return true;}result.setCount(recipe.outputCount*batch);
             if(!m.canOutput(result)){s.status=5;return true;}input.shrink(recipe.count*batch);output(m,result);s.status=0;return true;
         }
         return false;

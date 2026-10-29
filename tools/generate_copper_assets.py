@@ -4,7 +4,7 @@ from zipfile import ZipFile
 from io import BytesIO
 import json,shutil,sys,colorsys
 REFRESH_ICONS="--refresh-icons" in sys.argv
-MANUAL_ICONS={"copper_concentrate","seed_cake","plant_oil_bottle","plant_oil_bucket","lubricating_compound","waxed_cord","field_journal"}
+MANUAL_ICONS={"copper_concentrate","seed_cake","plant_oil_bottle","plant_oil_bucket","lubricating_compound","waxed_cord"}
 from PIL import Image,ImageDraw,ImageEnhance
 ROOT=Path(__file__).resolve().parents[1];A=ROOT/'src/main/resources/assets/smog';C=json.loads((ROOT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
 Z=ZipFile(ROOT/'.gradle-user-home/caches/fabric-loom/26.3/minecraft-client.jar')
@@ -222,7 +222,6 @@ model('press_frame',[box([0,0,0],[4,16,4],'log'),box([12,0,12],[16,16,16],'log')
 model('press_basket',[box([1,0,1],[15,3,15],'wood')]+[box([x,3,z],[x+2,13,z+2],'wood') for x in range(1,15,3) for z in range(1,15,3) if x in [1,13] or z in [1,13]],woodparts)
 model('lever_press',[box([0,0,0],[16,4,16],'wood'),box([1,4,1],[4,16,4],'log'),box([12,4,12],[15,16,15],'log'),box([4,6,4],[12,8,12],'wood'),box([7,8,7],[9,15,9],'metal'),box([3,14,7],[13,16,9],'wood')],woodparts)
 sprite('copper_concentrate',remap(image('item/raw_copper'),COPPER))
-sprite('field_journal',tint(image('item/book'),(169,123,71)))
 sprite('seed_cake',remap(image('item/dried_kelp'),FIRED))
 sprite('plant_oil_bottle',tint(image('item/honey_bottle'),(210,161,57)))
 sprite('lubricating_compound',tint(image('item/slime_ball'),(85,77,46)))

@@ -2273,13 +2273,6 @@
       "tab": "copper_age"
     },
     {
-      "name": "field_journal",
-      "kind": "field_journal",
-      "display": "Field Journal",
-      "display_ru": "Полевой журнал",
-      "tab": "copper_age"
-    },
-    {
       "name": "stone_work_hammer",
       "display": "Stone Working Hammer",
       "display_ru": "Каменный рабочий молот",
@@ -3465,23 +3458,6 @@
       }
     },
     {
-      "name": "field_journal",
-      "unlock": "minecraft:paper",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:paper",
-          "minecraft:paper",
-          "minecraft:string",
-          "smog:copper_fitting"
-        ],
-        "result": {
-          "id": "smog:field_journal",
-          "count": 1
-        }
-      }
-    },
-    {
       "name": "stone_work_hammer",
       "unlock": "minecraft:cobblestone",
       "data": {
@@ -4200,7 +4176,7 @@
       "jei.smog.guide.parts": "Cast copper and bronze parts. A plate contains one ingot, fitting a quarter, pipe blank a half. Remelting returns exactly the same amount. Parts remain available for upcoming copper-age devices.",
       "jei.smog.guide.bronze": "Three parts molten copper plus one part molten tin automatically become four parts molten bronze in a hot hearth. No mixing button. Excess metal stays in the tank. Reuse the same molds.",
       "jei.smog.guide.molten": "Tank accepts molten copper, tin and bronze via Fabric Fluid Storage. 9000 Fabric units per ingot; 81000 per bucket (9 ingots). Other fluids are rejected. Common c:molten_* and item material tags allow integration.",
-      "jei.smog.structure.copper_hearth": "Open shell, from 3 to 11 on each axis. Empty chamber. One floor or wall firebox and wall fluid port. Edges/corners are masonry. Configure controller or port to form.",
+      "jei.smog.structure.copper_hearth": "Hollow body, 3 to 11 blocks on each axis. 1 to 4 fireboxes/fuel tanks. Ports optional; inserts cannot occupy edges/corners. Use a configurator to assemble.",
       "jei.smog.structure.ceramic_kiln": "Closed shell, empty chamber. Floor firebox, roof vent. Use configurator. Controller information page lists full rules.",
       "jei.smog.copper.firing": "Batch firing: chamber size allows 8–64 items.",
       "jei.smog.copper.melting": "Heat the hearth; molten metal drains through a spout.",
@@ -4231,11 +4207,6 @@
       "message.smog.water_supply": "Water: %s / 8000 mB. Supplies adjacent workshops.",
       "message.smog.lubricated": "Press lubricated: the next 8 batches work faster.",
       "jei.smog.guide.water": "Tank: 8 buckets. Prime the pump above a water source for 4 buckets. Connect copper water pipes; a closed valve stops the line. Open downward outlets feed a trough or compatible tank below. Empty-hand use toggles valves/outlets; sneak-configure rotates them. Limited to 16 blocks, 256 nodes and loaded chunks. Buckets remain an alternative.",
-      "message.smog.journal_empty": "No records. Use the journal on an exposed ore or deposit.",
-      "message.smog.journal_entry": "%s/%s: %s at %s, %s, %s (%s)",
-      "message.smog.journal_rejected": "Inspect a new exposed resource block. The journal holds up to 32 records.",
-      "item.smog.field_journal.help": "Use on a resource to record it. Use in the air to browse; sneak to go back.",
-      "jei.smog.guide.survey": "The field journal stores personally inspected ores and deposits: material, coordinates and dimension. Use on an exposed block to record; use in the air to browse, sneak to reverse. Records travel with the item. Hidden veins are not scanned.",
       "advancements.smog.copper.root.title": "Copper workshop",
       "advancements.smog.copper.root.description": "Prepare molds, heat and a workshop. Vanilla routes remain available.",
       "advancements.smog.copper.pottery.title": "A reusable mold",
@@ -4246,8 +4217,6 @@
       "advancements.smog.copper.washing.description": "Wash 8 raw copper into 5 concentrate, yielding 10 ingots.",
       "advancements.smog.copper.pressing.title": "Workshop oil",
       "advancements.smog.copper.pressing.description": "Press seeds and bottle the oil. Compost the seed cake.",
-      "advancements.smog.copper.survey.title": "Field observations",
-      "advancements.smog.copper.survey.description": "Take a journal and record personally inspected resources.",
       "advancements.smog.copper.bronze.title": "Ready for moving parts",
       "advancements.smog.copper.bronze.description": "Combine 3 parts copper and 1 part tin to prepare for mechanization.",
       "tool.smog.unconfigured": "Assemble this tool from parts at the workbench.",
@@ -4347,7 +4316,7 @@
       "jei.smog.copper.required_heat": "Requires heat %s",
       "jei.smog.guide.fuel_tank": "Physical eight-bucket fuel tank in a flat wall or floor. Use lava buckets, canisters or Fabric pipes. Lava heat1100; blazing fuel1600, limited by the shell to1100 or1350 with sufficient refractory lining. Use blaze powder on stored lava: two powder per started bucket of the entire tank. Volume is preserved and no extra bucket is produced. Larger workshops consume more fuel. Breaking returns residual fuel in a canister.",
       "jei.smog.guide.basin": "Cast one metal storage block from nine ingots of fluid, without a mold. Fill under a faucet or via compatible Fabric fluid pipes. Filling and cooling are distinct world-visible stages.",
-      "jei.smog.guide.canister": "Eight-bucket single-fluid canister, exact Fabric units, standard FluidStorage.ITEM support. The smeltery GUI has input/output container slots and automatic/empty/fill modes. Left click a tank region to empty a carried container, right click to fill. Breaking a partially filled casting vessel or fuel tank returns residual amounts without rounding.",
+      "jei.smog.guide.canister": "Eight-bucket single-fluid canister with standard FluidStorage.ITEM support. Transfer through physical ports and tanks. Breaking occupied vessels returns exact residual amounts.",
       "gui.smog.copper.status_11": "Needs a larger structure; input may be retrieved",
       "gui.smog.smeltery.capacity": "Tank: %s / %s ingots",
       "role.smog.items": "Item input",
@@ -4385,7 +4354,25 @@
       "tool.smog.role.clamp": "clamp",
       "tool.smog.role.pickaxe_head": "pickaxe head",
       "tool.smog.role.axe_head": "axe head",
-      "tool.smog.role.shovel_head": "shovel head"
+      "tool.smog.role.shovel_head": "shovel head",
+      "tool.smog.head_wear": "Remaining head life: %s / %s",
+      "gui.smog.process.heat": "Required heat: %s",
+      "gui.smog.process.open_max": "Open chamber limit: %s",
+      "gui.smog.copper.status_12": "Required heat exceeds the body limit",
+      "gui.smog.copper.status_13": "Refractory lining required",
+      "gui.smog.copper.status_14": "Closed working chamber required",
+      "gui.smog.copper.status_15": "Controlled working atmosphere required",
+      "gui.smog.copper.status_16": "Overheated: cool the open chamber",
+      "gui.smog.casting.stage_0": "Install a mold",
+      "gui.smog.casting.stage_1": "Waiting for molten metal",
+      "gui.smog.casting.stage_2": "Pouring",
+      "gui.smog.casting.stage_3": "Cooling",
+      "gui.smog.casting.stage_4": "Casting ready",
+      "gui.smog.casting.stage_5": "Clear the output",
+      "gui.smog.casting.volume": "Poured: %s / %s mB",
+      "message.smog.casting_cooling": "Cooling: %s s remaining · Mold locked",
+      "gui.smog.casting.cooling": "Cooling: %s s",
+      "gui.smog.manual.batches": "Batches: %s"
     },
     "ru_ru": {
       "itemGroup.smog.copper_age": "Smog: Медная эпоха",
@@ -4427,7 +4414,7 @@
       "jei.smog.guide.parts": "Медные и бронзовые детали получаются литьём. Пластина содержит один слиток, фитинг — четверть, трубный элемент — половину. Переплавка возвращает ровно исходное количество металла. Эти детали сохраняются для следующих устройств медной эпохи.",
       "jei.smog.guide.bronze": "В нагретом очаге 3 части расплавленной меди и 1 часть олова автоматически дают 4 части расплавленной бронзы. Кнопка смешивания не нужна. Излишки исходного металла остаются в баке. Для отливки используются те же многоразовые формы.",
       "jei.smog.guide.molten": "В баке только расплавленные медь, олово и бронза. Поддерживаются совместимые жидкостные контейнеры и трубы через Fabric Fluid Storage. Один слиток — 9000 единиц Fabric, ведро — 81000, то есть 9 слитков. Посторонние жидкости не принимаются. Совместимость металлов задаётся общими тегами c:molten_*. Добытый металл других модов принимается через c:ingots/* и родственные теги.",
-      "jei.smog.structure.copper_hearth": "Открытый корпус от 3 до 11 по каждой оси. Центр пустой. Одна топка в полу или стене, жидкостный порт в стене; рёбра и углы — кладка. ПКМ настройщиком по контроллеру или порту.",
+      "jei.smog.structure.copper_hearth": "Полый корпус от 3 до 11 по каждой оси. От 1 до 4 топок/топливных баков. Порты необязательны; вставки вне рёбер и углов. Сборка — ПКМ настройщиком.",
       "jei.smog.structure.ceramic_kiln": "Закрытая оболочка, пустая камера. Топка в полу, вытяжка в крыше. ПКМ настройщиком. Подробности — страница информации контроллера.",
       "jei.smog.copper.firing": "Обжиг партии: от 8 до 64 изделий по камере.",
       "jei.smog.copper.melting": "Нагрейте очаг; расплав сливается через носик.",
@@ -4458,11 +4445,6 @@
       "message.smog.water_supply": "Вода: %s / 8000 мВ. Передача соседним установкам.",
       "message.smog.lubricated": "Пресс смазан: ускорение следующих 8 партий.",
       "jei.smog.guide.water": "Резервуар хранит 8 вёдер. Помпа над источником воды запускается одним нажатием на 4 ведра. Соедините их медными водяными трубами; запорный кран перекрывает линию. Открытый вывод воды направляется вниз в лоток или совместимый бак. ПКМ пустой рукой открывает кран/вывод; Shift+настройщик поворачивает. Линия ограничена 16 блоками от источника, 256 узлами и загруженными чанками. Вёдра остаются альтернативой.",
-      "message.smog.journal_empty": "Записей нет. Осмотрите журналом открытый рудный блок или залежь.",
-      "message.smog.journal_entry": "%s/%s: %s — %s, %s, %s (%s)",
-      "message.smog.journal_rejected": "Нужен открытый ресурсный блок и новая точка. Журнал хранит до 32 записей.",
-      "item.smog.field_journal.help": "ПКМ по ресурсу: записать. ПКМ в воздух: следующая запись, Shift — предыдущая.",
-      "jei.smog.guide.survey": "Полевой журнал записывает лично осмотренные руды и неметаллические залежи: материал, координаты и измерение. ПКМ по открытому блоку добавляет точку, ПКМ в воздух перебирает записи; Shift меняет направление. Данные хранятся в самом журнале. Скрытые жилы не сканируются.",
       "advancements.smog.copper.root.title": "Мастерская начинается здесь",
       "advancements.smog.copper.root.description": "Подготовьте формы, огонь и удобное место для работы. Ванильные способы остаются доступны.",
       "advancements.smog.copper.pottery.title": "Повторяемая форма",
@@ -4473,8 +4455,6 @@
       "advancements.smog.copper.washing.description": "Промойте 8 необработанной меди: 5 концентрата дают 10 слитков.",
       "advancements.smog.copper.pressing.title": "Масло мастерской",
       "advancements.smog.copper.pressing.description": "Отожмите семена и заберите масло бутылкой. Жмых можно компостировать.",
-      "advancements.smog.copper.survey.title": "Полевые наблюдения",
-      "advancements.smog.copper.survey.description": "Возьмите журнал и запишите координаты открытой руды.",
       "advancements.smog.copper.bronze.title": "Для движущихся деталей",
       "advancements.smog.copper.bronze.description": "Смешайте 3 части меди и 1 часть олова. Это подготовка к механизации.",
       "tool.smog.unconfigured": "Сначала соберите инструмент из частей на верстаке.",
@@ -4574,7 +4554,7 @@
       "jei.smog.copper.required_heat": "Нагрев не ниже %s",
       "jei.smog.guide.fuel_tank": "Физический бак вмещает 8 вёдер топлива и является функциональной вставкой в стене или дне плавильни. Заполняй лавой через ведро, канистру или Fabric-совместимые трубы. Топливо хранится здесь, отдельно от расплавов. Лава даёт нагрев до 1100; пылающее топливо — до 1600, но обычный корпус ограничен 1100, с достаточной огнеупорной футеровкой — 1350. Чтобы усилить лаву, нажми огненным порошком по баку: 2 порошка на каждое начатое ведро всего запаса. Топливо не создаёт второй бак или ведро. Большая камера и параллельная работа расходуют больше топлива. При разрушении остаток возвращается в канистре.",
       "jei.smog.guide.basin": "Глубокая ёмкость отливает металлический блок из 9 слитков расплава. Форма не нужна. Поставь под краном, выбери расплав в плавильне и открой кран. Заливка и охлаждение видны в мире. Можно подать металл трубой другого мода; принимается только совместимый металл текущей отливки.",
-      "jei.smog.guide.canister": "Канистра хранит до 8 вёдер одной обычной жидкости с точностью до единицы Fabric. Поддерживает стандартный FluidStorage.ITEM: совместимые трубы, машины, топливные баки и GUI. В плавильне есть вход/выход ёмкостей и три режима: авто, опорожнение, наполнение. Слой расплава на курсоре: ЛКМ выбирает/опорожняет ёмкость, ПКМ наполняет; топливная шкала работает с баком. При разрушении формы или топливного бака неполное количество не округляется и возвращается в канистре.",
+      "jei.smog.guide.canister": "Канистра на 8 вёдер одной жидкости; поддерживает стандартное FluidStorage.ITEM. Переливание через порты и баки в мире. При разрушении заполненных ёмкостей остатки возвращаются без округления.",
       "gui.smog.copper.status_11": "Нужно больше рабочих мест; предмет можно забрать",
       "gui.smog.smeltery.capacity": "Резервуар: %s / %s слитков",
       "role.smog.items": "Подача предметов",
@@ -4612,7 +4592,25 @@
       "tool.smog.role.clamp": "хомут",
       "tool.smog.role.pickaxe_head": "головка кирки",
       "tool.smog.role.axe_head": "головка топора",
-      "tool.smog.role.shovel_head": "головка лопаты"
+      "tool.smog.role.shovel_head": "головка лопаты",
+      "tool.smog.head_wear": "Осталось ресурса головки: %s / %s",
+      "gui.smog.process.heat": "Рабочий нагрев: %s",
+      "gui.smog.process.open_max": "В открытой камере: не выше %s",
+      "gui.smog.copper.status_12": "Нагрев выше предела корпуса",
+      "gui.smog.copper.status_13": "Нужна огнеупорная футеровка",
+      "gui.smog.copper.status_14": "Нужна закрытая рабочая камера",
+      "gui.smog.copper.status_15": "Нужна контролируемая рабочая среда",
+      "gui.smog.copper.status_16": "Перегрев: остудите открытую камеру",
+      "gui.smog.casting.stage_0": "Установите форму",
+      "gui.smog.casting.stage_1": "Ожидание расплава",
+      "gui.smog.casting.stage_2": "Заливка",
+      "gui.smog.casting.stage_3": "Охлаждение",
+      "gui.smog.casting.stage_4": "Отливка готова",
+      "gui.smog.casting.stage_5": "Освободите выход",
+      "gui.smog.casting.volume": "Залито: %s / %s mB",
+      "message.smog.casting_cooling": "Охлаждение: ещё %s с · Форма закреплена",
+      "gui.smog.casting.cooling": "Охлаждение: %s с",
+      "gui.smog.manual.batches": "Партий: %s"
     }
   },
   "workshop_modules": [

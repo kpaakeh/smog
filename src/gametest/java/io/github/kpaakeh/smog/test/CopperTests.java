@@ -96,14 +96,6 @@ public final class CopperTests {
         h.assertValueEqual(tank.copper.processFluid,81000,"Cancelled transfer preserves tank");
         set(h,pos.below(),Blocks.AIR);h.assertFalse(io.github.kpaakeh.smog.copper.WaterSupply.prime(h.getLevel(),pump),"No source cannot prime");h.succeed();
     }
-    @GameTest public void journalStoresOnlyInspectedResources(GameTestHelper h){
-        var pos=h.absolutePos(new BlockPos(5,2,5));var journal=new ItemStack(item("field_journal"));set(h,pos,Blocks.COPPER_ORE);
-        h.assertTrue(io.github.kpaakeh.smog.copper.FieldJournalItem.record(journal,h.getLevel(),pos),"Inspected ore is recorded");
-        h.assertFalse(io.github.kpaakeh.smog.copper.FieldJournalItem.record(journal,h.getLevel(),pos),"Same point is not duplicated");
-        set(h,pos.east(),Blocks.STONE);h.assertFalse(io.github.kpaakeh.smog.copper.FieldJournalItem.record(journal,h.getLevel(),pos.east()),"Ordinary stone does not claim a hidden deposit");
-        var records=journal.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getListOrEmpty("survey_records");h.assertValueEqual(records.size(),1,"Only personally inspected point stored");h.assertValueEqual(records.getCompoundOrEmpty(0).getIntOr("x",0),pos.getX(),"World coordinate, not test-local coordinate");
-        h.assertTrue(journal.copy().get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).equals(journal.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA)),"Records travel with the item");h.succeed();
-    }
     @GameTest public void moltenTransferRollsBackWithoutRounding(GameTestHelper h){
         var m=hearth(h,h.absolutePos(new BlockPos(6,2,2)),3);h.assertTrue(m.tryAssemble(),"Assembled tank");
         var copper=io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0);

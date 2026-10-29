@@ -23,7 +23,7 @@ public final class SmelteryGui {
         return result;
     }
     private static String fuelName(MachineMenu menu){int id=menu.data.get(27);if(id==0)return "";for(var fluid:io.github.kpaakeh.smog.fluid.ModFluids.all())if(net.minecraft.core.registries.BuiltInRegistries.FLUID.getId(fluid.source)==id)return fluid.name;return "lava";}
-    private static void tile(GuiGraphicsExtractor g,Identifier texture,int x,int y,int width,int height,int stripHeight){for(int yy=0;yy<height;yy+=16)for(int xx=0;xx<width;xx+=16)g.blit(RenderPipelines.GUI_TEXTURED,texture,x+xx,y+yy,0,0,Math.min(16,width-xx),Math.min(16,height-yy),16,stripHeight);}
+    public static void tile(GuiGraphicsExtractor g,Identifier texture,int x,int y,int width,int height,int stripHeight){for(int yy=0;yy<height;yy+=16)for(int xx=0;xx<width;xx+=16)g.blit(RenderPipelines.GUI_TEXTURED,texture,x+xx,y+yy,0,0,Math.min(16,width-xx),Math.min(16,height-yy),16,stripHeight);}
     public static void draw(MachineMenu menu,Font font,GuiGraphicsExtractor g,int x,int y,int mouseX,int mouseY){
         g.blit(RenderPipelines.GUI_TEXTURED,ModBlocks.id("textures/gui/smeltery.png"),x,y,0,0,248,244,248,244);
         for(var slot:menu.slots)if(slot.container==menu.container&&slot.isActive())GuiTextures.draw(g,"slot",x+slot.x-1,y+slot.y-1,18,18);

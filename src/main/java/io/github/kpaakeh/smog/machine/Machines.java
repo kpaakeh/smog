@@ -24,7 +24,6 @@ public final class Machines {
         if(spec.kind()!=MachineSpec.Kind.COPPER_WORKSHOP)team.reborn.energy.api.EnergyStorage.SIDED.registerForBlockEntity((machine,side)->machine.energyStorage(),type);
         if(name.equals("casting_table")||name.equals("casting_basin"))net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlockEntity((machine,side)->machine.castingFluid,type);
         if(name.equals("smeltery_fuel_tank"))net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlockEntity((machine,side)->machine.smelteryFuel,type);
-        if(name.equals("copper_hearth"))net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlockEntity((machine,side)->machine.molten,type);
         if(name.equals("washing_trough")||name.equals("lever_press")||name.equals("water_tank")||name.equals("hand_water_pump"))net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlockEntity((machine,side)->machine.processFluid,type);
         return block;
     }

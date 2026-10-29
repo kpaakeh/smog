@@ -67,6 +67,8 @@ public final class ToolAssembly {
             var result=preview(m);player.sendOverlayMessage(result.isEmpty()?Component.translatable("tool.smog.selected_schema",Component.translatable("item.smog.modular_"+schema(m).id())):Component.translatable("tool.smog.preview",result.getHoverName(),result.getMaxDamage()));return InteractionResult.SUCCESS;
         }
         if(m.getItem(5).isEmpty()&&canMount(held)){var template=ToolParts.schema(held);m.copper.selection=ToolDefinitions.index(template.id());m.setItem(5,held.split(1));m.sync();return InteractionResult.SUCCESS;}
+        var input=m.getItem(0);
+        if(shapingMode(m)&&ToolDefinitions.part(input)==null&&ItemStack.isSameItemSameComponents(input,held)&&input.getCount()<Math.min(input.getMaxStackSize(),m.getMaxStackSize(input))){input.grow(1);held.shrink(1);m.sync();return InteractionResult.SUCCESS;}
         for(int i=0;i<ToolDefinitions.maxParts();i++){int slot=ToolDefinitions.slot(i);if(m.getItem(slot).isEmpty()&&accepts(m,slot,held)){m.setItem(slot,held.split(1));m.sync();return InteractionResult.SUCCESS;}}
         return InteractionResult.PASS;
     }

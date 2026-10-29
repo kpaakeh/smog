@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
-    private Button rateButton,powerButton,previous,next,craft,containerMode;
+    private Button rateButton,powerButton,previous,next,craft;
     public MachineScreen(MachineMenu menu,Inventory inventory,Component title) {
         super(menu,inventory,title,menu.layout.width,menu.layout.height);inventoryLabelY=menu.layout.height-94;if(menu.layout.id.equals("smeltery")){inventoryLabelX=80;titleLabelX=80;}
     }
@@ -44,7 +44,6 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     private void send(int id){if(minecraft.gameMode!=null)minecraft.gameMode.handleInventoryButtonClick(menu.containerId,id);}
     private void refreshButtons(){
-        if(containerMode!=null){containerMode.setMessage(Component.literal(new String[]{"A","↓","↑"}[Math.floorMod(menu.data.get(29),3)]));containerMode.setTooltip(Tooltip.create(Component.translatable("gui.smog.smeltery.container_mode_"+Math.floorMod(menu.data.get(29),3))));}
         if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null)craft.visible=kind==2||kind==5;}
         if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
         if(rateButton!=null)rateButton.visible=menu.data.get(11)==MachineSpec.Kind.TRANSFORMER.ordinal();
@@ -62,6 +61,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         for(int col=0;col<9;col++)GuiTextures.draw(g,"slot",x+7+col*18,y+imageHeight-25,18,18);
         if((menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin")||menu.layout.id.equals("copper_workshop")||menu.layout.id.equals("manual_workshop")||menu.layout.id.equals("water_supply")||menu.layout.id.equals("tool_workbench"))) {
             int kind=menu.data.get(14);
+            if(kind==1){CastingGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}
             if(kind==7){var preview=io.github.kpaakeh.smog.copper.ToolAssembly.preview(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));
                 g.text(font,preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):preview.getMaxDamage()>0?Component.translatable("tool.smog.durability",Math.max(0,preview.getMaxDamage()-preview.getDamageValue()),preview.getMaxDamage()):Component.translatable("tool.smog.shaping_cost",Math.max(1,menu.data.get(17)),preview.getCount()),x+7,y+20,0xFF404040,false);
                 if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30){var mounted=menu.container.getItem(5);g.setTooltipForNextFrame(preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):!mounted.isEmpty()?Component.translatable("tool.smog.rebuild_compare",mounted.getMaxDamage(),preview.getMaxDamage()):preview.getHoverName(),mouseX,mouseY);}
@@ -82,7 +82,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 g.text(font,Component.literal("Cu "+menu.data.get(9)/4.0+" | Sn "+menu.data.get(10)/4.0),x+50,y+65,0xFF404040,false);
                 g.text(font,Component.literal("Br "+menu.data.get(11)/4.0+" | "+menu.data.get(4)/4.0+"/"+menu.data.get(5)/4.0),x+50,y+75,0xFF404040,false);
             }else {
-                g.text(font,Component.literal(menu.data.get(0)+" / "+menu.data.get(1)),x+75,y+70,0xFF404040,false);
+                g.text(font,kind==5?Component.translatable("gui.smog.manual.batches",menu.data.get(13)):Component.literal(menu.data.get(0)+" / "+menu.data.get(1)),x+75,y+70,0xFF404040,false);
             }
             return;
         }

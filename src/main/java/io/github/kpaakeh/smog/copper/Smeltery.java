@@ -67,7 +67,7 @@ public final class Smeltery {
         if(!state.fuelActive&&firebox&&demand&&lowDemand){m.copper.burn=m.takeFuel();state.burnTotal=m.copper.burn;if(m.copper.burn>0){state.fuelActive=true;state.fuelHeat=1100;}}
         if(!state.fuelActive&&firebox&&m.getItem(2).has(net.minecraft.core.component.DataComponents.COOKING_FUEL)&&state.fuelHeat==0)state.fuelHeat=1100;
         int target=state.fuelHeat;
-        boolean onlyZinc=active>0;for(int n=0;n<workers(m);n++){var recipe=CopperWorkshops.melt(m.getItem(slot(n)));if(recipe!=null&&recipe[0]!=4)onlyZinc=false;}
+        boolean onlyZinc=active>0;for(int n=0;n<workers(m);n++){var recipe=CopperWorkshops.melt(m.getItem(slot(n)));if(recipe!=null&&!MoltenMetalStorage.NAMES[recipe[0]].equals("zinc"))onlyZinc=false;}
         if(onlyZinc&&!CopperWorkshops.closed(m))target=Math.min(target,500);
         if(state.fuelActive)m.copper.heat=Math.min(maximumHeat(m),m.copper.heat<target?m.copper.heat+1+(m.copper.air>0?1:0):m.copper.heat>target?m.copper.heat-1:m.copper.heat);
         else if(level.getGameTime()%(20+Math.min(40,m.complexRoles().getOrDefault("lining",0)*2))==0)m.copper.heat=Math.max(0,m.copper.heat-1);
@@ -84,13 +84,13 @@ public final class Smeltery {
         heat(level,m,active);containers(m);m.copper.status=active==0?2:0;
         for(int n=0;n<count;n++){
             var input=m.getItem(slot(n));var recipe=CopperWorkshops.melt(input);String key=BuiltInRegistries.ITEM.getKey(input.getItem())+":"+input.getComponents().hashCode();if(!key.equals(m.smeltery.inputs[n])){m.smeltery.progress[n]=0;m.smeltery.inputs[n]=key;}
-            if(recipe==null)continue;if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}if(!MetalProcessing.safe(m,recipe[0])){m.copper.status=9;continue;}if(!m.smeltery.fuelActive){m.copper.status=m.smeltery.fuelHeat>0&&m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])?4:3;continue;}if(m.copper.heat<CopperWorkshops.meltingHeat(recipe[0])||m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])){m.copper.status=4;continue;}
+            if(recipe==null)continue;if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}if(!MetalProcessing.safe(m,recipe[0])){m.copper.status=MetalProcessing.problem(m,recipe[0]);continue;}if(!m.smeltery.fuelActive){m.copper.status=m.smeltery.fuelHeat>0&&m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])?4:3;continue;}if(m.copper.heat<CopperWorkshops.meltingHeat(recipe[0])||m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])){m.copper.status=4;continue;}
             int total=duration(recipe[1]);m.smeltery.progress[n]=Math.min(total,m.smeltery.progress[n]+m.smeltery.fuelSpeed*(m.copper.air>0?2:1));
             if(m.smeltery.progress[n]>=total){if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}m.copper.metal(recipe[0],m.copper.metal(recipe[0])+recipe[1]);input.shrink(1);m.smeltery.progress[n]=0;if(m.copper.air>0)m.copper.air--;}
         }
         m.copper.work=m.smeltery.progress[0];CopperWorkshops.alloy(m);m.setChanged();
     }
-    private static int workerStatus(MachineEntity m,int worker){if(worker>=workers(m))return 11;var recipe=CopperWorkshops.melt(m.getItem(slot(worker)));if(recipe==null)return 2;if(!MetalProcessing.safe(m,recipe[0]))return 9;if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m))return 5;if(!m.smeltery.fuelActive)return m.smeltery.fuelHeat>0&&m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])?4:3;if(m.copper.heat<CopperWorkshops.meltingHeat(recipe[0])||m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0]))return 4;return 0;}
+    private static int workerStatus(MachineEntity m,int worker){if(worker>=workers(m))return 11;var recipe=CopperWorkshops.melt(m.getItem(slot(worker)));if(recipe==null)return 2;if(!MetalProcessing.safe(m,recipe[0]))return MetalProcessing.problem(m,recipe[0]);if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m))return 5;if(!m.smeltery.fuelActive)return m.smeltery.fuelHeat>0&&m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])?4:3;if(m.copper.heat<CopperWorkshops.meltingHeat(recipe[0])||m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0]))return 4;return 0;}
     public static int data(MachineEntity m,int index){
         if(index>=STATUS&&index<STATUS+MAX_WORKERS)return workerStatus(m,index-STATUS);
         if(index>=METALS&&index<METALS+MoltenMetalStorage.NAMES.length*2){int kind=(index-METALS)/2;return (index-METALS)%2==0?m.copper.metal(kind)&65535:m.copper.metal(kind)>>>16;}

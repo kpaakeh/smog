@@ -201,3 +201,11 @@ Fluid/air/item ports accept zero to any physically available number. Added optio
 
 Complex modular shells retain their ordinary chunk models/BEs; no hidden constituent or replacement composite/assembled model. Fixed inverted molten-volume winding/normals, derived/clipped bounds from actual rotated chamber cells, and kept the selected-fluid marker inside its GUI tank. Fixed legacy structures retain their existing rendering. Artist faucet geometry and existing texture files preserved. Build only with check excluded; no game or tests launched.
 
+
+## Copper workshop polish — 0.10.5
+
+- Re-read copper/smeltery/tool design; recorded source-to-code scope in docs/COPPER_AGE_POLISH.md.
+- Exact fluid recovery from workshop tanks, shared per-port pouring budgets, persisted cooling total and dedicated casting status UI.
+- Specific metal process diagnostics and JEI requirements; visible worn-head condition; world-input batching and output-aware pottery/kiln batches.
+- Physical ports exclusively expose the smeltery fluid storage. Removed research journal, recipe, advancement, texture and obsolete associated test.
+- JEI recipe/tank-scale work is calculated once at registration. Artist assets preserved. Build excludes check; no tests or game launch.

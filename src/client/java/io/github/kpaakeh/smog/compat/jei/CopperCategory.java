@@ -27,6 +27,7 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
         for(int i=0;i<recipe.inputs().size();i++){
             var stack=recipe.inputs().get(i);var slot=builder.addInputSlot(6+(machine.equals("tool_workbench")||machine.equals("copper_hearth")?i%4:i)*20,7+(machine.equals("tool_workbench")||machine.equals("copper_hearth")?i/4:0)*20).setStandardSlotBackground();
             var metal=CopperWorkshops.melt(stack);
+            if(metal!=null&&recipe.description().endsWith("melting"))slot.addRichTooltipCallback((view,tooltip)->io.github.kpaakeh.smog.copper.MetalProcessing.requirements(metal[0]).forEach(tooltip::add));
             if(metal!=null&&(recipe.description().endsWith("casting")||recipe.description().endsWith("alloy")||recipe.description().endsWith("mold_making")))slot.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(metal[0]).getFluid(),recipe.fluidUnits()>0?recipe.fluidUnits():(long)metal[1]*stack.getCount()).setFluidRenderer(recipe.fluidUnits()>0?recipe.fluidUnits():(long)metal[1]*stack.getCount(),false,16,16);
             else if(recipe.machine().equals("washing_trough")&&stack.is(net.minecraft.world.item.Items.WATER_BUCKET))slot.addFluidStack(net.minecraft.world.level.material.Fluids.WATER,81000).setFluidRenderer(81000,false,16,16);
             else slot.add(stack);
@@ -38,6 +39,8 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
         else if(recipe.description().endsWith("melting")){int kind=CopperWorkshops.melt(recipe.inputs().getFirst())[0];output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(kind).getFluid(),(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount()).setFluidRenderer(tankCapacity(),false,16,30);}
         else output.add(recipe.result());
     }
-    private static long tankCapacity(){return CopperWorkshops.recipes().stream().filter(r->r.machine().equals("copper_hearth")).mapToLong(r->{if(r.description().endsWith("alloy"))return 9000L*r.result().getCount();if(r.description().endsWith("melting")){var melt=CopperWorkshops.melt(r.inputs().getFirst());return melt==null?0:(long)melt[1]*r.inputs().getFirst().getCount();}return 0;}).max().orElse(81000);}
+    private static long sharedTankCapacity=81000;
+    public static void configureTankScale(java.util.List<CopperWorkshops.RecipePreview> recipes){sharedTankCapacity=Math.max(1,recipes.stream().filter(r->r.machine().equals("copper_hearth")).mapToLong(r->{if(r.description().endsWith("alloy"))return 9000L*r.result().getCount();if(r.description().endsWith("melting")){var melt=CopperWorkshops.melt(r.inputs().getFirst());return melt==null?0:(long)melt[1]*r.inputs().getFirst().getCount();}return 0;}).max().orElse(81000));}
+    private static long tankCapacity(){return sharedTankCapacity;}
     @Override public void createRecipeExtras(IRecipeExtrasBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){builder.addRecipeArrow().setPosition(machine.equals("tool_workbench")?120:108,7);}
 }

@@ -31,7 +31,7 @@ public final class CopperInteractions {
         if(Smeltery.handles(m)){
             if(!m.assembled()){player.sendOverlayMessage(Component.translatable("message.smog.multiblock_incomplete"));return InteractionResult.SUCCESS;}
             if(held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}
-            if(FluidStorageUtil.interactWithFluidStorage(m.molten,player,hand))return InteractionResult.SUCCESS;
+            if(level.getBlockState(clicked).is(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("casting_spout")))&&FluidStorageUtil.interactWithFluidStorage(m.molten,player,hand))return InteractionResult.SUCCESS;
             if(held.has(DataComponents.COOKING_FUEL)&&put(m,2,held))return InteractionResult.SUCCESS;
             if(CopperWorkshops.melt(held)!=null)for(int n=0;n<Smeltery.workers(m);n++)if(put(m,Smeltery.slot(n),held))return InteractionResult.SUCCESS;
             return InteractionResult.PASS;
@@ -89,7 +89,7 @@ public final class CopperInteractions {
             if(held.isEmpty()){var contents=Component.empty();for(int k=0;k<MoltenMetalStorage.NAMES.length;k++)if(m.copper.metal(k)>0){if(!contents.getString().isEmpty())contents.append(" · ");contents.append(Component.translatable("conductor.smog."+MoltenMetalStorage.NAMES[k])).append(": "+ingots(m.copper.metal(k)));}player.sendOverlayMessage(contents.append(" | "+m.copper.heat));return InteractionResult.SUCCESS;}
         }else if(Smeltery.vessel(m)){
             if(held.isEmpty()&&take(m,player,3))return InteractionResult.SUCCESS;
-            if(CastingProcesses.locked(m)){player.sendOverlayMessage(Component.translatable("message.smog.casting_locked",m.smeltery.filled/81,m.smeltery.required/81));return InteractionResult.SUCCESS;}
+            if(CastingProcesses.locked(m)){if(player.isShiftKeyDown()&&held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}player.sendOverlayMessage(m.smeltery.filled>=m.smeltery.required&&m.smeltery.cooling>0?Component.translatable("message.smog.casting_cooling",(m.smeltery.cooling+19)/20):Component.translatable("message.smog.casting_locked",m.smeltery.filled/81,m.smeltery.required/81));return InteractionResult.SUCCESS;}
             if(!CopperWorkshops.workshop(m,"casting_basin")&&(CopperWorkshops.mold(held)>=0||MoldMaking.pattern(held)!=null)){take(m,player,1);m.setItem(1,held.split(1));m.copper.work=0;m.sync();return InteractionResult.SUCCESS;}
             if(held.isEmpty()){take(m,player,3);return InteractionResult.SUCCESS;}
         }else if(CopperWorkshops.workshop(m,"potter_table")){

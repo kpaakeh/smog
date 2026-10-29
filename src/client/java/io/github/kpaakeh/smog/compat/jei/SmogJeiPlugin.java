@@ -47,7 +47,8 @@ public final class SmogJeiPlugin implements IModPlugin {
             if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
         }
         registration.addRecipes(TYPE, pages);
-        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))CopperCategory.TYPES.forEach((machine,type)->registration.addRecipes(type,io.github.kpaakeh.smog.copper.CopperWorkshops.recipes().stream().filter(recipe->recipe.machine().equals(machine)).toList()));
+        var workshopRecipes=io.github.kpaakeh.smog.copper.CopperWorkshops.recipes();CopperCategory.configureTankScale(workshopRecipes);
+        if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))CopperCategory.TYPES.forEach((machine,type)->registration.addRecipes(type,workshopRecipes.stream().filter(recipe->recipe.machine().equals(machine)).toList()));
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER))registration.addRecipes(ProcessingCategory.CRUSHING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.CRUSHER).toList());
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS))registration.addRecipes(ProcessingCategory.PRESSING,io.github.kpaakeh.smog.machine.ProcessingRecipes.all().stream().filter(r->r.kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.PRESS).toList());
     }
