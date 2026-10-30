@@ -20,8 +20,12 @@ public final class Ropeway {
             }
         }return true;
     }
+    public static MachineEntity linkedDestination(ServerLevel level,MachineEntity m){
+        if(!m.copper.ropeLinked)return null;var pos=BlockPos.of(m.copper.ropeTarget);
+        if(!level.hasChunkAt(pos)||!(level.getBlockEntity(pos) instanceof MachineEntity other)||!handles(other)||!other.copper.ropeLinked||other.copper.ropeTarget!=m.getBlockPos().asLong())return null;return other;
+    }
     public static MachineEntity destination(ServerLevel level,MachineEntity m){
-        if(!m.copper.ropeLinked)return null;var pos=BlockPos.of(m.copper.ropeTarget);if(!clear(level,m.getBlockPos(),pos)||!(level.getBlockEntity(pos) instanceof MachineEntity other)||!handles(other)||!other.copper.ropeLinked||other.copper.ropeTarget!=m.getBlockPos().asLong())return null;return other;
+        var other=linkedDestination(level,m);return other!=null&&clear(level,m.getBlockPos(),other.getBlockPos())?other:null;
     }
     public static boolean link(ServerLevel level,MachineEntity a,MachineEntity b){
         if(!handles(a)||!handles(b)||a.copper.ropeLinked||b.copper.ropeLinked||!clear(level,a.getBlockPos(),b.getBlockPos()))return false;
@@ -33,10 +37,11 @@ public final class Ropeway {
     }
     public static int duration(MachineEntity m){return Math.max(40,(int)Math.ceil(Math.sqrt(m.getBlockPos().distSqr(BlockPos.of(m.copper.ropeTarget))))*10);}
     public static void tick(ServerLevel level,MachineEntity m){
+        if(RopewayRideEntity.busy(level,m.getBlockPos())){m.copper.status=17;return;}
         var other=destination(level,m);if(other==null){m.copper.status=8;return;}
         if(m.getItem(1).isEmpty()&&m.copper.queued>0&&!m.getItem(0).isEmpty()){m.setItem(1,m.removeItem(0,64));m.copper.work=0;m.copper.queued=0;m.sync();}
         if(m.getItem(1).isEmpty())return;
-        if(m.copper.work<duration(m)){m.copper.work+=BronzeDrive.connected(m)?2:1;m.setChanged();return;}
+        if(m.copper.work<duration(m)){m.copper.status=0;m.copper.workKey=BronzeDrive.connected(m)?"rope:2":"rope:1";m.copper.work+=m.copper.workKey.equals("rope:2")?2:1;m.setChanged();return;}
         var load=m.getItem(1);if(!other.canOutput(load)){m.copper.status=5;return;}
         if(other.getItem(3).isEmpty())other.setItem(3,load);else other.getItem(3).grow(load.getCount());m.setItem(1,ItemStack.EMPTY);m.copper.work=0;m.copper.status=0;other.sync();m.sync();
     }

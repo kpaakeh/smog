@@ -16,6 +16,31 @@ public final class CopperTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
     private static void set(GameTestHelper h,BlockPos pos,Block block){h.getLevel().setBlock(pos,block.defaultBlockState(),Block.UPDATE_ALL);}
+    @GameTest public void potteryRepeatsWorldBatchWithoutAddingMoreClay(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("potter_table"));
+        var table=(MachineEntity)h.getLevel().getBlockEntity(pos);table.serverTick();table.copper.selection=0;
+        var player=h.makeMockServerPlayerInLevel();
+        var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
+        player.setItemInHand(hand,new ItemStack(Items.CLAY_BALL,32));
+        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
+        h.assertTrue(player.getItemInHand(hand).isEmpty(),"Initial world insertion stores the supplied clay");
+        h.assertValueEqual(table.getItem(0).getCount(),16,"First batch consumes sixteen of the thirty-two clay balls");
+        h.assertTrue(table.getItem(3).is(item("unfired_ingot_mold")),"The selected pottery recipe produces ingot molds");
+        h.assertValueEqual(table.getItem(3).getCount(),8,"First world batch produces eight molds");
+        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
+        h.assertTrue(table.getItem(3).isEmpty(),"Empty-hand interaction collects the first batch");
+        h.assertValueEqual(table.getItem(0).getCount(),16,"Collecting output does not consume the next batch");
+        // Inventory.add may put the collected molds into the selected hotbar slot.
+        // Free that hand while keeping every collected item; no new clay is supplied.
+        if(!player.getItemInHand(hand).isEmpty()){var collected=player.getItemInHand(hand);player.setItemInHand(hand,ItemStack.EMPTY);player.getInventory().setItem(9,collected);}
+        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
+        h.assertTrue(table.getItem(0).isEmpty(),"Another empty-hand interaction processes the existing clay without new input");
+        h.assertTrue(table.getItem(3).is(item("unfired_ingot_mold")),"Repeated batch keeps the selected recipe");
+        h.assertValueEqual(table.getItem(3).getCount(),8,"Repeated world batch produces exactly eight molds");
+        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
+        h.assertValueEqual(player.getInventory().countItem(item("unfired_ingot_mold")),16,"Both collected batches conserve the exact recipe yield");
+        h.assertTrue(table.getItem(3).isEmpty(),"Both finished batches have been collected");h.succeed();
+    }
     private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width){return hearth(h,origin,width,3);}
     private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width,int height){
         int left=width/2;
@@ -111,10 +136,14 @@ public final class CopperTests {
         var encoded=ComplexFormationData.TYPE.codec().encodeStart(com.mojang.serialization.JsonOps.INSTANCE,data).getOrThrow();var restored=ComplexFormationData.TYPE.codec().parse(com.mojang.serialization.JsonOps.INSTANCE,encoded).getOrThrow();
         h.assertTrue(restored.owner(part).equals(a),"Ownership survives save/load");restored.release(a);h.assertTrue(restored.claim(b,java.util.List.of(b,part)),"Disassembly releases ownership");h.succeed();
     }
-    @GameTest public void bronzeAndCastingConserveMetalAndKeepMolds(GameTestHelper h){
+    @GameTest(maxTicks=100) public void bronzeAndCastingConserveMetalAndKeepMolds(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Working hearth");m.copper.heat=1000;m.copper.copper=12*U;m.copper.tin=4*U;
-        CopperWorkshops.tick(h.getLevel(),m);h.assertValueEqual(m.copper.bronze,16*U,"3 copper + 1 tin = 4 bronze");h.assertValueEqual(m.copper.total(),16*U,"No alloy multiplication");
-        var tablePos=origin.offset(-2,-1,1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.copper.selection=2;m.copper.lastPour=h.getLevel().getGameTime()-10;table.setItem(1,new ItemStack(item("ingot_mold")));
+        m.setItem(2,new ItemStack(Items.COAL));
+        CopperWorkshops.tick(h.getLevel(),m);
+        h.assertTrue(m.smeltery.fuelActive&&m.smeltery.fuelHeat>=600,"The physical firebox burns actual fuel at sufficient alloying heat");
+        h.assertTrue(m.getItem(2).isEmpty(),"Alloying starts by consuming the supplied coal");
+        h.assertValueEqual(m.copper.bronze,16*U,"3 copper + 1 tin = 4 bronze");h.assertValueEqual(m.copper.total(),16*U,"No alloy multiplication");
+        var tablePos=origin.offset(-2,-1,1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);m.smeltery.selected="bronze";table.setItem(1,new ItemStack(item("ingot_mold")));
         for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
         h.assertTrue(table.getItem(3).isEmpty(),"Bare wall port does not pour");
         var faucet=tablePos.above();var closed=block("casting_faucet").defaultBlockState().setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,Direction.WEST);
@@ -122,8 +151,17 @@ public final class CopperTests {
         for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
         h.assertTrue(table.getItem(3).isEmpty(),"Closed faucet does not pour");
         h.getLevel().setBlock(faucet,closed.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.OPEN,true),Block.UPDATE_ALL);
-        for(int i=0;i<110;i++)CopperWorkshops.tick(h.getLevel(),table);
-        h.assertTrue(table.getItem(3).is(item("bronze_ingot")),"Connected table casts bronze");h.assertTrue(table.getItem(1).is(item("ingot_mold")),"Mold is reusable");h.assertValueEqual(m.copper.total()+table.getItem(3).getCount()*4*U,16*U,"Casting conserves quarter-ingot units");h.succeed();
+        // The port budget is per real game tick; repeated direct calls in one tick cannot fill a mold.
+        h.runAfterDelay(14,()->{
+            h.assertValueEqual(table.smeltery.filled,4*U,"The open faucet fills one ingot mold over multiple real ticks");
+            h.getLevel().setBlock(faucet,closed,Block.UPDATE_ALL);
+        });
+        h.runAfterDelay(70,()->{
+            h.assertTrue(table.getItem(3).is(item("bronze_ingot")),"Connected table casts bronze");
+            h.assertValueEqual(table.getItem(3).getCount(),1,"Closing the faucet permits only the completed first pour");
+            h.assertTrue(table.getItem(1).is(item("ingot_mold")),"Mold is reusable");
+            h.assertValueEqual(m.copper.total()+table.smeltery.filled+table.getItem(3).getCount()*4*U,16*U,"Casting conserves stored, in-flight and finished metal");h.succeed();
+        });
     }
     @GameTest public void airPortNeedsOpenNozzle(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Formed hearth");

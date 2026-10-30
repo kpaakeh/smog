@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "io.github.kpaakeh.smog.test.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "HiddenReviewWindowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

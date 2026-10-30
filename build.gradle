@@ -89,3 +89,6 @@ publishing {
 if(providers.gradleProperty('copperTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.copperTest=true' }
 }
+if(providers.gradleProperty('logisticsTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.logisticsTest=true' }
+}

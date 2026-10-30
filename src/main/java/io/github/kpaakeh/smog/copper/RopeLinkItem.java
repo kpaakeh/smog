@@ -7,12 +7,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.network.chat.Component;
 import io.github.kpaakeh.smog.machine.MachineEntity;
 
 public final class RopeLinkItem extends Item {
     public RopeLinkItem(Properties p){super(p);}
+    @Override public void appendHoverText(ItemStack stack,TooltipContext context,TooltipDisplay display,java.util.function.Consumer<Component> lines,TooltipFlag flag){super.appendHoverText(stack,context,display,lines,flag);lines.accept(Component.translatable("item.smog.freight_rope.help"));lines.accept(Component.translatable("item.smog.freight_rope.unlink"));}
     @Override public InteractionResult useOn(UseOnContext context){
         if(!(context.getLevel() instanceof ServerLevel level))return InteractionResult.SUCCESS;
         if(!(level.getBlockEntity(context.getClickedPos()) instanceof MachineEntity anchor)||!Ropeway.handles(anchor))return InteractionResult.PASS;

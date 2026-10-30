@@ -324,7 +324,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         super.loadAdditional(input);items=NonNullList.withSize(machineId.getPath().equals("copper_hearth")?Math.max(io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE,Math.clamp(input.getIntOr("inventory_size",4),4,256)):machineId.getPath().equals("tool_workbench")?Math.max(io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize(),Math.clamp(input.getIntOr("inventory_size",256),6,256)):4,ItemStack.EMPTY);ContainerHelper.loadAllItems(input,items);
         progress=Math.max(0,input.getIntOr("progress",0));energy=Math.clamp(input.getIntOr("energy",0),0,capacity());
         burnTicks=Math.max(0,input.getIntOr("burn_ticks",0));burnTotal=Math.max(burnTicks,input.getIntOr("burn_total",0));enabled=input.getBooleanOr("enabled",true);
-        processingItem=items.get(0).getItem();copper.load(input);if(io.github.kpaakeh.smog.copper.Smeltery.related(this))smeltery.load(input);
+        processingItem=items.get(0).getItem();copper.load(input);if(level!=null&&level.isClientSide())copper.clientWorkTick=level.getGameTime();if(io.github.kpaakeh.smog.copper.Smeltery.related(this))smeltery.load(input);
         complexInspection=null;complexShape=null;
         complexRotation=Rotation.values()[Math.clamp(input.getIntOr("complex_rotation",facingRotation().ordinal()),0,3)];
         int width=input.getIntOr("complex_width",0);

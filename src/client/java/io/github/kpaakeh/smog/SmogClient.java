@@ -6,6 +6,7 @@ public class SmogClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(io.github.kpaakeh.smog.copper.CopperTransport.HANDCART,io.github.kpaakeh.smog.render.HandcartRenderer::new);
+        net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(io.github.kpaakeh.smog.copper.CopperTransport.ROPEWAY_RIDE,io.github.kpaakeh.smog.render.RopewayRideRenderer::new);
         for(var layout:io.github.kpaakeh.smog.gui.GuiLayouts.all())
             net.minecraft.client.gui.screens.MenuScreens.register(layout.type,io.github.kpaakeh.smog.gui.MachineScreen::new);
         io.github.kpaakeh.smog.render.ClientWires.initialize();

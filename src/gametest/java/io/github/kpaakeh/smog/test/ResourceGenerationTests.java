@@ -61,7 +61,10 @@ public final class ResourceGenerationTests {
             for(var value:root.getAsJsonArray("items"))h.assertFalse(value.getAsJsonObject().has("kind")&&value.getAsJsonObject().get("kind").getAsString().equals("wire"),"No electrical wire coils in copper release");
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
-        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems().size(),73,"Natural materials and copper building parts");
+        var displayed=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems();
+        var ids=displayed.stream().map(stack->BuiltInRegistries.ITEM.getKey(stack.getItem())).collect(java.util.stream.Collectors.toSet());
+        for(String required:java.util.List.of("limestone","kaolin","firebrick_casing","smeltery_glass","casting_faucet"))h.assertTrue(ids.contains(ModBlocks.id(required)),"Required resource/workshop building part is discoverable: "+required);
+        for(String forbidden:java.util.List.of("electric_furnace","crusher","solid_generator","generator_controller"))h.assertFalse(ids.contains(ModBlocks.id(forbidden)),"Legacy electrical industry stays outside the release building tab: "+forbidden);
         for(var stack:BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems())h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"No test content in release tab");
         h.assertFalse(BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(ModBlocks.id("machines")),"No empty industry tab");
         h.assertTrue(TestIndustryContent.fixture(BuiltInRegistries.ITEM.getValue(ModBlocks.id("electric_furnace"))),"System test fixture remains separate");

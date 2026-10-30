@@ -37,10 +37,11 @@ public final class CopperInteractions {
             return InteractionResult.PASS;
         }
         if(Ropeway.handles(m)){
+            if(held.is(Items.STICK)){player.sendOverlayMessage(RopewayRideEntity.mount(level,m,player));return InteractionResult.SUCCESS;}
             if(held.getItem() instanceof RopeLinkItem)return InteractionResult.PASS;
             if(player.isShiftKeyDown()&&!held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}
             if(!held.isEmpty()&&put(m,0,held))return InteractionResult.SUCCESS;
-            if(held.isEmpty()){if(take(m,player,3))return InteractionResult.SUCCESS;if(player.isShiftKeyDown()){take(m,player,0);return InteractionResult.SUCCESS;}m.copper.queued=1;m.sync();player.sendOverlayMessage(Component.translatable("message.smog.rope_queued"));return InteractionResult.SUCCESS;}
+            if(held.isEmpty()){if(take(m,player,3))return InteractionResult.SUCCESS;if(player.isShiftKeyDown()){take(m,player,0);return InteractionResult.SUCCESS;}if(!m.copper.ropeLinked){player.sendOverlayMessage(Component.translatable("message.smog.ride_link"));return InteractionResult.SUCCESS;}if(m.getItem(0).isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.rope_help"));return InteractionResult.SUCCESS;}if(RopewayRideEntity.busy(level,m.getBlockPos())){player.sendOverlayMessage(Component.translatable("message.smog.ride_busy"));return InteractionResult.SUCCESS;}if(Ropeway.destination(level,m)==null){player.sendOverlayMessage(Component.translatable("message.smog.rope_invalid"));return InteractionResult.SUCCESS;}m.copper.queued=1;m.sync();player.sendOverlayMessage(Component.translatable("message.smog.rope_queued"));return InteractionResult.SUCCESS;}
         }
         if(LoadingCrane.handles(m)){
             if(!held.isEmpty())return InteractionResult.PASS;
@@ -94,7 +95,12 @@ public final class CopperInteractions {
             if(held.isEmpty()){take(m,player,3);return InteractionResult.SUCCESS;}
         }else if(CopperWorkshops.workshop(m,"potter_table")){
             if(!held.isEmpty()&&put(m,0,held)){CopperWorkshops.button(m,22);m.sync();return InteractionResult.SUCCESS;}
-            if(held.isEmpty()){if(!take(m,player,3))player.sendOverlayMessage(Component.translatable("message.smog.mold_selected",Item.byId(CopperWorkshops.data(m,12)).getDefaultInstance().getHoverName()));return InteractionResult.SUCCESS;}
+            if(held.isEmpty()){
+                if(take(m,player,3))return InteractionResult.SUCCESS;
+                CopperWorkshops.button(m,22);m.sync();
+                player.sendOverlayMessage(Component.translatable("message.smog.mold_selected",Item.byId(CopperWorkshops.data(m,12)).getDefaultInstance().getHoverName()));
+                return InteractionResult.SUCCESS;
+            }
         }else if(CopperWorkshops.workshop(m,"ceramic_kiln")){
             if(held.has(DataComponents.COOKING_FUEL)&&put(m,2,held))return InteractionResult.SUCCESS;
             if(!held.isEmpty()&&put(m,0,held))return InteractionResult.SUCCESS;

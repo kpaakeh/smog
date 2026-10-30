@@ -27,5 +27,11 @@
   },
   "depends": {
     "smog": "*"
-  }
+  },
+  "mixins": [
+    {
+      "config": "smog-test-client.mixins.json",
+      "environment": "client"
+    }
+  ]
 }

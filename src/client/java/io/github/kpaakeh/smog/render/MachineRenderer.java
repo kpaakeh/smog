@@ -26,6 +26,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         public boolean drawRope;
         public float cargoProgress;
         public net.minecraft.client.renderer.item.ItemStackRenderState cargo;
+        public net.minecraft.client.renderer.item.ItemStackRenderState ropeCarriage;
         public record Part(net.minecraft.core.BlockPos offset,BlockModelRenderState model){}
         public record ItemPart(float x,float y,float z,net.minecraft.client.renderer.item.ItemStackRenderState model){}
         public java.util.List<ItemPart> displayedItems=java.util.List.of();
@@ -44,12 +45,12 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         BlockEntityRenderer.super.extractRenderState(machine, state, tick, camera, overlay);
         state.wires=machine.spec().kind()==MachineSpec.Kind.CONNECTOR?ClientWires.from(machine.getBlockPos()):java.util.List.of();
         if(!state.wires.isEmpty())state.lightCoords=net.minecraft.util.LightCoordsUtil.pack(machine.getLevel().getBrightness(net.minecraft.world.level.LightLayer.BLOCK,machine.getBlockPos().relative(ConnectorBlock.attachment(machine.getBlockState()))),machine.getLevel().getBrightness(net.minecraft.world.level.LightLayer.SKY,machine.getBlockPos().relative(ConnectorBlock.attachment(machine.getBlockState()))));
-        state.ropeEnd=null;state.drawRope=false;state.cargo=null;
+        state.ropeEnd=null;state.drawRope=false;state.cargo=null;state.ropeCarriage=null;
         if(io.github.kpaakeh.smog.copper.Ropeway.handles(machine)&&machine.copper.ropeLinked){
             var target=net.minecraft.core.BlockPos.of(machine.copper.ropeTarget);
             if(machine.getLevel().hasChunkAt(target)&&machine.getLevel().getBlockEntity(target) instanceof MachineEntity other&&other.copper.ropeLinked&&other.copper.ropeTarget==machine.getBlockPos().asLong()){
                 state.drawRope=machine.getBlockPos().asLong()<target.asLong();state.ropeEnd=Vec3.atLowerCornerOf(target.subtract(machine.getBlockPos()));
-                if(!machine.getItem(1).isEmpty()){state.cargo=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(state.cargo,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CHEST),net.minecraft.world.item.ItemDisplayContext.NONE,machine.getLevel(),null,0);state.cargoProgress=Math.clamp((machine.copper.work+tick)/io.github.kpaakeh.smog.copper.Ropeway.duration(machine),0,1);}
+                if(!machine.getItem(1).isEmpty()){state.ropeCarriage=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(state.ropeCarriage,RopewayRideRenderer.carriage(),net.minecraft.world.item.ItemDisplayContext.NONE,machine.getLevel(),null,0);state.cargo=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(state.cargo,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CHEST),net.minecraft.world.item.ItemDisplayContext.NONE,machine.getLevel(),null,0);if(machine.copper.clientWorkTick==Long.MIN_VALUE)machine.copper.clientWorkTick=machine.getLevel().getGameTime();float elapsed=machine.copper.status==0?Math.clamp(machine.getLevel().getGameTime()-machine.copper.clientWorkTick+tick,0,10):0;state.cargoProgress=Math.clamp((machine.copper.work+elapsed*(machine.copper.workKey.equals("rope:2")?2:1))/io.github.kpaakeh.smog.copper.Ropeway.duration(machine),0,1);}
             }
         }
         state.complexParts=java.util.List.of();
@@ -142,7 +143,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
     }
     private void addItem(java.util.List<State.ItemPart> shown,net.minecraft.world.item.ItemStack stack,float x,float y,float z,MachineEntity machine){var model=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(model,stack,net.minecraft.world.item.ItemDisplayContext.FIXED,machine.getLevel(),null,0);shown.add(new State.ItemPart(x,y,z,model));}
     @Override public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
-        if(state.ropeEnd!=null){if(state.drawRope)RopeRendering.submit(state.ropeEnd,pose,collector,state.lightCoords);if(state.cargo!=null){var at=RopeRendering.point(state.ropeEnd,state.cargoProgress);pose.pushPose();pose.translate(at.x,at.y-.35,at.z);pose.scale(.6f,.6f,.6f);state.cargo.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}}
+        if(state.ropeEnd!=null){if(state.drawRope)RopeRendering.submit(state.ropeEnd,pose,collector,state.lightCoords);if(state.cargo!=null){var at=RopeRendering.point(state.ropeEnd,state.cargoProgress);pose.pushPose();pose.translate(at.x,at.y,at.z);pose.rotate(com.mojang.math.Axis.YP.rotationDegrees((float)Math.toDegrees(Math.atan2(state.ropeEnd.x,state.ropeEnd.z))));pose.scale(.5f,.5f,.5f);state.ropeCarriage.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();pose.pushPose();pose.translate(at.x,at.y-.35,at.z);pose.scale(.6f,.6f,.6f);state.cargo.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}}
         if(!state.wires.isEmpty())WireRendering.submit(state.wires,state.blockPos,pose,collector,state.lightCoords);
         MoltenRendering.submitLayers(state.moltenLayers,pose,collector);
         MoltenRendering.submit(state.moltenSurfaces,pose,collector,state.lightCoords);

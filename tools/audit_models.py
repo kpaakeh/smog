@@ -12,8 +12,10 @@ for p in sorted(ROOT.glob('*.json')):
   for side,f in e.get('faces',{}).items():
    faces+=1
    axis,index,dimensions={'west':(0,0,(2,1)),'east':(0,1,(2,1)),'north':(2,0,(0,1)),'south':(2,1,(0,1)),'down':(1,0,(0,2)),'up':(1,1,(0,2))}[side]
-   coord=(a if index==0 else b)[axis];u,v=dimensions;uv=f['uv']
-   if abs(abs(uv[2]-uv[0])-(b[u]-a[u]))>1e-6 or abs(abs(uv[3]-uv[1])-(b[v]-a[v]))>1e-6:errors.append(f'{p.name}: UV density {side}')
+   coord=(a if index==0 else b)[axis];u,v=dimensions;uv=f.get('uv')
+   # Omitted UVs are valid vanilla geometry projections, with one texture pixel
+   # per model unit. Only explicit UV rectangles can override that density.
+   if uv is not None and (abs(abs(uv[2]-uv[0])-(b[u]-a[u]))>1e-6 or abs(abs(uv[3]-uv[1])-(b[v]-a[v]))>1e-6):errors.append(f'{p.name}: UV density {side}')
    planes.setdefault((axis,coord),[]).append((a[u],b[u],a[v],b[v]))
  for plane,rectangles in planes.items():
   for r,s in combinations(rectangles,2):

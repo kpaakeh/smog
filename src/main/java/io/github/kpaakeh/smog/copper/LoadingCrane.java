@@ -62,6 +62,8 @@ public final class LoadingCrane {
     }
     public static void tick(ServerLevel level,MachineEntity m){
         if(!m.assembled())return;
+        boolean signal=level.hasNeighborSignal(m.getBlockPos());
+        if(signal!=m.copper.craneRedstoneHigh){m.copper.craneRedstoneHigh=signal;m.setChanged();if(signal)queue(m);}
         if(m.copper.queued==0){if(BronzeDrive.connected(m)&&level.getGameTime()%20==0)queue(m);return;}
         int duration=duration(m),pickup=duration*3/20,delivery=duration*3/4;
         int problem=readiness(level,m,m.copper.work<=pickup&&m.getItem(1).isEmpty());

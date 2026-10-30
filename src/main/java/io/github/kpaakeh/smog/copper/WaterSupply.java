@@ -43,10 +43,12 @@ public final class WaterSupply {
             if(currentName.equals("smog:water_valve")&&!state.getValue(WorkshopPartBlock.OPEN))continue;
             for(var side:Direction.values()){
                 if(currentName.equals("smog:water_valve")&&side.getAxis()!=state.getValue(WorkshopPartBlock.FACING).getAxis())continue;
-                var pos=current.relative(side);if(!level.hasChunkAt(pos)||Math.abs(pos.getX()-start.getX())>16||Math.abs(pos.getY()-start.getY())>16||Math.abs(pos.getZ()-start.getZ())>16||!seen.add(pos))continue;
+                var pos=current.relative(side);if(!level.hasChunkAt(pos)||Math.abs(pos.getX()-start.getX())>16||Math.abs(pos.getY()-start.getY())>16||Math.abs(pos.getZ()-start.getZ())>16||seen.contains(pos))continue;
                 var next=level.getBlockState(pos);String name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(next.getBlock()).toString();
                 if(name.equals("smog:water_valve")&&side.getAxis()!=next.getValue(WorkshopPartBlock.FACING).getAxis())continue;
                 if(name.equals("smog:water_outlet")&&side!=next.getValue(WorkshopPartBlock.FACING))continue;
+                // A rejected side must not hide a later, valid route into the same valve.
+                seen.add(pos);
                 if(next.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet")){queue.add(pos);continue;}
                 if(level.getBlockEntity(pos) instanceof MachineEntity other&&(CopperWorkshops.workshop(other,"hand_water_pump")||CopperWorkshops.workshop(other,"water_tank")&&!CopperWorkshops.workshop(source,"hand_water_pump")))continue;
                 var storage=FluidStorage.SIDED.find(level,pos,side.getOpposite());if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,null));
