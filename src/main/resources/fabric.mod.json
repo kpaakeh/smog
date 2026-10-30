@@ -3,7 +3,7 @@
   "id": "smog",
   "version": "${version}",
   "name": "Smog",
-  "description": "A Fabric mod for Minecraft 26.3.",
+  "description": "Литьё и сплавы, составные инструменты, керамика, ручные механизмы и грузовая логистика.",
   "authors": [
     "kpaakeh"
   ],
