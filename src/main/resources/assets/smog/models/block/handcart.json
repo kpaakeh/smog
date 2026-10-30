@@ -4,8 +4,7 @@
 	"parent": "minecraft:block/block",
 	"texture_size": [64, 64],
 	"textures": {
-		"5": "smog:block/handcart",
-		"particle": "block/oak_planks"
+		"5": "smog:block/handcart"
 	},
 	"elements": [
 		{
