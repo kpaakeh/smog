@@ -16,6 +16,30 @@ public final class CopperTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
     private static void set(GameTestHelper h,BlockPos pos,Block block){h.getLevel().setBlock(pos,block.defaultBlockState(),Block.UPDATE_ALL);}
+    @GameTest public void automatedSandCoreCastingKeepsToolingUntilOutputCanComplete(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);
+        var input=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.UP);
+        var core=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(item("ceramic_core"));var mold=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(item("sand_pipe_mold"));
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(input.insert(mold,2,tx),2L,"Automation supplies two sand molds");h.assertValueEqual(input.insert(core,2,tx),2L,"Automation supplies two cores into their separate slot");tx.commit();}
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),6750,tx),6750L,"One cored pour accepts exactly the handle's metal content");tx.commit();}
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var menu=m.createMenu(1,player.getInventory(),player);
+        h.assertTrue(menu.slots.get(0).getItem().is(item("ceramic_core")),"The actual menu exposes the core as a separate slot");h.assertFalse(menu.slots.get(0).mayPickup(player),"The GUI cannot pick up a locked core");h.assertFalse(menu.slots.get(1).mayPickup(player),"The GUI cannot pick up a locked mold");
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(input.extract(core,1,tx),0L,"Automation cannot extract the locked core");h.assertValueEqual(input.insert(core,1,tx),0L,"Automation cannot add to the locked core stack");}
+        m.setItem(3,new ItemStack(Items.COBBLESTONE,64));for(int tick=0;tick<60;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
+        h.assertValueEqual(m.getItem(1).getCount(),2,"Blocked output has not consumed the sand mold");h.assertValueEqual(m.getItem(2).getCount(),2,"Blocked output has not consumed the core");h.assertValueEqual(m.smeltery.filled,6750,"Blocked output retains every poured metal unit");
+        m.setItem(3,ItemStack.EMPTY);io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(3).is(item("hollow_copper_handle")),"Unblocking output completes the saved cast");h.assertValueEqual(m.getItem(1).getCount(),1,"Completion consumes exactly one sand mold");h.assertValueEqual(m.getItem(2).getCount(),1,"Completion consumes exactly one core");h.assertTrue(menu.slots.get(0).mayPickup(player),"The spare core unlocks after completion");h.succeed();
+    }
+    @GameTest public void legacyPipeCastingWithoutCoreSnapshotStillCompletes(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);m.setItem(1,new ItemStack(item("pipe_mold")));
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){m.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),9000,tx);tx.commit();}
+        var legacy=m.saveCustomOnly(h.getLevel().registryAccess());legacy.remove("casting_core");legacy.remove("casting_consumes_core");
+        m.loadCustomOnly(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,h.getLevel().registryAccess(),legacy));
+        h.assertTrue(m.smeltery.castingCore.isEmpty()&&!m.smeltery.consumeCore,"Older saves default to no core requirement");
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),9000,tx),9000L,"A legacy ordinary pipe casting accepts its remaining metal");tx.commit();}
+        for(int tick=0;tick<100;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(3).is(item("copper_pipe_part")),"A legacy pipe recipe does not turn into a hollow handle");h.assertValueEqual(m.getItem(3).getCount(),4,"Legacy casting preserves its four-pipe output");h.succeed();
+    }
     @GameTest public void hollowCastingLocksSavesAndConsumesOneCoreWithoutMetalGain(GameTestHelper h){
         var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);
         m.setItem(1,new ItemStack(item("pipe_mold")));m.setItem(2,new ItemStack(item("ceramic_core"),2));
@@ -278,4 +302,15 @@ public final class CopperTests {
         player.setShiftKeyDown(true);player.gameMode.useItemOn(player,h.getLevel(),tool,net.minecraft.world.InteractionHand.MAIN_HAND,hit);h.assertTrue(h.getLevel().getBlockState(pos).getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING)==Direction.EAST,"Sneak item path rotates exactly once");h.succeed();
     }
 
+    @GameTest public void workshopAdvancementTreeLoadsAndClayUnlocksItsRoot(GameTestHelper h){
+        var manager=h.getLevel().getServer().getAdvancements();
+        for(String name:java.util.List.of("root","pottery","foundry","casting","kiln","bench","tools","hollow","washing","water","pressing","fiber","cart","crane","ropeway","bronze")){
+            var node=manager.get(ModBlocks.id("copper/"+name));h.assertTrue(node!=null,"Workshop advancement loads: "+name);h.assertTrue(node.value().display().isPresent(),"Workshop node has a display: "+name);
+            if(!name.equals("root"))h.assertTrue(node.value().parent().isPresent()&&manager.get(node.value().parent().get())!=null,"Every branch has a loaded parent: "+name);
+        }
+        h.assertTrue(CopperTests.class.getResource("/assets/smog/textures/block/refractory_bricks.png")!=null,"Requested refractory brick background exists");
+        var player=h.makeMockServerPlayerInLevel();var clay=new ItemStack(Items.CLAY_BALL);player.getInventory().setItem(0,clay);
+        net.minecraft.advancements.triggers.CriteriaTriggers.INVENTORY_CHANGED.trigger(player,player.getInventory(),clay);
+        h.assertTrue(player.getAdvancements().getOrStartProgress(manager.get(ModBlocks.id("copper/root"))).isDone(),"Obtaining clay really unlocks the workshop root");h.succeed();
+    }
 }

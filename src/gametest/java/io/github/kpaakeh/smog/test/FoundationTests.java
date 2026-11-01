@@ -44,8 +44,8 @@ public class FoundationTests {
             h.assertTrue(found,"Ore feature really creates blocks for "+ore.name());
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(),true,level.registryAccess());
-        for(String tab:List.of("ores","blocks"))h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab)).hasAnyItems(),"Creative tab has contents: "+tab);
-        h.assertValueEqual(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("ores")).getDisplayItems().size(),249,"All forms are in ore tab");
+        for(String tab:io.github.kpaakeh.smog.registry.ModCreativeTabs.IDS)h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab)).hasAnyItems(),"Creative tab has contents: "+tab);
+        var resourceItems=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems().stream().map(net.minecraft.world.item.ItemStack::getItem).collect(java.util.stream.Collectors.toSet());for(var ore:ModOres.all())for(var form:ore.contents())h.assertTrue(resourceItems.contains(form.asItem()),"Resource form stays discoverable in Blocks: "+ore.name());
         h.succeed();
     }
     @GameTest public void zoneGeometryMovementAndPersistence(GameTestHelper h) {

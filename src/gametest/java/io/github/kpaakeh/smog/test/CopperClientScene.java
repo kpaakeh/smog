@@ -12,7 +12,30 @@ import net.minecraft.world.level.block.*;
 /** Isolated copper workshop scene; no desktop input, no user world or saves. */
 public final class CopperClientScene {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
+    private static void hover(ClientGameTestContext context,int localX,int localY){
+        double[] position=new double[2];
+        context.runOnClient(mc->{
+            var menu=((io.github.kpaakeh.smog.gui.MachineScreen)mc.gui.screen()).getMenu();var window=mc.getWindow();
+            position[0]=((window.getGuiScaledWidth()-menu.layout.width)/2.0+localX)*window.getScreenWidth()/window.getGuiScaledWidth();
+            position[1]=((window.getGuiScaledHeight()-menu.layout.height)/2.0+localY)*window.getScreenHeight()/window.getGuiScaledHeight();
+        });
+        context.getInput().setCursorPos(position[0],position[1]);context.waitTicks(3);
+    }
+    private static String language(ClientGameTestContext context,String requested){
+        var previous=new java.util.concurrent.atomic.AtomicReference<String>();
+        var reload=new java.util.concurrent.atomic.AtomicReference<java.util.concurrent.CompletableFuture<Void>>();
+        context.runOnClient(mc->{
+            previous.set(mc.getLanguageManager().getSelected());
+            if(previous.get().equals(requested))return;
+            if(!mc.getLanguageManager().getLanguages().containsKey(requested))throw new IllegalArgumentException("Unavailable test language: "+requested);
+            mc.getLanguageManager().setSelected(requested);mc.options.languageCode=requested;reload.set(mc.reloadResourcePacks());
+        });
+        if(reload.get()!=null){context.waitFor(mc->reload.get().isDone());reload.get().join();}
+        return previous.get();
+    }
     public static void run(ClientGameTestContext context){
+        String requestedLanguage=System.getProperty("smog.testLanguage","");
+        String previousLanguage=requestedLanguage.isEmpty()?null:language(context,requestedLanguage);
         try(var world=context.worldBuilder().create()){
             world.getServer().runCommand("fill -12 99 -8 12 99 8 minecraft:stone");
             world.getServer().runCommand("time set noon");world.getServer().runCommand("weather clear");
@@ -47,6 +70,17 @@ public final class CopperClientScene {
                 level.setBlockAndUpdate(new BlockPos(-5,100,-1),block("water_tank").defaultBlockState());var tank=(MachineEntity)level.getBlockEntity(new BlockPos(-5,100,-1));tank.copper.processFluid=4*81000;tank.sync();
             });
             world.getServer().runCommand("tp @a 0.5 104 -5.5 0 35");context.waitTicks(40);context.waitFor(mc->mc.level.getBlockState(new BlockPos(0,100,0)).getValue(MachineBlock.ASSEMBLED));
+            context.runOnClient(mc->{
+                var player=mc.player;var original=player.getMainHandItem();
+                try{
+                    var tool=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("pickaxe"),"copper");
+                    player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tool);var stone=Blocks.STONE.defaultBlockState();float base=player.getDestroySpeed(stone);
+                    var data=io.github.kpaakeh.smog.copper.ModularToolItem.parts(tool);data.putInt("trait_work_stacks",4);data.putLong("trait_work_until",mc.level.getGameTime()+100);tool.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
+                    if(player.getDestroySpeed(stone)<=base)throw new IllegalStateException("Active work hardening is missing on the client");
+                    data.putLong("trait_work_until",mc.level.getGameTime());tool.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
+                    if(Math.abs(player.getDestroySpeed(stone)-base)>.0001f)throw new IllegalStateException("Expired work hardening survived the client mining query");
+                }finally{player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,original);}
+            });
             context.getInput().lookAt(new BlockPos(0,101,1));context.waitTicks(20);context.takeScreenshot("copper-workshop-world");
             world.getServer().runCommand("tp @a 0.5 105 1.5 0 90");context.waitTicks(12);context.takeScreenshot("copper-hearth-liquid-overhead");
             world.getServer().runCommand("tp @a 0.5 104 -5.5 0 35");context.waitTicks(8);
@@ -59,10 +93,16 @@ public final class CopperClientScene {
             world.getServer().runOnServer(server->{var player=server.getPlayerList().getPlayers().getFirst();player.openMenu((MachineEntity)server.overworld().getBlockEntity(new BlockPos(5,100,0)));});
             context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-press-gui");context.setScreen(()->null);
             world.getServer().runOnServer(server->{server.getPlayerList().getPlayers().getFirst().openMenu((MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,-3)));});
-            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-tool-workbench-gui");context.setScreen(()->null);
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-tool-workbench-gui");
+            hover(context,20,24);context.takeScreenshot("copper-tool-comparison-tooltip");
+            hover(context,85,67);context.takeScreenshot("copper-tool-traits-tooltip");context.setScreen(()->null);
             world.getServer().runCommand("tp @a 0.5 102 -5.5 0 45");context.getInput().lookAt(new BlockPos(0,100,-3));context.waitTicks(12);context.takeScreenshot("copper-tool-workbench-world");
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);});
-            context.runOnClient(mc->{var screen=(net.fabricmc.fabric.api.client.creativetab.v1.FabricCreativeModeInventoryScreen)mc.gui.screen();var tab=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("copper_age"));screen.switchToPage(screen.getPage(tab));screen.setSelectedTab(tab);});context.waitTicks(10);context.takeScreenshot("copper-tools-inventory");context.setScreen(()->null);
+            for(String tabId:java.util.List.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools")){
+                context.runOnClient(mc->{var screen=(net.fabricmc.fabric.api.client.creativetab.v1.FabricCreativeModeInventoryScreen)mc.gui.screen();var tab=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tabId));screen.switchToPage(screen.getPage(tab));screen.setSelectedTab(tab);});
+                context.waitTicks(5);context.takeScreenshot("copper-creative-"+tabId);
+            }
+            context.setScreen(()->null);
             world.getServer().runCommand("tp @a -4.5 102 -3.5 0 35");context.getInput().lookAt(new BlockPos(-5,100,0));context.waitTicks(20);context.takeScreenshot("copper-washing-and-water");
             world.getServer().runOnServer(server->{
                 var hearth=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,0));
@@ -88,8 +128,31 @@ public final class CopperClientScene {
             });
             context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(6);context.takeScreenshot("copper-casting-cooling-gui");
             context.waitTicks(50);context.takeScreenshot("copper-casting-ready-gui");context.setScreen(()->null);
-            context.runOnClient(mc->TestJeiProbe.showMultiblocks());context.waitTicks(8);context.takeScreenshot("copper-jei-structure-size-range");context.setScreen(()->null);
-        }
+            context.runOnClient(mc->TestJeiProbe.showCoredCasting());context.waitTicks(8);context.takeScreenshot("copper-jei-cored-casting");context.setScreen(()->null);
+            world.getServer().runOnServer(server->{
+                var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));table.setItem(3,ItemStack.EMPTY);
+                table.setItem(1,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("pipe_mold")));table.setItem(2,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("ceramic_core"),2));
+                try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),3375,tx)!=3375)throw new IllegalStateException("Cored partial casting fixture rejected");tx.commit();
+                }
+                server.getPlayerList().getPlayers().getFirst().openMenu(table);
+            });
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-casting-core-partial-gui");context.setScreen(()->null);
+            world.getServer().runCommand("tp @a 2.5 102 -5.5 0 45");context.getInput().lookAt(new BlockPos(2,100,-3));context.waitTicks(12);context.takeScreenshot("copper-casting-core-world");
+            world.getServer().runOnServer(server->{
+                var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));
+                try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),3375,tx)!=3375)throw new IllegalStateException("Cored top-up fixture rejected");tx.commit();
+                }
+            });
+            context.waitTicks(60);
+            world.getServer().runOnServer(server->{var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));if(!table.getItem(3).is(io.github.kpaakeh.smog.copper.ToolParts.item("hollow_copper_handle"))||table.getItem(2).getCount()!=1)throw new IllegalStateException("Cored casting did not produce one handle and consume one core");});
+            context.takeScreenshot("copper-casting-core-ready-world");
+            context.runOnClient(mc->TestJeiProbe.showMultiblocks());context.waitTicks(8);context.takeScreenshot("copper-jei-structure-size-range");context.setScreen(()->null);            world.getServer().runCommand("advancement grant @a from smog:copper/root");context.waitTicks(10);
+            context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.advancements.AdvancementsScreen(mc.player.connection.getAdvancements());});
+            context.runOnClient(mc->{var advancements=mc.player.connection.getAdvancements();var root=advancements.get(ModBlocks.id("copper/root"));if(root==null)throw new IllegalStateException("Workshop advancement root did not synchronize");advancements.setSelectedTab(root,true);});
+            context.waitTicks(12);context.takeScreenshot("copper-workshop-advancements");context.setScreen(()->null);
+        }finally{if(previousLanguage!=null)language(context,previousLanguage);}
     }
 }
 

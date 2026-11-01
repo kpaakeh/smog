@@ -15,7 +15,7 @@
     "hidden": false
   },
   "criteria": {
-    "obtain": {
+    "obtained": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
@@ -28,7 +28,7 @@
   },
   "requirements": [
     [
-      "obtain"
+      "obtained"
     ]
   ],
   "parent": "smog:copper/root"

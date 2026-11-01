@@ -92,3 +92,8 @@ if(providers.gradleProperty('copperTest').isPresent()) {
 if(providers.gradleProperty('logisticsTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.logisticsTest=true' }
 }
+if(providers.gradleProperty('testLanguage').isPresent()) {
+    def testLanguage=providers.gradleProperty('testLanguage').get()
+    if(!(testLanguage in ['en_us','ru_ru']))throw new GradleException('testLanguage must be en_us or ru_ru')
+    loom.runs.named('clientGameTest') { vmArg "-Dsmog.testLanguage=$testLanguage" }
+}

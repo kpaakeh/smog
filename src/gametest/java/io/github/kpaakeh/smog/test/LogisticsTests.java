@@ -95,7 +95,19 @@ public final class LogisticsTests {
         steps(h,m,LoadingCrane.duration(m));h.assertValueEqual(count(target,Items.DIAMOND),11,"Reserved batch still reaches its original destination");h.succeed();
     }
     @GameTest public void incompleteCraneReportsTheActualMissingPosition(GameTestHelper h){
-        var m=crane(h);var missing=m.structure().parts().entrySet().stream().filter(e->!e.getValue().value().equals("minecraft:air")).findFirst().orElseThrow().getKey().rotate(m.rotation()).offset(m.getBlockPos());m.disassemble();h.getLevel().setBlock(missing,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
-        h.assertFalse(m.tryAssemble(),"Incomplete gantry cannot assemble");h.assertTrue(m.assemblyDetail().equals("fixed|"+missing.getX()+"|"+missing.getY()+"|"+missing.getZ()),"Assembly feedback identifies the missing world block");h.succeed();
+        var m=crane(h);var part=m.structure().parts().entrySet().stream().filter(e->!e.getValue().value().equals("minecraft:air")).findFirst().orElseThrow();var missing=part.getKey().rotate(m.rotation()).offset(m.getBlockPos());m.disassemble();h.getLevel().setBlock(missing,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
+        h.assertFalse(m.tryAssemble(),"Incomplete gantry cannot assemble");h.assertTrue(m.assemblyDetail().equals("fixed|"+missing.getX()+"|"+missing.getY()+"|"+missing.getZ()+"|"+part.getValue().value()),"Assembly feedback identifies the missing world block");h.succeed();
+    }
+    @GameTest public void craneTransfersOnlyAvailableSpaceInEveryOrientation(GameTestHelper h){
+        var origin=h.absolutePos(new BlockPos(4,5,4));var definition=Multiblocks.get(ModBlocks.id("loading_crane"));
+        for(var turn:Rotation.values()){
+            definition.parts().forEach((offset,part)->h.getLevel().setBlock(origin.offset(offset.rotate(turn)),part.block().defaultBlockState(),Block.UPDATE_ALL));
+            Direction facing=turn.rotate(Direction.NORTH);h.getLevel().setBlock(origin,block("loading_crane").defaultBlockState().setValue(io.github.kpaakeh.smog.machine.MachineBlock.FACING,facing),Block.UPDATE_ALL);var m=(MachineEntity)h.getLevel().getBlockEntity(origin);h.assertTrue(m.tryAssemble(),"Rotated crane assembles: "+turn);
+            var source=barrel(h,LoadingCrane.bay(m,false));var target=barrel(h,LoadingCrane.bay(m,true));source.setItem(0,new ItemStack(Items.COBBLESTONE,16));
+            for(int slot=0;slot<target.getContainerSize()-1;slot++)target.setItem(slot,new ItemStack(Items.DIRT,64));target.setItem(target.getContainerSize()-1,new ItemStack(Items.COBBLESTONE,61));
+            LoadingCrane.queue(m);steps(h,m,LoadingCrane.duration(m)+1);h.assertValueEqual(count(source,Items.COBBLESTONE),13,"Pickup respects actual receiver room: "+turn);h.assertValueEqual(count(target,Items.COBBLESTONE),64,"Only three items are delivered: "+turn);h.assertTrue(m.getItem(1).isEmpty()&&m.copper.queued==0,"Rotated batch completes exactly once: "+turn);
+            var a=LoadingCrane.bay(m,false);var b=LoadingCrane.bay(m,true);m.disassemble();h.getLevel().setBlock(a,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);h.getLevel().setBlock(b,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);definition.parts().forEach((offset,part)->h.getLevel().setBlock(origin.offset(offset.rotate(turn)),Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL));h.getLevel().setBlock(origin,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
+        }
+        h.succeed();
     }
 }

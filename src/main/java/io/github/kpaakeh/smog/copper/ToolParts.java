@@ -34,7 +34,7 @@ public final class ToolParts {
         int delta=tool.getDamageValue()-ModularToolItem.parts(tool).getIntOr("assembled_damage",0),maximum=Math.max(1,tool.getMaxDamage());
         for(int i=0;i<parts.size();i++)if(head(parts.get(i))){var part=parts.get(i).copy();var data=ModularToolItem.parts(part);wear(part).add(delta,maximum).write(data);part.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
             if(i==ToolDefinitions.primary(schema)){preserveIdentity(tool,part);if(!tool.has(DataComponents.CUSTOM_NAME))part.remove(DataComponents.CUSTOM_NAME);if(tool.has(DataComponents.ENCHANTMENTS))part.set(DataComponents.ENCHANTMENTS,tool.get(DataComponents.ENCHANTMENTS));else part.remove(DataComponents.ENCHANTMENTS);}parts.set(i,part);
-        }return List.copyOf(parts);
+        }for(var part:parts)if(!part.isEmpty())ToolTraits.exportRuntime(tool,part);return List.copyOf(parts);
     }
     public static ItemStack extract(ItemStack tool,int slot){int role=ToolDefinitions.role(slot);var parts=components(tool);return role>=0&&role<parts.size()?parts.get(role).copy():ItemStack.EMPTY;}
     public static int[] melt(ItemStack stack){
@@ -72,7 +72,7 @@ public final class ToolParts {
         result.set(DataComponents.ENCHANTABLE,new net.minecraft.world.item.enchantment.Enchantable(14));var primary=parts.get(ToolDefinitions.primary(schema));if(primary.has(DataComponents.ENCHANTMENTS))result.set(DataComponents.ENCHANTMENTS,primary.get(DataComponents.ENCHANTMENTS));
         var data=new CompoundTag();data.putString("template",schema.id());data.putString("template_snapshot",ToolDefinitions.snapshot(schema));data.putInt("assembled_damage",result.getDamageValue());result.set(DataComponents.CUSTOM_DATA,CustomData.of(data));result.set(DataComponents.CONTAINER,ItemContainerContents.fromItems(parts));
         List<String> forms=new ArrayList<>();List<Integer> colors=new ArrayList<>();for(var part:parts){var definition=ToolDefinitions.part(part);forms.add(definition==null?"":definition.form().id());colors.add(definition==null?0xFFFFFF:definition.color());}result.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),forms,colors));
-        preserveIdentity(primary,result);if(result.getDamageValue()>=maximum)result.remove(DataComponents.ATTRIBUTE_MODIFIERS);return result;
+        ToolTraits.importRuntime(parts,result);preserveIdentity(primary,result);if(result.getDamageValue()>=maximum)result.remove(DataComponents.ATTRIBUTE_MODIFIERS);return result;
     }
     public static ItemStack example(ToolDefinitions.Template schema,String material){
         List<ItemStack> parts=new ArrayList<>();for(var role:schema.roles()){

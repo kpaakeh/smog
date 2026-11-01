@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:loading_crane"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.crane.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.crane.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:loading_crane"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "smog:copper/cart"
+}

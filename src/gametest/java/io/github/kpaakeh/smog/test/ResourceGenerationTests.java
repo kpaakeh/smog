@@ -63,11 +63,37 @@ public final class ResourceGenerationTests {
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
         var displayed=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems();
         var ids=displayed.stream().map(stack->BuiltInRegistries.ITEM.getKey(stack.getItem())).collect(java.util.stream.Collectors.toSet());
-        for(String required:java.util.List.of("limestone","kaolin","firebrick_casing","smeltery_glass","casting_faucet"))h.assertTrue(ids.contains(ModBlocks.id(required)),"Required resource/workshop building part is discoverable: "+required);
+        for(String required:java.util.List.of("limestone","kaolin","firebrick_casing","smeltery_glass"))h.assertTrue(ids.contains(ModBlocks.id(required)),"Required resource/workshop building part is discoverable: "+required);
         for(String forbidden:java.util.List.of("electric_furnace","crusher","solid_generator","generator_controller"))h.assertFalse(ids.contains(ModBlocks.id(forbidden)),"Legacy electrical industry stays outside the release building tab: "+forbidden);
         for(var stack:BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems())h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"No test content in release tab");
-        h.assertFalse(BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(ModBlocks.id("machines")),"No empty industry tab");
+        h.assertFalse(BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(ModBlocks.id("machines")),"Obsolete mixed industry tab replaced by mechanisms/controllers");
         h.assertTrue(TestIndustryContent.fixture(BuiltInRegistries.ITEM.getValue(ModBlocks.id("electric_furnace"))),"System test fixture remains separate");
+        h.succeed();
+    }
+    @GameTest public void creativeCategoriesAreDisjointAndToolsExistOnlyInTheirTabs(GameTestHelper h) throws IOException {
+        net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
+        var expected=java.util.Set.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools");
+        var actual=BuiltInRegistries.CREATIVE_MODE_TAB.keySet().stream().filter(id->id.getNamespace().equals("smog")).map(net.minecraft.resources.Identifier::getPath).collect(java.util.stream.Collectors.toSet());
+        h.assertTrue(actual.equals(expected),"Exactly the six requested Smog tabs exist");
+        var owner=new java.util.HashMap<net.minecraft.world.item.Item,String>();int examples=0;
+        for(String id:expected){var stacks=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(id)).getDisplayItems();h.assertFalse(stacks.isEmpty(),"Category is useful: "+id);
+            var seen=new java.util.ArrayList<net.minecraft.world.item.ItemStack>();
+            for(var stack:stacks){
+                h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"Fixtures never leak into "+id);
+                String previous=owner.putIfAbsent(stack.getItem(),id);h.assertTrue(previous==null||previous.equals(id),"One category owns each item: "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
+                h.assertFalse(seen.stream().anyMatch(s->net.minecraft.world.item.ItemStack.isSameItemSameComponents(s,stack)),"No duplicate entry within "+id);seen.add(stack);
+                if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ToolPartItem)h.assertTrue(id.equals("tool_parts"),"Final and cast parts belong only to Tool Parts");
+                if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ModularToolItem){examples++;h.assertTrue(id.equals("tools"),"Modular tools belong only to Tools");h.assertTrue(io.github.kpaakeh.smog.copper.ModularToolItem.configured(stack),"No empty modular tool shells");}
+            }
+        }
+        h.assertTrue(examples>0&&examples<=io.github.kpaakeh.smog.copper.ToolDefinitions.templates().size()*4,"Configured tools are a bounded selection, not thousands of combinations");
+        for(var part:io.github.kpaakeh.smog.copper.ToolDefinitions.parts())h.assertTrue("tool_parts".equals(owner.get(BuiltInRegistries.ITEM.getValue(part.item()))),"Every registered cast/final tool part is discoverable in its own category");
+        for(String name:java.util.List.of("configurator","stone_work_hammer","freight_rope"))h.assertTrue("tools".equals(owner.get(BuiltInRegistries.ITEM.getValue(ModBlocks.id(name)))),"Hand tool belongs to Tools: "+name);
+        for(String name:java.util.List.of("casting_faucet","water_valve","handcart","casting_table"))h.assertTrue("mechanisms".equals(owner.get(BuiltInRegistries.ITEM.getValue(ModBlocks.id(name)))),"Working mechanism is not mixed into building blocks: "+name);
+        try(var stream=ResourceGenerationTests.class.getResourceAsStream("/smog.content.json")){
+            var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
+            for(var value:root.getAsJsonArray("machines")){var machine=value.getAsJsonObject();var item=BuiltInRegistries.ITEM.getValue(ModBlocks.id(machine.get("name").getAsString()));h.assertTrue((machine.has("multiblock")?"controllers":"mechanisms").equals(owner.get(item)),"Only actual multiblock controllers enter Controllers");}
+        }
         h.succeed();
     }
 }

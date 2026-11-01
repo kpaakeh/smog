@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:copper_ingot"
+      "id": "minecraft:clay_ball"
     },
     "title": {
       "translate": "advancements.smog.copper.root.title"
@@ -10,18 +10,18 @@
       "translate": "advancements.smog.copper.root.description"
     },
     "frame": "task",
-    "show_toast": true,
+    "show_toast": false,
     "announce_to_chat": false,
     "hidden": false,
-    "background": "minecraft:gui/advancements/backgrounds/stone"
+    "background": "smog:block/refractory_bricks"
   },
   "criteria": {
-    "obtain": {
+    "obtained": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "minecraft:copper_ingot"
+            "items": "minecraft:clay_ball"
           }
         ]
       }
@@ -29,7 +29,7 @@
   },
   "requirements": [
     [
-      "obtain"
+      "obtained"
     ]
   ]
 }

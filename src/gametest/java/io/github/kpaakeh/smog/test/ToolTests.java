@@ -112,6 +112,51 @@ public final class ToolTests {
         var gold=ToolParts.assemble(item("gold_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);((ModularToolItem)gold.getItem()).hurtEnemy(gold,target,player);
         h.assertTrue(target.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING),"Gold hit marks the mob");h.succeed();
     }
+    @GameTest public void traitProfilesRejectFractionalCountersAndUnboundedBonuses(GameTestHelper h){
+        for(String trait:java.util.List.of(
+            "{\"id\":\"work_hardening\",\"max_stacks\":0.5}",
+            "{\"id\":\"work_hardening\",\"timeout_ticks\":0.5}",
+            "{\"id\":\"work_hardening\",\"max_stacks\":64,\"speed_per_stack\":1}",
+            "{\"id\":\"staggering\",\"duration_ticks\":0.5}",
+            "{\"id\":\"marking\",\"cooldown_ticks\":1.5}",
+            "{\"id\":\"grip\",\"every\":1}",
+            "{\"id\":\"grip\",\"every\":\"4\"}",
+            "{\"id\":\"grip\",\"everry\":4}")){
+            boolean rejected=false;try{ToolTraits.validate(com.google.gson.JsonParser.parseString("{\"traits\":["+trait+"]}").getAsJsonObject());}catch(IllegalArgumentException invalid){rejected=true;}
+            h.assertTrue(rejected,"Reject invalid material trait: "+trait);
+        }
+        ToolTraits.validate(com.google.gson.JsonParser.parseString("{\"traits\":[{\"id\":\"work_hardening\",\"max_stacks\":1,\"speed_per_stack\":1,\"timeout_ticks\":1},{\"id\":\"marking\",\"cooldown_ticks\":0},{\"id\":\"grip\",\"every\":2}]}").getAsJsonObject());h.succeed();
+    }
+    @GameTest public void miningQueryExpiresWorkAtTheExactDeadline(GameTestHelper h){
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var tool=build("wooden_handle");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tool);
+        float ordinary=player.getDestroySpeed(Blocks.STONE.defaultBlockState());var data=ModularToolItem.parts(tool);data.putInt("trait_work_stacks",4);data.putLong("trait_work_until",h.getLevel().getGameTime()+1);tool.set(DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
+        h.assertTrue(player.getDestroySpeed(Blocks.STONE.defaultBlockState())>ordinary,"Work bonus is active before its deadline");
+        data=ModularToolItem.parts(tool);data.putLong("trait_work_until",h.getLevel().getGameTime());tool.set(DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
+        h.assertTrue(Math.abs(player.getDestroySpeed(Blocks.STONE.defaultBlockState())-ordinary)<.00001,"Player mining query expires the bonus without waiting for an inventory tick");h.succeed();
+    }
+    @GameTest public void combatCooldownFollowsHeadThroughDisassemblyAndRepair(GameTestHelper h){
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var target=(net.minecraft.world.entity.LivingEntity)BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.Identifier.withDefaultNamespace("cow")).create(h.getLevel(),net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+        var tool=ToolParts.assemble(item("bronze_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);((ModularToolItem)tool.getItem()).hurtEnemy(tool,target,player);target.removeEffect(net.minecraft.world.effect.MobEffects.SLOWNESS);
+        var head=ToolParts.extract(tool,0);long deadline=ModularToolItem.parts(head).getLongOr("trait_staggering_until",0);
+        h.assertTrue(deadline>h.getLevel().getGameTime(),"Extracted bronze head carries its active cooldown");
+        var rebuilt=ToolParts.assemble(head,item("reinforced_handle"),item("cord_binding"),ItemStack.EMPTY);
+        ((ModularToolItem)rebuilt.getItem()).hurtEnemy(rebuilt,target,player);h.assertFalse(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Changing handles cannot bypass the head's cooldown");
+        var repaired=ToolParts.repair(rebuilt,item("bronze_ingot"));h.assertFalse(repaired.isEmpty(),"Fixture repairs the damaged bronze head");
+        ((ModularToolItem)repaired.getItem()).hurtEnemy(repaired,target,player);h.assertFalse(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Material repair does not reset combat cooldown");
+        var fresh=ToolParts.assemble(item("bronze_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);((ModularToolItem)fresh.getItem()).hurtEnemy(fresh,target,player);
+        h.assertTrue(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"A genuinely different fresh head keeps its independent cooldown");h.succeed();
+    }
+    @GameTest public void gripProgressFollowsWrapAndPveEffectsDoNotAffectPlayers(GameTestHelper h){
+        var tool=ToolParts.assemble(item("copper_axe_head"),item("wooden_handle"),item("cord_binding"),item("leather_wrap"));
+        for(int i=0;i<3;i++)ToolTraits.useWear(tool);
+        var rebuilt=ToolParts.assemble(ToolParts.extract(tool,0),ToolParts.extract(tool,1),ToolParts.extract(tool,2),ToolParts.extract(tool,4));
+        h.assertValueEqual(ToolTraits.useWear(rebuilt),0,"A wrap keeps its earned fourth-use grip through disassembly");h.assertValueEqual(ToolTraits.useWear(rebuilt),1,"Disassembly does not grant permanent free uses");
+        var attacker=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var target=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var bronze=ToolParts.assemble(item("bronze_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);((ModularToolItem)bronze.getItem()).hurtEnemy(bronze,target,attacker);
+        h.assertFalse(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Material crowd-control is PvE only");
+        h.assertValueEqual(ModularToolItem.parts(bronze).getLongOr("trait_staggering_until",0),0L,"Excluded player hits do not consume the PvE effect cooldown");h.succeed();
+    }
     @GameTest public void leatherGripSavesWearOnlyOnSuccessfulNativeUse(GameTestHelper h){
         var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         var axe=ToolParts.assemble(item("copper_axe_head"),item("wooden_handle"),item("cord_binding"),item("leather_wrap"));player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,axe);

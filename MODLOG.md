@@ -177,7 +177,7 @@ Added fixed 3x1x2 washing line: 8 raw copper + bucket water -> 5 concentrate, ea
 
 Added eight-bucket local water tank and finite manual pump above a source. Loaded adjacent compatible sinks only, no chunk loading or automatic infinite priming. Added field journal with 32 directly inspected resource records (dimension/world coordinates/material), item-bound custom data, duplicate prevention and browsing; no hidden-ore scan. Added seven informational copper advancements with no recipe gates or chat announcements. Modular JSON block assets retain 16px/block scale; separate layouts remove unused form/fuel slots from manual workshops and all slots from water supplies.
 
-Validation: 30 server GameTests passed; isolated real client scene with JEI passed and ten screenshots inspected, including liquid visible in assembled open hearth from overhead. All six JEI categories nonempty. 26 models/3416 faces audited without UV/coincident-face errors; 246 active PNGs, no missing/unused assets. Player ore artwork untouched. Full copper era is not complete: component tools, physical multi-metal process conditions, mold expansion, interchangeable press modules, local own pipes, carts/cranes/rope transport and mechanical drive remain tracked in COPPER_AGE_IMPLEMENTATION.md. Design files supplied by another chat remain unmodified and untracked.
+Validation: 30 server GameTests passed; isolated real client scene with JEI passed and ten screenshots inspected, including liquid visible in assembled open hearth from overhead. All six JEI categories nonempty. 26 models/3416 faces audited without UV/coincident-face errors; 246 active PNGs, no missing/unused assets. Player ore artwork untouched. Full Copper Workshop is not complete: component tools, physical multi-metal process conditions, mold expansion, interchangeable press modules, local own pipes, carts/cranes/rope transport and mechanical drive remain tracked in COPPER_AGE_IMPLEMENTATION.md. Design files supplied by another chat remain unmodified and untracked.
 
 ## 2026-10-29 — Workshop and smeltery descriptive reference
 
@@ -210,7 +210,7 @@ Complex modular shells retain their ordinary chunk models/BEs; no hidden constit
 - Physical ports exclusively expose the smeltery fluid storage. Removed research journal, recipe, advancement, texture and obsolete associated test.
 - JEI recipe/tank-scale work is calculated once at registration. Artist assets preserved. Build excludes check; no tests or game launch.
 
-## 2026-11-01 — сквозная полировка медной эры
+## 2026-11-01 — сквозная полировка Медной мастерской
 
 Запрос: довести код, игровой цикл и визуал до разработки следующей эры; отдельно сверить даже небольшие расхождения с документацией. Референс пользователя — Tinkers’ Construct. Работа идёт в существующем Fabric/Loom-проекте Minecraft 26.3 / Java 25, без изменения пользовательских миров. Исходные незакоммиченные изменения сохранены.
 
@@ -243,3 +243,27 @@ Complex modular shells retain their ordinary chunk models/BEs; no hidden constit
 ## 2026-11-01 — продолжение после обновления правил лимита
 
 Перечитан внешний AGENT-LIMITS.md, скрипт со свежим file fallback вернул should_stop:false. Корневой AGENTS.md уточнён: одна недоступность HTTP не повод останавливаться до запуска скрипта. Продолжена именно реализация: gameplay агент — свойства материалов без системы улучшений, process — полое литьё со стержнем, visual — численное сравнение до сборки. Основной агент реализовал конечную доводку до восьми одинаковых отливок одним ударом, расход1 молота/голову, ограничение вместимостью выхода и оставшимся ресурсом, защита от повторных кликов, повторная ручная загрузка. Добавлены FinishingTests и entrypoint. Новые сборки/commit/push не запускались согласно команде пользователя.
+
+### Сохранение на пороге резерва
+
+check_limits зафиксировал10%/should_stop=true в17:45:19UTC; новая разработка остановлена. По прямому исключению пользователя выполнены сохранение/сборка/commit/push. Коммит6c80d34 отправлен в origin/main. Первый auto-review отказал push, затем отправка успешно разрешена инструментом. Общая компиляция выявила две новые тестовые несовместимости API26.3 (copper block collection и entity-type registry), исправлены. Серверный прогон69/71 выявил отсутствие BLOCK_TRANSFORMER в контексте составного инструмента:26.3 Item.useOn читает компонент held-stack вместо AxeItem. Делегирование исправлено с временной установкой и обязательным восстановлением компонента; в batch-тесте подключено packet-соединение mock-игрока. Повторная сборка запущена; результат будет записан отдельно. Функции сверх этого необходимого завершения не разрабатывались.
+
+## 2026-11-02 — второй проход полировки
+
+Правила перечитаны; резерв обновлён до20%. Исходный свежий снимок90% five-hour/68% weekly позволил продолжить. Незавершённая сборка предыдущей сессии фактически завершилась успешно: в build/run/gameTest/logs/latest.log все71 required tests passed (20:49:54 предыдущего дня). Локальные исправления BLOCK_TRANSFORMER26.3 и mock-player connection сохранены, ещё не отправлены вторым коммитом.
+
+Новый EN клиент с JEI успешно завершился (runClientGameTest -PwithJei -PcopperTest):21кадр сохранены в build/review/2026-11-02/en. Просмотрены слои GUI, частичная заливка/охлаждение/готовность, диапазон3..11 в JEI, кнопка пресса без перекрытия. Обнаружено обрезание smeltery GUI244px при GUI-height240; visual-агент корректирует компактную высоту. Подготовлен тестовый язык -PtestLanguage=ru_ru с восстановлением после resource reload.
+
+Новые сохранённые исправления: строгая валидация параметров traits; cooldown/grip на несущих деталях против обхода разборкой; expiry наклёпа перед Player.getDestroySpeed на обоих logical sides через общий mixin; реальные JSON-параметры в подсказках. Core виден на столе, добавлены новые world/GUI/JEI кадры полого литья и регрессии автоматизации/старых NBT. Диагностика фиксированной структуры теперь сообщает не только координаты, но и ожидаемый блок; тест обновлён. Добавлена проверка крана во всех4 ориентациях с частично заполненным получателем.
+
+Остановка на безопасной границе: check_limits.py22:33:55UTC (01:33:55МСК2ноября) вернул should_stop:true, reason data_not_fresh, offline:true (60%/63% только недостоверный снимок, НЕ разрешение продолжать). Новая общая сборка/русский клиент не запущены, коммит/push после этой остановки не выполнялись: поручение автоматического завершения относится к достижению20%, а здесь причина — недостоверные данные. Следующие шаги после разрешающего свежего снимка: дождаться целостных правок агентов; build + server regressions; RU copper scene с core+tooltip+expiry asserts; logistics scene с видимым ездоком; сохранить кадры до следующего запуска; обновить итоговые статусы, commit/push при соответствующей команде/пороге. Новые эпохи и slots улучшений не добавлялись.
+
+### Дополнительные прямые требования пользователя 2 ноября
+
+Творческое меню разделено на6непересекающихся вкладок: Медная мастерская, Блоки, Механизмы, Контроллеры, Части инструментов, Инструменты. Parts и готовые tools отсутствуют в остальных собственных вкладках; пустые modular stacks не предлагаются. Название первой эпохи заменено в отображаемых текстах/README/документах; внутренние IDs/пути сохранены. Создана ветка16достижений с огнеупорным кирпичом в фоне, реальными inventory_changed критериями, родителями и en/ru текстами. Добавлены серверная проверка загрузки дерева/критерия глины и кадр вкладки достижений в клиенте.
+
+Канал лимитов восстановился, повторный свежий снимок22:34:29UTC56% разрешил работу, это не использование резерва. Следующий общий build+RU-client после второго ревью завершился успешно:78/78server, русский GUI/литьё/core/JEI кадры сохранены в build/review/2026-11-02/ru-before-tabs и просмотрены. Исправленная высота238полностью помещается в854x480; стержень и конечная полая рукоять видны в мире. Новые6вкладок, hover/expiry assertion и достижения добавлены уже после этого прогона и проверяются следующим запуском.
+
+### Финальная граница резерва 2 ноября
+
+check_limits22:41:41UTC вернул19%/should_stop:true five_hour_reserve_reached. Разработка новых функций прекращена; по прямой команде выполняются build/commit/push. Последний RU client успешно выполнил33кадра,6вкладок, hover/expiry assertion и16достижений с правильным кирпичным фоном; кадры сохранены build/review/2026-11-02/ru-final. Общийserver79/80: единственное падение — устаревшая FoundationTests-проверка удалённой ores-вкладки; заменена проверкой6вкладок и сохранности всех форм руд в Blocks. Новый final build+logistics запущен с этим исправлением, результат ожидается. Предыдущие78/78 до новых вкладок были зелёные. Последние статические аудиты62модели/5972грани/0ошибок,552PNG/0missing/0unused. Новые эпохи/слоты улучшений не добавлены. Длительное survival-прохождение3–5часов не подтверждено.

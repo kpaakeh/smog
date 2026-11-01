@@ -18,8 +18,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         super.init();
         if(menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin"))return;
         if(menu.layout.id.equals("smeltery")){
-            addRenderableWidget(Button.builder(Component.literal("<"),button->send(io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS)).bounds(leftPos+7,topPos+219,20,18).build());
-            addRenderableWidget(Button.builder(Component.literal(">"),button->send(io.github.kpaakeh.smog.copper.Smeltery.NEXT)).bounds(leftPos+43,topPos+219,20,18).build());
+            addRenderableWidget(Button.builder(Component.literal("<"),button->send(io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS)).bounds(leftPos+7,topPos+imageHeight-25,20,18).build());
+            addRenderableWidget(Button.builder(Component.literal(">"),button->send(io.github.kpaakeh.smog.copper.Smeltery.NEXT)).bounds(leftPos+43,topPos+imageHeight-25,20,18).build());
             return;
         }
         if((menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin")||menu.layout.id.equals("copper_workshop")||menu.layout.id.equals("manual_workshop")||menu.layout.id.equals("water_supply")||menu.layout.id.equals("tool_workbench"))) {
@@ -69,7 +69,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             if(kind==1){CastingGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}
             if(kind==7){var preview=io.github.kpaakeh.smog.copper.ToolAssembly.preview(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));
                 fittedText(g,preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):preview.getMaxDamage()>0?Component.translatable("tool.smog.durability",Math.max(0,preview.getMaxDamage()-preview.getDamageValue()),preview.getMaxDamage()).append(" [?]"):Component.translatable("tool.smog.shaping_cost",Math.max(1,menu.data.get(17)),preview.getCount()),x+7,y+20,162,mouseX,mouseY);
-                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30){if(preview.isEmpty())g.setTooltipForNextFrame(io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))),mouseX,mouseY);else g.setTooltipForNextFrame(font,ToolPreviewDetails.lines(preview,menu.container.getItem(5)),java.util.Optional.empty(),mouseX,mouseY);}
+                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30){if(preview.isEmpty())g.setTooltipForNextFrame(io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))),mouseX,mouseY);else g.setTooltipForNextFrame(font,ToolPreviewDetails.lines(preview,menu.container.getItem(5)).stream().flatMap(line->font.split(line,Math.max(80,Math.min(280,width-20))).stream()).toList(),mouseX,mouseY);}
                 if(!preview.isEmpty()){g.fakeItem(preview,x+79,y+imageHeight-129);if(mouseX>=x+79&&mouseX<x+95&&mouseY>=y+imageHeight-129&&mouseY<y+imageHeight-113)g.setTooltipForNextFrame(font,preview,mouseX,mouseY);}
                 GuiTextures.draw(g,"copper_progress_empty",x+106,y+imageHeight-129,24,16);GuiTextures.crop(g,"copper_progress_full",x+106,y+imageHeight-129,0,0,24*Math.clamp(menu.data.get(0),0,40)/40,16,24,16);
                 g.text(font,Component.literal(font.plainSubstrByWidth((menu.data.get(13)>0?Component.translatable("tool.smog.preview_queue",menu.data.get(13)):(io.github.kpaakeh.smog.copper.ToolAssembly.shapingMode(menu.container)||!io.github.kpaakeh.smog.copper.MoldMaking.preview(menu.container).isEmpty())&&!preview.isEmpty()?preview.getHoverName():Component.translatable("tool.smog.template."+io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)).id())).getString(),120)),x+47,y+imageHeight-106,0xFF404040,false);return;}

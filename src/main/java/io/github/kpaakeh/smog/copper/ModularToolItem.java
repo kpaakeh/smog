@@ -49,9 +49,9 @@ public final class ModularToolItem extends Item {
         }
         var delegates=new java.util.LinkedHashSet<Item>();for(var component:ToolParts.components(stack)){var definition=ToolDefinitions.part(component);if(definition!=null&&!definition.form().nativeSuffix().isEmpty()){String prefix=definition.material().nativePrefix().isEmpty()?"iron":definition.material().nativePrefix();var id=net.minecraft.resources.Identifier.withDefaultNamespace(prefix+"_"+definition.form().nativeSuffix());if(BuiltInRegistries.ITEM.containsKey(id))delegates.add(BuiltInRegistries.ITEM.getValue(id));}}if(delegates.isEmpty())return InteractionResult.PASS;
         // Vanilla use actions may damage their stack. Keep the assembly and apply native Unbreaking ourselves.
-        boolean had=stack.has(DataComponents.UNBREAKABLE);stack.set(DataComponents.UNBREAKABLE,net.minecraft.util.Unit.INSTANCE);
+        var originalTransformer=stack.get(DataComponents.BLOCK_TRANSFORMER);boolean had=stack.has(DataComponents.UNBREAKABLE);stack.set(DataComponents.UNBREAKABLE,net.minecraft.util.Unit.INSTANCE);
         InteractionResult result;
-        try{result=InteractionResult.PASS;for(var delegate:delegates){result=delegate.useOn(context);if(result.consumesAction())break;}}finally{if(!had)stack.remove(DataComponents.UNBREAKABLE);}
+        try{result=InteractionResult.PASS;for(var delegate:delegates){var transformer=delegate.getDefaultInstance().get(DataComponents.BLOCK_TRANSFORMER);if(transformer==null)continue;stack.set(DataComponents.BLOCK_TRANSFORMER,transformer);result=delegate.useOn(context);if(result.consumesAction())break;}}finally{if(originalTransformer==null)stack.remove(DataComponents.BLOCK_TRANSFORMER);else stack.set(DataComponents.BLOCK_TRANSFORMER,originalTransformer);if(!had)stack.remove(DataComponents.UNBREAKABLE);}
         if(result.consumesAction()&&(context.getPlayer()==null||!context.getPlayer().isCreative()))wear(stack,context.getLevel(),context.getLevel().isClientSide()?1:ToolTraits.useWear(stack));return result;
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,TooltipDisplay display,java.util.function.Consumer<Component> lines,TooltipFlag flag){

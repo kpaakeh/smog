@@ -1,47 +1,48 @@
 package io.github.kpaakeh.smog.registry;
 
 import java.util.*;
+import com.google.gson.JsonObject;
+import io.github.kpaakeh.smog.copper.*;
 import io.github.kpaakeh.smog.fluid.ModFluids;
-import io.github.kpaakeh.smog.machine.Machines;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.ItemLike;
 
+/** Six disjoint catalog-owned categories. Late test registrations never enter their snapshots. */
 public final class ModCreativeTabs {
+    public static final List<String> IDS=List.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools");
+    private static final Set<String> MECHANISM_PARTS=Set.of("casting_faucet","copper_water_pipe","water_valve","water_outlet","bronze_drive");
+    private static final List<String> EXAMPLE_MATERIALS=List.of("copper","bronze","iron","gold");
     private ModCreativeTabs() {}
-    public static void initialize(com.google.gson.JsonObject catalog) {
-        if(!catalog.getAsJsonArray("machines").isEmpty()&&catalog.getAsJsonArray("machines").asList().stream().anyMatch(v->!v.getAsJsonObject().get("kind").getAsString().equals("COPPER_WORKSHOP")))Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("machines"), FabricCreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.smog.machines"))
-            .icon(() -> Machines.all().iterator().next().block().asItem().getDefaultInstance())
-            .displayItems((parameters, output) -> {Machines.all().forEach(e -> output.accept(e.block()));ModItems.all().stream().filter(e->e.tab().equals("machines")).forEach(e->output.accept(e.item()));}).build());
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("ores"), FabricCreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.smog.ores"))
-            .icon(() -> ModOres.all().getFirst().stone().asItem().getDefaultInstance())
-            .displayItems((parameters, output) -> {ModOres.all().forEach(ore -> ore.contents().forEach(output::accept));ModAlloys.all().forEach(alloy->alloy.contents().forEach(output::accept));ModDeposits.all().forEach(deposit->{output.accept(deposit.chunk());output.accept(deposit.dust());});ModItems.all().stream().filter(e->e.tab().equals("ores")).forEach(e->output.accept(e.item()));}).build());
-        if(catalog.has("complex_multiblocks")) {
-            List<net.minecraft.world.level.ItemLike> copper=new ArrayList<>();
-            for(var value:catalog.getAsJsonArray("machines"))copper.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
-            for(var value:catalog.getAsJsonArray("blocks"))if(value.getAsJsonObject().has("tab")&&value.getAsJsonObject().get("tab").getAsString().equals("copper_age"))copper.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
-            ModItems.all().stream().filter(e->e.tab().equals("copper_age")).forEach(e->copper.add(e.item()));
-            ModFluids.all().stream().filter(f->f.name.equals("plant_oil")).forEach(f->copper.add(f.bucket));
-            ModAlloys.all().stream().filter(e->e.name().equals("bronze")).forEach(e->copper.addAll(e.contents()));
-            Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id("copper_age"),FabricCreativeModeTab.builder().title(Component.translatable("itemGroup.smog.copper_age")).icon(()->Items.COPPER_INGOT.getDefaultInstance()).displayItems((parameters,output)->copper.forEach(value->{
-                if(value instanceof io.github.kpaakeh.smog.copper.ModularToolItem){
-                    var schema=io.github.kpaakeh.smog.copper.ToolDefinitions.template(BuiltInRegistries.ITEM.getKey((Item)value).getPath().replace("modular_",""));
-                    for(String material:io.github.kpaakeh.smog.copper.ToolDefinitions.parts().stream().filter(p->p.form().category().equals("head")).map(p->p.material().id()).distinct().toList()){var example=io.github.kpaakeh.smog.copper.ToolParts.example(schema,material);if(!example.isEmpty())output.accept(example);}
-                }else output.accept(value);
-            })).build());
+    private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
+    public static void initialize(JsonObject catalog) {
+        Map<String,LinkedHashSet<Item>> groups=new LinkedHashMap<>();IDS.forEach(id->groups.put(id,new LinkedHashSet<>()));
+        Set<Item> assigned=new HashSet<>();
+        java.util.function.BiConsumer<String,ItemLike> add=(category,value)->{Item item=value.asItem();if(item!=Items.AIR&&assigned.add(item))groups.get(category).add(item);};
+        // Resources are captured once, before the separate test mod registers its fixtures.
+        ModOres.all().forEach(ore->ore.contents().forEach(value->add.accept("blocks",value)));
+        ModAlloys.all().forEach(alloy->alloy.contents().forEach(value->add.accept("blocks",value)));
+        ModDeposits.all().forEach(deposit->{add.accept("blocks",deposit.block());add.accept("blocks",deposit.chunk());add.accept("blocks",deposit.dust());});
+        for(var value:catalog.getAsJsonArray("blocks")){String name=value.getAsJsonObject().get("name").getAsString();add.accept(MECHANISM_PARTS.contains(name)?"mechanisms":"blocks",item(name));}
+        for(var value:catalog.getAsJsonArray("machines")){var machine=value.getAsJsonObject();String name=machine.get("name").getAsString();add.accept(machine.has("multiblock")?"controllers":"mechanisms",item(name));}
+        for(var value:catalog.getAsJsonArray("items")){
+            var entry=value.getAsJsonObject();String name=entry.get("name").getAsString(),kind=entry.has("kind")?entry.get("kind").getAsString():"item";var item=item(name);
+            if(item instanceof ModularToolItem)continue; // Only configured examples are discoverable.
+            String category=item instanceof ToolPartItem?"tool_parts":Set.of("configurator","wrench","rope").contains(kind)||name.equals("stone_work_hammer")?"tools":kind.equals("handcart")?"mechanisms":name.endsWith("_plate")?"blocks":"copper_age";
+            add.accept(category,item);
         }
-        // Catalog ownership is explicit: test fixtures and late registrations cannot leak into tabs.
-        List<net.minecraft.world.level.block.Block> blocks=new ArrayList<>();
-        for(var value:catalog.getAsJsonArray("blocks"))blocks.add(BuiltInRegistries.BLOCK.getValue(ModBlocks.id(value.getAsJsonObject().get("name").getAsString())));
-        ModDeposits.all().forEach(deposit->blocks.add(deposit.block()));
-        var fluids=ModFluids.all();
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ModBlocks.id("blocks"), FabricCreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.smog.blocks"))
-            .icon(()->ModDeposits.all().isEmpty()?Items.STONE.getDefaultInstance():ModDeposits.all().getFirst().block().asItem().getDefaultInstance())
-            .displayItems((parameters,output)->{blocks.forEach(output::accept);fluids.forEach(fluid->output.accept(fluid.bucket));}).build());
+        ModFluids.all().forEach(fluid->add.accept(fluid.name.equals("plant_oil")?"copper_age":"blocks",fluid.bucket));
+        for(String id:IDS){var contents=List.copyOf(groups.get(id));
+            Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id(id),FabricCreativeModeTab.builder()
+                .title(Component.translatable("itemGroup.smog."+id))
+                .icon(()->id.equals("tools")?ToolParts.example(ToolDefinitions.template("pickaxe"),"copper"):contents.isEmpty()?Items.COPPER_INGOT.getDefaultInstance():contents.getFirst().getDefaultInstance())
+                .displayItems((parameters,output)->{
+                    contents.forEach(output::accept);
+                    if(id.equals("tools"))for(var schema:ToolDefinitions.templates())for(String material:EXAMPLE_MATERIALS){var example=ToolParts.example(schema,material);if(!example.isEmpty())output.accept(example);}
+                }).build());
+        }
     }
 }

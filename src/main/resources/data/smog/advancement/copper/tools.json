@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:modular_pickaxe"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.tools.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.tools.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:modular_pickaxe"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "smog:copper/bench"
+}

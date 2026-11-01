@@ -28,7 +28,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         public net.minecraft.client.renderer.item.ItemStackRenderState cargo;
         public net.minecraft.client.renderer.item.ItemStackRenderState ropeCarriage;
         public record Part(net.minecraft.core.BlockPos offset,BlockModelRenderState model){}
-        public record ItemPart(float x,float y,float z,net.minecraft.client.renderer.item.ItemStackRenderState model){}
+        public record ItemPart(float x,float y,float z,float scale,net.minecraft.client.renderer.item.ItemStackRenderState model){public ItemPart(float x,float y,float z,net.minecraft.client.renderer.item.ItemStackRenderState model){this(x,y,z,.55f,model);}}
         public java.util.List<ItemPart> displayedItems=java.util.List.of();
         public java.util.List<MoltenRendering.Stream> streams=java.util.List.of();
         public java.util.List<MoltenRendering.Layer> moltenLayers=java.util.List.of();
@@ -109,6 +109,10 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             var preview=machine.getItem(3).isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.preview(machine):machine.getItem(3);if(!preview.isEmpty())addItem(shown,preview,.5f,1.06f,.8f,machine);
         }else if(io.github.kpaakeh.smog.copper.Smeltery.vessel(machine)){
             if(!machine.getItem(1).isEmpty())addItem(shown,machine.getItem(1),.5f,.775f,.5f,machine);
+            if(kind.equals("casting_table")&&io.github.kpaakeh.smog.copper.CastingProcesses.core(machine.getItem(2))){
+                var model=new net.minecraft.client.renderer.item.ItemStackRenderState();items.updateForTopItem(model,machine.getItem(2),net.minecraft.world.item.ItemDisplayContext.FIXED,machine.getLevel(),null,0);
+                shown.add(new State.ItemPart(.5f,.818f,.5f,.25f,model));
+            }
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.825f,.5f,machine);
             else if(machine.smeltery.filled>0){int metal=java.util.Arrays.asList(io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES).indexOf(machine.smeltery.pourMetal);if(metal>=0){boolean basin=kind.equals("casting_basin");float fill=machine.smeltery.filled/(float)Math.max(1,machine.smeltery.required);surfaces.add(basin?new MoltenRendering.Surface(.14f,.22f+.6f*fill,.14f,.72f,.72f,metal,machine.smeltery.cooling>0):new MoltenRendering.Surface(.32f,.782f+.025f*fill,.38f,.36f,.24f,metal,machine.smeltery.cooling>0));}}
 
@@ -148,7 +152,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         MoltenRendering.submitLayers(state.moltenLayers,pose,collector);
         MoltenRendering.submit(state.moltenSurfaces,pose,collector,state.lightCoords);
         MoltenRendering.submitStreams(state.streams,pose,collector);
-        for(var item:state.displayedItems){pose.pushPose();pose.translate(item.x(),item.y(),item.z());pose.rotate(Axis.XP.rotationDegrees(90));pose.scale(.55f,.55f,.55f);item.model().submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}
+        for(var item:state.displayedItems){pose.pushPose();pose.translate(item.x(),item.y(),item.z());pose.rotate(Axis.XP.rotationDegrees(90));pose.scale(item.scale(),item.scale(),item.scale());item.model().submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();}
         if(state.crane!=null){CraneRendering.submit(state.crane,pose,collector);return;}
         if (!state.formed) return;
         if(!state.complexParts.isEmpty()){

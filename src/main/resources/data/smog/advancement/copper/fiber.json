@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:plant_fiber"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.fiber.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.fiber.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:plant_fiber"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "smog:copper/pressing"
+}

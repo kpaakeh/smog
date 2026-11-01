@@ -5,7 +5,8 @@
   "mixins": [
     "ModularCraftRepairMixin",
     "ModularGrindstoneMixin",
-    "ModularAnvilMixin"
+    "ModularAnvilMixin",
+    "ModularMiningContextMixin"
   ],
   "injectors": {
     "defaultRequire": 1

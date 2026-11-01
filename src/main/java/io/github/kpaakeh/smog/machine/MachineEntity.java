@@ -38,7 +38,8 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     public String assemblyDetail(){return assemblyDetail;}
     public Component assemblyProblem(){
         var fields=assemblyDetail.split("\\|");
-        if(fields.length>=4&&(fields[0].equals("edge")||fields[0].equals("block")||fields[0].equals("fixed")))return Component.translatable("message.smog.assembly_"+fields[0],fields[1],fields[2],fields[3]);
+        if(fields.length==5&&fields[0].equals("fixed"))return Component.translatable("message.smog.assembly_fixed",fields[1],fields[2],fields[3],new BlockIngredient(fields[4]).block().getName());
+        if(fields.length>=4&&(fields[0].equals("edge")||fields[0].equals("block")))return Component.translatable("message.smog.assembly_"+fields[0],fields[1],fields[2],fields[3]);
         if(fields.length==5&&fields[0].equals("role"))return Component.translatable("message.smog.assembly_role",Component.translatable("role.smog."+fields[1]),fields[2],fields[3],fields[4]);
         if(assemblyDetail.equals("overlap"))return Component.translatable("message.smog.assembly_overlap");
         return Component.translatable("message.smog.assembly_check");
@@ -117,7 +118,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
                 for(var part:structure().parts().entrySet()){
                     var pos=worldPosition.offset(part.getKey().rotate(rotation()));
                     if(!server.hasChunkAt(pos))break;
-                    if(!part.getValue().matches(server.getBlockState(pos))){assemblyDetail="fixed|"+pos.getX()+"|"+pos.getY()+"|"+pos.getZ();break;}
+                    if(!part.getValue().matches(server.getBlockState(pos))){assemblyDetail="fixed|"+pos.getX()+"|"+pos.getY()+"|"+pos.getZ()+"|"+part.getValue().value();break;}
                 }
                 return false;
             }
