@@ -16,6 +16,78 @@ public final class CopperTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
     private static void set(GameTestHelper h,BlockPos pos,Block block){h.getLevel().setBlock(pos,block.defaultBlockState(),Block.UPDATE_ALL);}
+    @GameTest public void hollowCastingLocksSavesAndConsumesOneCoreWithoutMetalGain(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);
+        m.setItem(1,new ItemStack(item("pipe_mold")));m.setItem(2,new ItemStack(item("ceramic_core"),2));
+        var fluid=io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0);
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(fluid,123,tx),123L,"Partial cored pour accepted");}
+        h.assertFalse(m.smeltery.casting(),"Rollback removes the tentative cast");h.assertFalse(m.smeltery.consumeCore,"Rollback restores the core consumption flag");h.assertTrue(m.smeltery.castingCore.isEmpty(),"Rollback restores the core snapshot");
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){m.castingFluid.insert(fluid,123,tx);tx.commit();}
+        h.assertFalse(m.canPlaceItem(2,new ItemStack(item("ceramic_core"))),"Automation cannot alter the core during a cast");
+        var saved=m.saveCustomOnly(h.getLevel().registryAccess());m.loadCustomOnly(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,h.getLevel().registryAccess(),saved));
+        h.assertTrue(m.smeltery.consumeCore&&m.smeltery.castingCore.is(item("ceramic_core")),"The cored recipe and tooling snapshot survive reload");
+        var cores=m.getItem(2).copy();m.setItem(2,ItemStack.EMPTY);
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(fluid,9000,tx),0L,"A missing locked core cannot silently turn the job into ordinary pipes");}
+        m.setItem(2,cores);
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(fluid,9000,tx),6627L,"Hollow copper handle requires exactly 6750 units");tx.commit();}
+        for(int tick=0;tick<60;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(3).is(item("hollow_copper_handle")),"The cored mold produces a hollow handle");h.assertValueEqual(m.getItem(2).getCount(),1,"Exactly one ceramic core is consumed");h.assertValueEqual(m.getItem(1).getCount(),1,"The ceramic pipe mold remains reusable");
+        h.assertValueEqual(CopperWorkshops.melt(m.getItem(3))[1],6750,"Remelting returns only the metal poured, with no duplication");h.succeed();
+    }
+    @GameTest public void coredPipeMoldsRequireCompatibleMetalButPlainPipesRemainAvailable(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);m.setItem(1,new ItemStack(item("pipe_mold")));
+        h.assertValueEqual(io.github.kpaakeh.smog.copper.CastingProcesses.recipe(m,0).units(),18000,"Without a core the existing four-pipe recipe remains intact");
+        m.setItem(2,new ItemStack(item("ceramic_core")));int checked=0;
+        for(int metal=0;metal<io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length;metal++){
+            var part=io.github.kpaakeh.smog.copper.CastingProcesses.hollowPart(metal);var recipe=io.github.kpaakeh.smog.copper.CastingProcesses.recipe(m,metal);
+            if(part==null){h.assertTrue(recipe==null,"Unsupported cored metal cannot fall back to a plain pipe recipe");continue;}
+            checked++;h.assertTrue(recipe.result().is(BuiltInRegistries.ITEM.getValue(part.item()))&&recipe.consumeCore(),"Every compatible hollow material has a cored casting route");h.assertValueEqual(recipe.units(),io.github.kpaakeh.smog.copper.ToolParts.units(part),"The casting uses the registered material content");
+        }
+        h.assertTrue(checked>0,"At least one compatible hollow material is registered");m.setItem(1,new ItemStack(item("ingot_mold")));h.assertTrue(io.github.kpaakeh.smog.copper.CastingProcesses.recipe(m,0)==null,"A core in the wrong mold rejects pouring");h.succeed();
+    }
+    @GameTest public void partialCanistersPourIntoWorldMoldWithoutLosingRemainder(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));
+        var table=(MachineEntity)h.getLevel().getBlockEntity(pos);table.setItem(1,new ItemStack(item("ingot_mold")));
+        // InLevel creates a creative player: its fluid interactions intentionally retain the source item.
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
+        h.assertFalse(player.isCreative(),"Conservation is tested with a survival player");
+        var copper=io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0);
+        player.setItemInHand(hand,io.github.kpaakeh.smog.copper.FluidCanisterStorage.filled(copper,1234));
+        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
+        h.assertValueEqual(table.smeltery.filled,1234,"World interaction pours every unit from a partial recovery canister");
+        player.setItemInHand(hand,io.github.kpaakeh.smog.copper.FluidCanisterStorage.filled(copper,8000));
+        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
+        h.assertValueEqual(table.smeltery.filled,4*U,"A locked partial casting can be topped up by hand");
+        var remainder=player.getItemInHand(hand).getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getIntOr("smog_fluid_units",0);
+        h.assertValueEqual(remainder,234,"Excess metal remains in the canister with exact precision");
+        for(int tick=0;tick<60;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),table);
+        h.assertTrue(table.getItem(3).is(Items.COPPER_INGOT),"Hand-poured metal cools into the expected ingot");
+        h.assertValueEqual(table.getItem(3).getCount(),1,"One mold yields exactly one ingot");h.succeed();
+    }
+    @GameTest public void sidedAutomationSuppliesSandMoldsAndExtractsCastings(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(pos);
+        var input=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.UP);
+        var output=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.DOWN);
+        var mold=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(item("sand_ingot_mold"));
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+            h.assertValueEqual(input.insert(mold,2,tx),2L,"Top-side automation supplies consumable molds to their real slot");tx.commit();
+        }
+        for(int batch=0;batch<2;batch++){
+            try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                h.assertValueEqual(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),4*U,tx),(long)4*U,"Each mold accepts exactly one ingot of copper");tx.commit();
+            }
+            try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                h.assertValueEqual(input.insert(mold,1,tx),0L,"Automation cannot replace or add a mold while a casting is locked");
+                h.assertValueEqual(output.extract(mold,1,tx),0L,"Output automation cannot steal a working mold");
+            }
+            for(int tick=0;tick<60;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),table);
+            try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                h.assertValueEqual(output.extract(net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(Items.COPPER_INGOT),1,tx),1L,"Bottom-side automation extracts the finished ingot");tx.commit();
+            }
+            h.assertValueEqual(table.getItem(1).getCount(),1-batch,"Only the mold used for this casting is consumed");
+        }
+        h.succeed();
+    }
     @GameTest public void potteryRepeatsWorldBatchWithoutAddingMoreClay(GameTestHelper h){
         var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("potter_table"));
         var table=(MachineEntity)h.getLevel().getBlockEntity(pos);table.serverTick();table.copper.selection=0;
@@ -53,6 +125,34 @@ public final class CopperTests {
         set(h,origin.offset(-left,0,1),block("casting_spout"));set(h,origin.offset(left,0,1),block("air_intake"));
         if(!h.getLevel().getBlockState(origin).is(block("copper_hearth")))set(h,origin,block("copper_hearth"));
         return (MachineEntity)h.getLevel().getBlockEntity(origin);
+    }
+    @GameTest public void bellowsBudgetFollowsMetalVolumeForBlocksAndNuggets(GameTestHelper h){
+        var m=hearth(h,h.absolutePos(new BlockPos(6,2,2)),3);h.assertTrue(m.tryAssemble(),"Hearth assembles");
+        m.copper.heat=600;m.copper.burn=10000;m.copper.fillBellows();m.setItem(0,new ItemStack(BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.withDefaultNamespace("copper_block"))));
+        for(int tick=0;tick<320;tick++)io.github.kpaakeh.smog.copper.Smeltery.tick(h.getLevel(),m);
+        h.assertValueEqual(m.copper.bellowsUnits(),0,"Eight ingots of boosted work exhaust one bellows charge during a nine-ingot block");
+        h.assertFalse(m.getItem(0).isEmpty(),"A whole nine-ingot block does not fit within the eight-ingot boost");
+        for(int tick=0;tick<80;tick++)io.github.kpaakeh.smog.copper.Smeltery.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(0).isEmpty(),"The remaining block processing continues at normal speed");
+        h.assertValueEqual(m.copper.copper,9*9000,"Bellows never multiply the block's metal output");
+        m.copper.fillBellows();
+        for(int nugget=0;nugget<9;nugget++){
+            m.setItem(0,new ItemStack(Items.GOLD_NUGGET));
+            for(int tick=0;tick<20;tick++)io.github.kpaakeh.smog.copper.Smeltery.tick(h.getLevel(),m);
+            h.assertTrue(m.getItem(0).isEmpty(),"Each nugget completes its boosted job");
+        }
+        h.assertValueEqual(m.copper.bellowsUnits(),7*9000,"Nine nuggets consume one ingot of air budget, without rounding each nugget up");h.succeed();
+    }
+    @GameTest public void bellowsLegacyChargesAndFractionalBudgetSurviveSave(GameTestHelper h){
+        var legacy=new net.minecraft.nbt.CompoundTag();legacy.putInt("copper_air",3);legacy.putInt("molten_storage_version",1);
+        var state=new io.github.kpaakeh.smog.copper.CopperState();
+        state.load(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,h.getLevel().registryAccess(),legacy));
+        h.assertValueEqual(state.bellowsUnits(),3*9000,"Legacy three-charge saves migrate to three ingots of boost");
+        state.consumeBellows(1000);
+        var output=net.minecraft.world.level.storage.TagValueOutput.createWithoutContext(net.minecraft.util.ProblemReporter.DISCARDING);state.save(output);
+        var restored=new io.github.kpaakeh.smog.copper.CopperState();restored.load(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,h.getLevel().registryAccess(),output.buildResult()));
+        h.assertValueEqual(restored.bellowsUnits(),26000,"Sub-ingot bellows budget survives saving without rounding");
+        h.assertValueEqual(restored.air,3,"The existing coarse display still shows the remaining partial charge");h.succeed();
     }
     @GameTest public void complexHearthResizesWithEmptyChamber(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,origin,3);

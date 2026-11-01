@@ -7,6 +7,7 @@
   "color": "B8874D",
   "profiles": {
     "head": {
+      "traits": [{"id":"staggering","duration_ticks":20,"cooldown_ticks":60}],
       "durability": 320,
       "mining_speed": 6,
       "attack_damage": 3,

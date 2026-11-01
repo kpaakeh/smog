@@ -7,6 +7,7 @@
   "color": "F8D34E",
   "profiles": {
     "head": {
+      "traits": [{"id":"marking","duration_ticks":60,"cooldown_ticks":60}],
       "durability": 32,
       "mining_speed": 12,
       "attack_damage": 0,

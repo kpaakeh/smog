@@ -41,21 +41,29 @@ public final class ToolAssembly {
     public static boolean button(MachineEntity machine,int id){if((id!=20&&id!=21)||machine.copper.queued>0||!machine.getItem(5).isEmpty())return false;if(shapingMode(machine)){machine.copper.partSelection=Math.floorMod(activePart(machine)+(id==20?-1:1),ToolParts.shapingChoices(machine.getItem(0)).size());machine.sync();return true;}if(!empty(machine,-1))return false;machine.copper.partSelection=-1;machine.copper.selection=Math.floorMod(machine.copper.selection+(id==20?-1:1),ToolDefinitions.templates().size());machine.sync();return true;}
     public static void tick(ServerLevel level,MachineEntity m){
         if(m.copper.queued==0)return;var schema=schema(m);var result=preview(m);
-        if(result.isEmpty()){m.copper.work=0;m.copper.queued=0;m.sync();return;}if(!m.getItem(3).isEmpty()){m.copper.status=5;return;}if(++m.copper.work<40){m.setChanged();return;}
+        if(result.isEmpty()){m.copper.work=0;m.copper.queued=0;m.sync();return;}if(!m.canOutput(result)){m.copper.status=5;return;}if(++m.copper.work<40){m.setChanged();return;}
         var mounted=m.getItem(5);boolean repair=!mounted.isEmpty()&&!m.getItem(0).isEmpty()&&ToolDefinitions.part(m.getItem(0))==null;
         if(!mounted.isEmpty()&&!repair)for(int i=0;i<schema.roles().size();i++){int slot=ToolDefinitions.slot(i);if(!m.getItem(slot).isEmpty()){var old=ToolParts.extract(mounted,slot);if(!old.isEmpty())Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+1,m.getBlockPos().getZ()+.5,old);}}
         boolean imprint=!MoldMaking.preview(m).isEmpty();
         var shaping=shapingMode(m)?shapingPlan(m):null;
         for(int i=0;i<schema.roles().size();i++)if(!(imprint&&i==1)&&!m.getItem(ToolDefinitions.slot(i)).isEmpty())m.getItem(ToolDefinitions.slot(i)).shrink(i==0&&shaping!=null?shaping.count():1);
-        m.setItem(5,ItemStack.EMPTY);m.setItem(3,result);m.copper.queued=0;m.copper.work=0;m.copper.status=0;m.sync();
+        m.setItem(5,ItemStack.EMPTY);if(m.getItem(3).isEmpty())m.setItem(3,result);else m.getItem(3).grow(result.getCount());m.copper.queued--;m.copper.work=0;m.copper.status=0;m.sync();
     }
     private static void give(Player player,ItemStack stack){player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);}
     public static InteractionResult use(ServerLevel level,MachineEntity m,Player player,InteractionHand hand){
         var held=player.getItemInHand(hand);if(m.copper.queued>0){player.sendOverlayMessage(Component.translatable("tool.smog.working"));return InteractionResult.SUCCESS;}
         if(ToolParts.hammer(held)){
             if(player.isShiftKeyDown()&&!m.getItem(5).isEmpty()&&empty(m,-1)){var old=ToolParts.components(m.getItem(5));for(int i=0;i<old.size();i++)m.setItem(ToolDefinitions.slot(i),old.get(i));m.setItem(5,ItemStack.EMPTY);m.sync();return InteractionResult.SUCCESS;}
-            var result=preview(m);if(result.isEmpty()||!m.getItem(3).isEmpty()){player.sendOverlayMessage(Component.translatable("tool.smog.assembly_help"));return InteractionResult.SUCCESS;}
-            m.copper.queued=1;m.copper.work=0;if(!player.isCreative()){if(held.getItem() instanceof ModularToolItem)ModularToolItem.wear(held,level,1);else held.hurtAndBreak(1,player,net.minecraft.world.entity.EquipmentSlot.MAINHAND);}m.sync();return InteractionResult.SUCCESS;
+            var result=preview(m);if(result.isEmpty()||!m.canOutput(result)){player.sendOverlayMessage(Component.translatable("tool.smog.assembly_help"));return InteractionResult.SUCCESS;}
+            int batch=1;
+            var input=m.getItem(0);
+            var part=ToolDefinitions.part(input);
+            if(m.getItem(5).isEmpty()&&empty(m,0)&&part!=null&&part.cast()&&!ToolParts.finish(input).isEmpty()){
+                int room=result.getMaxStackSize()-m.getItem(3).getCount();
+                batch=Math.min(8,Math.min(input.getCount(),room));
+                if(!player.isCreative()&&held.isDamageableItem())batch=Math.min(batch,Math.max(1,held.getMaxDamage()-held.getDamageValue()));
+            }
+            m.copper.queued=batch;m.copper.work=0;if(!player.isCreative()){if(held.getItem() instanceof ModularToolItem)ModularToolItem.wear(held,level,batch);else held.hurtAndBreak(batch,player,hand==InteractionHand.MAIN_HAND?net.minecraft.world.entity.EquipmentSlot.MAINHAND:net.minecraft.world.entity.EquipmentSlot.OFFHAND);}m.sync();return InteractionResult.SUCCESS;
         }
         if(player.isShiftKeyDown()&&!held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(held.isEmpty()){
@@ -68,7 +76,7 @@ public final class ToolAssembly {
         }
         if(m.getItem(5).isEmpty()&&canMount(held)){var template=ToolParts.schema(held);m.copper.selection=ToolDefinitions.index(template.id());m.setItem(5,held.split(1));m.sync();return InteractionResult.SUCCESS;}
         var input=m.getItem(0);
-        if(shapingMode(m)&&ToolDefinitions.part(input)==null&&ItemStack.isSameItemSameComponents(input,held)&&input.getCount()<Math.min(input.getMaxStackSize(),m.getMaxStackSize(input))){input.grow(1);held.shrink(1);m.sync();return InteractionResult.SUCCESS;}
+        if(m.getItem(5).isEmpty()&&empty(m,0)&&(shapingMode(m)||ToolDefinitions.part(input)!=null&&ToolDefinitions.part(input).cast())&&ItemStack.isSameItemSameComponents(input,held)&&input.getCount()<Math.min(input.getMaxStackSize(),m.getMaxStackSize(input))){input.grow(1);held.shrink(1);m.sync();return InteractionResult.SUCCESS;}
         for(int i=0;i<ToolDefinitions.maxParts();i++){int slot=ToolDefinitions.slot(i);if(m.getItem(slot).isEmpty()&&accepts(m,slot,held)){m.setItem(slot,held.split(1));m.sync();return InteractionResult.SUCCESS;}}
         return InteractionResult.PASS;
     }

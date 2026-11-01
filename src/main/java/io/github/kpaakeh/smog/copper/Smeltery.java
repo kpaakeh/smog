@@ -73,6 +73,13 @@ public final class Smeltery {
         else if(level.getGameTime()%(20+Math.min(40,m.complexRoles().getOrDefault("lining",0)*2))==0)m.copper.heat=Math.max(0,m.copper.heat-1);
     }
     public static int duration(int units){return Math.max(40,(int)Math.min(20000,80L*Math.max(1,units)/MoltenMetalStorage.INGOT));}
+    /** Charge the actual boosted fraction, preserving sub-ingot quantities across every work tick. */
+    public static int advance(CopperState state,int progress,int total,int units,int speed){
+        int boosted=Math.min(total,progress+2*speed);
+        int cost=(int)((long)units*boosted/total-(long)units*progress/total);
+        if(state.bellowsUnits()>0&&cost<=state.bellowsUnits()){state.consumeBellows(cost);return boosted;}
+        return Math.min(total,progress+speed);
+    }
     private static void worldInputs(ServerLevel level,MachineEntity m){
         if(level.getGameTime()%5!=0||m.complexShape()==null)return;var shape=m.complexShape();var bounds=shape.bounds();var inverse=switch(m.rotation()){case CLOCKWISE_90->net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90;case COUNTERCLOCKWISE_90->net.minecraft.world.level.block.Rotation.CLOCKWISE_90;default->m.rotation();};
         for(var entity:level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(m.getBlockPos()).inflate(11))){var local=entity.blockPosition().subtract(m.getBlockPos()).rotate(inverse);var stack=entity.getItem();if(local.getX()<=bounds.minX()||local.getX()>=bounds.maxX()||local.getZ()<1||local.getZ()>=shape.depth()-1||local.getY()<0||local.getY()>=shape.height()-1||CopperWorkshops.melt(stack)==null)continue;
@@ -85,8 +92,8 @@ public final class Smeltery {
         for(int n=0;n<count;n++){
             var input=m.getItem(slot(n));var recipe=CopperWorkshops.melt(input);String key=BuiltInRegistries.ITEM.getKey(input.getItem())+":"+input.getComponents().hashCode();if(!key.equals(m.smeltery.inputs[n])){m.smeltery.progress[n]=0;m.smeltery.inputs[n]=key;}
             if(recipe==null)continue;if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}if(!MetalProcessing.safe(m,recipe[0])){m.copper.status=MetalProcessing.problem(m,recipe[0]);continue;}if(!m.smeltery.fuelActive){m.copper.status=m.smeltery.fuelHeat>0&&m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])?4:3;continue;}if(m.copper.heat<CopperWorkshops.meltingHeat(recipe[0])||m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])){m.copper.status=4;continue;}
-            int total=duration(recipe[1]);m.smeltery.progress[n]=Math.min(total,m.smeltery.progress[n]+m.smeltery.fuelSpeed*(m.copper.air>0?2:1));
-            if(m.smeltery.progress[n]>=total){if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}m.copper.metal(recipe[0],m.copper.metal(recipe[0])+recipe[1]);input.shrink(1);m.smeltery.progress[n]=0;if(m.copper.air>0)m.copper.air--;}
+            int total=duration(recipe[1]);m.smeltery.progress[n]=advance(m.copper,m.smeltery.progress[n],total,recipe[1],m.smeltery.fuelSpeed);
+            if(m.smeltery.progress[n]>=total){if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}m.copper.metal(recipe[0],m.copper.metal(recipe[0])+recipe[1]);input.shrink(1);m.smeltery.progress[n]=0;}
         }
         m.copper.work=m.smeltery.progress[0];CopperWorkshops.alloy(m);m.setChanged();
     }

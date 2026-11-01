@@ -17,8 +17,16 @@ public final class CastingProcesses {
     private static final Map<ServerLevel,Flow> FLOWS=new WeakHashMap<>();
     private static final class Flow{long tick=Long.MIN_VALUE;final Map<BlockPos,Integer> used=new HashMap<>();}
     private static Flow flow(ServerLevel level){var f=FLOWS.computeIfAbsent(level,k->new Flow());if(f.tick!=level.getGameTime()){f.tick=level.getGameTime();f.used.clear();}return f;}
-    public record Recipe(ItemStack result,int units,int cooling,boolean consumeMold){}
+    public record Recipe(ItemStack result,int units,int cooling,boolean consumeMold,boolean consumeCore){public Recipe(ItemStack result,int units,int cooling,boolean consumeMold){this(result,units,cooling,consumeMold,false);}}
+    public static boolean core(ItemStack stack){return CopperWorkshops.is(stack,"smog:ceramic_core");}
+    public static ToolDefinitions.Part hollowPart(int metal){var part=ToolDefinitions.find(MoltenMetalStorage.NAMES[metal],"hollow_handle",false);return part!=null&&!part.cast()&&part.material().molten().equals(MoltenMetalStorage.NAMES[metal])?part:null;}
+    public static boolean toolingMatches(MachineEntity m){return ItemStack.isSameItemSameComponents(m.getItem(1),m.smeltery.castingMold)&&ItemStack.isSameItemSameComponents(m.getItem(2),m.smeltery.castingCore);}
     public static Recipe recipe(MachineEntity m,int metal){
+        if(!m.getItem(2).isEmpty()){
+            if(!CopperWorkshops.workshop(m,"casting_table")||!core(m.getItem(2))||CopperWorkshops.mold(m.getItem(1))!=3)return null;
+            var part=hollowPart(metal);if(part==null)return null;int units=ToolParts.units(part);
+            return new Recipe(new ItemStack(BuiltInRegistries.ITEM.getValue(part.item())),units,Math.max(40,units/225),CopperWorkshops.singleUse(m.getItem(1)),true);
+        }
         if(CopperWorkshops.workshop(m,"casting_basin")){String name=MoltenMetalStorage.NAMES[metal];var id=net.minecraft.resources.Identifier.parse((Set.of("copper","iron","gold","netherite").contains(name)?"minecraft:":"smog:")+name+"_block");return BuiltInRegistries.ITEM.containsKey(id)?new Recipe(new ItemStack(BuiltInRegistries.ITEM.getValue(id)),9*MoltenMetalStorage.INGOT,160,false):null;}
         var pattern=MoldMaking.pattern(m.getItem(1));if(pattern!=null){int gold=Arrays.asList(MoltenMetalStorage.NAMES).indexOf("gold");if(metal!=gold)return null;var result=MoldMaking.metalMold(pattern);return result.isEmpty()?null:new Recipe(result,2*MoltenMetalStorage.INGOT,80,false);}
         int mold=CopperWorkshops.mold(m.getItem(1));if(mold<0)return null;var result=CopperWorkshops.castResult(metal,mold);return result.isEmpty()?null:new Recipe(result,CopperWorkshops.castCost(metal,mold),Math.max(40,CopperWorkshops.castCost(metal,mold)/225),CopperWorkshops.singleUse(m.getItem(1)));
@@ -28,13 +36,13 @@ public final class CastingProcesses {
         var s=m.smeltery;
         if(s.casting()){
             m.copper.work=s.required==0?0:100*s.filled/s.required;
-            if(!ItemStack.isSameItemSameComponents(m.getItem(1),s.castingMold)){m.copper.status=9;return;}
+            if(!toolingMatches(m)){m.copper.status=9;return;}
             if(s.filled>=s.required){
                 m.copper.status=10;if(s.cooling>0){s.cooling--;m.setChanged();return;}
                 if(s.castingResult.isEmpty()){m.copper.status=9;return;}
                 if(!m.canOutput(s.castingResult)){m.copper.status=5;return;}
                 if(m.getItem(3).isEmpty())m.setItem(3,s.castingResult.copy());else m.getItem(3).grow(s.castingResult.getCount());
-                if(s.consumeMold)m.getItem(1).shrink(1);s.clearCast();m.copper.work=0;m.copper.status=0;m.sync();return;
+                if(s.consumeMold)m.getItem(1).shrink(1);if(s.consumeCore)m.getItem(2).shrink(1);s.clearCast();m.copper.work=0;m.copper.status=0;m.sync();return;
             }
         }
         var route=CopperWorkshops.route(level,m.getBlockPos());var source=route==null?null:route.source();if(source==null){m.copper.status=s.casting()?8:6;return;}

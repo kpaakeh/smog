@@ -15,6 +15,22 @@ public final class ToolTests {
     private static ItemStack item(String name){return new ItemStack(ToolParts.item(name));}
     private static ItemStack build(String handle){return ToolParts.assemble(item("copper_pickaxe_head"),item(handle),item("cord_binding"),ItemStack.EMPTY);}
     private static MachineEntity table(GameTestHelper h){var pos=h.absolutePos(new BlockPos(3,2,3));h.getLevel().setBlock(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("tool_workbench")).defaultBlockState(),Block.UPDATE_ALL);return (MachineEntity)h.getLevel().getBlockEntity(pos);}
+    @GameTest public void offhandHammerCanFinishAssemblyWithoutTouchingMainHand(GameTestHelper h){
+        var bench=table(h);bench.copper.selection=ToolDefinitions.index("pickaxe");bench.setItem(0,item("copper_pickaxe_head"));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("cord_binding"));
+        // InLevel's native mock overrides gameMode() to CREATIVE even after setGameMode.
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var main=new ItemStack(Items.DIAMOND,7);var hammer=item("stone_work_hammer");hammer.setDamageValue(hammer.getMaxDamage()-1);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,main);player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,hammer);
+        h.assertFalse(player.isCreative(),"The hammer fixture uses survival mode");
+        h.assertTrue(hammer.isDamageableItem()&&hammer.getDamageValue()==hammer.getMaxDamage()-1,"The fixture holds a damageable hammer with one use remaining");
+        h.assertFalse(ToolAssembly.preview(bench).isEmpty(),"The pickaxe components form a valid recipe before the strike");
+        ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.OFF_HAND);
+        h.assertValueEqual(bench.copper.queued,1,"The offhand hammer queues the valid recipe");
+        h.assertTrue(player.getOffhandItem().isEmpty(),"Last hammer use breaks the actual offhand hammer; remaining damage="+player.getOffhandItem().getDamageValue()+", max="+player.getOffhandItem().getMaxDamage()+", count="+player.getOffhandItem().getCount()+", infinite="+player.getAbilities().instabuild);
+        h.assertTrue(player.getMainHandItem().is(Items.DIAMOND)&&player.getMainHandItem().getCount()==7,"Hammer break preserves the unrelated main-hand stack");
+        for(int tick=0;tick<40;tick++)ToolAssembly.tick(h.getLevel(),bench);
+        h.assertTrue(ModularToolItem.configured(bench.getItem(3)),"The final hammer use still completes the queued tool");h.succeed();
+    }
     @GameTest public void partSwapsDoNotChangeWearOrHarvestTier(GameTestHelper h){
         var tool=build("wooden_handle");tool.setDamageValue(1);var initial=ToolParts.extract(tool,0);int units=ToolParts.melt(initial)[1];
         for(int i=0;i<50;i++)tool=ToolParts.assemble(ToolParts.extract(tool,0),item(i%2==0?"reinforced_handle":"wooden_handle"),item("copper_clamp"),i%2==0?item("fiber_wrap"):ItemStack.EMPTY);
@@ -79,6 +95,69 @@ public final class ToolTests {
         var tool=m.removeItemNoUpdate(3);tool.setDamageValue(120);m.setItem(5,tool);m.setItem(0,new ItemStack(Items.COPPER_INGOT));m.copper.queued=1;
         for(int i=0;i<40;i++)ToolAssembly.tick(h.getLevel(),m);
         h.assertValueEqual(m.getItem(3).getDamageValue(),70,"One ingot repairs a quarter of 200 life");h.assertTrue(m.getItem(0).isEmpty()&&m.getItem(5).isEmpty(),"Repair consumes ingot and moves existing assembly");h.succeed();
+    }
+    @GameTest public void materialTraitsReactToWorkAndCombatWithoutChangingDrops(GameTestHelper h){
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var copper=build("wooden_handle");var state=Blocks.STONE.defaultBlockState();float initial=copper.getDestroySpeed(state);
+        for(int i=0;i<4;i++)((ModularToolItem)copper.getItem()).mineBlock(copper,h.getLevel(),state,h.absolutePos(new BlockPos(1,2,1)),player);
+        h.assertTrue(copper.getDestroySpeed(state)>initial,"Copper work hardening responds to successful suitable mining");
+        h.assertFalse(copper.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),"Work hardening never raises harvest tier");
+        var data=ModularToolItem.parts(copper);data.putLong("trait_work_until",h.getLevel().getGameTime()-1);copper.set(DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));ToolTraits.tick(copper,h.getLevel());
+        h.assertTrue(Math.abs(copper.getDestroySpeed(state)-initial)<.00001,"Copper bonus expires after idle timeout");
+        var target=(net.minecraft.world.entity.LivingEntity)BuiltInRegistries.ENTITY_TYPE.getValue(net.minecraft.resources.Identifier.withDefaultNamespace("cow")).create(h.getLevel(),net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+        var bronze=ToolParts.assemble(item("bronze_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);
+        ((ModularToolItem)bronze.getItem()).hurtEnemy(bronze,target,player);
+        h.assertTrue(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Bronze hit actually slows a mob");target.removeEffect(net.minecraft.world.effect.MobEffects.SLOWNESS);
+        ((ModularToolItem)bronze.getItem()).hurtEnemy(bronze,target,player);
+        h.assertFalse(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Bronze effect obeys its cooldown");
+        var gold=ToolParts.assemble(item("gold_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);((ModularToolItem)gold.getItem()).hurtEnemy(gold,target,player);
+        h.assertTrue(target.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING),"Gold hit marks the mob");h.succeed();
+    }
+    @GameTest public void leatherGripSavesWearOnlyOnSuccessfulNativeUse(GameTestHelper h){
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var axe=ToolParts.assemble(item("copper_axe_head"),item("wooden_handle"),item("cord_binding"),item("leather_wrap"));player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,axe);
+        for(int i=0;i<4;i++){var pos=h.absolutePos(new BlockPos(1+i,2,1));h.getLevel().setBlock(pos,Blocks.OAK_LOG.defaultBlockState(),Block.UPDATE_ALL);
+            var context=new net.minecraft.world.item.context.UseOnContext(player,net.minecraft.world.InteractionHand.MAIN_HAND,new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos),Direction.UP,pos,false));
+            ((ModularToolItem)axe.getItem()).useOn(context);h.assertTrue(h.getLevel().getBlockState(pos).is(Blocks.STRIPPED_OAK_LOG),"Native stripping still executes");}
+        h.assertValueEqual(axe.getDamageValue(),3,"Four successful native actions cost three wear with leather grip");
+        ((ModularToolItem)axe.getItem()).mineBlock(axe,h.getLevel(),Blocks.OAK_LOG.defaultBlockState(),h.absolutePos(new BlockPos(1,2,1)),player);
+        h.assertValueEqual(axe.getDamageValue(),4,"Ordinary mining does not receive free native-action wear");h.succeed();
+    }
+    @GameTest public void handleBalanceChangesActualAttackTempo(GameTestHelper h){
+        var ordinary=build("wooden_handle");var light=build("light_handle");var reinforced=build("reinforced_handle");
+        var attribute=net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED;double base=attribute.value().getDefaultValue();
+        double normalSpeed=ordinary.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        double lightSpeed=light.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        double heavySpeed=reinforced.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        h.assertTrue(Math.abs(normalSpeed-1.2)<0.00001,"Ordinary handle retains baseline attack tempo");
+        h.assertTrue(Math.abs(lightSpeed-normalSpeed*1.08)<0.00001,"Light handle improves actual attacks per second, not the negative modifier");
+        h.assertTrue(Math.abs(heavySpeed-normalSpeed*.97)<0.00001,"Reinforcement trades attack tempo for head life");
+        h.assertTrue(light.getMaxDamage()<ordinary.getMaxDamage()&&reinforced.getMaxDamage()>ordinary.getMaxDamage(),"Handling trade-offs retain their durability costs");
+        h.assertFalse(light.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),"Faster handling never upgrades the copper head tier");h.succeed();
+    }
+    @GameTest public void complexHandlesCannotBypassTheirAssemblyIngredients(GameTestHelper h){
+        h.assertFalse(ToolParts.shapingChoices(new ItemStack(Items.COPPER_INGOT)).stream().anyMatch(p->p.form().id().equals("hollow_handle")),"A bare ingot cannot bypass the ceramic core and pipe assembly");
+        var plankChoices=ToolParts.shapingChoices(new ItemStack(Items.OAK_PLANKS));
+        h.assertFalse(plankChoices.stream().anyMatch(p->p.form().id().equals("reinforced_handle")),"A bare plank cannot bypass reinforcing fittings and cord");
+        h.assertTrue(plankChoices.stream().anyMatch(p->p.form().id().equals("standard_handle")),"Plain wooden handles remain directly shapeable");h.succeed();
+    }
+    @GameTest public void headConversionsAndDisassemblyRetainAnvilHistory(GameTestHelper h){
+        var nativeTool=new ItemStack(Items.IRON_PICKAXE);var name=net.minecraft.network.chat.Component.literal("Workshop favorite");
+        nativeTool.set(DataComponents.CUSTOM_NAME,name);nativeTool.set(DataComponents.REPAIR_COST,7);nativeTool.setDamageValue(50);
+        var head=ToolParts.finish(nativeTool);
+        h.assertValueEqual(head.getOrDefault(DataComponents.REPAIR_COST,0),7,"Native conversion retains prior anvil work");
+        var assembled=ToolParts.assemble(head,item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);
+        h.assertTrue(name.equals(assembled.get(DataComponents.CUSTOM_NAME)),"Head conversion keeps the named favorite");
+        assembled.set(DataComponents.REPAIR_COST,15);
+        var extracted=ToolParts.extract(assembled,0);
+        var rebuilt=ToolParts.assemble(extracted,item("reinforced_handle"),item("cord_binding"),ItemStack.EMPTY);
+        h.assertValueEqual(rebuilt.getOrDefault(DataComponents.REPAIR_COST,0),15,"Disassembly cannot reset anvil cost");
+        h.assertTrue(name.equals(rebuilt.get(DataComponents.CUSTOM_NAME)),"Disassembly retains the name with the primary head");
+        rebuilt.remove(DataComponents.CUSTOM_NAME);
+        h.assertFalse(ToolParts.extract(rebuilt,0).has(DataComponents.CUSTOM_NAME),"Removing a name does not resurrect the stored head name");
+        var expensive=assembled.copy();expensive.set(DataComponents.REPAIR_COST,31);
+        var preserved=ToolParts.preserveIdentity(assembled,expensive);
+        h.assertValueEqual(preserved.getOrDefault(DataComponents.REPAIR_COST,0),31,"A cheap mounted assembly cannot reset an expensive replacement head");
+        h.succeed();
     }
     @GameTest public void headEnchantmentsStayWithTheHead(GameTestHelper h){
         var tool=build("wooden_handle");var enchantment=h.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(net.minecraft.world.item.enchantment.Enchantments.UNBREAKING);tool.enchant(enchantment,1);

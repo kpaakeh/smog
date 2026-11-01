@@ -46,7 +46,7 @@ public final class GuiLayouts {
         register("tool_workbench",176,190+extraRows*18,toolSlots,ModBlocks.id("textures/gui/copper_workshop.png"));
         register("manual_workshop",176,190,List.of(new SlotPosition(0,26,35,false),new SlotPosition(3,134,35,true)),ModBlocks.id("textures/gui/copper_workshop.png"));
         register("water_supply",176,190,List.of(),ModBlocks.id("textures/gui/copper_workshop.png"));
-        register("casting_table",176,190,List.of(new SlotPosition(1,71,35,false),new SlotPosition(3,134,35,true)),ModBlocks.id("textures/gui/copper_workshop.png"));
+        register("casting_table",176,190,List.of(new SlotPosition(2,52,35,false),new SlotPosition(1,71,35,false),new SlotPosition(3,134,35,true)),ModBlocks.id("textures/gui/copper_workshop.png"));
         register("casting_basin",176,190,List.of(new SlotPosition(3,134,35,true)),ModBlocks.id("textures/gui/copper_workshop.png"));
         register("copper_workshop",176,190,List.of(new SlotPosition(0,26,35,false),new SlotPosition(1,71,35,false),new SlotPosition(2,26,65,false),new SlotPosition(3,134,35,true)));
         register("processor",176,190,List.of(new SlotPosition(0,35,35,false),new SlotPosition(3,110,35,true)));

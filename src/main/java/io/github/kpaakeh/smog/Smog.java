@@ -13,6 +13,7 @@ public class Smog implements ModInitializer {
         io.github.kpaakeh.smog.worldgen.ResourceDepositFeature.initialize();
         io.github.kpaakeh.smog.registry.ContentCatalog.initialize();
         io.github.kpaakeh.smog.copper.CopperTransport.initialize();
+        io.github.kpaakeh.smog.copper.RopewayInteractions.initialize();
         io.github.kpaakeh.smog.gui.GuiLayouts.initialize();
         io.github.kpaakeh.smog.machine.ProcessingRecipes.initialize();
         io.github.kpaakeh.smog.copper.CopperWorkshops.initialize();

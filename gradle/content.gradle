@@ -338,6 +338,21 @@ abstract class GenerateSmogContent extends DefaultTask {
         }
         root.tool_templates.each { schema -> en["tool.smog.template.${schema.id}"]=schema.name.en_us;ru["tool.smog.template.${schema.id}"]=schema.name.ru_ru }
         en.putAll(root.translations?.en_us ?: [:]);ru.putAll(root.translations?.ru_ru ?: [:]);
+        // Name the common tags this catalog actually contributes. Material
+        // subtags use the same localized item/block name as their contents.
+        def commonTagNames=[crushed_ores:['Crushed Ores','Дроблёные руды'],dusts:['Dusts','Пыль'],ingots:['Ingots','Слитки'],nuggets:['Nuggets','Самородки'],ores:['Ores','Руды'],ore_shards:['Ore Shards','Рудные осколки'],plates:['Plates','Пластины'],raw_materials:['Raw Materials','Необработанное сырьё'],storage_blocks:['Storage Blocks','Блоки хранения'],stones:['Stones','Каменные породы']]
+        tags.each { path,values ->
+            def match=path =~ /^data\/c\/tags\/(item|block)\/(.+)\.json$/
+            if(match.matches()) {
+                def registry=match[0][1],name=match[0][2]
+                String key="tag.${registry}.c.${name.replace('/','.')}"
+                if(commonTagNames.containsKey(name)){en.putIfAbsent(key,commonTagNames[name][0]);ru.putIfAbsent(key,commonTagNames[name][1])}
+                else {
+                    def member=values.find { !it.startsWith('#')&&it.startsWith('smog:') }
+                    if(member!=null){def id=member.replace(':','.');String entry="item.$id";if(!en.containsKey(entry))entry="block.$id";if(en.containsKey(entry)){en.putIfAbsent(key,en[entry]);ru.putIfAbsent(key,ru[entry])}}
+                }
+            }
+        }
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
     }

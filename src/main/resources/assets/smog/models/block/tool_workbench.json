@@ -3,7 +3,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/block",
 	"textures": {
-		"stone": "block/copper_block"
+		"stone": "block/copper_block",
+		"particle": "minecraft:block/copper_block"
 	},
 	"elements": [
 		{

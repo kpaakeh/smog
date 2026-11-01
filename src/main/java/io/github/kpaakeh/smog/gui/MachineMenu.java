@@ -20,7 +20,7 @@ public final class MachineMenu extends AbstractContainerMenu {
             @Override public int getMaxStackSize(){return layout.id.equals("smeltery")?1:super.getMaxStackSize();}
             @Override public int getMaxStackSize(ItemStack stack){return layout.id.equals("smeltery")?1:super.getMaxStackSize(stack);}
             @Override public boolean isActive(){if(!layout.id.equals("smeltery"))return true;int worker=io.github.kpaakeh.smog.copper.Smeltery.worker(position.index());return worker<0||worker/io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE==MachineMenu.this.data.get(23)&&(worker<MachineMenu.this.data.get(22)||!container.getItem(position.index()).isEmpty());}
-            @Override public boolean mayPickup(Player player){return !(container instanceof MachineEntity machine&&(io.github.kpaakeh.smog.copper.ToolAssembly.handles(machine)&&machine.copper.queued>0||position.index()==1&&io.github.kpaakeh.smog.copper.CastingProcesses.locked(machine)));}
+            @Override public boolean mayPickup(Player player){return !(container instanceof MachineEntity machine&&(io.github.kpaakeh.smog.copper.ToolAssembly.handles(machine)&&machine.copper.queued>0||(position.index()==1||position.index()==2)&&io.github.kpaakeh.smog.copper.CastingProcesses.locked(machine)));}
             @Override public boolean mayPlace(ItemStack stack) { return isActive()&&!position.output() && container.canPlaceItem(position.index(),stack); }
         });
         addStandardInventorySlots(inventory,layout.id.equals("smeltery")?80:8,layout.height-82);addDataSlots(this.data);

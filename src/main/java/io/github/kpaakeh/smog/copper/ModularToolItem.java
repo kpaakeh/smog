@@ -28,13 +28,14 @@ public final class ModularToolItem extends Item {
         stack.setDamageValue(Math.min(stack.getMaxDamage(),stack.getDamageValue()+wear));if(broken(stack))stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);
     }
     @Override public void inventoryTick(ItemStack stack,ServerLevel level,net.minecraft.world.entity.Entity holder,net.minecraft.world.entity.EquipmentSlot slot){
+        ToolTraits.tick(stack,level);
         if(broken(stack)){stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);return;}
         if(!stack.has(DataComponents.ATTRIBUTE_MODIFIERS)){var restored=ToolParts.assemble(ToolParts.schema(stack),ToolParts.components(stack));if(restored.has(DataComponents.ATTRIBUTE_MODIFIERS))stack.set(DataComponents.ATTRIBUTE_MODIFIERS,restored.get(DataComponents.ATTRIBUTE_MODIFIERS));}
     }
-    @Override public void hurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){if(!(attacker instanceof net.minecraft.world.entity.player.Player p&&p.isCreative()))wear(stack,attacker.level(),2);}
-    @Override public float getDestroySpeed(ItemStack stack,BlockState state){return broken(stack)?.2f:super.getDestroySpeed(stack,state);}
+    @Override public void hurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){if(!(attacker instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(!broken(stack))ToolTraits.hit(stack,target,attacker);wear(stack,attacker.level(),2);}}
+    @Override public float getDestroySpeed(ItemStack stack,BlockState state){return broken(stack)?.2f:ToolTraits.miningSpeed(stack,state,super.getDestroySpeed(stack,state));}
     @Override public boolean isCorrectToolForDrops(ItemStack stack,BlockState state){return !broken(stack)&&super.isCorrectToolForDrops(stack,state);}
-    @Override public boolean mineBlock(ItemStack stack,Level level,BlockState state,BlockPos pos,LivingEntity user){if(!level.isClientSide()&&state.getDestroySpeed(level,pos)!=0&&!(user instanceof net.minecraft.world.entity.player.Player p&&p.isCreative()))wear(stack,level,1);return true;}
+    @Override public boolean mineBlock(ItemStack stack,Level level,BlockState state,BlockPos pos,LivingEntity user){if(!level.isClientSide()&&state.getDestroySpeed(level,pos)!=0&&!(user instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(level instanceof ServerLevel server&&!broken(stack))ToolTraits.mined(stack,server,state);wear(stack,level,1);}return true;}
     @Override public void postHurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){}
     @Override public InteractionResult useOn(UseOnContext context){
         var stack=context.getItemInHand();if(broken(stack))return InteractionResult.PASS;
@@ -43,7 +44,7 @@ public final class ModularToolItem extends Item {
             var level=context.getLevel();var pos=context.getClickedPos();var old=level.getBlockState(pos);
             String block=BuiltInRegistries.BLOCK.getKey(old.getBlock()).toString();String result=switch(block){case "smog:firebrick_casing"->"firebrick_tiles";case "smog:firebrick_tiles"->"carved_firebrick";case "smog:carved_firebrick"->"firebrick_casing";default->null;};
             if(result==null)return InteractionResult.PASS;
-            if(!level.isClientSide()){level.setBlock(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id(result)).defaultBlockState(),net.minecraft.world.level.block.Block.UPDATE_ALL);if(context.getPlayer()==null||!context.getPlayer().isCreative())wear(stack,level,1);}
+            if(!level.isClientSide()){level.setBlock(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id(result)).defaultBlockState(),net.minecraft.world.level.block.Block.UPDATE_ALL);if(context.getPlayer()==null||!context.getPlayer().isCreative())wear(stack,level,ToolTraits.useWear(stack));}
             return InteractionResult.SUCCESS;
         }
         var delegates=new java.util.LinkedHashSet<Item>();for(var component:ToolParts.components(stack)){var definition=ToolDefinitions.part(component);if(definition!=null&&!definition.form().nativeSuffix().isEmpty()){String prefix=definition.material().nativePrefix().isEmpty()?"iron":definition.material().nativePrefix();var id=net.minecraft.resources.Identifier.withDefaultNamespace(prefix+"_"+definition.form().nativeSuffix());if(BuiltInRegistries.ITEM.containsKey(id))delegates.add(BuiltInRegistries.ITEM.getValue(id));}}if(delegates.isEmpty())return InteractionResult.PASS;
@@ -51,7 +52,7 @@ public final class ModularToolItem extends Item {
         boolean had=stack.has(DataComponents.UNBREAKABLE);stack.set(DataComponents.UNBREAKABLE,net.minecraft.util.Unit.INSTANCE);
         InteractionResult result;
         try{result=InteractionResult.PASS;for(var delegate:delegates){result=delegate.useOn(context);if(result.consumesAction())break;}}finally{if(!had)stack.remove(DataComponents.UNBREAKABLE);}
-        if(result.consumesAction()&&(context.getPlayer()==null||!context.getPlayer().isCreative()))wear(stack,context.getLevel(),1);return result;
+        if(result.consumesAction()&&(context.getPlayer()==null||!context.getPlayer().isCreative()))wear(stack,context.getLevel(),context.getLevel().isClientSide()?1:ToolTraits.useWear(stack));return result;
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,TooltipDisplay display,java.util.function.Consumer<Component> lines,TooltipFlag flag){
         super.appendHoverText(stack,context,display,lines,flag);
@@ -59,6 +60,7 @@ public final class ModularToolItem extends Item {
         var schema=ToolParts.schema(stack);var components=ToolParts.components(stack);
         for(int i=0;i<components.size();i++)if(!components.get(i).isEmpty())lines.accept(Component.translatable("tool.smog.part_"+schema.roles().get(i).category(),components.get(i).getHoverName()));
         for(var component:components){var head=ToolDefinitions.part(component);if(head==null||!head.form().category().equals("head"))continue;var profile=head.material().profile(head.form());lines.accept(Component.translatable("tool.smog.tier",Component.translatable("tool.smog.tier."+ToolDefinitions.string(profile,"harvest_tier","wooden"))));}
+        ToolTraits.tooltip(stack,lines);
         var mining=stack.get(DataComponents.TOOL);if(mining!=null)lines.accept(Component.translatable("tool.smog.speed",String.format(java.util.Locale.ROOT,"%.2f",mining.rules().stream().flatMap(r->r.speed().stream()).max(Float::compare).orElse(1f))));
         lines.accept(Component.translatable(broken(stack)?"tool.smog.broken":"tool.smog.durability",Math.max(0,stack.getMaxDamage()-stack.getDamageValue()),stack.getMaxDamage()));
     }

@@ -15,7 +15,9 @@ def model(name):
     seen.add(name);data=load('assets/smog/models/'+name.split(':',1)[1]+'.json')
     if data.get('parent'):model(data['parent'])
     for texture in data.get('textures',{}).values():
-        if texture.startswith('smog:'):used.add(texture.split(':',1)[1]+'.png')
+        # 26.3 also permits texture objects (sprite plus rendering flags).
+        if isinstance(texture,dict):texture=texture.get('sprite','')
+        if isinstance(texture,str) and texture.startswith('smog:'):used.add(texture.split(':',1)[1]+'.png')
 def walk(value):
     if isinstance(value,dict):
         for key,entry in value.items():
@@ -24,7 +26,9 @@ def walk(value):
     elif isinstance(value,list):
         for entry in value:walk(entry)
 for kind in ['items','blockstates']:
-    for p in (GENERATED/'assets/smog'/kind).glob('*.json'):walk(json.loads(p.read_text(encoding='utf-8')))
+    # Source overrides generated resources, just as it does in load().
+    paths={p.name:p for folder in [GENERATED,SOURCE] for p in (folder/'assets/smog'/kind).glob('*.json')}
+    for p in paths.values():walk(json.loads(p.read_text(encoding='utf-8-sig')))
 content=json.loads((ROOT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
 for fluid in content['fluids']:
     for kind in ['still','flow','overlay']:used.add('block/'+fluid['name']+'_'+kind+'.png')

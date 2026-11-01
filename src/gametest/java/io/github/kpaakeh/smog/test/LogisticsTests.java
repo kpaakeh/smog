@@ -64,4 +64,38 @@ public final class LogisticsTests {
         var line=rideLine(h);var obstacle=h.absolutePos(new BlockPos(3,4,1));h.getLevel().setBlock(obstacle,Blocks.STONE.defaultBlockState(),Block.UPDATE_ALL);var player=h.makeMockServerPlayerInLevel();var stick=new ItemStack(Items.STICK);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stick);CopperInteractions.use(h.getLevel(),line[0],player,net.minecraft.world.InteractionHand.MAIN_HAND,line[0].getBlockPos());h.assertFalse(player.isPassenger(),"Blocked physical route cannot board a passenger");h.assertTrue(stick.is(Items.STICK)&&stick.getCount()==1,"Using the transport never consumes the stick");h.assertFalse(RopewayRideEntity.busy(h.getLevel(),line[0].getBlockPos()),"Failed boarding does not create an invisible reserved hoist");h.succeed();
     }
 
+    private static void rideSteps(RopewayRideEntity ride,int ticks){for(int n=0;n<ticks&&!ride.isRemoved();n++){ride.tick();for(var rider:ride.getPassengers())ride.positionRider(rider);}}
+    private static net.minecraft.world.phys.Vec3 ropePoint(MachineEntity[] line,double t){var start=line[0].getBlockPos();return Ropeway.point(net.minecraft.world.phys.Vec3.atLowerCornerOf(line[1].getBlockPos().subtract(start)),t).add(start.getX(),start.getY(),start.getZ());}
+    @GameTest public void midspanRideFollowsLookAndCanReverseWithoutTeleporting(GameTestHelper h){
+        var line=rideLine(h);var player=h.makeMockServerPlayerInLevel();player.setYRot(-90);player.setXRot(0);
+        RopewayRideEntity.mountAt(h.getLevel(),line[0],player,.5);h.assertTrue(player.getVehicle() instanceof RopewayRideEntity,"Can board the middle of a rope instead of an endpoint");var ride=(RopewayRideEntity)player.getVehicle();
+        var center=ropePoint(line,.5);h.assertTrue(Math.abs(ride.getX()-center.x)<.2,"Mount starts at the selected rope point");double initial=ride.getX();rideSteps(ride,5);h.assertTrue(ride.getX()>initial+.1,"Looking toward the positive endpoint moves forward");double turn=ride.getX();player.setYRot(90);rideSteps(ride,5);h.assertTrue(ride.getX()<turn-.1,"Turning to the opposite endpoint reverses travel");h.assertTrue(player.isPassenger(),"Changing direction does not eject the passenger");double beforeVertical=ride.getX();player.setXRot(-90);rideSteps(ride,2);h.assertTrue(ride.getX()<beforeVertical,"Vertical look preserves the previous direction in the deadzone");
+        player.setXRot(0);player.setYRot(90);rideSteps(ride,80);h.assertFalse(player.isPassenger(),"Reversed journey reaches a safe endpoint and releases its passenger");h.succeed();
+    }
+
+    private static void aimAtRope(net.minecraft.server.level.ServerPlayer player,net.minecraft.world.phys.Vec3 point,double distance){player.setPos(point.x,point.y-player.getEyeHeight(),point.z+distance);player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,point);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(Items.STICK));}
+    @GameTest public void ropeRayBoardsOnlyVisibleReachablePoint(GameTestHelper h){
+        var line=rideLine(h);var point=ropePoint(line,.5);var player=h.makeMockServerPlayerInLevel();
+        aimAtRope(player,point,12);h.assertTrue(RopewayRideEntity.mountLookedAt(h.getLevel(),player)==null,"Ray outside native interaction reach cannot select a rope");h.assertFalse(player.isPassenger(),"Distant stick use cannot teleport the player onto a rope");
+        aimAtRope(player,point,2);var obstacle=BlockPos.containing(point.x,point.y,point.z+1);for(int dx=-1;dx<=1;dx++)h.getLevel().setBlock(obstacle.offset(dx,0,0),Blocks.STONE.defaultBlockState(),Block.UPDATE_ALL);h.assertTrue(RopewayRideEntity.mountLookedAt(h.getLevel(),player)==null,"A solid block occludes the authoritative eye ray");h.assertFalse(player.isPassenger(),"A hidden rope cannot be boarded through a wall");for(int dx=-1;dx<=1;dx++)h.getLevel().setBlock(obstacle.offset(dx,0,0),Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
+        aimAtRope(player,point,2);h.assertTrue(net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.invoker().interact(player,h.getLevel(),net.minecraft.world.InteractionHand.MAIN_HAND).consumesAction(),"Registered native stick callback consumes a visible rope interaction");h.assertTrue(player.getVehicle() instanceof RopewayRideEntity,"Stick eye ray creates a real passenger vehicle");h.assertTrue(Math.abs(player.getVehicle().getX()-point.x)<.25,"Ray boarding starts at the looked-at middle, not an anchor");h.assertValueEqual(player.getMainHandItem().getCount(),1,"Ray boarding never consumes the stick");h.succeed();
+    }
+
+    @GameTest public void visibleRopeTakesPriorityOverClickableBlockBehindIt(GameTestHelper h){
+        var line=rideLine(h);var point=ropePoint(line,.5);var player=h.makeMockServerPlayerInLevel();aimAtRope(player,point,2);var chest=BlockPos.containing(point.x,point.y,point.z-1);h.getLevel().setBlock(chest,Blocks.CHEST.defaultBlockState(),Block.UPDATE_ALL);
+        var hit=new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(chest),Direction.SOUTH,chest,false);var result=net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.invoker().interact(player,h.getLevel(),net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        h.assertTrue(result.consumesAction(),"Registered block callback intercepts a visible rope in front of the clicked chest");h.assertTrue(player.getVehicle() instanceof RopewayRideEntity,"Clicking toward a background chest still boards the visible rope");h.assertTrue(player.containerMenu==player.inventoryMenu,"Rope interaction does not open the background container");h.succeed();
+    }
+
+    @GameTest public void unrelatedMenuButtonsCannotRedirectReservedCraneCargo(GameTestHelper h){
+        var m=crane(h);var source=barrel(h,LoadingCrane.bay(m,false));var target=barrel(h,LoadingCrane.bay(m,true));source.setItem(0,new ItemStack(Items.DIAMOND,11));LoadingCrane.queue(m);steps(h,m,LoadingCrane.duration(m)*3/20+1);
+        int progress=m.copper.work,selection=m.copper.selection;
+        h.assertFalse(CopperWorkshops.button(m,20),"Crane rejects pottery previous button");h.assertFalse(CopperWorkshops.button(m,21),"Crane rejects pottery next button");
+        h.assertValueEqual(m.copper.selection,selection,"Reserved cargo keeps its delivery direction");h.assertValueEqual(m.copper.work,progress,"Unrelated packets do not rewind the hoist");
+        steps(h,m,LoadingCrane.duration(m));h.assertValueEqual(count(target,Items.DIAMOND),11,"Reserved batch still reaches its original destination");h.succeed();
+    }
+    @GameTest public void incompleteCraneReportsTheActualMissingPosition(GameTestHelper h){
+        var m=crane(h);var missing=m.structure().parts().entrySet().stream().filter(e->!e.getValue().value().equals("minecraft:air")).findFirst().orElseThrow().getKey().rotate(m.rotation()).offset(m.getBlockPos());m.disassemble();h.getLevel().setBlock(missing,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
+        h.assertFalse(m.tryAssemble(),"Incomplete gantry cannot assemble");h.assertTrue(m.assemblyDetail().equals("fixed|"+missing.getX()+"|"+missing.getY()+"|"+missing.getZ()),"Assembly feedback identifies the missing world block");h.succeed();
+    }
 }

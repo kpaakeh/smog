@@ -33,7 +33,7 @@ public final class RopewayRideRenderer extends EntityRenderer<RopewayRideEntity,
         var direction=ride.end().subtract(ride.start());state.angle=(float)Math.toDegrees(Math.atan2(direction.getX(),direction.getZ()));state.light=getPackedLightCoords(ride,tick);
     }
     @Override public void submit(State state,PoseStack pose,SubmitNodeCollector collector,CameraRenderState camera){
-        pose.pushPose();pose.translate(0,1.5,0);pose.rotate(Axis.YP.rotationDegrees(state.angle));
+        pose.pushPose();pose.translate(0,RopewayRideEntity.HANG_DROP,0);pose.rotate(Axis.YP.rotationDegrees(state.angle));
         state.carriage.submit(pose,collector,state.light,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();
         super.submit(state,pose,collector,camera);
     }

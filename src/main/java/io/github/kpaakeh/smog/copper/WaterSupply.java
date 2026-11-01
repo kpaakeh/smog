@@ -47,9 +47,8 @@ public final class WaterSupply {
                 var next=level.getBlockState(pos);String name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(next.getBlock()).toString();
                 if(name.equals("smog:water_valve")&&side.getAxis()!=next.getValue(WorkshopPartBlock.FACING).getAxis())continue;
                 if(name.equals("smog:water_outlet")&&side!=next.getValue(WorkshopPartBlock.FACING))continue;
-                // A rejected side must not hide a later, valid route into the same valve.
-                seen.add(pos);
-                if(next.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet")){queue.add(pos);continue;}
+                // Visit conduit positions once, but probe each accessible side of terminal tanks.
+                if(next.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet")){seen.add(pos);queue.add(pos);continue;}
                 if(level.getBlockEntity(pos) instanceof MachineEntity other&&(CopperWorkshops.workshop(other,"hand_water_pump")||CopperWorkshops.workshop(other,"water_tank")&&!CopperWorkshops.workshop(source,"hand_water_pump")))continue;
                 var storage=FluidStorage.SIDED.find(level,pos,side.getOpposite());if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,null));
             }

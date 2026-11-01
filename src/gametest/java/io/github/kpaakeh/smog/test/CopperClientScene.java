@@ -20,16 +20,17 @@ public final class CopperClientScene {
             world.getServer().runOnServer(server->{
                 var level=server.overworld();var player=server.getPlayerList().getPlayers().getFirst();player.setGameMode(net.minecraft.world.level.GameType.CREATIVE);player.getAbilities().flying=true;player.onUpdateAbilities();
                 int hotbar=0;
-                for(String metal:java.util.List.of("copper","bronze"))for(String handle:java.util.List.of("wooden_handle","reinforced_handle","hollow_copper_handle")){
-                    var tool=io.github.kpaakeh.smog.copper.ToolParts.assemble(new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item(metal+"_pickaxe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item(handle)),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item(metal+"_clamp")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item(handle.equals("wooden_handle")?"fiber_wrap":handle.equals("reinforced_handle")?"leather_wrap":"wool_wrap")));
+                for(String metal:java.util.List.of("copper","bronze","iron"))for(String kind:java.util.List.of("pickaxe","hammer")){
+                    var tool=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template(kind),metal);
+                    if(tool.isEmpty())throw new IllegalStateException("Dynamic tool fixture missing: "+metal+" "+kind);
                     player.getInventory().setItem(hotbar++,tool);
                 }
-                var mattock=io.github.kpaakeh.smog.copper.ToolParts.assemble(io.github.kpaakeh.smog.copper.ToolDefinitions.template("mattock"),java.util.List.of(new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("iron_pickaxe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("bronze_axe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("wooden_handle")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("cord_binding")),ItemStack.EMPTY));player.getInventory().setItem(6,mattock);
+                var mattock=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("mattock"),"bronze");if(mattock.isEmpty())throw new IllegalStateException("Dynamic mattock fixture missing");player.getInventory().setItem(6,mattock);
                 player.getInventory().setItem(7,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("handcart")));
                 player.getInventory().setSelectedSlot(0);
                 var cart=io.github.kpaakeh.smog.copper.CopperTransport.HANDCART.create(level,net.minecraft.world.entity.EntitySpawnReason.COMMAND);cart.setInitialPos(-3.5,100,-2.5);cart.setItem(53,new ItemStack(Items.BRICKS,64));level.addFreshEntity(cart);
                 var craneOrigin=new BlockPos(8,104,4);Multiblocks.get(ModBlocks.id("loading_crane")).parts().forEach((p,ingredient)->level.setBlockAndUpdate(craneOrigin.offset(p),ingredient.block().defaultBlockState()));level.setBlockAndUpdate(craneOrigin,block("loading_crane").defaultBlockState());var crane=(MachineEntity)level.getBlockEntity(craneOrigin);if(!crane.tryAssemble())throw new IllegalStateException("Crane failed");level.setBlockAndUpdate(io.github.kpaakeh.smog.copper.LoadingCrane.bay(crane,false),Blocks.BARREL.defaultBlockState());level.setBlockAndUpdate(io.github.kpaakeh.smog.copper.LoadingCrane.bay(crane,true),Blocks.BARREL.defaultBlockState());
-                var anchorA=new BlockPos(-9,104,5);var anchorB=new BlockPos(9,104,5);level.setBlockAndUpdate(anchorA,block("rope_anchor").defaultBlockState());level.setBlockAndUpdate(anchorB,block("rope_anchor").defaultBlockState());var firstAnchor=(MachineEntity)level.getBlockEntity(anchorA);var lastAnchor=(MachineEntity)level.getBlockEntity(anchorB);if(!io.github.kpaakeh.smog.copper.Ropeway.link(level,firstAnchor,lastAnchor))throw new IllegalStateException("Rope span failed");firstAnchor.setItem(0,new ItemStack(Items.BRICKS,32));firstAnchor.copper.queued=1;firstAnchor.sync();
+                var anchorA=new BlockPos(-9,104,-6);var anchorB=new BlockPos(9,104,-6);level.setBlockAndUpdate(anchorA,block("rope_anchor").defaultBlockState());level.setBlockAndUpdate(anchorB,block("rope_anchor").defaultBlockState());var firstAnchor=(MachineEntity)level.getBlockEntity(anchorA);var lastAnchor=(MachineEntity)level.getBlockEntity(anchorB);if(!io.github.kpaakeh.smog.copper.Ropeway.link(level,firstAnchor,lastAnchor))throw new IllegalStateException("Rope span failed");firstAnchor.setItem(0,new ItemStack(Items.BRICKS,32));firstAnchor.copper.queued=1;firstAnchor.sync();
                 var origin=new BlockPos(0,100,0);
                 var definition=Multiblocks.get(ModBlocks.id("copper_hearth"));
                 definition.parts().forEach((p,ingredient)->level.setBlockAndUpdate(origin.offset(p),ingredient.block().defaultBlockState()));
@@ -42,7 +43,7 @@ public final class CopperClientScene {
                     machine.setItem(0,new ItemStack(name.equals("washing_trough")?Items.RAW_COPPER:Items.WHEAT_SEEDS,16));machine.copper.processFluid=name.equals("washing_trough")?162000:20250;machine.sync();
                 }
                 var benchPos=new BlockPos(0,100,-3);level.setBlockAndUpdate(benchPos,block("tool_workbench").defaultBlockState());var bench=(MachineEntity)level.getBlockEntity(benchPos);bench.copper.selection=io.github.kpaakeh.smog.copper.ToolDefinitions.index("hammer");
-                bench.setItem(0,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("bronze_hammer_head")));bench.setItem(1,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("hollow_copper_handle")));bench.setItem(2,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("bronze_clamp")));bench.setItem(4,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("fiber_wrap")));bench.sync();
+                var hammer=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("hammer"),"bronze");var components=io.github.kpaakeh.smog.copper.ToolParts.components(hammer);for(int role=0;role<components.size();role++)bench.setItem(io.github.kpaakeh.smog.copper.ToolDefinitions.slot(role),components.get(role));bench.sync();
                 level.setBlockAndUpdate(new BlockPos(-5,100,-1),block("water_tank").defaultBlockState());var tank=(MachineEntity)level.getBlockEntity(new BlockPos(-5,100,-1));tank.copper.processFluid=4*81000;tank.sync();
             });
             world.getServer().runCommand("tp @a 0.5 104 -5.5 0 35");context.waitTicks(40);context.waitFor(mc->mc.level.getBlockState(new BlockPos(0,100,0)).getValue(MachineBlock.ASSEMBLED));
@@ -50,6 +51,7 @@ public final class CopperClientScene {
             world.getServer().runCommand("tp @a 0.5 105 1.5 0 90");context.waitTicks(12);context.takeScreenshot("copper-hearth-liquid-overhead");
             world.getServer().runCommand("tp @a 0.5 104 -5.5 0 35");context.waitTicks(8);
             world.getServer().runCommand("tp @a 0.5 107 -9.5 0 20");context.waitTicks(8);context.getInput().lookAt(new BlockPos(0,103,4));context.waitTicks(10);context.takeScreenshot("copper-logistics-world");
+            world.getServer().runCommand("tp @a 8.5 102.5 0.5 0 0");context.waitTicks(10);context.getInput().lookAt(new BlockPos(8,104,4));context.waitTicks(5);context.takeScreenshot("copper-crane-redmarker-front");
             context.waitFor(mc->TestJeiProbe.ready());
             for(String machine:java.util.List.of("copper_hearth","casting_table","potter_table","ceramic_kiln","washing_trough","lever_press","tool_workbench")){
                 context.runOnClient(mc->TestJeiProbe.showCopper(machine));context.waitTicks(6);context.takeScreenshot("copper-jei-"+machine);context.setScreen(()->null);
@@ -62,6 +64,31 @@ public final class CopperClientScene {
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);});
             context.runOnClient(mc->{var screen=(net.fabricmc.fabric.api.client.creativetab.v1.FabricCreativeModeInventoryScreen)mc.gui.screen();var tab=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("copper_age"));screen.switchToPage(screen.getPage(tab));screen.setSelectedTab(tab);});context.waitTicks(10);context.takeScreenshot("copper-tools-inventory");context.setScreen(()->null);
             world.getServer().runCommand("tp @a -4.5 102 -3.5 0 35");context.getInput().lookAt(new BlockPos(-5,100,0));context.waitTicks(20);context.takeScreenshot("copper-washing-and-water");
+            world.getServer().runOnServer(server->{
+                var hearth=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,0));
+                hearth.copper.tin=2*9000;hearth.copper.bronze=3*9000;hearth.sync();
+                server.getPlayerList().getPlayers().getFirst().openMenu(hearth);
+            });
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-smeltery-multiple-layers-gui");context.setScreen(()->null);
+            world.getServer().runOnServer(server->{
+                var level=server.overworld();var pos=new BlockPos(2,100,-3);level.setBlockAndUpdate(pos,block("casting_table").defaultBlockState());
+                var table=(MachineEntity)level.getBlockEntity(pos);table.setItem(1,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("ingot_mold")));
+                try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),4500,tx)!=4500)throw new IllegalStateException("Partial casting fixture rejected");tx.commit();
+                }
+                server.getPlayerList().getPlayers().getFirst().openMenu(table);
+            });
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-casting-partial-gui");context.setScreen(()->null);
+            world.getServer().runOnServer(server->{
+                var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));
+                try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
+                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),4500,tx)!=4500)throw new IllegalStateException("Casting top-up fixture rejected");tx.commit();
+                }
+                server.getPlayerList().getPlayers().getFirst().openMenu(table);
+            });
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(6);context.takeScreenshot("copper-casting-cooling-gui");
+            context.waitTicks(50);context.takeScreenshot("copper-casting-ready-gui");context.setScreen(()->null);
+            context.runOnClient(mc->TestJeiProbe.showMultiblocks());context.waitTicks(8);context.takeScreenshot("copper-jei-structure-size-range");context.setScreen(()->null);
         }
     }
 }

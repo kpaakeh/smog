@@ -13,9 +13,10 @@ import io.github.kpaakeh.smog.machine.MachineEntity;
 
 /** Server-owned passenger hoist, with native vehicle interpolation and no chunk tickets. */
 public final class RopewayRideEntity extends Entity {
+    public static final double HANG_DROP=2.5;
     private static final EntityDataAccessor<Long> START=SynchedEntityData.defineId(RopewayRideEntity.class,EntityDataSerializers.LONG);
     private static final EntityDataAccessor<Long> END=SynchedEntityData.defineId(RopewayRideEntity.class,EntityDataSerializers.LONG);
-    private int progress,lastWait;
+    private int progress,lastWait,direction=1;
     public RopewayRideEntity(EntityType<?> type,Level level){super(type,level);setNoGravity(true);}
     @Override protected InterpolationHandler createInterpolationHandler(){return LinearInterpolationHandler.create(this,3);}
     @Override protected void defineSynchedData(SynchedEntityData.Builder b){b.define(START,0L);b.define(END,0L);}
@@ -23,7 +24,7 @@ public final class RopewayRideEntity extends Entity {
     public BlockPos end(){return BlockPos.of(entityData.get(END));}
     public boolean uses(BlockPos anchor){return start().equals(anchor)||end().equals(anchor);}
     private int duration(){return Math.max(40,(int)Math.ceil(Math.sqrt(start().distSqr(end())))*10);}
-    private Vec3 at(double t){return Ropeway.point(Vec3.atLowerCornerOf(end().subtract(start())),t).add(start().getX(),start().getY()-1.5,start().getZ());}
+    private Vec3 at(double t){return Ropeway.point(Vec3.atLowerCornerOf(end().subtract(start())),t).add(start().getX(),start().getY()-HANG_DROP,start().getZ());}
     public static Vec3 landing(ServerLevel level,BlockPos anchor,Entity passenger){
         // Search a small platform around the anchor, accounting for real floor height and hazards.
         for(int radius=0;radius<=3;radius++)for(int dy=1;dy>=-4;dy--)for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
@@ -47,7 +48,7 @@ public final class RopewayRideEntity extends Entity {
     private static boolean clear(ServerLevel level,BlockPos start,BlockPos end){
         if(start.equals(end)||start.distSqr(end)>576)return false;
         var delta=Vec3.atLowerCornerOf(end.subtract(start));int steps=Math.max(1,(int)Math.ceil(delta.length()*4));
-        for(int n=0;n<=steps;n++){var p=Ropeway.point(delta,n/(double)steps).add(start.getX(),start.getY()-1.5,start.getZ());var box=new AABB(p.x-.3,p.y,p.z-.3,p.x+.3,p.y+1.8,p.z+.3);
+        for(int n=0;n<=steps;n++){var p=Ropeway.point(delta,n/(double)steps).add(start.getX(),start.getY()-HANG_DROP,start.getZ());var box=new AABB(p.x-.3,p.y,p.z-.3,p.x+.3,p.y+1.8,p.z+.3);
             for(int x=(int)Math.floor(box.minX);x<=(int)Math.floor(box.maxX);x++)for(int y=(int)Math.floor(box.minY);y<=(int)Math.floor(box.maxY);y++)for(int z=(int)Math.floor(box.minZ);z<=(int)Math.floor(box.maxZ);z++){
                 var pos=new BlockPos(x,y,z);if(!level.hasChunkAt(pos))return false;if(pos.equals(start)||pos.equals(end))continue;
                 var shape=level.getBlockState(pos).getCollisionShape(level,pos);if(net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(shape.move(x,y,z),net.minecraft.world.phys.shapes.Shapes.create(box),net.minecraft.world.phys.shapes.BooleanOp.AND))return false;
@@ -55,13 +56,41 @@ public final class RopewayRideEntity extends Entity {
         }return true;
     }
     public static Component mount(ServerLevel level,MachineEntity anchor,Player player){
+        return mountAt(level,anchor,player,0);
+    }
+    public static Component mountAt(ServerLevel level,MachineEntity anchor,Player player,double position){
+        if(!Double.isFinite(position))return Component.translatable("message.smog.ride_clear");
         if(anchor.copper.ropeLinked&&!level.hasChunkAt(BlockPos.of(anchor.copper.ropeTarget)))return Component.translatable("message.smog.ride_blocked");
         var other=Ropeway.linkedDestination(level,anchor);if(other==null)return Component.translatable("message.smog.ride_link");
         if(player.isPassenger()||!anchor.getItem(1).isEmpty()||!other.getItem(1).isEmpty()||anchor.copper.queued>0||other.copper.queued>0||busy(level,anchor.getBlockPos()))return Component.translatable("message.smog.ride_busy");
         if(!clear(level,anchor.getBlockPos(),other.getBlockPos())||landing(level,anchor.getBlockPos(),player)==null||landing(level,other.getBlockPos(),player)==null)return Component.translatable("message.smog.ride_clear");
         var ride=CopperTransport.ROPEWAY_RIDE.create(level,EntitySpawnReason.SPAWN_ITEM_USE);if(ride==null)return Component.translatable("message.smog.ride_busy");
-        ride.entityData.set(START,anchor.getBlockPos().asLong());ride.entityData.set(END,other.getBlockPos().asLong());var at=ride.at(0);ride.setPos(at.x,at.y,at.z);level.addFreshEntity(ride);
+        ride.entityData.set(START,anchor.getBlockPos().asLong());ride.entityData.set(END,other.getBlockPos().asLong());ride.progress=(int)Math.round(Math.clamp(position,0,1)*ride.duration());ride.chooseDirection(player);var at=ride.at(ride.progress/(double)ride.duration());ride.setPos(at.x,at.y,at.z);level.addFreshEntity(ride);
         if(!player.startRiding(ride)){ride.discard();return Component.translatable("message.smog.ride_busy");}return Component.translatable("message.smog.ride_started");
+    }
+    /** Aim at the actual sagging line within normal block reach, without loading distant chunks. */
+    public static Component mountLookedAt(ServerLevel level,Player player){
+        var eye=player.getEyePosition();var look=player.getLookAngle();double reach=player.blockInteractionRange(),nearest=Double.MAX_VALUE,t=0;MachineEntity selected=null;
+        int radius=(int)Math.ceil((24+reach)/16),cx=player.blockPosition().getX()>>4,cz=player.blockPosition().getZ()>>4;
+        for(int x=cx-radius;x<=cx+radius;x++)for(int z=cz-radius;z<=cz+radius;z++){
+            var chunk=level.getChunkSource().getChunkNow(x,z);if(chunk==null)continue;
+            for(var entity:chunk.getBlockEntities().values())if(entity instanceof MachineEntity anchor&&Ropeway.handles(anchor)&&anchor.copper.ropeLinked){
+                var end=BlockPos.of(anchor.copper.ropeTarget);if(anchor.getBlockPos().asLong()>=end.asLong()||anchor.getBlockPos().distSqr(end)>576||Ropeway.linkedDestination(level,anchor)==null)continue;
+                var delta=Vec3.atLowerCornerOf(end.subtract(anchor.getBlockPos()));
+                for(int sample=0;sample<=192;sample++){
+                    double fraction=sample/192.0;var point=Ropeway.point(delta,fraction).add(anchor.getBlockPos().getX(),anchor.getBlockPos().getY(),anchor.getBlockPos().getZ());var offset=point.subtract(eye);double along=offset.dot(look);
+                    if(along<0||along>reach||along>=nearest||offset.lengthSqr()>reach*reach||offset.subtract(look.scale(along)).lengthSqr()>.18*.18)continue;
+                    var obstruction=level.clip(new ClipContext(eye,point,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,player));
+                    if(obstruction.getType()!=HitResult.Type.MISS&&!obstruction.getBlockPos().equals(anchor.getBlockPos())&&!obstruction.getBlockPos().equals(end))continue;
+                    selected=anchor;t=fraction;nearest=along;
+                }
+            }
+        }
+        return selected==null?null:mountAt(level,selected,player,t);
+    }
+    private void chooseDirection(Player player){
+        var tangent=Vec3.atLowerCornerOf(end().subtract(start())).normalize();double dot=player.getLookAngle().dot(tangent);
+        if(Math.abs(dot)>.15)direction=dot>0?1:-1;
     }
     public static boolean busy(ServerLevel level,BlockPos anchor){return !level.getEntitiesOfClass(RopewayRideEntity.class,new AABB(anchor).inflate(26),r->!r.isRemoved()&&r.uses(anchor)).isEmpty();}
     @Override protected boolean canAddPassenger(Entity passenger){return passenger instanceof Player&&getPassengers().isEmpty();}
@@ -85,10 +114,11 @@ public final class RopewayRideEntity extends Entity {
         boolean linked=level.getBlockEntity(start()) instanceof MachineEntity a&&Ropeway.handles(a)&&a.copper.ropeLinked&&a.copper.ropeTarget==end().asLong()&&level.getBlockEntity(end()) instanceof MachineEntity b&&b.copper.ropeLinked&&b.copper.ropeTarget==start().asLong();
         if(!linked){if(canRelease(level)){ejectPassengers();discard();}else waiting(2);return;}
         if(!clear(level,start(),end())){waiting(1);return;}
-        if(progress>=duration()){if(canRelease(level)){ejectPassengers();discard();}else waiting(2);return;}
+        if(getFirstPassenger() instanceof Player player)chooseDirection(player);
+        if(progress>=duration()&&direction>0||progress<=0&&direction<0){if(canRelease(level)){ejectPassengers();discard();}else waiting(2);return;}
         lastWait=0;
-        var next=at(++progress/(double)duration());setPos(next.x,next.y,next.z);setDeltaMovement(Vec3.ZERO);for(var passenger:getPassengers())passenger.fallDistance=0;
+        progress=Math.clamp(progress+direction,0,duration());var next=at(progress/(double)duration());setPos(next.x,next.y,next.z);setDeltaMovement(Vec3.ZERO);for(var passenger:getPassengers())passenger.fallDistance=0;
     }
-    @Override protected void readAdditionalSaveData(ValueInput i){entityData.set(START,i.getLongOr("start",0));entityData.set(END,i.getLongOr("end",0));progress=Math.clamp(i.getIntOr("progress",0),0,duration());}
-    @Override protected void addAdditionalSaveData(ValueOutput o){o.putLong("start",entityData.get(START));o.putLong("end",entityData.get(END));o.putInt("progress",progress);}
+    @Override protected void readAdditionalSaveData(ValueInput i){entityData.set(START,i.getLongOr("start",0));entityData.set(END,i.getLongOr("end",0));progress=Math.clamp(i.getIntOr("progress",0),0,duration());direction=i.getIntOr("direction",1)<0?-1:1;}
+    @Override protected void addAdditionalSaveData(ValueOutput o){o.putLong("start",entityData.get(START));o.putLong("end",entityData.get(END));o.putInt("progress",progress);o.putInt("direction",direction);}
 }

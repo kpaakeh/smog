@@ -12,6 +12,31 @@ import net.minecraft.world.level.block.*;
 
 public final class WaterlineTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
+    @GameTest public void externalTankTriesValidSideAfterShorterRejectedApproach(GameTestHelper h){
+        var source=h.absolutePos(new BlockPos(3,3,3));var level=h.getLevel();
+        level.setBlock(source,block("water_tank").defaultBlockState(),Block.UPDATE_ALL);
+        var tank=(MachineEntity)level.getBlockEntity(source);tank.serverTick();tank.copper.processFluid=81000;
+        var target=source.east(2).south(2);level.setBlock(target,Blocks.GOLD_BLOCK.defaultBlockState(),Block.UPDATE_ALL);
+        var water=net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.world.level.material.Fluids.WATER);
+        var receiver=new net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage<net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant>(){
+            @Override protected net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant getBlankVariant(){return net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.blank();}
+            @Override protected long getCapacity(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant resource){return 81000;}
+            @Override protected boolean canInsert(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant resource){return resource.equals(water);}
+        };
+        int[] rejected={0};
+        net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage.SIDED.registerForBlocks((world,pos,state,entity,side)->{
+            if(world!=level||!pos.equals(target))return null;
+            if(side==Direction.WEST)return receiver;rejected[0]++;return null;
+        },Blocks.GOLD_BLOCK);
+        // Short branch reaches the north face first; the external tank accepts only from the west.
+        for(var pos:new BlockPos[]{source.east(),source.east(2),source.east(2).south()})level.setBlock(pos,block("copper_water_pipe").defaultBlockState(),Block.UPDATE_ALL);
+        h.assertValueEqual(WaterSupply.transfer(level,tank,8100),0,"The short route cannot insert through the rejected north face");
+        h.assertTrue(rejected[0]>0,"The external sided provider was actually queried on the invalid approach");
+        for(var pos:new BlockPos[]{source.west(),source.west().south(),source.west().south(2),source.south(2),source.east().south(2)})level.setBlock(pos,block("copper_water_pipe").defaultBlockState(),Block.UPDATE_ALL);
+        h.assertValueEqual(WaterSupply.transfer(level,tank,8100),8100,"A longer route can still insert through the valid west face");
+        h.assertValueEqual(receiver.getAmount(),8100L,"The external tank receives the intended amount");
+        h.assertValueEqual((long)tank.copper.processFluid+receiver.getAmount(),81000L,"Trying multiple sides cannot duplicate water");h.succeed();
+    }
     @GameTest public void rejectedValveSideDoesNotHideLongerAxialRoute(GameTestHelper h){
         var source=h.absolutePos(new BlockPos(3,3,3));var level=h.getLevel();
         level.setBlock(source,block("water_tank").defaultBlockState(),Block.UPDATE_ALL);

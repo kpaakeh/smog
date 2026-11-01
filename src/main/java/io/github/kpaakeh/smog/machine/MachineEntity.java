@@ -38,7 +38,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     public String assemblyDetail(){return assemblyDetail;}
     public Component assemblyProblem(){
         var fields=assemblyDetail.split("\\|");
-        if(fields.length>=4&&(fields[0].equals("edge")||fields[0].equals("block")))return Component.translatable("message.smog.assembly_"+fields[0],fields[1],fields[2],fields[3]);
+        if(fields.length>=4&&(fields[0].equals("edge")||fields[0].equals("block")||fields[0].equals("fixed")))return Component.translatable("message.smog.assembly_"+fields[0],fields[1],fields[2],fields[3]);
         if(fields.length==5&&fields[0].equals("role"))return Component.translatable("message.smog.assembly_role",Component.translatable("role.smog."+fields[1]),fields[2],fields[3],fields[4]);
         if(assemblyDetail.equals("overlap"))return Component.translatable("message.smog.assembly_overlap");
         return Component.translatable("message.smog.assembly_check");
@@ -112,7 +112,17 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         }
         if((io.github.kpaakeh.smog.copper.ManualWorkshops.handles(this)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(this))){
             if(clickedPart!=null&&!clickedPart.equals(worldPosition)&&structure().parts().entrySet().stream().noneMatch(e->!e.getValue().value().equals("minecraft:air")&&worldPosition.offset(e.getKey().rotate(rotation())).equals(clickedPart)))return false;
-            if(structure().check(server,worldPosition,rotation())!=MultiblockDefinition.Result.COMPLETE||!claimManual(server))return false;
+            if(structure().check(server,worldPosition,rotation())!=MultiblockDefinition.Result.COMPLETE){
+                assemblyDetail="";
+                for(var part:structure().parts().entrySet()){
+                    var pos=worldPosition.offset(part.getKey().rotate(rotation()));
+                    if(!server.hasChunkAt(pos))break;
+                    if(!part.getValue().matches(server.getBlockState(pos))){assemblyDetail="fixed|"+pos.getX()+"|"+pos.getY()+"|"+pos.getZ();break;}
+                }
+                return false;
+            }
+            if(!claimManual(server)){assemblyDetail="overlap";return false;}
+            assemblyDetail="";
         }
         GeneratorKind chosen=GeneratorKind.NONE;
         if(spec().kind()==MachineSpec.Kind.GENERATOR_CONTROLLER) {
@@ -291,7 +301,13 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         return spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?slot==2&&stack.has(net.minecraft.core.component.DataComponents.COOKING_FUEL)
             :!spec().source()&&!spec().relay()&&slot==0;
     }
-    @Override public int[] getSlotsForFace(Direction side) {return io.github.kpaakeh.smog.copper.Smeltery.handles(this)?(side==Direction.DOWN?new int[]{}:side==Direction.UP?java.util.stream.IntStream.range(0,io.github.kpaakeh.smog.copper.Smeltery.workers(this)).map(io.github.kpaakeh.smog.copper.Smeltery::slot).toArray():new int[]{2}):spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};}
+    @Override public int[] getSlotsForFace(Direction side) {
+        if(io.github.kpaakeh.smog.copper.Smeltery.vessel(this)){
+            if(side==Direction.DOWN)return new int[]{3};
+            return io.github.kpaakeh.smog.copper.CopperWorkshops.workshop(this,"casting_table")?new int[]{1,2}:new int[]{};
+        }
+        return io.github.kpaakeh.smog.copper.Smeltery.handles(this)?(side==Direction.DOWN?new int[]{}:side==Direction.UP?java.util.stream.IntStream.range(0,io.github.kpaakeh.smog.copper.Smeltery.workers(this)).map(io.github.kpaakeh.smog.copper.Smeltery::slot).toArray():new int[]{2}):spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};
+    }
     @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side) {return canPlaceItem(slot,stack);}
     @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side) {return slot==3;}
     public final ContainerData data=new ContainerData() {

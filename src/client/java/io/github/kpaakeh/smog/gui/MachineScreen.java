@@ -27,9 +27,9 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 previous=addRenderableWidget(Button.builder(Component.literal("<"),button->send(20)).bounds(leftPos+7,topPos+imageHeight-109,16,14).build());
                 next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+26,topPos+imageHeight-109,16,14).build());return;
             }
-            previous=addRenderableWidget(Button.builder(Component.literal("<"),button->send(20)).bounds(leftPos+7,topPos+83,20,16).build());
-            next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+30,topPos+83,20,16).build());
-            craft=addRenderableWidget(Button.builder(Component.translatable("gui.smog.copper.craft"),button->send(22)).bounds(leftPos+55,topPos+83,59,16).build());
+            previous=addRenderableWidget(Button.builder(Component.literal("<"),button->send(20)).bounds(leftPos+7,topPos+81,20,14).build());
+            next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+30,topPos+81,20,14).build());
+            craft=addRenderableWidget(Button.builder(Component.translatable("gui.smog.copper.craft"),button->send(22)).bounds(leftPos+55,topPos+81,59,14).build());
             return;
         }
         powerButton=addRenderableWidget(new TextureButton(leftPos+134,topPos+77,34,16,"button",Component.translatable("gui.smog.on"),button->{
@@ -43,6 +43,11 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         refreshButtons();
     }
     private void send(int id){if(minecraft.gameMode!=null)minecraft.gameMode.handleInventoryButtonClick(menu.containerId,id);}
+    private void fittedText(GuiGraphicsExtractor g,Component text,int x,int y,int width,int mouseX,int mouseY){
+        if(font.width(text)<=width){g.text(font,text,x,y,0xFF404040,false);return;}
+        g.text(font,Component.literal(font.plainSubstrByWidth(text.getString(),Math.max(0,width-font.width("…")))+"…"),x,y,0xFF404040,false);
+        if(mouseX>=x&&mouseX<x+width&&mouseY>=y&&mouseY<y+font.lineHeight)g.setTooltipForNextFrame(text,mouseX,mouseY);
+    }
     private void refreshButtons(){
         if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null)craft.visible=kind==2||kind==5;}
         if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
@@ -63,21 +68,21 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             int kind=menu.data.get(14);
             if(kind==1){CastingGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}
             if(kind==7){var preview=io.github.kpaakeh.smog.copper.ToolAssembly.preview(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));
-                g.text(font,preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):preview.getMaxDamage()>0?Component.translatable("tool.smog.durability",Math.max(0,preview.getMaxDamage()-preview.getDamageValue()),preview.getMaxDamage()):Component.translatable("tool.smog.shaping_cost",Math.max(1,menu.data.get(17)),preview.getCount()),x+7,y+20,0xFF404040,false);
-                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30){var mounted=menu.container.getItem(5);g.setTooltipForNextFrame(preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):!mounted.isEmpty()?Component.translatable("tool.smog.rebuild_compare",mounted.getMaxDamage(),preview.getMaxDamage()):preview.getHoverName(),mouseX,mouseY);}
+                fittedText(g,preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):preview.getMaxDamage()>0?Component.translatable("tool.smog.durability",Math.max(0,preview.getMaxDamage()-preview.getDamageValue()),preview.getMaxDamage()).append(" [?]"):Component.translatable("tool.smog.shaping_cost",Math.max(1,menu.data.get(17)),preview.getCount()),x+7,y+20,162,mouseX,mouseY);
+                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30){if(preview.isEmpty())g.setTooltipForNextFrame(io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))),mouseX,mouseY);else g.setTooltipForNextFrame(font,ToolPreviewDetails.lines(preview,menu.container.getItem(5)),java.util.Optional.empty(),mouseX,mouseY);}
                 if(!preview.isEmpty()){g.fakeItem(preview,x+79,y+imageHeight-129);if(mouseX>=x+79&&mouseX<x+95&&mouseY>=y+imageHeight-129&&mouseY<y+imageHeight-113)g.setTooltipForNextFrame(font,preview,mouseX,mouseY);}
                 GuiTextures.draw(g,"copper_progress_empty",x+106,y+imageHeight-129,24,16);GuiTextures.crop(g,"copper_progress_full",x+106,y+imageHeight-129,0,0,24*Math.clamp(menu.data.get(0),0,40)/40,16,24,16);
-                g.text(font,Component.literal(font.plainSubstrByWidth((menu.data.get(13)>0?Component.translatable("tool.smog.working_short"):(io.github.kpaakeh.smog.copper.ToolAssembly.shapingMode(menu.container)||!io.github.kpaakeh.smog.copper.MoldMaking.preview(menu.container).isEmpty())&&!preview.isEmpty()?preview.getHoverName():Component.translatable("tool.smog.template."+io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)).id())).getString(),120)),x+47,y+imageHeight-106,0xFF404040,false);return;}
+                g.text(font,Component.literal(font.plainSubstrByWidth((menu.data.get(13)>0?Component.translatable("tool.smog.preview_queue",menu.data.get(13)):(io.github.kpaakeh.smog.copper.ToolAssembly.shapingMode(menu.container)||!io.github.kpaakeh.smog.copper.MoldMaking.preview(menu.container).isEmpty())&&!preview.isEmpty()?preview.getHoverName():Component.translatable("tool.smog.template."+io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)).id())).getString(),120)),x+47,y+imageHeight-106,0xFF404040,false);return;}
             if(kind==6){g.text(font,Component.literal(menu.data.get(19)+" / 8000 mB"),x+7,y+20,0xFF404040,false);return;}
             GuiTextures.draw(g,"copper_progress_empty",x+99,y+35,24,16);
             int work=24*Math.clamp(menu.data.get(0),0,Math.max(1,menu.data.get(1)))/Math.max(1,menu.data.get(1));
             GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,work,16,24,16);
             if(menu.data.get(2)>0)GuiTextures.draw(g,"copper_lit_progress",x+49,y+36,14,14);
             if(kind==5||kind==6)g.text(font,Component.literal(menu.data.get(19)+" / 8000 mB"),x+7,y+20,0xFF404040,false);
-            else if(kind==2)g.text(font,net.minecraft.world.item.Item.byId(menu.data.get(12)).getDefaultInstance().getHoverName(),x+7,y+20,0xFF404040,false);
+            else if(kind==2)fittedText(g,net.minecraft.world.item.Item.byId(menu.data.get(12)).getDefaultInstance().getHoverName(),x+7,y+20,162,mouseX,mouseY);
             else if(kind==1)g.text(font,Component.translatable("conductor.smog."+io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES[Math.floorMod(menu.data.get(6),io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length)]),x+7,y+20,0xFF404040,false);
             else g.text(font,Component.translatable("gui.smog.copper.heat",menu.data.get(2),menu.data.get(3)),x+7,y+20,0xFF404040,false);
-            g.text(font,Component.translatable("gui.smog.copper.status_"+menu.data.get(7)),x+7,y+55,0xFF404040,false);
+            fittedText(g,Component.translatable("gui.smog.copper.status_"+menu.data.get(7)),x+7,y+55,162,mouseX,mouseY);
             if(kind==0){
                 g.text(font,Component.literal("Cu "+menu.data.get(9)/4.0+" | Sn "+menu.data.get(10)/4.0),x+50,y+65,0xFF404040,false);
                 g.text(font,Component.literal("Br "+menu.data.get(11)/4.0+" | "+menu.data.get(4)/4.0+"/"+menu.data.get(5)/4.0),x+50,y+75,0xFF404040,false);
@@ -108,6 +113,9 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     @Override public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event,boolean doubleClick){if(menu.layout.id.equals("smeltery")&&(event.button()==0||event.button()==1)){int action=SmelteryGui.click(menu,event.x(),event.y(),leftPos,topPos,event.button());if(action>=0){send(action);return true;}}return super.mouseClicked(event,doubleClick);}
     @Override protected void extractLabels(GuiGraphicsExtractor g,int mouseX,int mouseY){
-        g.text(font,title,titleLabelX,titleLabelY,0xFF404040,false);g.text(font,playerInventoryTitle,inventoryLabelX,inventoryLabelY,0xFF404040,false);
+        int width=imageWidth-titleLabelX-7;
+        g.text(font,font.width(title)<=width?title:Component.literal(font.plainSubstrByWidth(title.getString(),Math.max(0,width-font.width("…")))+"…"),titleLabelX,titleLabelY,0xFF404040,false);
+        if(font.width(title)>width&&mouseX>=leftPos+titleLabelX&&mouseX<leftPos+imageWidth-7&&mouseY>=topPos+titleLabelY&&mouseY<topPos+titleLabelY+font.lineHeight)g.setTooltipForNextFrame(title,mouseX,mouseY);
+        g.text(font,playerInventoryTitle,inventoryLabelX,inventoryLabelY,0xFF404040,false);
     }
 }

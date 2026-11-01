@@ -21,6 +21,7 @@
           "durability_multiplier": 0.85
         },
         "reinforced": {
+          "shaping": false,
           "speed_multiplier": 0.97,
           "durability_multiplier": 1.15
         }
