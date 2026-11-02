@@ -12,6 +12,8 @@
       "io.github.kpaakeh.smog.test.CopperTests",
       "io.github.kpaakeh.smog.test.PotteryTests",
       "io.github.kpaakeh.smog.test.ToolTests",
+      "io.github.kpaakeh.smog.test.ToolActionTests",
+      "io.github.kpaakeh.smog.test.ToolCatalogTests",
       "io.github.kpaakeh.smog.test.FinishingTests",
       "io.github.kpaakeh.smog.test.WaterlineTests",
       "io.github.kpaakeh.smog.test.PressModuleTests",

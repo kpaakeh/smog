@@ -31,7 +31,7 @@ public final class ModCreativeTabs {
         for(var value:catalog.getAsJsonArray("items")){
             var entry=value.getAsJsonObject();String name=entry.get("name").getAsString(),kind=entry.has("kind")?entry.get("kind").getAsString():"item";var item=item(name);
             if(item instanceof ModularToolItem)continue; // Only configured examples are discoverable.
-            String category=item instanceof ToolPartItem?"tool_parts":Set.of("configurator","wrench","rope").contains(kind)||name.equals("stone_work_hammer")?"tools":kind.equals("handcart")?"mechanisms":name.endsWith("_plate")?"blocks":"copper_age";
+            String category=item instanceof ToolPartItem?"tool_parts":Set.of("configurator","wrench","rope").contains(kind)?"tools":kind.equals("handcart")?"mechanisms":name.endsWith("_plate")?"blocks":"copper_age";
             add.accept(category,item);
         }
         ModFluids.all().forEach(fluid->add.accept(fluid.name.equals("plant_oil")?"copper_age":"blocks",fluid.bucket));

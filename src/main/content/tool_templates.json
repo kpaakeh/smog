@@ -84,16 +84,6 @@
       "material_units": 27000
     },
     {
-      "id": "chisel_head",
-      "category": "head",
-      "name": {
-        "en_us": "Chisel Head",
-        "ru_ru": "Головка резца"
-      },
-      "prototype_shape": "chisel",
-      "material_units": 9000
-    },
-    {
       "id": "standard_handle",
       "category": "handle",
       "variant": "standard",
@@ -205,6 +195,67 @@
       },
       "prototype_shape": "copper_clamp",
       "material_units": 2250
+    },
+    {
+      "id": "saw_head",
+      "category": "head",
+      "name": {
+        "en_us": "Saw Blade",
+        "ru_ru": "Полотно пилы"
+      },
+      "prototype_shape": "saw",
+      "material_units": 27000,
+      "mining_tag": "minecraft:mineable/axe"
+    },
+    {
+      "id": "sword_head",
+      "category": "head",
+      "name": {
+        "en_us": "Sword Blade",
+        "ru_ru": "Клинок меча"
+      },
+      "prototype_shape": "sword",
+      "material_units": 18000,
+      "source_texture": "minecraft:item/iron_sword",
+      "native_suffix": "sword",
+      "head_region": [
+        4,
+        0,
+        16,
+        12
+      ]
+    },
+    {
+      "id": "katana_head",
+      "category": "head",
+      "name": {
+        "en_us": "Katana Blade",
+        "ru_ru": "Клинок катаны"
+      },
+      "prototype_shape": "katana",
+      "material_units": 18000
+    },
+    {
+      "id": "machete_head",
+      "category": "head",
+      "name": {
+        "en_us": "Machete Blade",
+        "ru_ru": "Клинок мачете"
+      },
+      "prototype_shape": "machete",
+      "material_units": 27000,
+      "mining_tag": "minecraft:mineable/axe"
+    },
+    {
+      "id": "sickle_head",
+      "category": "head",
+      "name": {
+        "en_us": "Sickle Blade",
+        "ru_ru": "Лезвие серпа"
+      },
+      "prototype_shape": "sickle",
+      "material_units": 18000,
+      "mining_tag": "minecraft:mineable/hoe"
     }
   ],
   "templates": [
@@ -287,18 +338,18 @@
       "max_support_durability_multiplier": 1.3
     },
     {
-      "id": "shovel",
-      "behavior": "shovel",
+      "id": "saw",
+      "behavior": "saw",
       "name": {
-        "en_us": "Shovel",
-        "ru_ru": "Лопата"
+        "en_us": "Saw",
+        "ru_ru": "Пила"
       },
       "parts": [
         {
           "id": "head",
           "category": "head",
           "forms": [
-            "shovel_head"
+            "saw_head"
           ],
           "primary": true
         },
@@ -326,18 +377,18 @@
       "max_support_durability_multiplier": 1.3
     },
     {
-      "id": "hoe",
-      "behavior": "hoe",
+      "id": "shovel",
+      "behavior": "shovel",
       "name": {
-        "en_us": "Hoe",
-        "ru_ru": "Мотыга"
+        "en_us": "Shovel",
+        "ru_ru": "Лопата"
       },
       "parts": [
         {
           "id": "head",
           "category": "head",
           "forms": [
-            "hoe_head"
+            "shovel_head"
           ],
           "primary": true
         },
@@ -404,18 +455,18 @@
       "max_support_durability_multiplier": 1.3
     },
     {
-      "id": "chisel",
-      "behavior": "chisel",
+      "id": "hoe",
+      "behavior": "hoe",
       "name": {
-        "en_us": "Chisel",
-        "ru_ru": "Резец"
+        "en_us": "Hoe",
+        "ru_ru": "Мотыга"
       },
       "parts": [
         {
           "id": "head",
           "category": "head",
           "forms": [
-            "chisel_head"
+            "hoe_head"
           ],
           "primary": true
         },
@@ -423,7 +474,10 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "short_handle"
+            "standard_handle",
+            "light_handle",
+            "reinforced_handle",
+            "hollow_handle"
           ]
         },
         {
@@ -440,43 +494,141 @@
       "max_support_durability_multiplier": 1.3
     },
     {
-      "id": "mattock",
-      "behavior": "pickaxe",
+      "id": "sword",
+      "behavior": "sword",
       "name": {
-        "en_us": "Mining Mattock",
-        "ru_ru": "Горная киркомотыга"
+        "en_us": "Sword",
+        "ru_ru": "Меч"
       },
       "parts": [
         {
-          "id": "pick",
+          "id": "head",
           "category": "head",
           "forms": [
-            "pickaxe_head"
+            "sword_head"
           ],
-          "primary": true,
-          "offset": [
-            0,
-            0,
-            0
-          ]
-        },
-        {
-          "id": "axe",
-          "category": "head",
-          "forms": [
-            "axe_head"
-          ],
-          "offset": [
-            -3,
-            1,
-            0.1
-          ]
+          "primary": true
         },
         {
           "id": "handle",
           "category": "handle",
           "forms": [
             "standard_handle",
+            "short_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "katana",
+      "behavior": "katana",
+      "name": {
+        "en_us": "Katana",
+        "ru_ru": "Катана"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "katana_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "short_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "machete",
+      "behavior": "machete",
+      "name": {
+        "en_us": "Machete",
+        "ru_ru": "Мачете"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "machete_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "short_handle",
+            "hollow_handle"
+          ]
+        },
+        {
+          "id": "binding",
+          "category": "binding"
+        },
+        {
+          "id": "wrap",
+          "category": "wrap",
+          "optional": true
+        }
+      ],
+      "max_support_speed_multiplier": 1.15,
+      "max_support_durability_multiplier": 1.3
+    },
+    {
+      "id": "sickle",
+      "behavior": "sickle",
+      "name": {
+        "en_us": "Sickle",
+        "ru_ru": "Серп"
+      },
+      "parts": [
+        {
+          "id": "head",
+          "category": "head",
+          "forms": [
+            "sickle_head"
+          ],
+          "primary": true
+        },
+        {
+          "id": "handle",
+          "category": "handle",
+          "forms": [
+            "standard_handle",
+            "light_handle",
             "reinforced_handle",
             "hollow_handle"
           ]

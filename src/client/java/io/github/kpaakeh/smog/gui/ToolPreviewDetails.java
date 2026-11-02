@@ -45,7 +45,7 @@ public final class ToolPreviewDetails {
             }
         }
         if(schema.behavior().equals("hammer"))purposes.add("hammer");
-        if(schema.behavior().equals("chisel"))purposes.add("chisel");
+        if(java.util.Set.of("saw","sword","katana","machete","sickle").contains(schema.behavior()))purposes.add(schema.behavior());
         for(String purpose:purposes)lines.add(Component.translatable("tool.smog.preview_purpose",Component.translatable("tool.smog.preview_use_"+purpose)));
         if(heads==0)return lines;
         int baseLife=Math.max(1,Math.round(headLife/heads));

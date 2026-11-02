@@ -50,7 +50,7 @@ public final class CopperClientScene {
                     if(tool.isEmpty())throw new IllegalStateException("Dynamic tool fixture missing: "+metal+" "+kind);
                     player.getInventory().setItem(hotbar++,tool);
                 }
-                var mattock=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("mattock"),"bronze");if(mattock.isEmpty())throw new IllegalStateException("Dynamic mattock fixture missing");player.getInventory().setItem(6,mattock);
+                var saw=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("saw"),"bronze");if(saw.isEmpty())throw new IllegalStateException("Dynamic saw fixture missing");player.getInventory().setItem(6,saw);
                 player.getInventory().setItem(7,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("handcart")));
                 player.getInventory().setSelectedSlot(0);
                 var cart=io.github.kpaakeh.smog.copper.CopperTransport.HANDCART.create(level,net.minecraft.world.entity.EntitySpawnReason.COMMAND);cart.setInitialPos(-3.5,100,-2.5);cart.setItem(53,new ItemStack(Items.BRICKS,64));level.addFreshEntity(cart);
@@ -80,10 +80,7 @@ public final class CopperClientScene {
                     var data=io.github.kpaakeh.smog.copper.ModularToolItem.parts(tool);data.putInt("trait_work_stacks",4);data.putLong("trait_work_until",mc.level.getGameTime()+100);tool.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
                     if(player.getDestroySpeed(stone)<=base)throw new IllegalStateException("Active work hardening is missing on the client");
                     data.putLong("trait_work_until",mc.level.getGameTime());tool.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
-                    if(Math.abs(player.getDestroySpeed(stone)-base)>.0001f)throw new IllegalStateException("Expired work hardening survived the client mining query");                    var mixed=io.github.kpaakeh.smog.copper.ToolParts.assemble(io.github.kpaakeh.smog.copper.ToolDefinitions.template("mattock"),java.util.List.of(new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("copper_pickaxe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("bronze_axe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("wooden_handle")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("cord_binding")),ItemStack.EMPTY));
-                    var comparisons=io.github.kpaakeh.smog.gui.ToolPreviewDetails.speeds(mixed);var mining=mixed.get(net.minecraft.core.component.DataComponents.TOOL);
-                    if(comparisons.size()!=2)throw new IllegalStateException("Mixed tool comparison must list its two distinct jobs");
-                    for(var comparison:comparisons){var target=comparison.family().equals("pickaxe")?stone:Blocks.OAK_LOG.defaultBlockState();if(Math.abs(comparison.result()-mining.getMiningSpeed(target))>.0001f)throw new IllegalStateException("Mixed tool comparison advertises the wrong speed for "+comparison.family());}
+                    if(Math.abs(player.getDestroySpeed(stone)-base)>.0001f)throw new IllegalStateException("Expired work hardening survived the client mining query");
                 }finally{player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,original);}
             });
             context.getInput().lookAt(new BlockPos(0,101,1));context.waitTicks(20);context.takeScreenshot("copper-workshop-world");
@@ -100,8 +97,7 @@ public final class CopperClientScene {
             world.getServer().runOnServer(server->{server.getPlayerList().getPlayers().getFirst().openMenu((MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,-3)));});
             context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-tool-workbench-gui");
             hover(context,20,24);context.takeScreenshot("copper-tool-comparison-tooltip");
-            hover(context,85,67);context.takeScreenshot("copper-tool-traits-tooltip");context.setScreen(()->null);            world.getServer().runOnServer(server->{var bench=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,-3));for(int slot=0;slot<bench.getContainerSize();slot++)bench.setItem(slot,ItemStack.EMPTY);bench.copper.selection=io.github.kpaakeh.smog.copper.ToolDefinitions.index("mattock");String[] parts={"copper_pickaxe_head","bronze_axe_head","wooden_handle","cord_binding"};for(int role=0;role<parts.length;role++)bench.setItem(io.github.kpaakeh.smog.copper.ToolDefinitions.slot(role),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item(parts[role])));bench.sync();server.getPlayerList().getPlayers().getFirst().openMenu(bench);});
-            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(8);hover(context,20,24);context.takeScreenshot("copper-mixed-tool-comparison");context.setScreen(()->null);
+            hover(context,85,67);context.takeScreenshot("copper-tool-traits-tooltip");context.setScreen(()->null);
             world.getServer().runCommand("tp @a 0.5 102 -5.5 0 45");context.getInput().lookAt(new BlockPos(0,100,-3));context.waitTicks(12);context.takeScreenshot("copper-tool-workbench-world");
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);});
             for(String tabId:java.util.List.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools")){

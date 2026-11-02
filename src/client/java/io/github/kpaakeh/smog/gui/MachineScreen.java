@@ -27,7 +27,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if((menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin")||menu.layout.id.equals("copper_workshop")||menu.layout.id.equals("manual_workshop")||menu.layout.id.equals("water_supply")||menu.layout.id.equals("tool_workbench"))) {
             if(menu.layout.id.equals("tool_workbench")){
                 previous=addRenderableWidget(Button.builder(Component.literal("<"),button->send(20)).bounds(leftPos+7,topPos+imageHeight-109,16,14).build());
-                next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+26,topPos+imageHeight-109,16,14).build());return;
+                next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+26,topPos+imageHeight-109,16,14).build());
+                craft=addRenderableWidget(Button.builder(Component.translatable("gui.smog.copper.craft"),button->send(22)).bounds(leftPos+55,topPos+imageHeight-109,94,14).build());return;
             }
             previous=addRenderableWidget(Button.builder(Component.literal("<"),button->send(20)).bounds(leftPos+7,topPos+81,20,14).build());
             next=addRenderableWidget(Button.builder(Component.literal(">"),button->send(21)).bounds(leftPos+30,topPos+81,20,14).build());
@@ -55,7 +56,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if(mouseX>=x&&mouseX<x+width&&mouseY>=y&&mouseY<y+font.lineHeight)textTooltip(g,java.util.List.of(text),mouseX,mouseY);
     }
     private void refreshButtons(){
-        if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null)craft.visible=kind==2||kind==5;}
+        if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null){craft.visible=kind==2||kind==5||kind==7&&!io.github.kpaakeh.smog.copper.ToolAssembly.requiresHammer(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));craft.active=menu.data.get(13)==0;}}
         if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
         if(rateButton!=null)rateButton.visible=menu.data.get(11)==MachineSpec.Kind.TRANSFORMER.ordinal();
     }

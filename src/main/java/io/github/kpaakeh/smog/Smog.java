@@ -22,6 +22,8 @@ public class Smog implements ModInitializer {
         io.github.kpaakeh.smog.zone.BuiltinZones.initialize();
         io.github.kpaakeh.smog.zone.ZoneSystem.initialize();
         io.github.kpaakeh.smog.zone.ZoneCommands.initialize();
+        io.github.kpaakeh.smog.copper.NaturalTreeLogs.initialize();
+        io.github.kpaakeh.smog.copper.ToolActions.initialize();
         LOGGER.info("Smog initialized");
     }
 }

@@ -26,7 +26,16 @@
           "durability_multiplier": 1.15
         }
       }
+    },
+    "head": {
+      "durability": 59,
+      "mining_speed": 2,
+      "attack_damage": 1,
+      "harvest_tier": "wooden",
+      "casting": false,
+      "shaping": true
     }
   },
-  "repair_ingredient": "#minecraft:planks"
+  "repair_ingredient": "#minecraft:planks",
+  "native_prefix": "wooden"
 }

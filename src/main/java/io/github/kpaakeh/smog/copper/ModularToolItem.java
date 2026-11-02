@@ -35,18 +35,12 @@ public final class ModularToolItem extends Item {
     @Override public void hurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){if(!(attacker instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(!broken(stack))ToolTraits.hit(stack,target,attacker);wear(stack,attacker.level(),2);}}
     @Override public float getDestroySpeed(ItemStack stack,BlockState state){return broken(stack)?.2f:ToolTraits.miningSpeed(stack,state,super.getDestroySpeed(stack,state));}
     @Override public boolean isCorrectToolForDrops(ItemStack stack,BlockState state){return !broken(stack)&&super.isCorrectToolForDrops(stack,state);}
-    @Override public boolean mineBlock(ItemStack stack,Level level,BlockState state,BlockPos pos,LivingEntity user){if(!level.isClientSide()&&state.getDestroySpeed(level,pos)!=0&&!(user instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(level instanceof ServerLevel server&&!broken(stack))ToolTraits.mined(stack,server,state);wear(stack,level,1);}return true;}
+    @Override public boolean mineBlock(ItemStack stack,Level level,BlockState state,BlockPos pos,LivingEntity user){if(!level.isClientSide()&&state.getDestroySpeed(level,pos)!=0&&!(user instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(level instanceof ServerLevel server&&!broken(stack))ToolTraits.mined(stack,server,state);wear(stack,level,1);if(user instanceof net.minecraft.server.level.ServerPlayer player)ToolActions.afterMined(stack,(ServerLevel)level,state,pos,player);}return true;}
     @Override public void postHurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){}
     @Override public InteractionResult useOn(UseOnContext context){
         var stack=context.getItemInHand();if(broken(stack))return InteractionResult.PASS;
         String name=ToolParts.schema(stack).behavior();
-        if(name.equals("chisel")){
-            var level=context.getLevel();var pos=context.getClickedPos();var old=level.getBlockState(pos);
-            String block=BuiltInRegistries.BLOCK.getKey(old.getBlock()).toString();String result=switch(block){case "smog:firebrick_casing"->"firebrick_tiles";case "smog:firebrick_tiles"->"carved_firebrick";case "smog:carved_firebrick"->"firebrick_casing";default->null;};
-            if(result==null)return InteractionResult.PASS;
-            if(!level.isClientSide()){level.setBlock(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id(result)).defaultBlockState(),net.minecraft.world.level.block.Block.UPDATE_ALL);if(context.getPlayer()==null||!context.getPlayer().isCreative())wear(stack,level,ToolTraits.useWear(stack));}
-            return InteractionResult.SUCCESS;
-        }
+        if(name.equals("sickle"))return ToolActions.harvest(context);
         var delegates=new java.util.LinkedHashSet<Item>();for(var component:ToolParts.components(stack)){var definition=ToolDefinitions.part(component);if(definition!=null&&!definition.form().nativeSuffix().isEmpty()){String prefix=definition.material().nativePrefix().isEmpty()?"iron":definition.material().nativePrefix();var id=net.minecraft.resources.Identifier.withDefaultNamespace(prefix+"_"+definition.form().nativeSuffix());if(BuiltInRegistries.ITEM.containsKey(id))delegates.add(BuiltInRegistries.ITEM.getValue(id));}}if(delegates.isEmpty())return InteractionResult.PASS;
         // Vanilla use actions may damage their stack. Keep the assembly and apply native Unbreaking ourselves.
         var originalTransformer=stack.get(DataComponents.BLOCK_TRANSFORMER);boolean had=stack.has(DataComponents.UNBREAKABLE);stack.set(DataComponents.UNBREAKABLE,net.minecraft.util.Unit.INSTANCE);

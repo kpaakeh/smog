@@ -29,7 +29,7 @@ public final class ToolParts {
     public static HeadWear wear(ItemStack head){return HeadWear.read(ModularToolItem.parts(head));}
     public static ToolDefinitions.Template schema(ItemStack tool){var data=ModularToolItem.parts(tool);String snapshot=data.getStringOr("template_snapshot","");if(!snapshot.isEmpty())try{return ToolDefinitions.snapshot(snapshot);}catch(RuntimeException malformed){return null;}return ToolDefinitions.template(data.getStringOr("template",BuiltInRegistries.ITEM.getKey(tool.getItem()).getPath().replace("modular_","")));}
     public static boolean hammerAssembly(ItemStack stack){return ModularToolItem.configured(stack)&&components(stack).stream().anyMatch(p->shape(p).equals("hammer"));}
-    public static boolean hammer(ItemStack stack){return CopperWorkshops.is(stack,"smog:stone_work_hammer")||!ModularToolItem.broken(stack)&&hammerAssembly(stack);}
+    public static boolean hammer(ItemStack stack){return !ModularToolItem.broken(stack)&&hammerAssembly(stack);}
     public static List<ItemStack> components(ItemStack tool){
         var schema=schema(tool);if(schema==null)return List.of();var stored=tool.getOrDefault(DataComponents.CONTAINER,ItemContainerContents.EMPTY);var parts=NonNullList.withSize(schema.roles().size(),ItemStack.EMPTY);stored.copyInto(parts);
         int delta=tool.getDamageValue()-ModularToolItem.parts(tool).getIntOr("assembled_damage",0),maximum=Math.max(1,tool.getMaxDamage());
@@ -68,8 +68,10 @@ public final class ToolParts {
         rules.addAll(wrongTierSpeeds);result.set(DataComponents.TOOL,new Tool(List.copyOf(rules),1,1,false));
         // Scale actual attacks per second, not the negative vanilla additive modifier.
         double attackSpeedBase=Attributes.ATTACK_SPEED.value().getDefaultValue();
-        double attackSpeedModifier=1.2*supportHandling-attackSpeedBase;
-        var attributes=ItemAttributeModifiers.builder().add(Attributes.ATTACK_DAMAGE,new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID,attack/heads.size(),AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.MAINHAND).add(Attributes.ATTACK_SPEED,new AttributeModifier(Item.BASE_ATTACK_SPEED_ID,attackSpeedModifier,AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.MAINHAND).build();result.set(DataComponents.ATTRIBUTE_MODIFIERS,attributes);
+        double tempo=switch(schema.behavior()){case "sword"->1.6;case "katana"->2.0;case "machete"->1.1;default->1.2;};
+        double attackBonus=switch(schema.behavior()){case "sword"->2;case "katana"->1;case "machete"->3;default->0;};
+        double attackSpeedModifier=tempo*supportHandling-attackSpeedBase;
+        var attributes=ItemAttributeModifiers.builder().add(Attributes.ATTACK_DAMAGE,new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID,attack/heads.size()+attackBonus,AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.MAINHAND).add(Attributes.ATTACK_SPEED,new AttributeModifier(Item.BASE_ATTACK_SPEED_ID,attackSpeedModifier,AttributeModifier.Operation.ADD_VALUE),EquipmentSlotGroup.MAINHAND).build();result.set(DataComponents.ATTRIBUTE_MODIFIERS,attributes);
         result.set(DataComponents.ENCHANTABLE,new net.minecraft.world.item.enchantment.Enchantable(14));var primary=parts.get(ToolDefinitions.primary(schema));if(primary.has(DataComponents.ENCHANTMENTS))result.set(DataComponents.ENCHANTMENTS,primary.get(DataComponents.ENCHANTMENTS));
         var data=new CompoundTag();data.putString("template",schema.id());data.putString("template_snapshot",ToolDefinitions.snapshot(schema));data.putInt("assembled_damage",result.getDamageValue());result.set(DataComponents.CUSTOM_DATA,CustomData.of(data));result.set(DataComponents.CONTAINER,ItemContainerContents.fromItems(parts));
         List<String> forms=new ArrayList<>();List<Integer> colors=new ArrayList<>();for(var part:parts){var definition=ToolDefinitions.part(part);forms.add(definition==null?"":definition.form().id());colors.add(definition==null?0xFFFFFF:definition.color());}result.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),forms,colors));

@@ -15,6 +15,51 @@ public final class ToolTests {
     private static ItemStack item(String name){return new ItemStack(ToolParts.item(name));}
     private static ItemStack build(String handle){return ToolParts.assemble(item("copper_pickaxe_head"),item(handle),item("cord_binding"),ItemStack.EMPTY);}
     private static MachineEntity table(GameTestHelper h){var pos=h.absolutePos(new BlockPos(3,2,3));h.getLevel().setBlock(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("tool_workbench")).defaultBlockState(),Block.UPDATE_ALL);return (MachineEntity)h.getLevel().getBlockEntity(pos);}
+    @GameTest public void stoneWorkingHammerBootstrapStartsFromCobblestoneWithoutAHammer(GameTestHelper h){
+        var bench=table(h);bench.copper.selection=ToolDefinitions.index("hammer");bench.setItem(0,new ItemStack(Items.COBBLESTONE,3));
+        h.assertFalse(ToolAssembly.requiresHammer(bench),"Shaping the first stone hammer head cannot require a metalworking hammer");
+        h.assertTrue(ToolAssembly.button(bench,22),"The first head can be shaped by hand from actual cobblestone");
+        for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
+        h.assertTrue(bench.getItem(3).is(ToolParts.item("stone_hammer_head"))&&bench.getItem(0).isEmpty(),"The declared stone cost produces one finished working-hammer head");
+        bench.setItem(0,bench.removeItemNoUpdate(3));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("cord_binding"));h.assertTrue(ToolAssembly.button(bench,22),"The nonmetal head, handle and binding assemble without a circular requirement");
+        for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
+        h.assertTrue(ToolParts.hammer(bench.getItem(3)),"The resulting paid modular hammer can perform later metalwork");h.succeed();
+    }
+    @GameTest public void requestedToolSetAndWeaponTradeoffsAreNativeAttributes(GameTestHelper h){
+        var expected=java.util.Set.of("pickaxe","axe","saw","shovel","hammer","hoe","sword","katana","machete","sickle");
+        h.assertTrue(ToolDefinitions.templates().stream().map(ToolDefinitions.Template::id).collect(java.util.stream.Collectors.toSet()).equals(expected),"Exactly the requested ten tool templates exist");
+        var sword=ToolParts.example(ToolDefinitions.template("sword"),"copper");var katana=ToolParts.example(ToolDefinitions.template("katana"),"copper");var machete=ToolParts.example(ToolDefinitions.template("machete"),"copper");
+        var speed=net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED;var damage=net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE;var hand=net.minecraft.world.entity.EquipmentSlot.MAINHAND;
+        double normalSpeed=sword.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(speed,speed.value().getDefaultValue(),hand),fast=katana.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(speed,speed.value().getDefaultValue(),hand),slow=machete.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(speed,speed.value().getDefaultValue(),hand);
+        double normalDamage=sword.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(damage,damage.value().getDefaultValue(),hand),weak=katana.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(damage,damage.value().getDefaultValue(),hand),strong=machete.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(damage,damage.value().getDefaultValue(),hand);
+        h.assertTrue(fast>normalSpeed&&normalSpeed>slow,"Katana attacks faster than a sword; machete attacks slower");h.assertTrue(weak<normalDamage&&normalDamage<strong,"Katana trades damage for speed and machete makes the reverse trade");h.succeed();
+    }
+    @GameTest public void nonmetalWorkingHammerAndWoodenToolsAssembleWithoutAHammer(GameTestHelper h){
+        var bench=table(h);bench.copper.selection=ToolDefinitions.index("hammer");bench.setItem(0,item("stone_hammer_head"));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("cord_binding"));
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;
+        ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertValueEqual(bench.copper.queued,1,"The first stone working hammer requires no pre-existing hammer");
+        for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
+        var hammer=bench.removeItemNoUpdate(3);h.assertTrue(ModularToolItem.configured(hammer)&&ToolParts.hammer(hammer),"The working hammer itself is a real usable modular assembly");
+        h.assertTrue(bench.getItem(0).isEmpty()&&bench.getItem(1).isEmpty()&&bench.getItem(2).isEmpty(),"Hand assembly consumes each component once");
+        bench.copper.selection=ToolDefinitions.index("pickaxe");bench.setItem(0,item("wood_pickaxe_head"));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("cord_binding"));
+        h.assertTrue(ToolAssembly.button(bench,22),"GUI hand assembly is available for a nonmetal tool");
+        for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
+        h.assertTrue(ModularToolItem.configured(bench.getItem(3))&&ToolParts.metal(ToolParts.extract(bench.getItem(3),0)).equals("wood"),"GUI produces the paid wooden tool without using the working hammer");
+        h.assertValueEqual(hammer.getDamageValue(),0,"A hammer is not charged for hand assembly");h.succeed();
+    }
+    @GameTest public void anyMetalComponentRequiresAWorkingModularHammer(GameTestHelper h){
+        var bench=table(h);bench.copper.selection=ToolDefinitions.index("hammer");bench.setItem(0,item("stone_hammer_head"));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("copper_clamp"));
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;
+        ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertValueEqual(bench.copper.queued,0,"A metal clamp requires hammering even when the head and handle are nonmetal");
+        h.assertFalse(ToolAssembly.button(bench,22),"GUI cannot bypass the metal-component requirement");
+        h.assertTrue(bench.getItem(0).getCount()==1&&bench.getItem(1).getCount()==1&&bench.getItem(2).getCount()==1,"Rejected hand assembly preserves all components");
+        var hammer=ToolParts.example(ToolDefinitions.template("hammer"),"stone");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,hammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertValueEqual(bench.copper.queued,1,"The assembled stone hammer starts the metal clamp operation");h.assertValueEqual(hammer.getDamageValue(),1,"One assembly costs one real working-hammer use");
+        for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
+        h.assertTrue(ModularToolItem.configured(bench.getItem(3)),"Hammered parts produce the configured tool");h.succeed();
+    }
     @GameTest public void modularHammerCanMountRepairAndDisassembleThroughDirectUse(GameTestHelper h){
         var bench=table(h);var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;
         var hammer=ToolParts.assemble(item("copper_hammer_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);hammer.setDamageValue(70);hammer.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Favorite hammer"));
@@ -25,7 +70,7 @@ public final class ToolTests {
         h.assertTrue(player.getMainHandItem().isEmpty()&&ModularToolItem.configured(bench.getItem(5)),"Sneaking mounts the actual modular hammer for service");
         player.setShiftKeyDown(false);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(Items.COPPER_INGOT));ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
         h.assertTrue(bench.getItem(0).is(Items.COPPER_INGOT)&&player.getMainHandItem().isEmpty(),"Direct repair ingredient insertion is still available");
-        var stoneHammer=item("stone_work_hammer");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stoneHammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        var stoneHammer=ToolParts.example(ToolDefinitions.template("hammer"),"stone");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stoneHammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
         for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
         var repaired=bench.removeItemNoUpdate(3);h.assertValueEqual(repaired.getDamageValue(),20,"Mounted hammer repairs exactly one ingot's worth");h.assertTrue(repaired.has(DataComponents.CUSTOM_NAME),"Repair retains its name");
         player.setShiftKeyDown(true);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,repaired);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
@@ -35,7 +80,7 @@ public final class ToolTests {
     }
     @GameTest public void finishingNamedCastsRetainsIdentityAndRejectsMixedOutput(GameTestHelper h){
         var bench=table(h);var casts=item("copper_cast_pickaxe_head");casts.setCount(2);casts.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Mine crew"));casts.set(DataComponents.REPAIR_COST,7);bench.setItem(0,casts);bench.setItem(3,item("copper_pickaxe_head"));
-        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;var hammer=item("stone_work_hammer");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,hammer);
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;var hammer=ToolParts.example(ToolDefinitions.template("hammer"),"stone");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,hammer);
         ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);h.assertValueEqual(bench.copper.queued,0,"Named results cannot silently merge into a plain output stack");h.assertValueEqual(hammer.getDamageValue(),0,"Rejected mixed output costs no strike");
         bench.setItem(3,ItemStack.EMPTY);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);for(int n=0;n<80;n++)ToolAssembly.tick(h.getLevel(),bench);
         var finished=bench.getItem(3);h.assertValueEqual(finished.getCount(),2,"Finite finishing batch keeps both named heads");h.assertTrue(net.minecraft.network.chat.Component.literal("Mine crew").equals(finished.get(DataComponents.CUSTOM_NAME)),"Finishing carries the chosen cast name");h.assertValueEqual(finished.getOrDefault(DataComponents.REPAIR_COST,0),7,"Finishing cannot reset prior anvil work");h.succeed();
@@ -44,14 +89,14 @@ public final class ToolTests {
         var bench=table(h);bench.copper.selection=ToolDefinitions.index("pickaxe");bench.setItem(0,item("copper_pickaxe_head"));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("cord_binding"));
         // InLevel's native mock overrides gameMode() to CREATIVE even after setGameMode.
         var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);
-        var main=new ItemStack(Items.DIAMOND,7);var hammer=item("stone_work_hammer");hammer.setDamageValue(hammer.getMaxDamage()-1);
+        var main=new ItemStack(Items.DIAMOND,7);var hammer=ToolParts.example(ToolDefinitions.template("hammer"),"stone");hammer.setDamageValue(hammer.getMaxDamage()-1);
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,main);player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,hammer);
         h.assertFalse(player.isCreative(),"The hammer fixture uses survival mode");
         h.assertTrue(hammer.isDamageableItem()&&hammer.getDamageValue()==hammer.getMaxDamage()-1,"The fixture holds a damageable hammer with one use remaining");
         h.assertFalse(ToolAssembly.preview(bench).isEmpty(),"The pickaxe components form a valid recipe before the strike");
         ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.OFF_HAND);
         h.assertValueEqual(bench.copper.queued,1,"The offhand hammer queues the valid recipe");
-        h.assertTrue(player.getOffhandItem().isEmpty(),"Last hammer use breaks the actual offhand hammer; remaining damage="+player.getOffhandItem().getDamageValue()+", max="+player.getOffhandItem().getMaxDamage()+", count="+player.getOffhandItem().getCount()+", infinite="+player.getAbilities().instabuild);
+        h.assertTrue(ModularToolItem.broken(player.getOffhandItem())&&!player.getOffhandItem().isEmpty(),"Last hammer use preserves the spent offhand assembly; remaining damage="+player.getOffhandItem().getDamageValue()+", max="+player.getOffhandItem().getMaxDamage()+", count="+player.getOffhandItem().getCount()+", infinite="+player.getAbilities().instabuild);
         h.assertTrue(player.getMainHandItem().is(Items.DIAMOND)&&player.getMainHandItem().getCount()==7,"Hammer break preserves the unrelated main-hand stack");
         for(int tick=0;tick<40;tick++)ToolAssembly.tick(h.getLevel(),bench);
         h.assertTrue(ModularToolItem.configured(bench.getItem(3)),"The final hammer use still completes the queued tool");h.succeed();
@@ -93,21 +138,21 @@ public final class ToolTests {
     @GameTest public void jsonMaterialCreatesPartsAndRolesAreNotFixed(GameTestHelper h){
         var iron=ToolDefinitions.find("iron","pickaxe_head",false);h.assertTrue(iron!=null&&ToolParts.item(iron.item().toString()) instanceof ToolPartItem,"Iron head registered from its own JSON profile");
         var ironTool=ToolParts.assemble(item("iron_pickaxe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);h.assertValueEqual(ironTool.getMaxDamage(),250,"Material JSON controls life");
-        var saved=new ItemStack[]{ItemStack.EMPTY};var original=ToolDefinitions.template("mattock");var json=com.google.gson.JsonParser.parseString("{\"id\":\"mattock\",\"behavior\":\"pickaxe\",\"parts\":[{\"id\":\"pick\",\"category\":\"head\",\"forms\":[\"pickaxe_head\"],\"primary\":true},{\"id\":\"axe\",\"category\":\"head\",\"forms\":[\"axe_head\"]},{\"id\":\"spade\",\"category\":\"head\",\"forms\":[\"shovel_head\"]},{\"id\":\"handle\",\"category\":\"handle\"},{\"id\":\"binding\",\"category\":\"binding\"},{\"id\":\"wrap\",\"category\":\"wrap\",\"optional\":true}]}").getAsJsonObject();
-        try{
-            var schema=ToolDefinitions.parseTemplate(json);ToolDefinitions.registerTemplate(schema);
+        var saved=new ItemStack[]{ItemStack.EMPTY};var json=com.google.gson.JsonParser.parseString("{\"id\":\"pickaxe\",\"behavior\":\"pickaxe\",\"parts\":[{\"id\":\"pick\",\"category\":\"head\",\"forms\":[\"pickaxe_head\"],\"primary\":true},{\"id\":\"axe\",\"category\":\"head\",\"forms\":[\"axe_head\"]},{\"id\":\"spade\",\"category\":\"head\",\"forms\":[\"shovel_head\"]},{\"id\":\"handle\",\"category\":\"handle\"},{\"id\":\"binding\",\"category\":\"binding\"},{\"id\":\"wrap\",\"category\":\"wrap\",\"optional\":true}]}").getAsJsonObject();
+        {
+            var schema=ToolDefinitions.parseTemplate(json);
             var composed=ToolParts.assemble(schema,java.util.List.of(item("copper_pickaxe_head"),item("iron_axe_head"),item("bronze_shovel_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY));
             saved[0]=composed;h.assertTrue(ModularToolItem.configured(composed),"Three different heads compose without a new Java item implementation");h.assertValueEqual(ToolParts.components(composed).size(),6,"All JSON roles retained");
             h.assertFalse(composed.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),"Iron axe cannot upgrade copper pick head");h.assertTrue(composed.getDestroySpeed(Blocks.DIRT.defaultBlockState())>1,"Secondary shovel works");
             var ops=h.getLevel().registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);var encoded=ItemStack.CODEC.encodeStart(ops,composed).getOrThrow();var restored=ItemStack.CODEC.parse(ops,encoded).getOrThrow();h.assertTrue(ItemStack.isSameItemSameComponents(composed,restored),"Arbitrary composition round-trips native serialization");
             composed.setDamageValue(60);var before=ToolParts.components(composed);var repaired=ToolParts.repair(composed,new ItemStack(Items.COPPER_INGOT));var after=ToolParts.components(repaired);
             h.assertTrue(ToolParts.wear(after.get(1)).equals(ToolParts.wear(before.get(1))),"Repairing copper does not heal iron head");h.assertTrue(ToolParts.wear(after.get(2)).equals(ToolParts.wear(before.get(2))),"Repairing copper does not heal bronze head");
-        }finally{ToolDefinitions.registerTemplate(original);}h.assertValueEqual(ToolParts.components(saved[0]).size(),6,"Saved schema cannot truncate parts after the current definition changes");h.succeed();
+        }h.assertValueEqual(ToolParts.components(saved[0]).size(),6,"Saved schema cannot truncate parts after the current definition changes");h.succeed();
     }
     @GameTest public void profileShapingAndCountedRolesWork(GameTestHelper h){
         var schema=ToolDefinitions.template("hammer");var plan=ToolParts.shaping(new ItemStack(Items.IRON_INGOT,4),schema);h.assertTrue(plan!=null,"Iron custom head has a reachable profile-driven shaping route");h.assertValueEqual(plan.count(),4,"Three material units plus one unit shaping loss");
         var table=table(h);table.copper.selection=ToolDefinitions.index("hammer");table.setItem(0,new ItemStack(Items.IRON_INGOT,4));table.copper.queued=1;for(int i=0;i<40;i++)ToolAssembly.tick(h.getLevel(),table);h.assertTrue(table.getItem(0).isEmpty(),"Actual shaping consumes the full declared cost");h.assertTrue(ToolParts.metal(table.getItem(3)).equals("iron"),"No copper hardcoding in production");
-        var raw=com.google.gson.JsonParser.parseString("{\"id\":\"mattock\",\"parts\":[{\"id\":\"heads\",\"category\":\"head\",\"forms\":[\"pickaxe_head\"],\"count\":5,\"primary\":true},{\"id\":\"handle\",\"category\":\"handle\"},{\"id\":\"binding\",\"category\":\"binding\"}]}").getAsJsonObject();var counted=ToolDefinitions.parseTemplate(raw);h.assertValueEqual(counted.roles().size(),7,"Count is read from JSON, not fixed slot names");
+        var raw=com.google.gson.JsonParser.parseString("{\"id\":\"pickaxe\",\"parts\":[{\"id\":\"heads\",\"category\":\"head\",\"forms\":[\"pickaxe_head\"],\"count\":5,\"primary\":true},{\"id\":\"handle\",\"category\":\"handle\"},{\"id\":\"binding\",\"category\":\"binding\"}]}").getAsJsonObject();var counted=ToolDefinitions.parseTemplate(raw);h.assertValueEqual(counted.roles().size(),7,"Count is read from JSON, not fixed slot names");
         var parts=new java.util.ArrayList<ItemStack>();for(int i=0;i<5;i++)parts.add(item("copper_pickaxe_head"));parts.add(item("wooden_handle"));parts.add(item("cord_binding"));var tool=ToolParts.assemble(counted,parts);h.assertValueEqual(ToolParts.components(tool).size(),7,"Five-head composition preserved without global schema replacement");h.succeed();
     }
     @GameTest public void finishingAssemblyAndRepairConsumeRealParts(GameTestHelper h){

@@ -1,0 +1,20 @@
+{
+  "id": "stone",
+  "name": {
+    "en_us": "Stone",
+    "ru_ru": "Камень"
+  },
+  "color": "969696",
+  "profiles": {
+    "head": {
+      "durability": 131,
+      "mining_speed": 4,
+      "attack_damage": 2,
+      "harvest_tier": "stone",
+      "casting": false,
+      "shaping": true
+    }
+  },
+  "repair_ingredient": "#minecraft:stone_tool_materials",
+  "native_prefix": "stone"
+}

@@ -6,7 +6,10 @@
     "ModularCraftRepairMixin",
     "ModularGrindstoneMixin",
     "ModularAnvilMixin",
-    "ModularMiningContextMixin"
+    "ModularMiningContextMixin",
+    "NaturalTreeFeatureMixin",
+    "PlacedTreeLogMixin",
+    "CropSeedAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -142,8 +142,7 @@
         "smog:modular_axe",
         "smog:modular_shovel",
         "smog:modular_hoe",
-        "smog:modular_hammer",
-        "smog:modular_chisel"
+        "smog:modular_hammer"
       ]
     },
     {
@@ -913,7 +912,9 @@
       "work_ticks": 80,
       "model": "smog:block/rope_anchor",
       "assembled_model": "smog:block/rope_anchor",
-      "render_parts": ["carriage"],
+      "render_parts": [
+        "carriage"
+      ],
       "texture": "minecraft:block/bricks",
       "mining_level": "wood"
     },
@@ -2212,19 +2213,22 @@
       "display_ru": "Оловянный концентрат",
       "tab": "copper_age",
       "model": "smog:item/tin_dust"
-    },    {
+    },
+    {
       "name": "lead_concentrate",
       "display": "Lead Concentrate",
       "display_ru": "Свинцовый концентрат",
       "tab": "copper_age",
       "model": "smog:item/lead_dust"
-    },    {
+    },
+    {
       "name": "iron_concentrate",
       "display": "Iron Concentrate",
       "display_ru": "Железный концентрат",
       "tab": "copper_age",
       "model": "smog:item/wrought_iron_dust"
-    },    {
+    },
+    {
       "name": "gold_concentrate",
       "display": "Gold Concentrate",
       "display_ru": "Золотой концентрат",
@@ -2253,12 +2257,6 @@
       "name": "waxed_cord",
       "display": "Waxed Cord",
       "display_ru": "Вощёный шнур",
-      "tab": "copper_age"
-    },
-    {
-      "name": "stone_work_hammer",
-      "display": "Stone Working Hammer",
-      "display_ru": "Каменный рабочий молот",
       "tab": "copper_age"
     },
     {
@@ -3516,25 +3514,6 @@
       }
     },
     {
-      "name": "stone_work_hammer",
-      "unlock": "minecraft:cobblestone",
-      "data": {
-        "type": "minecraft:crafting_shaped",
-        "pattern": [
-          "CCC",
-          " SS"
-        ],
-        "key": {
-          "C": "minecraft:cobblestone",
-          "S": "minecraft:stick"
-        },
-        "result": {
-          "id": "smog:stone_work_hammer",
-          "count": 1
-        }
-      }
-    },
-    {
       "name": "tool_workbench",
       "unlock": "minecraft:oak_planks",
       "data": {
@@ -4174,8 +4153,7 @@
       "tool.smog.preview_use_axe": "Chop wood; strip logs",
       "tool.smog.preview_use_shovel": "Dig soil, sand and gravel; make paths",
       "tool.smog.preview_use_hoe": "Harvest vegetation; till soil",
-      "tool.smog.preview_use_hammer": "Workshop assembly and finishing",
-      "tool.smog.preview_use_chisel": "Shape refractory masonry",
+      "tool.smog.preview_use_hammer": "Mines a 3×3×1 area; workshop assembly and finishing",
       "tool.smog.preview_baseline": "Heads → assembled tool (multiple heads: average durability)",
       "tool.smog.preview_life": "Full durability: %s → %s (%s)",
       "tool.smog.preview_speed": "Peak mining speed: %s → %s (%s)",
@@ -4303,12 +4281,12 @@
       "tool.smog.part_wrap": "Wrap: %s",
       "tool.smog.working": "Working. Parts are temporarily secured.",
       "tool.smog.mount_hammer": "Sneak + right-click an empty workbench mount to service this hammer.",
-      "tool.smog.assembly_help": "Provide a finished head, compatible handle and binding. Use a hammer to start; sneak with hammer to disassemble.",
-      "tool.smog.preview": "Result: %s | Durability: %s. Start with a working hammer.",
-      "jei.smog.copper.tools": "Head sets harvest tier; handle and binding adjust speed and life. Start with a hammer.",
+      "tool.smog.assembly_help": "Add a head, handle and binding. Metal parts require a working assembled hammer; nonmetal parts can be assembled empty-handed or with the Craft button.",
+      "tool.smog.preview": "Result: %s | Durability: %s. Nonmetal: empty hand; metal: assembled hammer.",
+      "jei.smog.copper.tools": "Head, handle and binding; optional wrap. Only assemblies containing metal require a working assembled hammer.",
       "jei.smog.guide.tools": "Cast and hammer-finish a head on an empty workbench. Add a compatible handle and binding, optionally a wrap. One hammer action starts assembly. Sneak with hammer to disassemble a mounted tool, retaining head wear and enchantments. New heads carry only their own enchantments. A matching ingot repairs a quarter of durability. Sneak-use an item for the optional menu.",
       "tool.smog.working_short": "Assembly in progress",
-      "tool.smog.ready_short": "Start with a hammer",
+      "tool.smog.ready_short": "Nonmetal: empty hand; metal: hammer",
       "tool.smog.missing_parts": "Add compatible parts",
       "tool.smog.tier": "Head harvest level: %s",
       "tool.smog.speed": "Working speed: %s",
@@ -4468,7 +4446,12 @@
       "item.smog.rope_anchor.help_3": "Use a stick on any rope section to ride where you look",
       "item.smog.rope_anchor.help_4": "Sneak to exit; leave clearance and safe landing platforms",
       "item.smog.loading_crane.help_1": "Use: load a batch; sneak-use: reverse direction",
-      "item.smog.loading_crane.help_2": "Red controller marker: one rising redstone pulse per batch"
+      "item.smog.loading_crane.help_2": "Red controller marker: one rising redstone pulse per batch",
+      "tool.smog.preview_use_saw": "Fells marked natural trees",
+      "tool.smog.preview_use_sword": "Balanced melee blade",
+      "tool.smog.preview_use_katana": "Faster attacks, lower damage",
+      "tool.smog.preview_use_machete": "Slower attacks, higher damage",
+      "tool.smog.preview_use_sickle": "Right-click: harvest and replant mature crops in 3×1×3"
     },
     "ru_ru": {
       "gui.smog.pottery.input": "Материал",
@@ -4505,8 +4488,7 @@
       "tool.smog.preview_use_axe": "Рубка дерева; снятие коры",
       "tool.smog.preview_use_shovel": "Копание земли, песка и гравия; создание тропинок",
       "tool.smog.preview_use_hoe": "Сбор растений; вспашка земли",
-      "tool.smog.preview_use_hammer": "Сборка и доводка в мастерской",
-      "tool.smog.preview_use_chisel": "Обработка огнеупорной кладки",
+      "tool.smog.preview_use_hammer": "Добыча 3×3×1; сборка и доводка в мастерской",
       "tool.smog.preview_baseline": "Головки → инструмент (несколько головок: средний ресурс)",
       "tool.smog.preview_life": "Полный ресурс: %s → %s (%s)",
       "tool.smog.preview_speed": "Максимальная скорость добычи: %s → %s (%s)",
@@ -4634,12 +4616,12 @@
       "tool.smog.part_wrap": "Обмотка: %s",
       "tool.smog.working": "Работа идёт. Части временно закреплены.",
       "tool.smog.mount_hammer": "Shift + ПКМ по столу со свободным креплением — установить этот молот для ремонта.",
-      "tool.smog.assembly_help": "Нужны доведённая головка, подходящая рукоять и крепление. Запуск молотом; Shift+молот — разборка.",
-      "tool.smog.preview": "Результат: %s | Ресурс: %s. Запуск рабочим молотом.",
-      "jei.smog.copper.tools": "Головка задаёт добычу; рукоять и крепление — темп и ресурс. Запуск молотом.",
+      "tool.smog.assembly_help": "Положите головку, рукоять и крепление. Если есть металл, нужен рабочий составной молот; без металла — пустая рука или кнопка изготовления.",
+      "tool.smog.preview": "Результат: %s | Прочность: %s. Без металла — пустая рука; с металлом — составной молот.",
+      "jei.smog.copper.tools": "Головка, рукоять, крепление и необязательная обмотка. Рабочий составной молот нужен только при наличии металлических деталей.",
       "jei.smog.guide.tools": "Отлейте головку, доведите рабочим молотом на пустом столе. Затем внесите рукоять и крепление, обмотка необязательна. Запуск одним ПКМ молотом. Shift+молот разбирает помещённый инструмент, сохраняя износ головки и её чары. Новая головка получает только собственные чары. Слиток соответствующего металла чинит четверть ресурса. Shift+ПКМ предметом открывает необязательный интерфейс.",
       "tool.smog.working_short": "Идёт сборка",
-      "tool.smog.ready_short": "Запуск: рабочим молотом",
+      "tool.smog.ready_short": "Без металла — пустая рука; с металлом — молот",
       "tool.smog.missing_parts": "Добавьте детали",
       "tool.smog.tier": "Уровень головки: %s",
       "tool.smog.speed": "Скорость работы: %s",
@@ -4799,7 +4781,12 @@
       "item.smog.rope_anchor.help_3": "ПКМ палкой по канату: ехать в сторону взгляда",
       "item.smog.rope_anchor.help_4": "Shift: выйти; оставь место под канатом и площадки высадки",
       "item.smog.loading_crane.help_1": "ПКМ: партия; Shift + ПКМ: смена направления",
-      "item.smog.loading_crane.help_2": "Красная метка на контроллере: 1 импульс редстоуна — 1 партия"
+      "item.smog.loading_crane.help_2": "Красная метка на контроллере: 1 импульс редстоуна — 1 партия",
+      "tool.smog.preview_use_saw": "Валит деревья с метками естественного происхождения",
+      "tool.smog.preview_use_sword": "Сбалансированный клинок",
+      "tool.smog.preview_use_katana": "Быстрее атаки, меньше урон",
+      "tool.smog.preview_use_machete": "Медленнее атаки, больше урон",
+      "tool.smog.preview_use_sickle": "ПКМ: сбор и повторная посадка зрелых культур в области 3×1×3"
     }
   },
   "workshop_modules": [

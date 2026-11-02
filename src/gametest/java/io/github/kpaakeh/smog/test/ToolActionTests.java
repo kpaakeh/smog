@@ -1,0 +1,48 @@
+package io.github.kpaakeh.smog.test;
+
+import io.github.kpaakeh.smog.copper.*;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+import net.minecraft.core.*;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.phys.*;
+
+public final class ToolActionTests {
+    private static ServerPlayer player(GameTestHelper h,String type,BlockPos pos){var p=(ServerPlayer)h.makeMockServerPlayer(GameType.SURVIVAL);p.connection=h.makeMockServerPlayerInLevel().connection;p.setPos(pos.getX()+.5,pos.getY(),pos.getZ()-3);p.setYRot(0);p.setXRot(0);p.setItemInHand(InteractionHand.MAIN_HAND,ToolParts.example(ToolDefinitions.template(type),"copper"));return p;}
+    @GameTest public void hammerBreaksOnePlaneAndPaysWearForEveryBlock(GameTestHelper h){
+        var level=h.getLevel();var center=h.absolutePos(new BlockPos(4,3,4));
+        for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)level.setBlock(center.offset(x,y,0),Blocks.STONE.defaultBlockState(),Block.UPDATE_ALL);
+        level.setBlock(center.offset(0,0,1),Blocks.STONE.defaultBlockState(),Block.UPDATE_ALL);
+        var p=player(h,"hammer",center);var tool=p.getMainHandItem();
+        h.assertTrue(p.gameMode.destroyBlock(center),"The initial native player break succeeds");
+        for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)h.assertTrue(level.getBlockState(center.offset(x,y,0)).isAir(),"Hammer clears every block in the selected3x3plane");
+        h.assertTrue(level.getBlockState(center.offset(0,0,1)).is(Blocks.STONE),"The second depth layer is untouched");
+        h.assertValueEqual(tool.getDamageValue(),9,"All nine native breaks consume durability");h.succeed();
+    }
+    @GameTest public void sawUsesPositiveProvenanceAndNeverCutsAttachedPlacedLogs(GameTestHelper h){
+        var level=h.getLevel();var base=h.absolutePos(new BlockPos(4,2,4));
+        for(int y=0;y<4;y++){var pos=base.above(y);level.setBlock(pos,Blocks.OAK_LOG.defaultBlockState(),Block.UPDATE_ALL);NaturalTreeLogs.generated(level,pos,Blocks.OAK_LOG.defaultBlockState());}
+        var placed=base.offset(1,2,0);level.setBlock(placed,Blocks.OAK_LOG.defaultBlockState(),Block.UPDATE_ALL);
+        var p=player(h,"saw",base);var tool=p.getMainHandItem();h.assertTrue(p.gameMode.destroyBlock(base),"Native initial saw break succeeds");
+        for(int y=0;y<4;y++)h.assertTrue(level.getBlockState(base.above(y)).isAir(),"All positively marked connected logs are felled");
+        h.assertTrue(level.getBlockState(placed).is(Blocks.OAK_LOG),"A connected player-built log is not included");h.assertValueEqual(tool.getDamageValue(),4,"Saw pays for every harvested log");
+        var replacement=base.offset(0,0,2);level.setBlock(replacement,Blocks.OAK_LOG.defaultBlockState(),Block.UPDATE_ALL);NaturalTreeLogs.generated(level,replacement,Blocks.OAK_LOG.defaultBlockState());NaturalTreeLogs.placed(level,replacement);
+        h.assertFalse(NaturalTreeLogs.natural(level,replacement),"Manual replacement clears generation provenance");h.succeed();
+    }
+    @GameTest public void sickleHarvestsOnlyMaturePlantsAndReservesPlantingMaterial(GameTestHelper h){
+        var level=h.getLevel();var center=h.absolutePos(new BlockPos(4,2,4));
+        for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++){var pos=center.offset(x,0,z);level.setBlock(pos.below(),Blocks.FARMLAND.defaultBlockState(),Block.UPDATE_ALL);level.setBlock(pos,Blocks.CARROTS.defaultBlockState().setValue(CropBlock.AGE,x==1&&z==1?2:7),Block.UPDATE_ALL);}
+        var p=player(h,"sickle",center);var tool=p.getMainHandItem();var context=new UseOnContext(p,InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(center),Direction.UP,center,false));
+        h.assertTrue(tool.useOn(context).consumesAction(),"Right-click harvests the mature crop area");
+        for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++)h.assertValueEqual(level.getBlockState(center.offset(x,0,z)).getValue(CropBlock.AGE),x==1&&z==1?2:0,"Mature carrots are replanted and young carrots preserved");
+        h.assertValueEqual(tool.getDamageValue(),8,"Only the eight mature plants consume durability");
+        int before=level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new AABB(center).inflate(3)).stream().mapToInt(e->e.getItem().getCount()).sum();
+        h.assertTrue(before>0,"Harvest leaves actual produce after reserving one carrot per planted crop");tool.useOn(context);
+        h.assertValueEqual(tool.getDamageValue(),8,"Clicking immature replanted crops again creates no extra harvest or wear");h.succeed();
+    }
+}

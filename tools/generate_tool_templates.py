@@ -25,9 +25,9 @@ def head(form):
   if form['id']=='hoe_head':
    for pixel in [(10,7),(9,8)]:im.putpixel(pixel,(0,0,0,0))
   return gray(im)
- # No corresponding vanilla hammer/chisel exists; these two explicit shape templates stay editable.
+ # Shared hand-edited masks for forms without a vanilla equivalent.
  im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
- points={'hammer':[(6,1),(9,1),(15,7),(15,10),(12,10),(6,4)],'chisel':[(11,1),(14,1),(14,4),(10,8),(8,7)]}[form['prototype_shape']]
+ points={'hammer':[(6,1),(9,1),(15,7),(15,10),(12,10),(6,4)],'saw':[(5,7),(10,2),(14,1),(15,2),(15,5),(13,7),(12,6),(11,9),(10,8),(9,11),(8,10),(7,12),(5,10)],'katana':[(5,10),(8,6),(11,2),(14,0),(14,3),(11,7),(8,10),(6,12)],'machete':[(6,9),(10,3),(15,1),(15,5),(10,10),(7,12)],'sickle':[(7,7),(8,4),(11,1),(14,2),(15,5),(14,8),(11,9),(12,7),(13,5),(12,4),(10,5),(9,8)]}[form['prototype_shape']]
  d.polygon(points,fill=(160,160,160,255));d.line(points+[points[0]],fill=(60,60,60,255));d.line(points[:2],fill=(245,245,245,255));return im
 
 def handle(form):

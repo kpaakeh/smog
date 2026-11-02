@@ -88,7 +88,7 @@ public final class ResourceGenerationTests {
         }
         h.assertTrue(examples>0&&examples<=io.github.kpaakeh.smog.copper.ToolDefinitions.templates().size()*4,"Configured tools are a bounded selection, not thousands of combinations");
         for(var part:io.github.kpaakeh.smog.copper.ToolDefinitions.parts())h.assertTrue("tool_parts".equals(owner.get(BuiltInRegistries.ITEM.getValue(part.item()))),"Every registered cast/final tool part is discoverable in its own category");
-        for(String name:java.util.List.of("configurator","stone_work_hammer","freight_rope"))h.assertTrue("tools".equals(owner.get(BuiltInRegistries.ITEM.getValue(ModBlocks.id(name)))),"Hand tool belongs to Tools: "+name);
+        for(String name:java.util.List.of("configurator","freight_rope"))h.assertTrue("tools".equals(owner.get(BuiltInRegistries.ITEM.getValue(ModBlocks.id(name)))),"Hand tool belongs to Tools: "+name);
         for(String name:java.util.List.of("casting_faucet","water_valve","handcart","casting_table"))h.assertTrue("mechanisms".equals(owner.get(BuiltInRegistries.ITEM.getValue(ModBlocks.id(name)))),"Working mechanism is not mixed into building blocks: "+name);
         try(var stream=ResourceGenerationTests.class.getResourceAsStream("/smog.content.json")){
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();

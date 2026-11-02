@@ -38,7 +38,19 @@ public final class ToolAssembly {
         String role=ToolParts.problem(schema,selected(inventory,schema));
         return role.isEmpty()?Component.translatable("tool.smog.missing_parts"):Component.translatable("tool.smog.need_role",Component.translatableWithFallback("tool.smog.role."+role,role));
     }
-    public static boolean button(MachineEntity machine,int id){if((id!=20&&id!=21)||machine.copper.queued>0||!machine.getItem(5).isEmpty())return false;if(shapingMode(machine)){machine.copper.partSelection=Math.floorMod(activePart(machine)+(id==20?-1:1),ToolParts.shapingChoices(machine.getItem(0)).size());machine.sync();return true;}if(!empty(machine,-1))return false;machine.copper.partSelection=-1;machine.copper.selection=Math.floorMod(machine.copper.selection+(id==20?-1:1),ToolDefinitions.templates().size());machine.sync();return true;}
+    public static boolean requiresHammer(Container inventory){return requiresHammer(inventory,schema(inventory),inventory instanceof MachineEntity machine?activePart(machine):-1);}
+    public static boolean requiresHammer(Container inventory,ToolDefinitions.Template schema,int selectedPart){
+        if(!MoldMaking.preview(inventory).isEmpty())return true;
+        var result=preview(inventory,schema,selectedPart);if(result.isEmpty())return true;
+        var part=ToolDefinitions.part(result);if(part!=null)return !part.material().molten().isEmpty();
+        if(!ModularToolItem.configured(result))return true;
+        return ToolParts.components(result).stream().map(ToolDefinitions::part).filter(java.util.Objects::nonNull).anyMatch(p->!p.material().molten().isEmpty());
+    }
+    private static boolean startWithoutHammer(MachineEntity machine){
+        var result=preview(machine);if(machine.copper.queued>0||result.isEmpty()||requiresHammer(machine)||!machine.canOutput(result))return false;
+        machine.copper.queued=1;machine.copper.work=0;machine.sync();return true;
+    }
+    public static boolean button(MachineEntity machine,int id){if(id==22)return startWithoutHammer(machine);if((id!=20&&id!=21)||machine.copper.queued>0||!machine.getItem(5).isEmpty())return false;if(shapingMode(machine)){machine.copper.partSelection=Math.floorMod(activePart(machine)+(id==20?-1:1),ToolParts.shapingChoices(machine.getItem(0)).size());machine.sync();return true;}if(!empty(machine,-1))return false;machine.copper.partSelection=-1;machine.copper.selection=Math.floorMod(machine.copper.selection+(id==20?-1:1),ToolDefinitions.templates().size());machine.sync();return true;}
     public static void tick(ServerLevel level,MachineEntity m){
         if(m.copper.queued==0)return;var schema=schema(m);var result=preview(m);
         if(result.isEmpty()){m.copper.work=0;m.copper.queued=0;m.sync();return;}if(!m.canOutput(result)){m.copper.status=5;return;}if(++m.copper.work<40){m.setChanged();return;}
@@ -76,6 +88,7 @@ public final class ToolAssembly {
                 for(int i=ToolDefinitions.maxParts()-1;i>=0;i--){int slot=ToolDefinitions.slot(i);if(!m.getItem(slot).isEmpty()){give(player,m.removeItemNoUpdate(slot));m.sync();return InteractionResult.SUCCESS;}}
                 if(!m.getItem(5).isEmpty()){give(player,m.removeItemNoUpdate(5));m.sync();return InteractionResult.SUCCESS;}button(m,21);
             }
+            if(!player.isShiftKeyDown()&&startWithoutHammer(m))return InteractionResult.SUCCESS;
             var result=preview(m);player.sendOverlayMessage(result.isEmpty()?Component.translatable("tool.smog.selected_schema",Component.translatable("item.smog.modular_"+schema(m).id())):Component.translatable("tool.smog.preview",result.getHoverName(),result.getMaxDamage()));return InteractionResult.SUCCESS;
         }
         if(m.getItem(5).isEmpty()&&canMount(held)){var template=ToolParts.schema(held);m.copper.selection=ToolDefinitions.index(template.id());m.setItem(5,held.split(1));m.sync();return InteractionResult.SUCCESS;}

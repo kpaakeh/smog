@@ -45,6 +45,7 @@ abstract class GenerateSmogContent extends DefaultTask {
         castingShapes.each { shape -> ['sand','metal'].each { style -> root.items.add([name:"${style}_${shape.id}_mold",kind:'mold_variant',base_mold:"${shape.id}_mold",style:style,display:(style=='sand'?'Sand mold: ':'Metal cast: ')+shape.en,display_ru:(style=='sand'?'Песчаная форма: ':'Металлическая форма: ')+shape.ru,tab:'copper_age']) } }
         root.tool_templates.each { schema ->
             def memberships=['minecraft:enchantable/durability']
+            if(schema.behavior in ['sword','katana','machete'])memberships.add('minecraft:swords')
             def miningForms=schema.parts.findAll { it.category=='head' }.collectMany { role -> root.tool_forms.findAll { form -> form.category=='head'&&(!role.forms||form.id in role.forms)&&form.mining_tag } }
             if(miningForms){memberships.addAll(['minecraft:enchantable/mining','minecraft:enchantable/mining_loot']);miningForms.each { form -> def family=form.mining_tag.split('/').last();memberships.add('minecraft:'+['pickaxe':'pickaxes','axe':'axes','shovel':'shovels','hoe':'hoes'].get(family,'pickaxes')) }}
             root.items.add([name:"modular_${schema.id}",kind:'modular_tool',template:schema.id,display:"Assembled ${schema.name.en_us}",display_ru:"Составной инструмент: ${schema.name.ru_ru}",tags:memberships.unique(),tab:'copper_age'])
