@@ -1,0 +1,65 @@
+{
+  "families": [
+    {
+      "stem": "firebrick",
+      "base": "firebrick_casing",
+      "texture": "refractory_bricks",
+      "en": "Refractory",
+      "ru": "Огнеупорный кирпич",
+      "existing": {
+        "bricks": "firebrick_casing",
+        "tiles": "firebrick_tiles",
+        "chiseled": "carved_firebrick"
+      }
+    },
+    {
+      "stem": "limestone",
+      "base": "limestone",
+      "texture": "limestone",
+      "en": "Limestone",
+      "ru": "Известняк"
+    },
+    {
+      "stem": "fluorite",
+      "base": "fluorite",
+      "texture": "fluorite",
+      "en": "Fluorite",
+      "ru": "Флюорит"
+    },
+    {
+      "stem": "phosphorite",
+      "base": "phosphorite",
+      "texture": "phosphorite",
+      "en": "Phosphorite",
+      "ru": "Фосфорит"
+    },
+    {
+      "stem": "kaolin",
+      "base": "kaolin",
+      "texture": "kaolin",
+      "en": "Kaolin",
+      "ru": "Каолин"
+    },
+    {
+      "stem": "dolomite",
+      "base": "dolomite",
+      "texture": "dolomite",
+      "en": "Dolomite",
+      "ru": "Доломит"
+    },
+    {
+      "stem": "rock_salt",
+      "base": "rock_salt",
+      "texture": "rock_salt",
+      "en": "Rock Salt",
+      "ru": "Каменная соль"
+    },
+    {
+      "stem": "graphite",
+      "base": "graphite",
+      "texture": "graphite",
+      "en": "Graphite",
+      "ru": "Графит"
+    }
+  ]
+}

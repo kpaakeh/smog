@@ -28,7 +28,7 @@ public final class MultiplayerClientScene {
         Path directory=Path.of(System.getProperty("user.dir")).toAbsolutePath().resolve("multiplayer-peer-"+System.currentTimeMillis());
         try(var world=context.worldBuilder().create()){
             Files.createDirectories(directory);var pos=new BlockPos(0,100,0);
-            world.getServer().runOnServer(server->{server.setUsesAuthentication(false);var level=server.overworld();level.setBlockAndUpdate(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_table")).defaultBlockState());var table=(MachineEntity)level.getBlockEntity(pos);table.setItem(3,new ItemStack(Items.COPPER_INGOT,5));var host=server.getPlayerList().getPlayers().getFirst();host.setPos(.5,100,-2);});
+            world.getServer().runOnServer(server->{server.setUsesAuthentication(false);var level=server.overworld();for(var floor:BlockPos.betweenClosed(new BlockPos(-6,99,-6),new BlockPos(6,99,6)))level.setBlockAndUpdate(floor,net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());level.setBlockAndUpdate(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("casting_table")).defaultBlockState());var table=(MachineEntity)level.getBlockEntity(pos);table.setItem(3,new ItemStack(Items.COPPER_INGOT,5));var host=server.getPlayerList().getPlayers().getFirst();host.setPos(.5,100,-2);});
             int port;try(var socket=new java.net.ServerSocket(0)){port=socket.getLocalPort();}
             final int tcpPort=port;
             context.runOnClient(mc->{if(!mc.getSingleplayerServer().publishServer(MinecraftServer.MultiplayerScope.LAN,false,tcpPort))throw new IllegalStateException("Cannot publish isolated LAN server");});
@@ -64,14 +64,18 @@ public final class MultiplayerClientScene {
         }catch(Throwable e){try{Files.writeString(directory.resolve("peer-error.txt"),e.toString());}catch(Exception ignored){}throw new RuntimeException(e);}
     }
     private static Process startPeer(Path directory,int port)throws Exception{
-        var info=ProcessHandle.current().info();var arguments=new ArrayList<>(Arrays.asList(info.arguments().orElseThrow()));
-        // Refuse ambiguous @argument files rather than accidentally sharing a profile or credentials.
-        if(arguments.stream().anyMatch(s->s.startsWith("@")))throw new IllegalStateException("Peer harness cannot safely rewrite a Java @argument file");
-        arguments.removeIf(s->s.startsWith("-Xmx")||s.startsWith("-Xms")||s.startsWith("-Dsmog.peer")||s.startsWith("-Dsmog.multiplayerTest"));
+        var manifest=com.google.gson.JsonParser.parseString(Files.readString(Path.of(System.getProperty("smog.peerLaunchManifest")))).getAsJsonObject();
+        var arguments=new ArrayList<String>();for(var value:manifest.getAsJsonArray("jvmArgs"))arguments.add(value.getAsString());
+        arguments.removeIf(value->value.startsWith("-Xmx")||value.startsWith("-Xms")||value.startsWith("-Dsmog.peer")||value.startsWith("-Dsmog.multiplayerTest"));
+        arguments.add("-Xmx1G");arguments.add("-Dsmog.multiplayerTest=true");arguments.add("-Dsmog.peerPort="+port);arguments.add("-Dsmog.peerDirectory="+directory);
+        arguments.add("-cp");var classpath=new ArrayList<String>();for(var value:manifest.getAsJsonArray("classpath"))classpath.add(value.getAsString());arguments.add(String.join(java.io.File.pathSeparator,classpath));
+        arguments.add(manifest.get("mainClass").getAsString());
+        for(var value:manifest.getAsJsonArray("args"))arguments.add(value.getAsString());
         setArgument(arguments,"--gameDir",directory.resolve("game").toString());setArgument(arguments,"--username","SmogPeer");setArgument(arguments,"--uuid",UUID.nameUUIDFromBytes("OfflinePlayer:SmogPeer".getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString().replace("-",""));
-        arguments.addFirst("-Dsmog.peerDirectory="+directory);arguments.addFirst("-Dsmog.peerPort="+port);arguments.addFirst("-Dsmog.multiplayerTest=true");arguments.addFirst("-Xmx1G");arguments.addFirst(info.command().orElseThrow());
+        var argumentFile=directory.resolve("peer-java.args");
+        Files.write(argumentFile,arguments.stream().map(value->"\""+value.replace("\\","\\\\").replace("\"","\\\"")+"\"").toList());
         Files.createDirectories(directory.resolve("game"));
-        var child=new ProcessBuilder(arguments).directory(directory.resolve("game").toFile()).redirectErrorStream(true).redirectOutput(directory.resolve("peer.log").toFile()).start();
+        var child=new ProcessBuilder(manifest.get("java").getAsString(),"@"+argumentFile).directory(directory.resolve("game").toFile()).redirectErrorStream(true).redirectOutput(directory.resolve("peer.log").toFile()).start();
         Runtime.getRuntime().addShutdownHook(new Thread(()->{if(child.isAlive())child.destroyForcibly();},"Smog-peer-cleanup"));return child;
     }
     private static void setArgument(List<String> arguments,String option,String value){int at=arguments.indexOf(option);if(at>=0){if(at+1>=arguments.size())throw new IllegalArgumentException(option);arguments.set(at+1,value);}else{arguments.add(option);arguments.add(value);}}

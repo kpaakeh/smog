@@ -12,14 +12,20 @@ public final class ToolTooltipLayout {
     public static List<Component> wrap(List<Component> lines,Font font,int width){
         var output=new ArrayList<Component>();
         for(int index=0;index<lines.size();index++){
-            var line=lines.get(index);if(index==0||font.width(line)<=width){output.add(line);continue;}
+            var line=lines.get(index);if(font.width(line)<=width){output.add(line);continue;}
             MutableComponent[] current={Component.empty()};
             line.visit((style,text)->{
                 var words=WORDS.matcher(text);
                 while(words.find()){
                     var word=Component.literal(words.group()).setStyle(style);
                     if(!current[0].getString().isBlank()&&font.width(current[0].copy().append(word))>width){output.add(current[0]);current[0]=Component.empty();}
-                    if(!current[0].getString().isEmpty()||!words.group().isBlank())current[0].append(word);
+                    if(font.width(word)>width){
+                        for(int offset=0;offset<words.group().length();){
+                            int cp=words.group().codePointAt(offset);offset+=Character.charCount(cp);var glyph=Component.literal(new String(Character.toChars(cp))).setStyle(style);
+                            if(!current[0].getString().isEmpty()&&font.width(current[0].copy().append(glyph))>width){output.add(current[0]);current[0]=Component.empty();}
+                            current[0].append(glyph);
+                        }
+                    }else if(!current[0].getString().isEmpty()||!words.group().isBlank())current[0].append(word);
                 }
                 return Optional.empty();
             },Style.EMPTY);

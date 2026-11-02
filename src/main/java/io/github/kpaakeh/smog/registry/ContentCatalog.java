@@ -76,6 +76,7 @@ public final class ContentCatalog {
                 if (!ingredient.value().startsWith("#") && !net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(Identifier.parse(ingredient.value())))
                     throw new IllegalArgumentException("Unknown multiblock block: " + ingredient.value());
             }
+            DecorBlocks.initialize();
             ModCreativeTabs.initialize(root);
         } catch (IOException e) { throw new IllegalStateException("Unable to read content catalog", e); }
     }

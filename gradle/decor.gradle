@@ -1,0 +1,27 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+def decorDirectory=layout.buildDirectory.dir('generated/decor')
+def decorDirectoryFile=decorDirectory.get().asFile
+def contentDirectoryFile=layout.buildDirectory.dir('generated/smog-content').get().asFile
+tasks.register('generateDecor',Exec) {
+    inputs.file('src/main/content/decor.json');inputs.file('tools/generate_decor.py');inputs.dir('src/main/resources/assets/smog/textures/block')
+    outputs.dir(decorDirectory)
+    commandLine 'C:/Users/carba/AppData/Local/Programs/Python/Python312/python.exe','tools/generate_decor.py',decorDirectory.get().asFile.absolutePath
+}
+sourceSets.main.resources.srcDir(decorDirectory)
+tasks.named('generateContent') {
+    dependsOn('generateDecor');inputs.file('src/main/content/decor.json')
+    doLast {
+        def fragments=new JsonSlurper().parse(new File(decorDirectoryFile,'decor.fragments.json'))
+        def content=contentDirectoryFile
+        ['en_us','ru_ru'].each { language ->
+            def file=new File(content,"assets/smog/lang/${language}.json");def data=new JsonSlurper().parse(file);data.putAll(fragments[language]);file.setText(JsonOutput.prettyPrint(JsonOutput.toJson(data))+'\n','UTF-8')
+        }
+        fragments.tags.each { path,values ->
+            def file=new File(content,path);def data=file.exists()?new JsonSlurper().parse(file):[replace:false,values:[]];data.values.addAll(values);data.values=data.values.unique();file.parentFile.mkdirs();file.setText(JsonOutput.prettyPrint(JsonOutput.toJson(data))+'\n','UTF-8')
+        }
+    }
+}
+
+tasks.named('sourcesJar') { from(layout.projectDirectory.file('src/main/content/decor.json')) { into('content') } }

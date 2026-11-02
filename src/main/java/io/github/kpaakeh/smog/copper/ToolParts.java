@@ -97,10 +97,21 @@ public final class ToolParts {
         var profile=candidate.material().profile(candidate.form());int units=units(candidate),extra=Math.max(0,(int)ToolDefinitions.number(profile,"shaping_extra_units",0));int count=(units+extra+8999)/9000;int yield=units<=9000&&extra==0&&9000%units==0?Math.min(64,9000/units):1;
         return new Shaping(new ItemStack(item(candidate.item().toString()),yield),Math.max(1,count));
     }
-    public static boolean materialIngredient(ItemStack ingredient,ToolDefinitions.Material material){String value=material.repairItem();if(value.isEmpty()||ingredient.isEmpty())return false;return value.startsWith("#")?ingredient.is(TagKey.create(Registries.ITEM,Identifier.parse(value.substring(1)))):name(ingredient).equals(value);}
-    public static List<Item> repairIngredients(){var values=new LinkedHashSet<Item>();for(String value:ToolDefinitions.parts().stream().map(p->p.material().repairItem()).filter(s->!s.isEmpty()).distinct().toList()){
-        if(value.startsWith("#"))BuiltInRegistries.ITEM.getTagOrEmpty(TagKey.create(Registries.ITEM,Identifier.parse(value.substring(1)))).forEach(holder->values.add(holder.value()));else{var id=Identifier.parse(value);if(BuiltInRegistries.ITEM.containsKey(id))values.add(BuiltInRegistries.ITEM.getValue(id));}
-    }return List.copyOf(values);}
+    public static boolean materialIngredient(ItemStack ingredient,ToolDefinitions.Material material){
+        String value=material.repairItem();if(value.isEmpty()||ingredient.isEmpty())return false;
+        if(value.startsWith("#"))return ingredient.is(TagKey.create(Registries.ITEM,Identifier.parse(value.substring(1))));
+        if(name(ingredient).equals(value))return true;
+        return !material.molten().isEmpty()&&ingredient.is(TagKey.create(Registries.ITEM,Identifier.fromNamespaceAndPath("c","ingots/"+material.molten())));
+    }
+    public static List<Item> repairIngredients(){
+        var values=new LinkedHashSet<Item>();
+        for(String value:ToolDefinitions.parts().stream().map(p->p.material().repairItem()).filter(s->!s.isEmpty()).distinct().toList()){
+            if(value.startsWith("#"))BuiltInRegistries.ITEM.getTagOrEmpty(TagKey.create(Registries.ITEM,Identifier.parse(value.substring(1)))).forEach(holder->values.add(holder.value()));
+            else {var id=Identifier.parse(value);if(BuiltInRegistries.ITEM.containsKey(id))values.add(BuiltInRegistries.ITEM.getValue(id));}
+        }
+        for(var material:ToolDefinitions.parts().stream().map(ToolDefinitions.Part::material).filter(m->!m.molten().isEmpty()).distinct().toList())BuiltInRegistries.ITEM.getTagOrEmpty(TagKey.create(Registries.ITEM,Identifier.fromNamespaceAndPath("c","ingots/"+material.molten()))).forEach(holder->values.add(holder.value()));
+        return List.copyOf(values);
+    }
     public static Shaping shaping(ItemStack ingredient,ToolDefinitions.Template schema){
         var role=schema.roles().get(ToolDefinitions.primary(schema));for(var candidate:shapingChoices(ingredient))if(role.accepts(candidate)){var plan=shaping(ingredient,candidate);if(ingredient.getCount()>=plan.count())return plan;}return null;
     }

@@ -2,11 +2,11 @@
 from pathlib import Path
 import json,sys
 ROOT=Path(__file__).resolve().parents[1]
-SOURCE=ROOT/'src/main/resources';GENERATED=ROOT/'build/generated/smog-content'
+SOURCE=ROOT/'src/main/resources';GENERATED=ROOT/'build/generated/smog-content';DECOR=ROOT/'build/generated/decor'
 if not GENERATED.exists():raise SystemExit('Run gradlew generateContent first.')
 used=set();seen=set();missing=[]
 def load(path):
-    for folder in [SOURCE,GENERATED]:
+    for folder in [SOURCE,GENERATED,DECOR]:
         p=folder/path
         if p.is_file():return json.loads(p.read_text(encoding='utf-8-sig'))
     missing.append(path);return {}
@@ -27,7 +27,7 @@ def walk(value):
         for entry in value:walk(entry)
 for kind in ['items','blockstates']:
     # Source overrides generated resources, just as it does in load().
-    paths={p.name:p for folder in [GENERATED,SOURCE] for p in (folder/'assets/smog'/kind).glob('*.json')}
+    paths={p.name:p for folder in [DECOR,GENERATED,SOURCE] for p in (folder/'assets/smog'/kind).glob('*.json')}
     for p in paths.values():walk(json.loads(p.read_text(encoding='utf-8-sig')))
 content=json.loads((ROOT/'src/main/content/smog.content.json').read_text(encoding='utf-8'))
 for fluid in content['fluids']:
@@ -39,7 +39,10 @@ for fluid in content['fluids']:
 used.update(['block/workshop_water_surface.png','block/plant_oil_surface.png'])
 if any(m.get('name')=='copper_hearth' for m in content.get('machines',[])):used.update(['gui/smeltery.png','block/smeltery_fuel_surface.png','block/blazing_fuel_surface.png'])
 used.update('gui/sprites/tooltip/workshop_'+kind+'.png' for kind in ['background','frame'])
-textures=SOURCE/'assets/smog/textures';actual={p.relative_to(textures).as_posix() for p in textures.rglob('*.png')}
+actual=set()
+for folder in [GENERATED,DECOR,SOURCE]:
+    textures=folder/'assets/smog/textures'
+    actual.update(p.relative_to(textures).as_posix() for p in textures.rglob('*.png'))
 unused=sorted(actual-used);absent=sorted(used-actual)
 print('Active PNGs:',len(actual),'Unused:',len(unused),'Missing:',len(absent))
 for item in unused:print('UNUSED',item)

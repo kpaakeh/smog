@@ -36,6 +36,20 @@ public final class LogisticsTests {
         h.getLevel().setBlock(power,Blocks.REDSTONE_BLOCK.defaultBlockState(),Block.UPDATE_ALL);steps(h,m,LoadingCrane.duration(m)*2);h.assertValueEqual(count(target,Items.COBBLESTONE),64,"Constant high signal starts one batch only");h.assertTrue(m.copper.craneRedstoneHigh,"Last high state is tracked");
         h.getLevel().setBlock(power,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);steps(h,m,1);h.getLevel().setBlock(power,Blocks.REDSTONE_BLOCK.defaultBlockState(),Block.UPDATE_ALL);steps(h,m,LoadingCrane.duration(m));h.assertValueEqual(count(target,Items.COBBLESTONE),128,"A new rising edge starts the second batch");h.assertValueEqual(count(source,Items.COBBLESTONE),0,"No phantom or lost source items");h.succeed();
     }
+    @GameTest public void disabledCraneKeepsReservedCargoAndDoesNotDuplicateHeldRedstoneOrder(GameTestHelper h){
+        var m=crane(h);var source=barrel(h,LoadingCrane.bay(m,false));var target=barrel(h,LoadingCrane.bay(m,true));
+        source.setItem(0,new ItemStack(Items.COBBLESTONE,64));source.setItem(1,new ItemStack(Items.COBBLESTONE,64));
+        LoadingCrane.queue(m);steps(h,m,LoadingCrane.duration(m)*3/20+1);
+        h.assertValueEqual(m.getItem(1).getCount(),64,"The hoist reserves exactly one real stack before pausing");int progress=m.copper.work;
+        m.enabled(false);h.getLevel().setBlock(m.getBlockPos().north(),Blocks.REDSTONE_BLOCK.defaultBlockState(),Block.UPDATE_ALL);
+        for(int n=0;n<200;n++)m.serverTick();
+        h.assertValueEqual(m.copper.work,progress,"Disabled controller does not advance the order");
+        h.assertValueEqual(m.getItem(1).getCount(),64,"Reserved cargo stays on the disabled hoist");h.assertValueEqual(count(target,Items.COBBLESTONE),0,"Disabled controller delivers no phantom cargo");
+        m.enabled(true);for(int n=0;n<LoadingCrane.duration(m)*2;n++)m.serverTick();
+        h.assertValueEqual(count(target,Items.COBBLESTONE),64,"Resume completes the preserved order once");
+        h.assertValueEqual(count(source,Items.COBBLESTONE),64,"A held signal does not steal a second source stack while resuming");
+        h.assertTrue(m.getItem(1).isEmpty()&&m.copper.queued==0,"No duplicate order or stranded cargo remains");h.succeed();
+    }
     @GameTest public void craneObstructionKeepsReservedLoad(GameTestHelper h){
         var m=crane(h);var source=barrel(h,LoadingCrane.bay(m,false));var target=barrel(h,LoadingCrane.bay(m,true));source.setItem(0,new ItemStack(Items.DIAMOND,11));LoadingCrane.queue(m);steps(h,m,LoadingCrane.duration(m)*3/20+1);var obstruction=m.getBlockPos().offset(0,-2,2);h.getLevel().setBlock(obstruction,Blocks.STONE.defaultBlockState(),Block.UPDATE_ALL);int progress=m.copper.work;steps(h,m,100);
         h.assertValueEqual(m.copper.work,progress,"Solid obstacle pauses the physical hoist");h.assertValueEqual(m.getItem(1).getCount(),11,"Obstacle never deletes reserved items");h.getLevel().setBlock(obstruction,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);steps(h,m,LoadingCrane.duration(m));h.assertValueEqual(count(target,Items.DIAMOND),11,"Clearing the obstruction resumes the saved batch");h.succeed();

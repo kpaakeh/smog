@@ -819,6 +819,12 @@
       "color": "9FBFC9",
       "display": "Tin Wire Coil",
       "display_ru": "Катушка оловянного провода"
+    },
+    {
+      "name": "test_interop_iron_ingot",
+      "kind": "generic",
+      "display": "Tagged interop iron ingot",
+      "tab": "test_only"
     }
   ]
 }

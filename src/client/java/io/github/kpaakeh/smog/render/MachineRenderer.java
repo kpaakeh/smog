@@ -105,8 +105,8 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             }
             if(!machine.getItem(0).isEmpty()){var offset=new net.minecraft.core.BlockPos(0,0,1).rotate(machine.rotation());addItem(shown,machine.getItem(0),offset.getX()+.5f,Math.max(.25f,level+.12f),offset.getZ()+.5f,machine);}
         }else if(kind.equals("tool_workbench")){
-            for(int i=0;i<io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts();i++){int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.slot(i);if(!machine.getItem(slot).isEmpty())addItem(shown,machine.getItem(slot),(i+1f)/(io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+1),1.02f,.5f,machine);}
-            var preview=machine.getItem(3).isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.preview(machine):machine.getItem(3);if(!preview.isEmpty())addItem(shown,preview,.5f,1.06f,.8f,machine);
+            for(int i=0;i<io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts();i++){int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.slot(i);if(!machine.getItem(slot).isEmpty())addItem(shown,machine.getItem(slot),(i+1f)/(io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+1),.9f,.5f,machine);}
+            var preview=machine.getItem(3).isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.preview(machine):machine.getItem(3);if(!preview.isEmpty())addItem(shown,preview,.5f,.925f,.8f,machine);
         }else if(io.github.kpaakeh.smog.copper.Smeltery.vessel(machine)){
             if(!machine.getItem(1).isEmpty())addItem(shown,machine.getItem(1),.5f,.775f,.5f,machine);
             if(kind.equals("casting_table")&&io.github.kpaakeh.smog.copper.CastingProcesses.core(machine.getItem(2))){
@@ -114,7 +114,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
                 shown.add(new State.ItemPart(.5f,.818f,.5f,.25f,model));
             }
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.825f,.5f,machine);
-            else if(machine.smeltery.filled>0){int metal=java.util.Arrays.asList(io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES).indexOf(machine.smeltery.pourMetal);if(metal>=0){boolean basin=kind.equals("casting_basin");float fill=machine.smeltery.filled/(float)Math.max(1,machine.smeltery.required);surfaces.add(basin?new MoltenRendering.Surface(.14f,.22f+.6f*fill,.14f,.72f,.72f,metal,machine.smeltery.cooling>0):new MoltenRendering.Surface(.32f,.782f+.025f*fill,.38f,.36f,.24f,metal,machine.smeltery.cooling>0));}}
+            else if(machine.smeltery.filled>0){int metal=java.util.Arrays.asList(io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES).indexOf(machine.smeltery.pourMetal);if(metal>=0){boolean basin=kind.equals("casting_basin");float fill=machine.smeltery.filled/(float)Math.max(1,machine.smeltery.required);surfaces.add(basin?new MoltenRendering.Surface(.14f,.22f+.6f*fill,.14f,.72f,.72f,metal,true):new MoltenRendering.Surface(.32f,.782f+.025f*fill,.38f,.36f,.24f,metal,true));}}
 
         }else if((io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(machine))||io.github.kpaakeh.smog.copper.WaterSupply.handles(machine)){
             if(storage.processFluid>0&&!kind.equals("hand_water_pump"))surfaces.add(new MoltenRendering.Surface(.14f,.35f+.3f*storage.processFluid/io.github.kpaakeh.smog.copper.WorkshopFluidStorage.CAPACITY,.14f,.72f,.72f,kind.equals("lever_press")?-2:-1,false));

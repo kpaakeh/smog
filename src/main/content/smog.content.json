@@ -2930,7 +2930,7 @@
         ],
         "key": {
           "C": "minecraft:clay_ball",
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "S": "minecraft:stick"
         },
         "result": {
@@ -2951,7 +2951,7 @@
         ],
         "key": {
           "B": "minecraft:brick",
-          "S": "minecraft:cobblestone"
+          "S": "#minecraft:stone_tool_materials"
         },
         "result": {
           "id": "smog:casting_table",
@@ -2972,7 +2972,7 @@
         "key": {
           "B": "minecraft:brick",
           "F": "minecraft:furnace",
-          "C": "minecraft:cobblestone"
+          "C": "#minecraft:stone_tool_materials"
         },
         "result": {
           "id": "smog:copper_hearth",
@@ -3002,7 +3002,7 @@
     },
     {
       "name": "hand_bellows",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3011,7 +3011,7 @@
           "PPP"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "L": "minecraft:leather"
         },
         "result": {
@@ -3135,7 +3135,7 @@
           "minecraft:clay_ball",
           "minecraft:clay_ball",
           "minecraft:clay_ball",
-          "minecraft:sand"
+          "#minecraft:sand"
         ],
         "result": {
           "id": "smog:tempered_clay",
@@ -3309,7 +3309,7 @@
     },
     {
       "name": "washing_trough",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3318,7 +3318,7 @@
           "PPP"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "C": "smog:copper_fitting",
           "B": "minecraft:bucket"
         },
@@ -3330,7 +3330,7 @@
     },
     {
       "name": "washing_section",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3339,7 +3339,7 @@
           " P "
         ],
         "key": {
-          "P": "minecraft:oak_planks"
+          "P": "#minecraft:planks"
         },
         "result": {
           "id": "smog:washing_section",
@@ -3358,7 +3358,7 @@
         ],
         "key": {
           "S": "minecraft:string",
-          "P": "minecraft:oak_planks"
+          "P": "#minecraft:planks"
         },
         "result": {
           "id": "smog:washing_sieve",
@@ -3368,7 +3368,7 @@
     },
     {
       "name": "workshop_support",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3377,7 +3377,7 @@
           "P P"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "S": "minecraft:stick"
         },
         "result": {
@@ -3388,7 +3388,7 @@
     },
     {
       "name": "lever_press",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3397,10 +3397,10 @@
           "PPP"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "S": "minecraft:stick",
           "C": "smog:copper_fitting",
-          "F": "minecraft:oak_fence"
+          "F": "#minecraft:wooden_fences"
         },
         "result": {
           "id": "smog:lever_press",
@@ -3410,7 +3410,7 @@
     },
     {
       "name": "press_frame",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3418,7 +3418,7 @@
           "C C"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "C": "smog:copper_fitting"
         },
         "result": {
@@ -3439,7 +3439,7 @@
         ],
         "key": {
           "S": "minecraft:stick",
-          "P": "minecraft:oak_planks"
+          "P": "#minecraft:planks"
         },
         "result": {
           "id": "smog:press_basket",
@@ -3489,7 +3489,7 @@
           "PPP"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "C": "smog:copper_plate"
         },
         "result": {
@@ -3531,7 +3531,7 @@
         ],
         "key": {
           "S": "smog:waxed_cord",
-          "P": "minecraft:oak_planks"
+          "P": "#minecraft:planks"
         },
         "result": {
           "id": "smog:press_basket",
@@ -3541,7 +3541,7 @@
     },
     {
       "name": "tool_workbench",
-      "unlock": "minecraft:oak_planks",
+      "unlock": "#minecraft:planks",
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
@@ -3550,7 +3550,7 @@
           "P P"
         ],
         "key": {
-          "P": "minecraft:oak_planks",
+          "P": "#minecraft:planks",
           "C": "smog:copper_fitting",
           "S": "minecraft:crafting_table"
         },
@@ -3640,15 +3640,12 @@
     },
     {
       "name": "fiber_wrap",
-      "unlock": "minecraft:string",
+      "unlock": "smog:plant_fiber",
       "data": {
-        "type": "minecraft:crafting_shaped",
-        "pattern": [
-          "SS"
+        "type": "minecraft:crafting_shapeless",
+        "ingredients": [
+          "smog:plant_fiber"
         ],
-        "key": {
-          "S": "minecraft:string"
-        },
         "result": {
           "id": "smog:fiber_wrap",
           "count": 2
@@ -3672,11 +3669,11 @@
     },
     {
       "name": "wool_wrap",
-      "unlock": "minecraft:white_wool",
+      "unlock": "#minecraft:wool",
       "data": {
         "type": "minecraft:crafting_shapeless",
         "ingredients": [
-          "minecraft:white_wool",
+          "#minecraft:wool",
           "minecraft:string"
         ],
         "result": {
@@ -3924,11 +3921,11 @@
     },
     {
       "name": "molding_sand",
-      "unlock": "minecraft:sand",
+      "unlock": "#minecraft:sand",
       "data": {
         "type": "minecraft:crafting_shapeless",
         "ingredients": [
-          "minecraft:sand",
+          "#minecraft:sand",
           "minecraft:clay_ball"
         ],
         "result": {

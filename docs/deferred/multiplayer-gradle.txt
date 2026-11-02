@@ -1,0 +1,23 @@
+if(providers.gradleProperty('multiplayerTest').isPresent()) {
+    def peerLaunchFile = layout.buildDirectory.file('run/clientGameTest/peer-launch.json')
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.multiplayerTest=true'; vmArg '-Xmx1G'; vmArg '-Dsmog.peerLaunchManifest=' + peerLaunchFile.get().asFile.absolutePath }
+    tasks.named('runClientGameTest') {
+        doFirst { task ->
+            // Loom keeps its launch properties outside JavaExec.jvmArgs until execution.
+            Class type = task.class
+            java.lang.reflect.Method internalArgs = null
+            while (type != null && internalArgs == null) {
+                try { internalArgs = type.getDeclaredMethod('getInternalJvmArgs') } catch (NoSuchMethodException ignored) { type = type.superclass }
+            }
+            if (internalArgs == null) throw new GradleException('Cannot obtain explicit Loom launch properties')
+            internalArgs.accessible = true
+            def launch = [java: task.javaLauncher.get().executablePath.asFile.absolutePath,
+                mainClass: task.mainClass.get(), classpath: task.classpath.files.collect { it.canonicalPath },
+                jvmArgs: (task.allJvmArgs + internalArgs.invoke(task).get()).findAll { !it.startsWith('@') }.unique(),
+                args: task.args, environment: [:]]
+            def target = peerLaunchFile.get().asFile
+            target.parentFile.mkdirs()
+            target.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(launch)), 'UTF-8')
+        }
+    }
+}

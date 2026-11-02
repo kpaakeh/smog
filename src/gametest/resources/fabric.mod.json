@@ -15,6 +15,8 @@
       "io.github.kpaakeh.smog.test.ToolActionTests",
       "io.github.kpaakeh.smog.test.ToolCatalogTests",
       "io.github.kpaakeh.smog.test.WorkshopRecipeTests",
+      "io.github.kpaakeh.smog.test.DecorTests",
+      "io.github.kpaakeh.smog.test.WorkshopMaterialTests",
       "io.github.kpaakeh.smog.test.ToolBalanceTests",
       "io.github.kpaakeh.smog.test.FinishingTests",
       "io.github.kpaakeh.smog.test.WaterlineTests",
@@ -22,7 +24,9 @@
       "io.github.kpaakeh.smog.test.LogisticsTests",
       "io.github.kpaakeh.smog.test.HandcartTerrainTests",
       "io.github.kpaakeh.smog.test.WorkshopReliabilityTests",
-      "io.github.kpaakeh.smog.test.ToolTooltipTests"
+      "io.github.kpaakeh.smog.test.VanillaToolTransportTests",
+      "io.github.kpaakeh.smog.test.ToolTooltipTests",
+      "io.github.kpaakeh.smog.test.ToolMaterialInteropTests"
     ],
     "fabric-client-gametest": [
       "io.github.kpaakeh.smog.test.ClientFoundationTests"

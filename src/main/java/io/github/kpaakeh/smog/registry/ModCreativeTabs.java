@@ -34,6 +34,7 @@ public final class ModCreativeTabs {
             String category=item instanceof ToolPartItem?"tool_parts":Set.of("configurator","wrench","rope").contains(kind)?"tools":kind.equals("handcart")?"mechanisms":name.endsWith("_plate")?"blocks":"copper_age";
             add.accept(category,item);
         }
+        DecorBlocks.all().forEach(block->add.accept("blocks",block));
         ModFluids.all().forEach(fluid->add.accept(fluid.name.equals("plant_oil")?"copper_age":"blocks",fluid.bucket));
         for(String id:IDS){var contents=List.copyOf(groups.get(id));
             Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,ModBlocks.id(id),FabricCreativeModeTab.builder()
