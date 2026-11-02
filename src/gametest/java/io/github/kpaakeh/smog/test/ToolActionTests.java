@@ -13,6 +13,20 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.*;
 
 public final class ToolActionTests {
+    @GameTest public void sawFellsAnActualGeneratedTreeWithAutomaticProvenance(GameTestHelper h){
+        var level=h.getLevel();var base=h.absolutePos(new BlockPos(4,20,4));
+        for(var clear:BlockPos.betweenClosed(base.offset(-4,0,-4),base.offset(4,14,4)))level.setBlock(clear,Blocks.AIR.defaultBlockState(),Block.UPDATE_ALL);
+        for(var soil:BlockPos.betweenClosed(base.offset(-2,-1,-2),base.offset(2,-1,2)))level.setBlock(soil,Blocks.DIRT.defaultBlockState(),Block.UPDATE_ALL);
+        var sapling=Blocks.OAK_SAPLING.defaultBlockState().setValue(SaplingBlock.STAGE,1);level.setBlock(base,sapling,Block.UPDATE_ALL);
+        ((SaplingBlock)Blocks.OAK_SAPLING).advanceTree(level,base,sapling,net.minecraft.util.RandomSource.create(7));
+        var logs=new java.util.ArrayList<BlockPos>();
+        for(var pos:BlockPos.betweenClosed(base.offset(-3,0,-3),base.offset(3,12,3)))if(level.getBlockState(pos).is(Blocks.OAK_LOG))logs.add(pos.immutable());
+        h.assertTrue(logs.size()>=4,"The real tree feature generated a trunk");
+        for(var pos:logs)h.assertTrue(NaturalTreeLogs.natural(level,pos),"TreeFeature automatically marks generated logs");
+        var p=player(h,"saw",base);var tool=p.getMainHandItem();h.assertTrue(p.gameMode.destroyBlock(base),"Native first break succeeds on the generated tree");
+        for(var pos:logs)h.assertTrue(level.getBlockState(pos).isAir(),"The entire generated trunk is felled");
+        h.assertValueEqual(tool.getDamageValue(),logs.size(),"Every generated log costs durability");h.succeed();
+    }
     private static ServerPlayer player(GameTestHelper h,String type,BlockPos pos){var p=(ServerPlayer)h.makeMockServerPlayer(GameType.SURVIVAL);p.connection=h.makeMockServerPlayerInLevel().connection;p.setPos(pos.getX()+.5,pos.getY(),pos.getZ()-3);p.setYRot(0);p.setXRot(0);p.setItemInHand(InteractionHand.MAIN_HAND,ToolParts.example(ToolDefinitions.template(type),"copper"));return p;}
     @GameTest public void hammerBreaksOnePlaneAndPaysWearForEveryBlock(GameTestHelper h){
         var level=h.getLevel();var center=h.absolutePos(new BlockPos(4,3,4));

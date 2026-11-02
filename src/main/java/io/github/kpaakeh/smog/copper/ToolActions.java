@@ -15,7 +15,7 @@ import net.minecraft.world.phys.*;
 /** Extra work uses normal player destruction; re-entry never expands another area. */
 public final class ToolActions {
     private static final Set<UUID> ACTIVE=new HashSet<>();
-    private record Face(BlockPos pos,Direction face){}
+    private record Face(BlockPos pos,Direction face,boolean naturalLog){}
     private static final Map<UUID,Face> FACES=new HashMap<>();
     private ToolActions(){}
     public static void initialize(){
@@ -23,7 +23,7 @@ public final class ToolActions {
         PlayerBlockBreakEvents.BEFORE.register((level,player,pos,state,entity)->{
             if(player instanceof ServerPlayer server&&!ACTIVE.contains(server.getUUID())){
                 var hit=server.pick(6,0,false);var face=hit instanceof BlockHitResult block?block.getDirection():Direction.getApproximateNearest(server.getLookAngle()).getOpposite();
-                FACES.put(server.getUUID(),new Face(pos.immutable(),face));
+                FACES.put(server.getUUID(),new Face(pos.immutable(),face,state.is(BlockTags.LOGS)&&NaturalTreeLogs.natural(level,pos)));
             }
             return true;
         });
@@ -40,7 +40,7 @@ public final class ToolActions {
                     if(ModularToolItem.broken(stack))return;var other=level.getBlockState(target);
                     if(other.is(BlockTags.MINEABLE_WITH_PICKAXE)&&other.getDestroySpeed(level,target)<=Math.max(0,state.getDestroySpeed(level,pos))*3+1)destroy(player,stack,target);
                 }
-            }else if(behavior.equals("saw")&&state.is(BlockTags.LOGS)&&NaturalTreeLogs.natural(level,pos)){
+            }else if(behavior.equals("saw")&&state.is(BlockTags.LOGS)&&naturalOrigin(level,pos,player)){
                 var pending=new ArrayDeque<BlockPos>();var visited=new HashSet<BlockPos>();pending.add(pos.immutable());visited.add(pos.immutable());
                 while(!pending.isEmpty()&&visited.size()<=256){
                     var current=pending.removeFirst();
@@ -54,6 +54,10 @@ public final class ToolActions {
                 NaturalTreeLogs.placed(level,pos);
             }
         }finally{ACTIVE.remove(player.getUUID());FACES.remove(player.getUUID());}
+    }
+    private static boolean naturalOrigin(ServerLevel level,BlockPos pos,ServerPlayer player){
+        var before=FACES.get(player.getUUID());
+        return before!=null&&before.pos.equals(pos)?before.naturalLog:NaturalTreeLogs.natural(level,pos);
     }
     private static boolean destroy(ServerPlayer player,ItemStack tool,BlockPos pos){
         var level=player.level();if(!level.hasChunkAt(pos)||!level.mayInteract(player,pos)||player.isSpectator()||ModularToolItem.broken(tool))return false;
