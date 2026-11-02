@@ -123,7 +123,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
         }else if(kind.equals("potter_table")){
             var selected=machine.getItem(3).isEmpty()?net.minecraft.world.item.Item.byId(io.github.kpaakeh.smog.copper.CopperWorkshops.data(machine,12)).getDefaultInstance():machine.getItem(3);addItem(shown,selected,.5f,1.035f,.5f,machine);
         }
-        if(kind.equals("smeltery_fuel_tank")&&machine.smeltery.fuelAmount>0)surfaces.add(new MoltenRendering.Surface(.19f,.2f+.55f*machine.smeltery.fuelAmount/io.github.kpaakeh.smog.copper.SmelteryFuelStorage.CAPACITY,.19f,.62f,.62f,machine.smeltery.fuel.equals("smog:blazing_fuel")?-4:-3,true));
+        if(kind.equals("smeltery_fuel_tank")&&machine.smeltery.fuelAmount>0)layers.add(new MoltenRendering.Layer(.19f,.2f,.19f,.62f,.55f*machine.smeltery.fuelAmount/io.github.kpaakeh.smog.copper.SmelteryFuelStorage.CAPACITY,.62f,machine.smeltery.fuel.equals("smog:blazing_fuel")?-4:-3));
         state.moltenLayers=java.util.List.copyOf(layers);state.streams=java.util.List.copyOf(streams);state.moltenSurfaces=java.util.List.copyOf(surfaces);state.displayedItems=java.util.List.copyOf(shown);
     }
     private MoltenRendering.Surface chamberSurface(float x,float y,float z,float width,float depth,int metal,boolean hot,net.minecraft.world.level.block.Rotation rotation){

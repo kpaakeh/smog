@@ -19,12 +19,12 @@ public final class CastingGui {
         int total=stage==3?Math.max(1,menu.data.get(25)):Math.max(1,required);
         int progress=stage==3?total-menu.data.get(24):filled;
         GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,stage==4?24:Math.clamp((int)(24L*progress/total),0,24),16,24,16);
-        if(required>0)g.text(font,Component.translatable("gui.smog.casting.volume",filled/81,required/81),x+7,y+70,0xFF404040,false);
+        if(required>0)g.text(font,Component.translatable("gui.smog.casting.volume",FluidAmountText.format(filled),FluidAmountText.format(required)),x+7,y+70,0xFF404040,false);
         if(stage==3)g.text(font,Component.translatable("gui.smog.casting.cooling",(menu.data.get(24)+19)/20),x+7,y+82,0xFF404040,false);
         if(menu.layout.id.equals("casting_table")){
             if(menu.container.getItem(2).isEmpty()&&mouseX>=x+52&&mouseX<x+68&&mouseY>=y+35&&mouseY<y+51)g.setTooltipForNextFrame(Component.translatable("gui.smog.casting.core_slot"),mouseX,mouseY);
             if(menu.container.getItem(1).isEmpty()&&mouseX>=x+71&&mouseX<x+87&&mouseY>=y+35&&mouseY<y+51)g.setTooltipForNextFrame(Component.translatable("gui.smog.casting.mold_slot"),mouseX,mouseY);
         }
-        if(mouseX>=x+25&&mouseX<x+43&&mouseY>=y+34&&mouseY<y+66){var tooltip=metal>=0&&metal<MoltenMetalStorage.NAMES.length?Component.translatable("block.smog.molten_"+MoltenMetalStorage.NAMES[metal]).append(" / "+(filled>0&&filled<81?"<1":Integer.toString(filled/81))+" mB"):label;g.setTooltipForNextFrame(tooltip,mouseX,mouseY);}
+        if(mouseX>=x+25&&mouseX<x+43&&mouseY>=y+34&&mouseY<y+66){var tooltip=metal>=0&&metal<MoltenMetalStorage.NAMES.length?Component.translatable("block.smog.molten_"+MoltenMetalStorage.NAMES[metal]).append(" / ").append(FluidAmountText.format(filled)):label;g.setTooltipForNextFrame(tooltip,mouseX,mouseY);}
     }
 }

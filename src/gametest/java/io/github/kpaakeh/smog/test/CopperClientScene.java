@@ -36,6 +36,8 @@ public final class CopperClientScene {
     public static void run(ClientGameTestContext context){
         String requestedLanguage=System.getProperty("smog.testLanguage","");
         String previousLanguage=requestedLanguage.isEmpty()?null:language(context,requestedLanguage);
+        if(!io.github.kpaakeh.smog.copper.FluidAmounts.format(81000+18000,true).getString().equals("1222 2/9 mB"))throw new IllegalStateException("Exact mB must retain fractional Fabric units");
+        if(!io.github.kpaakeh.smog.copper.FluidAmounts.format(1,true).getString().equals("0 1/81 mB"))throw new IllegalStateException("Sub-mB volume must not round to zero");
         try(var world=context.worldBuilder().create()){
             world.getServer().runCommand("fill -12 99 -8 12 99 8 minecraft:stone");
             world.getServer().runCommand("time set noon");world.getServer().runCommand("weather clear");

@@ -34,14 +34,14 @@ public final class SmelteryGui {
         for(int col=0;col<9;col++)GuiTextures.draw(g,"slot",x+79+col*18,y+menu.layout.height-25,18,18);
         g.fill(x+TX-1,y+TY-1,x+TX+TW+1,y+TY+TH+1,0xFF373737);g.fill(x+TX,y+TY,x+TX+TW,y+TY+TH,0xFF8B8B8B);
         for(var layer:layers(menu)){tile(g,ModBlocks.id("textures/block/molten_"+MoltenMetalStorage.NAMES[layer.metal()]+"_surface.png"),x+TX,y+layer.y(),TW,layer.height(),16);if(layer.metal()==menu.data.get(24))g.fill(x+TX,y+layer.y(),x+TX+1,y+layer.y()+layer.height(),0xFFF2E5AF);
-            if(mouseX>=x+TX&&mouseX<x+TX+TW&&mouseY>=y+layer.y()&&mouseY<y+layer.y()+layer.height())g.setTooltipForNextFrame(Component.translatable("block.smog.molten_"+MoltenMetalStorage.NAMES[layer.metal()]).append("  /  "+(layer.amount()<81?"<1":Integer.toString(layer.amount()/81))+" mB"),mouseX,mouseY);
+            if(mouseX>=x+TX&&mouseX<x+TX+TW&&mouseY>=y+layer.y()&&mouseY<y+layer.y()+layer.height())g.setTooltipForNextFrame(Component.translatable("block.smog.molten_"+MoltenMetalStorage.NAMES[layer.metal()]).append("  /  ").append(FluidAmountText.format(layer.amount())),mouseX,mouseY);
         }
         marks(g,x+TX,y+TY,TW,TH);
         g.fill(x+223,y+23,x+237,y+100,0xFF373737);g.fill(x+224,y+24,x+236,y+99,0xFF20252A);int fuel=value(menu,25),maximum=Math.max(1,menu.data.get(38)),height=Math.clamp(75*menu.data.get(2)/maximum,0,75);
         if(fuel==0&&menu.data.get(35)>0)GuiTextures.draw(g,"copper_lit_progress",x+222,y+97,14,14);
         if(height>0)g.fill(x+224,y+99-height,x+236,y+99,0xFFE6A23A);
         int limit=y+99-Math.clamp(75*menu.data.get(28)/maximum,0,75);g.fill(x+222,limit,x+238,limit+1,0xFFF6E7BC);
-        if(mouseX>=x+222&&mouseX<x+238&&mouseY>=y+23&&mouseY<y+100)g.setTooltipForNextFrame(Component.translatable("gui.smog.smeltery.heat",menu.data.get(2),maximum,menu.data.get(28)),mouseX,mouseY);
+        if(mouseX>=x+222&&mouseX<x+238&&mouseY>=y+23&&mouseY<y+100)g.setTooltipForNextFrame(Component.translatable("gui.smog.smeltery.heat",menu.data.get(2),maximum,menu.data.get(28)).append(" · ").append(Component.translatable("gui.smog.smeltery.fuel",FluidAmountText.format(fuel))),mouseX,mouseY);
         g.text(font,Component.literal((menu.data.get(23)+1)+" / "+Math.max(1,(menu.data.get(33)+Smeltery.PAGE_SIZE-1)/Smeltery.PAGE_SIZE)),x+16,y+menu.layout.height-36,0xFF404040,false);
         int page=menu.data.get(23);
         for(int n=page*Smeltery.PAGE_SIZE;n<Math.min((page+1)*Smeltery.PAGE_SIZE,Smeltery.MAX_WORKERS);n++){int slot=Smeltery.slot(n);if(menu.container.getItem(slot).isEmpty())continue;int px=x+7+(n%3)*18,py=y+45+((n%Smeltery.PAGE_SIZE)/3)*19;g.fill(px,py,px+18,py+2,0xFF373737);g.fill(px,py,px+18*menu.data.get(Smeltery.PROGRESS+n)/1000,py+2,0xFF84AA55);int status=menu.data.get(Smeltery.STATUS+n);if(status!=0&&!menu.container.getItem(slot).isEmpty())g.fill(px+15,py,px+18,py+2,0xFFB05D49);if(mouseX>=px&&mouseX<px+18&&mouseY>=py&&mouseY<py+3)g.setTooltipForNextFrame(Component.translatable("gui.smog.copper.status_"+status),mouseX,mouseY);if(n>=menu.data.get(22))g.fill(px,py-18,px+18,py,0x66888888);}

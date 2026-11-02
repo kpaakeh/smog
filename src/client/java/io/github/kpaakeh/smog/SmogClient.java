@@ -5,6 +5,13 @@ import net.fabricmc.api.ClientModInitializer;
 public class SmogClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback.EVENT.register((stack,context,flag,lines)->{
+            if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.WorkshopCanisterItem&&!lines.isEmpty()){
+                var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+                var ordinary=io.github.kpaakeh.smog.copper.FluidAmounts.format(data.getIntOr("smog_fluid_units",0),false).copy().append(" / ").append(io.github.kpaakeh.smog.copper.FluidAmounts.format(648000,false)).getString();
+                for(int i=0;i<lines.size();i++)if(lines.get(i).getString().equals(ordinary))lines.set(i,io.github.kpaakeh.smog.gui.FluidAmountText.format(data.getIntOr("smog_fluid_units",0)).copy().append(" / ").append(io.github.kpaakeh.smog.gui.FluidAmountText.format(648000)));
+            }
+        });
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(io.github.kpaakeh.smog.copper.CopperTransport.HANDCART,io.github.kpaakeh.smog.render.HandcartRenderer::new);
         net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(io.github.kpaakeh.smog.copper.CopperTransport.ROPEWAY_RIDE,io.github.kpaakeh.smog.render.RopewayRideRenderer::new);
         for(var layout:io.github.kpaakeh.smog.gui.GuiLayouts.all())

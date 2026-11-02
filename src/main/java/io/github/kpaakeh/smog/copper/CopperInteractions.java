@@ -26,7 +26,7 @@ public final class CopperInteractions {
         if(Smeltery.fuelTank(m)){
             if(held.is(Items.BLAZE_POWDER)&&m.smelteryFuel.resource().equals(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.world.level.material.Fluids.LAVA))&&m.smeltery.fuelAmount>0){int powder=2*((m.smeltery.fuelAmount+80999)/81000);if(!player.isCreative()&&held.getCount()<powder){player.sendOverlayMessage(Component.translatable("message.smog.fuel_powder",powder));return InteractionResult.SUCCESS;}int amount=m.smeltery.fuelAmount;var target=net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.core.registries.BuiltInRegistries.FLUID.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("blazing_fuel")));try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){if(m.smelteryFuel.extract(m.smelteryFuel.resource(),amount,tx)!=amount||m.smelteryFuel.insert(target,amount,tx)!=amount)return InteractionResult.FAIL;tx.commit();}if(!player.isCreative())held.shrink(powder);player.sendOverlayMessage(Component.translatable("message.smog.fuel_prepared"));return InteractionResult.SUCCESS;}
 
-            if(held.isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.fuel_tank",m.smeltery.fuelAmount/81));return InteractionResult.SUCCESS;}
+            if(held.isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.fuel_tank",FluidAmounts.format(m.smeltery.fuelAmount,player.isShiftKeyDown()),FluidAmounts.format(SmelteryFuelStorage.CAPACITY,player.isShiftKeyDown())));return InteractionResult.SUCCESS;}
             return FluidStorageUtil.interactWithFluidStorage(m.smelteryFuel,player,hand)?InteractionResult.SUCCESS:InteractionResult.PASS;
         }
         if(Smeltery.handles(m)){
@@ -94,7 +94,7 @@ public final class CopperInteractions {
             if(FluidStorageUtil.interactWithFluidStorage(m.castingFluid,player,hand))return InteractionResult.SUCCESS;
             if(CastingProcesses.core(held)&&put(m,2,held))return InteractionResult.SUCCESS;
             if(held.isEmpty()&&take(m,player,3))return InteractionResult.SUCCESS;
-            if(CastingProcesses.locked(m)){if(player.isShiftKeyDown()&&held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}player.sendOverlayMessage(m.smeltery.filled>=m.smeltery.required&&m.smeltery.cooling>0?Component.translatable("message.smog.casting_cooling",(m.smeltery.cooling+19)/20):Component.translatable("message.smog.casting_locked",m.smeltery.filled/81,m.smeltery.required/81));return InteractionResult.SUCCESS;}
+            if(CastingProcesses.locked(m)){if(player.isShiftKeyDown()&&held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}player.sendOverlayMessage(m.smeltery.filled>=m.smeltery.required&&m.smeltery.cooling>0?Component.translatable("message.smog.casting_cooling",(m.smeltery.cooling+19)/20):Component.translatable("message.smog.casting_locked",FluidAmounts.format(m.smeltery.filled,player.isShiftKeyDown()),FluidAmounts.format(m.smeltery.required,player.isShiftKeyDown())));return InteractionResult.SUCCESS;}
             if(!CopperWorkshops.workshop(m,"casting_basin")&&(CopperWorkshops.mold(held)>=0||MoldMaking.pattern(held)!=null)){take(m,player,1);m.setItem(1,held.split(1));m.copper.work=0;m.sync();return InteractionResult.SUCCESS;}
             if(held.isEmpty()){take(m,player,3);return InteractionResult.SUCCESS;}
         }else if(CopperWorkshops.workshop(m,"potter_table")){
