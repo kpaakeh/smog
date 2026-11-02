@@ -43,10 +43,14 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         refreshButtons();
     }
     private void send(int id){if(minecraft.gameMode!=null)minecraft.gameMode.handleInventoryButtonClick(menu.containerId,id);}
+    private void textTooltip(GuiGraphicsExtractor g,java.util.List<Component> text,int mouseX,int mouseY){
+        var lines=text.stream().flatMap(line->font.split(line,Math.max(40,Math.min(280,width-20))).stream()).toList();
+        g.setTooltipForNextFrame(font,lines,(sw,sh,x,y,w,h)->new org.joml.Vector2i(Math.max(4,Math.min(x+12,width-w-4)),Math.max(4,Math.min(y-12,height-h-4))),mouseX,mouseY,false);
+    }
     private void fittedText(GuiGraphicsExtractor g,Component text,int x,int y,int width,int mouseX,int mouseY){
         if(font.width(text)<=width){g.text(font,text,x,y,0xFF404040,false);return;}
         g.text(font,Component.literal(font.plainSubstrByWidth(text.getString(),Math.max(0,width-font.width("…")))+"…"),x,y,0xFF404040,false);
-        if(mouseX>=x&&mouseX<x+width&&mouseY>=y&&mouseY<y+font.lineHeight)g.setTooltipForNextFrame(text,mouseX,mouseY);
+        if(mouseX>=x&&mouseX<x+width&&mouseY>=y&&mouseY<y+font.lineHeight)textTooltip(g,java.util.List.of(text),mouseX,mouseY);
     }
     private void refreshButtons(){
         if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null)craft.visible=kind==2||kind==5;}
@@ -69,7 +73,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             if(kind==1){CastingGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}
             if(kind==7){var preview=io.github.kpaakeh.smog.copper.ToolAssembly.preview(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));
                 fittedText(g,preview.isEmpty()?io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))):preview.getMaxDamage()>0?Component.translatable("tool.smog.durability",Math.max(0,preview.getMaxDamage()-preview.getDamageValue()),preview.getMaxDamage()).append(" [?]"):Component.translatable("tool.smog.shaping_cost",Math.max(1,menu.data.get(17)),preview.getCount()),x+7,y+20,162,mouseX,mouseY);
-                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30){if(preview.isEmpty())g.setTooltipForNextFrame(io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6))),mouseX,mouseY);else g.setTooltipForNextFrame(font,ToolPreviewDetails.lines(preview,menu.container.getItem(5)).stream().flatMap(line->font.split(line,Math.max(80,Math.min(280,width-20))).stream()).toList(),mouseX,mouseY);}
+                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+19&&mouseY<y+30)textTooltip(g,preview.isEmpty()?java.util.List.of(io.github.kpaakeh.smog.copper.ToolAssembly.problem(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)))):ToolPreviewDetails.lines(preview,menu.container.getItem(5)),mouseX,mouseY);
                 if(!preview.isEmpty()){g.fakeItem(preview,x+79,y+imageHeight-129);if(mouseX>=x+79&&mouseX<x+95&&mouseY>=y+imageHeight-129&&mouseY<y+imageHeight-113)g.setTooltipForNextFrame(font,preview,mouseX,mouseY);}
                 GuiTextures.draw(g,"copper_progress_empty",x+106,y+imageHeight-129,24,16);GuiTextures.crop(g,"copper_progress_full",x+106,y+imageHeight-129,0,0,24*Math.clamp(menu.data.get(0),0,40)/40,16,24,16);
                 g.text(font,Component.literal(font.plainSubstrByWidth((menu.data.get(13)>0?Component.translatable("tool.smog.preview_queue",menu.data.get(13)):(io.github.kpaakeh.smog.copper.ToolAssembly.shapingMode(menu.container)||!io.github.kpaakeh.smog.copper.MoldMaking.preview(menu.container).isEmpty())&&!preview.isEmpty()?preview.getHoverName():Component.translatable("tool.smog.template."+io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)).id())).getString(),120)),x+47,y+imageHeight-106,0xFF404040,false);return;}

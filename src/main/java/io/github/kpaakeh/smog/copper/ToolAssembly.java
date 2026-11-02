@@ -52,6 +52,10 @@ public final class ToolAssembly {
     private static void give(Player player,ItemStack stack){player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);}
     public static InteractionResult use(ServerLevel level,MachineEntity m,Player player,InteractionHand hand){
         var held=player.getItemInHand(hand);if(m.copper.queued>0){player.sendOverlayMessage(Component.translatable("tool.smog.working"));return InteractionResult.SUCCESS;}
+        // A hammer is both an action tool and a repairable assembly. Sneaking chooses mounting.
+        if(player.isShiftKeyDown()&&m.getItem(5).isEmpty()&&canMount(held)&&ToolParts.hammerAssembly(held)){
+            m.copper.selection=ToolDefinitions.index(ToolParts.schema(held).id());m.setItem(5,held.split(1));m.sync();return InteractionResult.SUCCESS;
+        }
         if(ToolParts.hammer(held)){
             if(player.isShiftKeyDown()&&!m.getItem(5).isEmpty()&&empty(m,-1)){var old=ToolParts.components(m.getItem(5));for(int i=0;i<old.size();i++)m.setItem(ToolDefinitions.slot(i),old.get(i));m.setItem(5,ItemStack.EMPTY);m.sync();return InteractionResult.SUCCESS;}
             var result=preview(m);if(result.isEmpty()||!m.canOutput(result)){player.sendOverlayMessage(Component.translatable("tool.smog.assembly_help"));return InteractionResult.SUCCESS;}

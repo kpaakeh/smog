@@ -3011,11 +3011,13 @@
       "name": "unfired_ingot_mold",
       "unlock": "minecraft:clay_ball",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:clay_ball",
-          "minecraft:clay_ball"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "CC"
         ],
+        "key": {
+          "C": "minecraft:clay_ball"
+        },
         "result": {
           "id": "smog:unfired_ingot_mold",
           "count": 1
@@ -3026,11 +3028,13 @@
       "name": "unfired_plate_mold",
       "unlock": "minecraft:clay_ball",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:clay_ball",
-          "minecraft:clay_ball"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "C C"
         ],
+        "key": {
+          "C": "minecraft:clay_ball"
+        },
         "result": {
           "id": "smog:unfired_plate_mold",
           "count": 1
@@ -3041,11 +3045,14 @@
       "name": "unfired_fitting_mold",
       "unlock": "minecraft:clay_ball",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:clay_ball",
-          "minecraft:clay_ball"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "C",
+          "C"
         ],
+        "key": {
+          "C": "minecraft:clay_ball"
+        },
         "result": {
           "id": "smog:unfired_fitting_mold",
           "count": 1
@@ -3110,8 +3117,8 @@
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
-          "B B",
-          "BBB"
+          "BBB",
+          "B B"
         ],
         "key": {
           "B": "minecraft:brick"
@@ -3128,8 +3135,9 @@
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
-          "B B",
-          "BBB"
+          " B ",
+          "BBB",
+          " B "
         ],
         "key": {
           "B": "minecraft:brick"
@@ -3147,7 +3155,8 @@
         "type": "minecraft:crafting_shaped",
         "pattern": [
           "B B",
-          "BBB"
+          " B ",
+          "B B"
         ],
         "key": {
           "B": "minecraft:brick"
@@ -3194,6 +3203,25 @@
       }
     },
     {
+      "name": "casting_faucet_from_ingots",
+      "unlock": "minecraft:copper_ingot",
+      "data": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          " B ",
+          "CBC",
+          " B "
+        ],
+        "key": {
+          "B": "minecraft:brick",
+          "C": "minecraft:copper_ingot"
+        },
+        "result": {
+          "id": "smog:casting_faucet"
+        }
+      }
+    },
+    {
       "name": "casting_faucet",
       "unlock": "smog:copper_fitting",
       "data": {
@@ -3217,8 +3245,8 @@
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
-          " F ",
-          "PFP"
+          "PFP",
+          " F "
         ],
         "key": {
           "F": "smog:copper_fitting",
@@ -3256,8 +3284,9 @@
       "data": {
         "type": "minecraft:crafting_shaped",
         "pattern": [
-          "P P",
-          "PPP"
+          " P ",
+          "PPP",
+          " P "
         ],
         "key": {
           "P": "minecraft:oak_planks"
@@ -3467,8 +3496,7 @@
         "type": "minecraft:crafting_shaped",
         "pattern": [
           "CCC",
-          " S ",
-          " S "
+          " SS"
         ],
         "key": {
           "C": "minecraft:cobblestone",
@@ -3584,11 +3612,14 @@
       "name": "cord_binding",
       "unlock": "minecraft:string",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:string",
-          "minecraft:string"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "S",
+          "S"
         ],
+        "key": {
+          "S": "minecraft:string"
+        },
         "result": {
           "id": "smog:cord_binding",
           "count": 2
@@ -3641,11 +3672,13 @@
       "name": "fiber_wrap",
       "unlock": "minecraft:string",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:string",
-          "minecraft:string"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "SS"
         ],
+        "key": {
+          "S": "minecraft:string"
+        },
         "result": {
           "id": "smog:fiber_wrap",
           "count": 2
@@ -3784,11 +3817,13 @@
       "name": "fiber_string",
       "unlock": "smog:plant_fiber",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:plant_fiber",
-          "smog:plant_fiber"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "FF"
         ],
+        "key": {
+          "F": "smog:plant_fiber"
+        },
         "result": {
           "id": "minecraft:string",
           "count": 1
@@ -3799,11 +3834,14 @@
       "name": "fiber_binding",
       "unlock": "smog:plant_fiber",
       "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:plant_fiber",
-          "smog:plant_fiber"
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "F",
+          "F"
         ],
+        "key": {
+          "F": "smog:plant_fiber"
+        },
         "result": {
           "id": "smog:cord_binding",
           "count": 2
@@ -4158,9 +4196,10 @@
       "tool.smog.preview_use_hoe": "Harvest vegetation; till soil",
       "tool.smog.preview_use_hammer": "Workshop assembly and finishing",
       "tool.smog.preview_use_chisel": "Shape refractory masonry",
-      "tool.smog.preview_baseline": "Heads alone → assembled tool (multiple heads: average durability, peak mining speed)",
+      "tool.smog.preview_baseline": "Heads → assembled tool (multiple heads: average durability)",
       "tool.smog.preview_life": "Full durability: %s → %s (%s)",
       "tool.smog.preview_speed": "Peak mining speed: %s → %s (%s)",
+      "tool.smog.preview_speed_family": "%s: %s → %s (%s)",
       "tool.smog.preview_conditions": "Base values; enchantments and situational traits apply during use.",
       "gui.smog.casting.core_slot": "Optional ceramic core: pipe mold → hollow handle; the core is consumed.",
       "gui.smog.casting.mold_slot": "Casting mold or sample for making a metal cast",
@@ -4283,6 +4322,7 @@
       "tool.smog.part_binding": "Binding: %s",
       "tool.smog.part_wrap": "Wrap: %s",
       "tool.smog.working": "Working. Parts are temporarily secured.",
+      "tool.smog.mount_hammer": "Sneak + right-click an empty workbench mount to service this hammer.",
       "tool.smog.assembly_help": "Provide a finished head, compatible handle and binding. Use a hammer to start; sneak with hammer to disassemble.",
       "tool.smog.preview": "Result: %s | Durability: %s. Start with a working hammer.",
       "jei.smog.copper.tools": "Head sets harvest tier; handle and binding adjust speed and life. Start with a hammer.",
@@ -4466,9 +4506,10 @@
       "tool.smog.preview_use_hoe": "Сбор растений; вспашка земли",
       "tool.smog.preview_use_hammer": "Сборка и доводка в мастерской",
       "tool.smog.preview_use_chisel": "Обработка огнеупорной кладки",
-      "tool.smog.preview_baseline": "Головки → инструмент (несколько головок: средний ресурс, максимальная скорость)",
+      "tool.smog.preview_baseline": "Головки → инструмент (несколько головок: средний ресурс)",
       "tool.smog.preview_life": "Полный ресурс: %s → %s (%s)",
       "tool.smog.preview_speed": "Максимальная скорость добычи: %s → %s (%s)",
+      "tool.smog.preview_speed_family": "%s: %s → %s (%s)",
       "tool.smog.preview_conditions": "Базовые значения; чары и ситуативные свойства действуют при работе.",
       "gui.smog.casting.core_slot": "Необязательный керамический стержень: трубная форма → полая рукоять; стержень расходуется.",
       "gui.smog.casting.mold_slot": "Литейная форма или образец для металлической оснастки",
@@ -4591,6 +4632,7 @@
       "tool.smog.part_binding": "Крепление: %s",
       "tool.smog.part_wrap": "Обмотка: %s",
       "tool.smog.working": "Работа идёт. Части временно закреплены.",
+      "tool.smog.mount_hammer": "Shift + ПКМ по столу со свободным креплением — установить этот молот для ремонта.",
       "tool.smog.assembly_help": "Нужны доведённая головка, подходящая рукоять и крепление. Запуск молотом; Shift+молот — разборка.",
       "tool.smog.preview": "Результат: %s | Ресурс: %s. Запуск рабочим молотом.",
       "jei.smog.copper.tools": "Головка задаёт добычу; рукоять и крепление — темп и ресурс. Запуск молотом.",

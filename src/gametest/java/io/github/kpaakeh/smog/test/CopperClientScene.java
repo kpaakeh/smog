@@ -78,7 +78,10 @@ public final class CopperClientScene {
                     var data=io.github.kpaakeh.smog.copper.ModularToolItem.parts(tool);data.putInt("trait_work_stacks",4);data.putLong("trait_work_until",mc.level.getGameTime()+100);tool.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
                     if(player.getDestroySpeed(stone)<=base)throw new IllegalStateException("Active work hardening is missing on the client");
                     data.putLong("trait_work_until",mc.level.getGameTime());tool.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(data));
-                    if(Math.abs(player.getDestroySpeed(stone)-base)>.0001f)throw new IllegalStateException("Expired work hardening survived the client mining query");
+                    if(Math.abs(player.getDestroySpeed(stone)-base)>.0001f)throw new IllegalStateException("Expired work hardening survived the client mining query");                    var mixed=io.github.kpaakeh.smog.copper.ToolParts.assemble(io.github.kpaakeh.smog.copper.ToolDefinitions.template("mattock"),java.util.List.of(new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("copper_pickaxe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("bronze_axe_head")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("wooden_handle")),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("cord_binding")),ItemStack.EMPTY));
+                    var comparisons=io.github.kpaakeh.smog.gui.ToolPreviewDetails.speeds(mixed);var mining=mixed.get(net.minecraft.core.component.DataComponents.TOOL);
+                    if(comparisons.size()!=2)throw new IllegalStateException("Mixed tool comparison must list its two distinct jobs");
+                    for(var comparison:comparisons){var target=comparison.family().equals("pickaxe")?stone:Blocks.OAK_LOG.defaultBlockState();if(Math.abs(comparison.result()-mining.getMiningSpeed(target))>.0001f)throw new IllegalStateException("Mixed tool comparison advertises the wrong speed for "+comparison.family());}
                 }finally{player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,original);}
             });
             context.getInput().lookAt(new BlockPos(0,101,1));context.waitTicks(20);context.takeScreenshot("copper-workshop-world");
@@ -95,7 +98,8 @@ public final class CopperClientScene {
             world.getServer().runOnServer(server->{server.getPlayerList().getPlayers().getFirst().openMenu((MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,-3)));});
             context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-tool-workbench-gui");
             hover(context,20,24);context.takeScreenshot("copper-tool-comparison-tooltip");
-            hover(context,85,67);context.takeScreenshot("copper-tool-traits-tooltip");context.setScreen(()->null);
+            hover(context,85,67);context.takeScreenshot("copper-tool-traits-tooltip");context.setScreen(()->null);            world.getServer().runOnServer(server->{var bench=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,-3));for(int slot=0;slot<bench.getContainerSize();slot++)bench.setItem(slot,ItemStack.EMPTY);bench.copper.selection=io.github.kpaakeh.smog.copper.ToolDefinitions.index("mattock");String[] parts={"copper_pickaxe_head","bronze_axe_head","wooden_handle","cord_binding"};for(int role=0;role<parts.length;role++)bench.setItem(io.github.kpaakeh.smog.copper.ToolDefinitions.slot(role),new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item(parts[role])));bench.sync();server.getPlayerList().getPlayers().getFirst().openMenu(bench);});
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(8);hover(context,20,24);context.takeScreenshot("copper-mixed-tool-comparison");context.setScreen(()->null);
             world.getServer().runCommand("tp @a 0.5 102 -5.5 0 45");context.getInput().lookAt(new BlockPos(0,100,-3));context.waitTicks(12);context.takeScreenshot("copper-tool-workbench-world");
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);});
             for(String tabId:java.util.List.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools")){
@@ -151,7 +155,9 @@ public final class CopperClientScene {
             context.runOnClient(mc->TestJeiProbe.showMultiblocks());context.waitTicks(8);context.takeScreenshot("copper-jei-structure-size-range");context.setScreen(()->null);            world.getServer().runCommand("advancement grant @a from smog:copper/root");context.waitTicks(10);
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.advancements.AdvancementsScreen(mc.player.connection.getAdvancements());});
             context.runOnClient(mc->{var advancements=mc.player.connection.getAdvancements();var root=advancements.get(ModBlocks.id("copper/root"));if(root==null)throw new IllegalStateException("Workshop advancement root did not synchronize");advancements.setSelectedTab(root,true);});
-            context.waitTicks(12);context.takeScreenshot("copper-workshop-advancements");context.setScreen(()->null);
+            context.waitTicks(12);context.runOnClient(mc->mc.gui.toastManager().clear());context.waitTicks(2);context.takeScreenshot("copper-workshop-advancements");
+            context.runOnClient(mc->mc.gui.screen().mouseScrolled(mc.getWindow().getGuiScaledWidth()/2.0,mc.getWindow().getGuiScaledHeight()/2.0,0,20));context.waitTicks(2);context.takeScreenshot("copper-workshop-advancements-upper");
+            context.runOnClient(mc->mc.gui.screen().mouseScrolled(mc.getWindow().getGuiScaledWidth()/2.0,mc.getWindow().getGuiScaledHeight()/2.0,0,-40));context.waitTicks(2);context.takeScreenshot("copper-workshop-advancements-lower");context.setScreen(()->null);
         }finally{if(previousLanguage!=null)language(context,previousLanguage);}
     }
 }

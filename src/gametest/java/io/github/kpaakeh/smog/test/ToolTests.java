@@ -15,6 +15,31 @@ public final class ToolTests {
     private static ItemStack item(String name){return new ItemStack(ToolParts.item(name));}
     private static ItemStack build(String handle){return ToolParts.assemble(item("copper_pickaxe_head"),item(handle),item("cord_binding"),ItemStack.EMPTY);}
     private static MachineEntity table(GameTestHelper h){var pos=h.absolutePos(new BlockPos(3,2,3));h.getLevel().setBlock(pos,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("tool_workbench")).defaultBlockState(),Block.UPDATE_ALL);return (MachineEntity)h.getLevel().getBlockEntity(pos);}
+    @GameTest public void modularHammerCanMountRepairAndDisassembleThroughDirectUse(GameTestHelper h){
+        var bench=table(h);var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;
+        var hammer=ToolParts.assemble(item("copper_hammer_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);hammer.setDamageValue(70);hammer.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Favorite hammer"));
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,hammer);
+        ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertTrue(bench.getItem(5).isEmpty()&&!player.getMainHandItem().isEmpty(),"Ordinary hammer use still means a strike, not mounting");
+        player.setShiftKeyDown(true);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertTrue(player.getMainHandItem().isEmpty()&&ModularToolItem.configured(bench.getItem(5)),"Sneaking mounts the actual modular hammer for service");
+        player.setShiftKeyDown(false);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,new ItemStack(Items.COPPER_INGOT));ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertTrue(bench.getItem(0).is(Items.COPPER_INGOT)&&player.getMainHandItem().isEmpty(),"Direct repair ingredient insertion is still available");
+        var stoneHammer=item("stone_work_hammer");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stoneHammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
+        var repaired=bench.removeItemNoUpdate(3);h.assertValueEqual(repaired.getDamageValue(),20,"Mounted hammer repairs exactly one ingot's worth");h.assertTrue(repaired.has(DataComponents.CUSTOM_NAME),"Repair retains its name");
+        player.setShiftKeyDown(true);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,repaired);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stoneHammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
+        h.assertTrue(bench.getItem(5).isEmpty()&&ToolParts.shape(bench.getItem(0)).equals("hammer")&&!bench.getItem(1).isEmpty()&&!bench.getItem(2).isEmpty(),"Shift with a working hammer still dismantles an already mounted assembly");
+        h.assertValueEqual(stoneHammer.getDamageValue(),1,"Mounting and dismantling do not charge an extra strike");h.succeed();
+    }
+    @GameTest public void finishingNamedCastsRetainsIdentityAndRejectsMixedOutput(GameTestHelper h){
+        var bench=table(h);var casts=item("copper_cast_pickaxe_head");casts.setCount(2);casts.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Mine crew"));casts.set(DataComponents.REPAIR_COST,7);bench.setItem(0,casts);bench.setItem(3,item("copper_pickaxe_head"));
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;var hammer=item("stone_work_hammer");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,hammer);
+        ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);h.assertValueEqual(bench.copper.queued,0,"Named results cannot silently merge into a plain output stack");h.assertValueEqual(hammer.getDamageValue(),0,"Rejected mixed output costs no strike");
+        bench.setItem(3,ItemStack.EMPTY);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);for(int n=0;n<80;n++)ToolAssembly.tick(h.getLevel(),bench);
+        var finished=bench.getItem(3);h.assertValueEqual(finished.getCount(),2,"Finite finishing batch keeps both named heads");h.assertTrue(net.minecraft.network.chat.Component.literal("Mine crew").equals(finished.get(DataComponents.CUSTOM_NAME)),"Finishing carries the chosen cast name");h.assertValueEqual(finished.getOrDefault(DataComponents.REPAIR_COST,0),7,"Finishing cannot reset prior anvil work");h.succeed();
+    }
     @GameTest public void offhandHammerCanFinishAssemblyWithoutTouchingMainHand(GameTestHelper h){
         var bench=table(h);bench.copper.selection=ToolDefinitions.index("pickaxe");bench.setItem(0,item("copper_pickaxe_head"));bench.setItem(1,item("wooden_handle"));bench.setItem(2,item("cord_binding"));
         // InLevel's native mock overrides gameMode() to CREATIVE even after setGameMode.

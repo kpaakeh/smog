@@ -29,7 +29,7 @@ public final class SmelteryItemPortBlock extends WorkshopPartBlock implements Wo
         @Override public void setChanged(){var m=owner();if(m!=null)m.sync();}
         @Override public boolean stillValid(Player player){return owner()!=null&&player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos))<64;}
         @Override public int[] getSlotsForFace(Direction side){return java.util.stream.IntStream.range(0,getContainerSize()).toArray();}
-        @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side){return canPlaceItem(slot,stack);}
+        @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side){return getItem(slot).isEmpty()&&canPlaceItem(slot,stack);}
         @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side){return false;}
     }
 }

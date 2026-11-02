@@ -16,6 +16,34 @@ public final class CopperTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
     private static void set(GameTestHelper h,BlockPos pos,Block block){h.getLevel().setBlock(pos,block.defaultBlockState(),Block.UPDATE_ALL);}
+    @GameTest public void canonicalWorkshopCraftsResolveWithoutAmbiguousResults(GameTestHelper h) throws java.io.IOException {
+        try(var stream=CopperTests.class.getResourceAsStream("/smog.content.json")){
+            var root=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(stream,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+            int checked=0;var problems=new java.util.ArrayList<String>();
+            for(var entry:root.getAsJsonArray("crafting")){
+                var definition=entry.getAsJsonObject();var recipe=definition.getAsJsonObject("data");String type=recipe.get("type").getAsString();if(!type.equals("minecraft:crafting_shaped")&&!type.equals("minecraft:crafting_shapeless"))continue;
+                var grid=new java.util.ArrayList<ItemStack>(java.util.Collections.nCopies(9,ItemStack.EMPTY));
+                if(type.equals("minecraft:crafting_shaped")){
+                    var rows=recipe.getAsJsonArray("pattern");var key=recipe.getAsJsonObject("key");for(int y=0;y<rows.size();y++){String row=rows.get(y).getAsString();for(int x=0;x<row.length();x++)if(row.charAt(x)!=' ')grid.set(y*3+x,craftIngredient(key.get(String.valueOf(row.charAt(x))).getAsString()));}
+                }else{var ingredients=recipe.getAsJsonArray("ingredients");for(int n=0;n<ingredients.size();n++)grid.set(n,craftIngredient(ingredients.get(n).getAsString()));}
+                var input=net.minecraft.world.item.crafting.CraftingInput.of(3,3,grid);var expected=recipe.getAsJsonObject("result");var expectedItem=BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse(expected.get("id").getAsString()));int count=expected.has("count")?expected.get("count").getAsInt():1;
+                String name=definition.get("name").getAsString();var actual=h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,h.getLevel()).map(holder->holder.value().assemble(input)).orElse(ItemStack.EMPTY);
+                if(!actual.is(expectedItem)||actual.getCount()!=count)problems.add("Actual lookup for "+name+" expected "+expectedItem+" x"+count+", got "+actual);
+                // Native matches() handles trimming, horizontal mirrors, tags and shaped/shapeless overlap.
+                for(var holder:h.getLevel().getServer().getRecipeManager().getRecipes())if(holder.value() instanceof net.minecraft.world.item.crafting.CraftingRecipe candidate&&candidate.matches(input,h.getLevel())){
+                    var result=candidate.assemble(input);if(!result.is(expectedItem)||result.getCount()!=count)problems.add("Competing recipe for "+name+": "+holder.id()+" gives "+result);
+                }
+                checked++;
+            }
+            if(checked<70)problems.add("Not every catalog recipe was checked: "+checked);
+            h.assertTrue(problems.isEmpty(),"All workshop crafting problems ("+problems.size()+"): "+String.join("; ",problems));h.succeed();
+        }
+    }
+    private static ItemStack craftIngredient(String ingredient){
+        if(!ingredient.startsWith("#"))return new ItemStack(BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse(ingredient)));
+        var tag=net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,net.minecraft.resources.Identifier.parse(ingredient.substring(1)));
+        return BuiltInRegistries.ITEM.stream().map(Item::getDefaultInstance).filter(stack->stack.is(tag)).findFirst().orElseThrow();
+    }
     @GameTest public void automatedSandCoreCastingKeepsToolingUntilOutputCanComplete(GameTestHelper h){
         var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);
         var input=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.UP);
@@ -150,6 +178,29 @@ public final class CopperTests {
         if(!h.getLevel().getBlockState(origin).is(block("copper_hearth")))set(h,origin,block("copper_hearth"));
         return (MachineEntity)h.getLevel().getBlockEntity(origin);
     }
+    @GameTest public void solidFuelStacksPersistWhileEveryWorkSlotRemainsSingleItem(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,pos,3);h.assertTrue(m.tryAssemble(),"Hearth assembles");
+        var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
+        player.setItemInHand(hand,new ItemStack(Items.COAL,64));io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),m,player,hand,pos);
+        h.assertTrue(player.getItemInHand(hand).isEmpty(),"One world action loads the fuel stack");h.assertValueEqual(m.getItem(2).getCount(),64,"Fuel has a normal stack capacity independent of work cells");
+        m.serverTick();h.assertValueEqual(m.getItem(2).getCount(),64,"Idle server ticks do not eject sixty-three fuel items");
+        var saved=m.saveCustomOnly(h.getLevel().registryAccess());m.loadCustomOnly(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,h.getLevel().registryAccess(),saved));h.assertValueEqual(m.getItem(2).getCount(),64,"The stored fuel stack survives saving and loading");
+        var menu=m.createMenu(1,player.getInventory(),player);h.assertValueEqual(menu.slots.get(io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS).getMaxStackSize(new ItemStack(Items.COAL)),64,"The real fuel GUI slot accepts a full stack");h.assertValueEqual(menu.slots.get(0).getMaxStackSize(new ItemStack(Items.RAW_COPPER)),1,"The real worker GUI slot still accepts one item");
+        player.setItemInHand(hand,new ItemStack(Items.RAW_COPPER,16));io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),m,player,hand,pos);h.assertValueEqual(m.getItem(0).getCount(),1,"World insertion respects the single-item work cell");h.assertValueEqual(player.getItemInHand(hand).getCount(),15,"All excess raw input stays in the player's hand");h.succeed();
+    }
+    @GameTest public void fuelAndWorkTransferViewsHaveIndependentTransactionalCapacities(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(6,2,2));var m=hearth(h,pos,3);h.assertTrue(m.tryAssemble(),"Hearth assembles");
+        var fuel=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.NORTH);var top=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.UP);var coal=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(Items.COAL);var copper=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(Items.RAW_COPPER);
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(fuel.insert(coal,64,tx),64L,"A pipe can provision the whole fuel stack");}
+        h.assertTrue(m.getItem(2).isEmpty(),"A rolled-back fuel transfer restores the empty slot");
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(fuel.insert(coal,64,tx),64L,"Committed pipe provisioning accepts sixty-four fuel");h.assertValueEqual(top.insert(copper,64,tx),(long)io.github.kpaakeh.smog.copper.Smeltery.workers(m),"Bulk raw input is limited to one item per available worker");tx.commit();}
+        h.assertValueEqual(m.getItem(2).getCount(),64,"Fuel stack is retained after commit");
+        for(int worker=0;worker<io.github.kpaakeh.smog.copper.Smeltery.workers(m);worker++)h.assertValueEqual(m.getItem(io.github.kpaakeh.smog.copper.Smeltery.slot(worker)).getCount(),1,"Every controller transfer slot has its own one-item capacity");
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(top.insert(copper,1,tx),0L,"A filled set of work cells rejects additional pipe input");}
+        for(int worker=0;worker<io.github.kpaakeh.smog.copper.Smeltery.workers(m);worker++)m.setItem(io.github.kpaakeh.smog.copper.Smeltery.slot(worker),ItemStack.EMPTY);
+        int accepted=0;for(int item=0;item<8;item++)if(net.minecraft.world.level.block.entity.HopperBlockEntity.addItem(null,m,new ItemStack(Items.RAW_COPPER),Direction.UP).isEmpty())accepted++;
+        h.assertValueEqual(accepted,io.github.kpaakeh.smog.copper.Smeltery.workers(m),"Native hopper-style insertion also stops at one item per work cell");h.succeed();
+    }
     @GameTest public void bellowsBudgetFollowsMetalVolumeForBlocksAndNuggets(GameTestHelper h){
         var m=hearth(h,h.absolutePos(new BlockPos(6,2,2)),3);h.assertTrue(m.tryAssemble(),"Hearth assembles");
         m.copper.heat=600;m.copper.burn=10000;m.copper.fillBellows();m.setItem(0,new ItemStack(BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.withDefaultNamespace("copper_block"))));
@@ -260,6 +311,21 @@ public final class CopperTests {
         var encoded=ComplexFormationData.TYPE.codec().encodeStart(com.mojang.serialization.JsonOps.INSTANCE,data).getOrThrow();var restored=ComplexFormationData.TYPE.codec().parse(com.mojang.serialization.JsonOps.INSTANCE,encoded).getOrThrow();
         h.assertTrue(restored.owner(part).equals(a),"Ownership survives save/load");restored.release(a);h.assertTrue(restored.claim(b,java.util.List.of(b,part)),"Disassembly releases ownership");h.succeed();
     }
+    @GameTest(maxTicks=100) public void starterFaucetCraftLeadsToFirstFittingsWithoutCastParts(GameTestHelper h){
+        var input=net.minecraft.world.item.crafting.CraftingInput.of(3,3,java.util.List.of(ItemStack.EMPTY,new ItemStack(Items.BRICK),ItemStack.EMPTY,new ItemStack(Items.COPPER_INGOT),new ItemStack(Items.BRICK),new ItemStack(Items.COPPER_INGOT),ItemStack.EMPTY,new ItemStack(Items.BRICK),ItemStack.EMPTY));
+        var crafted=h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,h.getLevel()).orElseThrow().value().assemble(input);
+        h.assertTrue(crafted.is(item("casting_faucet"))&&crafted.getCount()==1,"Three vanilla bricks and two vanilla copper ingots craft the first actual faucet");
+        var economical=net.minecraft.world.item.crafting.CraftingInput.of(3,2,java.util.List.of(ItemStack.EMPTY,new ItemStack(item("copper_fitting")),ItemStack.EMPTY,new ItemStack(item("copper_pipe_part")),new ItemStack(item("copper_fitting")),new ItemStack(item("copper_pipe_part"))));
+        h.assertTrue(h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,economical,h.getLevel()).orElseThrow().value().assemble(economical).is(crafted.getItem()),"The existing cheaper cast-parts faucet recipe remains available");
+        var nozzleInput=net.minecraft.world.item.crafting.CraftingInput.of(3,2,java.util.List.of(new ItemStack(item("copper_pipe_part")),new ItemStack(item("copper_fitting")),new ItemStack(item("copper_pipe_part")),ItemStack.EMPTY,new ItemStack(item("copper_fitting")),ItemStack.EMPTY));
+        h.assertTrue(h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,nozzleInput,h.getLevel()).orElseThrow().value().assemble(nozzleInput).is(item("air_nozzle")),"The inverted two-row layout produces the air nozzle without shadowing the faucet recipe");
+        var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Starter hearth assembles without cast copper parts");m.copper.copper=9000;m.smeltery.selected="copper";m.sync();
+        var tablePos=origin.offset(-2,-1,1);set(h,tablePos,block("casting_table"));var table=(MachineEntity)h.getLevel().getBlockEntity(tablePos);table.setItem(1,new ItemStack(item("fitting_mold")));
+        var faucet=((BlockItem)crafted.getItem()).getBlock().defaultBlockState().setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,Direction.WEST).setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.OPEN,true);h.getLevel().setBlock(tablePos.above(),faucet,Block.UPDATE_ALL);
+        h.assertTrue(CopperWorkshops.route(h.getLevel(),tablePos)!=null,"The crafted starter faucet connects the real wall port to the first mold");
+        h.runAfterDelay(14,()->{h.assertValueEqual(table.smeltery.filled,9000,"First pour transfers exactly one ingot through the physical route");h.getLevel().setBlock(tablePos.above(),faucet.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.OPEN,false),Block.UPDATE_ALL);});
+        h.runAfterDelay(70,()->{h.assertTrue(table.getItem(3).is(item("copper_fitting")),"The first mold produces useful fittings");h.assertValueEqual(table.getItem(3).getCount(),4,"One poured ingot produces exactly four first fittings");h.assertValueEqual(m.copper.total()+table.smeltery.filled,0,"No metal remains duplicated in the source or form");h.assertValueEqual(table.getItem(1).getCount(),1,"The starter fitting mold remains reusable");h.succeed();});
+    }
     @GameTest(maxTicks=100) public void bronzeAndCastingConserveMetalAndKeepMolds(GameTestHelper h){
         var origin=h.absolutePos(new BlockPos(6,2,3));var m=hearth(h,origin,3);h.assertTrue(m.tryAssemble(),"Working hearth");m.copper.heat=1000;m.copper.copper=12*U;m.copper.tin=4*U;
         m.setItem(2,new ItemStack(Items.COAL));
@@ -309,6 +375,7 @@ public final class CopperTests {
             if(!name.equals("root"))h.assertTrue(node.value().parent().isPresent()&&manager.get(node.value().parent().get())!=null,"Every branch has a loaded parent: "+name);
         }
         h.assertTrue(CopperTests.class.getResource("/assets/smog/textures/block/refractory_bricks.png")!=null,"Requested refractory brick background exists");
+        var toolIcon=manager.get(ModBlocks.id("copper/tools")).value().display().orElseThrow().icon();h.assertTrue(toolIcon.get(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA)!=null&&toolIcon.get(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA).strings().contains("pickaxe_head"),"Tool advancement supplies visible assembled icon layers, not an empty modular shell");
         var player=h.makeMockServerPlayerInLevel();var clay=new ItemStack(Items.CLAY_BALL);player.getInventory().setItem(0,clay);
         net.minecraft.advancements.triggers.CriteriaTriggers.INVENTORY_CHANGED.trigger(player,player.getInventory(),clay);
         h.assertTrue(player.getAdvancements().getOrStartProgress(manager.get(ModBlocks.id("copper/root"))).isDone(),"Obtaining clay really unlocks the workshop root");h.succeed();

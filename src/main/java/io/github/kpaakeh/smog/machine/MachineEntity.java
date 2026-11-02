@@ -184,7 +184,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         if(machineId.getPath().equals("tool_workbench"))for(int slot=io.github.kpaakeh.smog.copper.ToolDefinitions.inventorySize();slot<items.size();slot++)if(!items.get(slot).isEmpty()){var extra=items.get(slot);items.set(slot,ItemStack.EMPTY);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}
         if(io.github.kpaakeh.smog.copper.Smeltery.handles(this)){
             for(int n=0;n<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS;n++){var old=items.get(io.github.kpaakeh.smog.copper.Smeltery.slot(n));if(old.getCount()<=1)continue;var extra=old.copyWithCount(old.getCount()-1);old.setCount(1);for(int other=0;other<io.github.kpaakeh.smog.copper.Smeltery.MAX_WORKERS&&!extra.isEmpty();other++){int target=io.github.kpaakeh.smog.copper.Smeltery.slot(other);if(items.get(target).isEmpty())items.set(target,extra.split(1));}if(!extra.isEmpty())Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}
-            for(int slot:new int[]{2,4,5}){var old=items.get(slot);if(old.getCount()>1){var extra=old.copyWithCount(old.getCount()-1);old.setCount(1);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}}
+            for(int slot:new int[]{4,5}){var old=items.get(slot);if(old.getCount()>1){var extra=old.copyWithCount(old.getCount()-1);old.setCount(1);Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,extra);setChanged();}}
             for(int slot=0;slot<items.size();slot++)if((slot==1||slot==3||slot==6||slot==7||slot>=io.github.kpaakeh.smog.copper.Smeltery.INVENTORY_SIZE)&&!items.get(slot).isEmpty()){var preserved=removeItemNoUpdate(slot);if(slot==3&&items.get(5).isEmpty()){items.set(5,preserved.split(1));if(!preserved.isEmpty())Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);}else Containers.dropItemStack(server,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,preserved);setChanged();}
         }
         if(spec().kind()!=MachineSpec.Kind.COPPER_WORKSHOP)EnergyNetwork.track(this);
@@ -294,7 +294,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
     @Override protected Component getDefaultName() { return getBlockState().getBlock().getName(); }
     @Override protected NonNullList<ItemStack> getItems() { return items; }
     @Override protected void setItems(NonNullList<ItemStack> value) { items=value; }
-    @Override public int getMaxStackSize(){return machineId!=null&&io.github.kpaakeh.smog.copper.Smeltery.handles(this)?1:64;}
+    @Override public int getMaxStackSize(){return 64;}
     @Override public int getContainerSize() { return items.size(); }
     @Override public boolean canPlaceItem(int slot,ItemStack stack) {
         if(io.github.kpaakeh.smog.copper.ToolAssembly.handles(this))return copper.queued==0&&io.github.kpaakeh.smog.copper.ToolAssembly.accepts(this,slot,stack);
@@ -309,7 +309,7 @@ public final class MachineEntity extends BaseContainerBlockEntity implements Wor
         }
         return io.github.kpaakeh.smog.copper.Smeltery.handles(this)?(side==Direction.DOWN?new int[]{}:side==Direction.UP?java.util.stream.IntStream.range(0,io.github.kpaakeh.smog.copper.Smeltery.workers(this)).map(io.github.kpaakeh.smog.copper.Smeltery::slot).toArray():new int[]{2}):spec().kind()==MachineSpec.Kind.COPPER_WORKSHOP?(side==Direction.DOWN?new int[]{3}:side==Direction.UP?new int[]{0}:new int[]{2}):side==Direction.DOWN?new int[]{3}:spec().kind()==MachineSpec.Kind.SOLID_GENERATOR?new int[]{2}:new int[]{0};
     }
-    @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side) {return canPlaceItem(slot,stack);}
+    @Override public boolean canPlaceItemThroughFace(int slot,ItemStack stack,Direction side) {return !(io.github.kpaakeh.smog.copper.Smeltery.handles(this)&&io.github.kpaakeh.smog.copper.Smeltery.worker(slot)>=0&&!getItem(slot).isEmpty())&&canPlaceItem(slot,stack);}
     @Override public boolean canTakeItemThroughFace(int slot,ItemStack stack,Direction side) {return slot==3;}
     public final ContainerData data=new ContainerData() {
         @Override public int getCount() {return MachineMenu.DATA_SIZE;}

@@ -1,7 +1,23 @@
 {
   "display": {
     "icon": {
-      "id": "smog:modular_pickaxe"
+      "id": "smog:modular_pickaxe",
+      "components": {
+        "minecraft:custom_model_data": {
+          "strings": [
+            "pickaxe_head",
+            "standard_handle",
+            "binding",
+            ""
+          ],
+          "colors": [
+            13993561,
+            12093514,
+            13285521,
+            16777215
+          ]
+        }
+      }
     },
     "title": {
       "translate": "advancements.smog.copper.tools.title"

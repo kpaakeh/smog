@@ -28,7 +28,8 @@ public final class ToolParts {
     public static String metal(ItemStack head){var p=ToolDefinitions.part(head);return p==null?"":p.material().id();}
     public static HeadWear wear(ItemStack head){return HeadWear.read(ModularToolItem.parts(head));}
     public static ToolDefinitions.Template schema(ItemStack tool){var data=ModularToolItem.parts(tool);String snapshot=data.getStringOr("template_snapshot","");if(!snapshot.isEmpty())try{return ToolDefinitions.snapshot(snapshot);}catch(RuntimeException malformed){return null;}return ToolDefinitions.template(data.getStringOr("template",BuiltInRegistries.ITEM.getKey(tool.getItem()).getPath().replace("modular_","")));}
-    public static boolean hammer(ItemStack stack){return CopperWorkshops.is(stack,"smog:stone_work_hammer")||ModularToolItem.configured(stack)&&!ModularToolItem.broken(stack)&&components(stack).stream().anyMatch(p->shape(p).equals("hammer"));}
+    public static boolean hammerAssembly(ItemStack stack){return ModularToolItem.configured(stack)&&components(stack).stream().anyMatch(p->shape(p).equals("hammer"));}
+    public static boolean hammer(ItemStack stack){return CopperWorkshops.is(stack,"smog:stone_work_hammer")||!ModularToolItem.broken(stack)&&hammerAssembly(stack);}
     public static List<ItemStack> components(ItemStack tool){
         var schema=schema(tool);if(schema==null)return List.of();var stored=tool.getOrDefault(DataComponents.CONTAINER,ItemContainerContents.EMPTY);var parts=NonNullList.withSize(schema.roles().size(),ItemStack.EMPTY);stored.copyInto(parts);
         int delta=tool.getDamageValue()-ModularToolItem.parts(tool).getIntOr("assembled_damage",0),maximum=Math.max(1,tool.getMaxDamage());
@@ -84,7 +85,7 @@ public final class ToolParts {
     public static ToolDefinitions.Part nativeSource(ItemStack stack){
         String source=name(stack);return ToolDefinitions.parts().stream().filter(p->!p.cast()&&p.form().category().equals("head")&&!p.material().nativePrefix().isEmpty()&&!p.form().nativeSuffix().isEmpty()&&source.equals("minecraft:"+p.material().nativePrefix()+"_"+p.form().nativeSuffix())).findFirst().orElse(null);
     }
-    public static ItemStack finish(ItemStack input){var definition=ToolDefinitions.part(input);if(definition!=null&&definition.cast()){var target=ToolDefinitions.find(definition.material().id(),definition.form().id(),false);return new ItemStack(item(target.item().toString()));}
+    public static ItemStack finish(ItemStack input){var definition=ToolDefinitions.part(input);if(definition!=null&&definition.cast()){var target=ToolDefinitions.find(definition.material().id(),definition.form().id(),false);return preserveIdentity(input,new ItemStack(item(target.item().toString())));}
         var source=nativeSource(input);if(source==null)return ItemStack.EMPTY;var result=new ItemStack(item(source.item().toString()));var data=new CompoundTag();new HeadWear(java.math.BigInteger.valueOf(input.getDamageValue()),java.math.BigInteger.valueOf(Math.max(1,input.getMaxDamage()))).write(data);result.set(DataComponents.CUSTOM_DATA,CustomData.of(data));if(input.has(DataComponents.ENCHANTMENTS))result.set(DataComponents.ENCHANTMENTS,input.get(DataComponents.ENCHANTMENTS));return preserveIdentity(input,result);
     }
     public static int units(ToolDefinitions.Part part){return Math.max(1,(int)ToolDefinitions.number(part.material().profile(part.form()),"material_units",part.form().metalUnits()));}
