@@ -5,7 +5,17 @@ import net.fabricmc.api.ClientModInitializer;
 public class SmogClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        io.github.kpaakeh.smog.copper.ToolTooltip.viewerMode(()->{
+            int mode=0;
+            if(com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_LCONTROL)||com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_RCONTROL))mode|=io.github.kpaakeh.smog.copper.ToolTooltip.PROPERTIES;
+            if(com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_LALT)||com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_RALT))mode|=io.github.kpaakeh.smog.copper.ToolTooltip.CONSTRUCTION;
+            return mode;
+        });
         net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback.EVENT.register((stack,context,flag,lines)->{
+            if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ModularToolItem||stack.getItem() instanceof io.github.kpaakeh.smog.copper.ToolPartItem){
+                var mc=net.minecraft.client.Minecraft.getInstance();var wrapped=io.github.kpaakeh.smog.gui.ToolTooltipLayout.wrap(lines,mc.font,Math.max(120,Math.min(260,mc.getWindow().getGuiScaledWidth()-24)));
+                lines.clear();lines.addAll(wrapped);
+            }
             if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.WorkshopCanisterItem&&!lines.isEmpty()){
                 var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
                 var ordinary=io.github.kpaakeh.smog.copper.FluidAmounts.format(data.getIntOr("smog_fluid_units",0),false).copy().append(" / ").append(io.github.kpaakeh.smog.copper.FluidAmounts.format(648000,false)).getString();

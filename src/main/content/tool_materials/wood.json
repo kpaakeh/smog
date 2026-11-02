@@ -8,24 +8,13 @@
   "profiles": {
     "handle": {
       "forms": [
-        "standard_handle",
-        "light_handle",
-        "reinforced_handle",
-        "short_handle"
+        "standard_handle"
       ],
+      "shaping": true,
       "speed_multiplier": 1,
       "durability_multiplier": 1,
-      "variants": {
-        "light": {
-          "speed_multiplier": 1.08,
-          "durability_multiplier": 0.85
-        },
-        "reinforced": {
-          "shaping": false,
-          "speed_multiplier": 0.97,
-          "durability_multiplier": 1.15
-        }
-      }
+      "handling_multiplier": 1,
+      "material_units": 4500
     },
     "head": {
       "durability": 59,

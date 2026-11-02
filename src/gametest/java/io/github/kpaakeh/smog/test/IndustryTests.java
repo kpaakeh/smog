@@ -96,7 +96,7 @@ public class IndustryTests {
         var source=place(h,"solid_generator",new BlockPos(0,1,1));var a=place(h,"connector_lv",new BlockPos(1,1,1));
         var b=place(h,"connector_lv",new BlockPos(6,1,1));var sink=place(h,"electric_furnace",new BlockPos(7,1,1));
         for(var node:List.of(source,a,b,sink))node.serverTick();source.energy(1000);
-        var link=new WireLink(a.getBlockPos(),b.getBlockPos(),ConductorMaterial.COPPER);var wires=WireData.get(h.getLevel());h.assertTrue(wires.add(link),"Wire added");
+        var link=new WireLink(a.getBlockPos(),b.getBlockPos(),ConductorMaterial.COPPER);var wires=WireData.get(h.getLevel());h.assertTrue(wires.add(link),"Wire added; saved links="+wires.all().size()+", sample="+wires.all().stream().limit(2).toList()+", requested="+link);
         h.assertFalse(wires.add(new WireLink(b.getBlockPos(),a.getBlockPos(),ConductorMaterial.COPPER)),"Reverse duplicate rejected");
         EnergyNetwork.tick(h.getLevel());h.assertValueEqual(sink.energy(),32,"Source rate limits a copper wire");h.assertValueEqual(source.energy(),968,"Energy conserved");
         var encoded=WireLink.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE,link).getOrThrow();h.assertValueEqual(WireLink.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE,encoded).getOrThrow(),link,"Wire persistence codec");

@@ -12,6 +12,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 
 public final class CopperTests {
+    private static int copperRodUnits(){return io.github.kpaakeh.smog.copper.ToolParts.units(io.github.kpaakeh.smog.copper.CastingProcesses.hollowPart(0));}
     private static final int U=io.github.kpaakeh.smog.copper.MoltenMetalStorage.QUARTER;
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
     private static Item item(String name){return BuiltInRegistries.ITEM.getValue(ModBlocks.id(name));}
@@ -50,14 +51,14 @@ public final class CopperTests {
         var input=net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED.find(h.getLevel(),pos,Direction.UP);
         var core=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(item("ceramic_core"));var mold=net.fabricmc.fabric.api.transfer.v1.item.ItemVariant.of(item("sand_pipe_mold"));
         try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(input.insert(mold,2,tx),2L,"Automation supplies two sand molds");h.assertValueEqual(input.insert(core,2,tx),2L,"Automation supplies two cores into their separate slot");tx.commit();}
-        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),6750,tx),6750L,"One cored pour accepts exactly the handle's metal content");tx.commit();}
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),copperRodUnits(),tx),(long)copperRodUnits(),"One cored pour accepts exactly the handle's metal content");tx.commit();}
         var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);var menu=m.createMenu(1,player.getInventory(),player);
         h.assertTrue(menu.slots.get(0).getItem().is(item("ceramic_core")),"The actual menu exposes the core as a separate slot");h.assertFalse(menu.slots.get(0).mayPickup(player),"The GUI cannot pick up a locked core");h.assertFalse(menu.slots.get(1).mayPickup(player),"The GUI cannot pick up a locked mold");
         try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(input.extract(core,1,tx),0L,"Automation cannot extract the locked core");h.assertValueEqual(input.insert(core,1,tx),0L,"Automation cannot add to the locked core stack");}
         m.setItem(3,new ItemStack(Items.COBBLESTONE,64));for(int tick=0;tick<60;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
-        h.assertValueEqual(m.getItem(1).getCount(),2,"Blocked output has not consumed the sand mold");h.assertValueEqual(m.getItem(2).getCount(),2,"Blocked output has not consumed the core");h.assertValueEqual(m.smeltery.filled,6750,"Blocked output retains every poured metal unit");
+        h.assertValueEqual(m.getItem(1).getCount(),2,"Blocked output has not consumed the sand mold");h.assertValueEqual(m.getItem(2).getCount(),2,"Blocked output has not consumed the core");h.assertValueEqual(m.smeltery.filled,copperRodUnits(),"Blocked output retains every poured metal unit");
         m.setItem(3,ItemStack.EMPTY);io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
-        h.assertTrue(m.getItem(3).is(item("hollow_copper_handle")),"Unblocking output completes the saved cast");h.assertValueEqual(m.getItem(1).getCount(),1,"Completion consumes exactly one sand mold");h.assertValueEqual(m.getItem(2).getCount(),1,"Completion consumes exactly one core");h.assertTrue(menu.slots.get(0).mayPickup(player),"The spare core unlocks after completion");h.succeed();
+        h.assertTrue(m.getItem(3).is(item("copper_standard_handle")),"Unblocking output completes the saved cast");h.assertValueEqual(m.getItem(1).getCount(),1,"Completion consumes exactly one sand mold");h.assertValueEqual(m.getItem(2).getCount(),1,"Completion consumes exactly one core");h.assertTrue(menu.slots.get(0).mayPickup(player),"The spare core unlocks after completion");h.succeed();
     }
     @GameTest public void legacyPipeCastingWithoutCoreSnapshotStillCompletes(GameTestHelper h){
         var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);m.setItem(1,new ItemStack(item("pipe_mold")));
@@ -82,10 +83,10 @@ public final class CopperTests {
         var cores=m.getItem(2).copy();m.setItem(2,ItemStack.EMPTY);
         try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(fluid,9000,tx),0L,"A missing locked core cannot silently turn the job into ordinary pipes");}
         m.setItem(2,cores);
-        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(fluid,9000,tx),6627L,"Hollow copper handle requires exactly 6750 units");tx.commit();}
+        try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){h.assertValueEqual(m.castingFluid.insert(fluid,9000,tx),(long)copperRodUnits()-123,"The ordinary copper rod accepts exactly its remaining registered metal content");tx.commit();}
         for(int tick=0;tick<60;tick++)io.github.kpaakeh.smog.copper.CastingProcesses.tick(h.getLevel(),m);
-        h.assertTrue(m.getItem(3).is(item("hollow_copper_handle")),"The cored mold produces a hollow handle");h.assertValueEqual(m.getItem(2).getCount(),1,"Exactly one ceramic core is consumed");h.assertValueEqual(m.getItem(1).getCount(),1,"The ceramic pipe mold remains reusable");
-        h.assertValueEqual(CopperWorkshops.melt(m.getItem(3))[1],6750,"Remelting returns only the metal poured, with no duplication");h.succeed();
+        h.assertTrue(m.getItem(3).is(item("copper_standard_handle")),"The cored mold produces the single ordinary rod type");h.assertValueEqual(m.getItem(2).getCount(),1,"Exactly one ceramic core is consumed");h.assertValueEqual(m.getItem(1).getCount(),1,"The ceramic pipe mold remains reusable");
+        h.assertValueEqual(CopperWorkshops.melt(m.getItem(3))[1],copperRodUnits(),"Remelting returns only the metal poured, with no duplication");h.succeed();
     }
     @GameTest public void coredPipeMoldsRequireCompatibleMetalButPlainPipesRemainAvailable(GameTestHelper h){
         var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("casting_table"));var m=(MachineEntity)h.getLevel().getBlockEntity(pos);m.setItem(1,new ItemStack(item("pipe_mold")));

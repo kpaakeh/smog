@@ -19,7 +19,7 @@ public final class CastingProcesses {
     private static Flow flow(ServerLevel level){var f=FLOWS.computeIfAbsent(level,k->new Flow());if(f.tick!=level.getGameTime()){f.tick=level.getGameTime();f.used.clear();}return f;}
     public record Recipe(ItemStack result,int units,int cooling,boolean consumeMold,boolean consumeCore){public Recipe(ItemStack result,int units,int cooling,boolean consumeMold){this(result,units,cooling,consumeMold,false);}}
     public static boolean core(ItemStack stack){return CopperWorkshops.is(stack,"smog:ceramic_core");}
-    public static ToolDefinitions.Part hollowPart(int metal){var part=ToolDefinitions.find(MoltenMetalStorage.NAMES[metal],"hollow_handle",false);return part!=null&&!part.cast()&&part.material().molten().equals(MoltenMetalStorage.NAMES[metal])?part:null;}
+    public static ToolDefinitions.Part hollowPart(int metal){var part=ToolDefinitions.find(MoltenMetalStorage.NAMES[metal],"standard_handle",false);return part!=null&&!part.cast()&&part.material().molten().equals(MoltenMetalStorage.NAMES[metal])?part:null;}
     public static boolean toolingMatches(MachineEntity m){return ItemStack.isSameItemSameComponents(m.getItem(1),m.smeltery.castingMold)&&ItemStack.isSameItemSameComponents(m.getItem(2),m.smeltery.castingCore);}
     public static Recipe recipe(MachineEntity m,int metal){
         if(!m.getItem(2).isEmpty()){

@@ -62,7 +62,7 @@ public final class ToolTests {
     }
     @GameTest public void modularHammerCanMountRepairAndDisassembleThroughDirectUse(GameTestHelper h){
         var bench=table(h);var player=h.makeMockServerPlayer(net.minecraft.world.level.GameType.SURVIVAL);((net.minecraft.server.level.ServerPlayer)player).connection=h.makeMockServerPlayerInLevel().connection;
-        var hammer=ToolParts.assemble(item("copper_hammer_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);hammer.setDamageValue(70);hammer.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Favorite hammer"));
+        var hammer=ToolParts.assemble(item("copper_hammer_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);hammer.setDamageValue(70);int expectedRepairDamage=Math.max(0,(4*hammer.getDamageValue()-hammer.getMaxDamage()+3)/4);hammer.set(DataComponents.CUSTOM_NAME,net.minecraft.network.chat.Component.literal("Favorite hammer"));
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,hammer);
         ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
         h.assertTrue(bench.getItem(5).isEmpty()&&!player.getMainHandItem().isEmpty(),"Ordinary hammer use still means a strike, not mounting");
@@ -72,7 +72,7 @@ public final class ToolTests {
         h.assertTrue(bench.getItem(0).is(Items.COPPER_INGOT)&&player.getMainHandItem().isEmpty(),"Direct repair ingredient insertion is still available");
         var stoneHammer=ToolParts.example(ToolDefinitions.template("hammer"),"stone");player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stoneHammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
         for(int n=0;n<40;n++)ToolAssembly.tick(h.getLevel(),bench);
-        var repaired=bench.removeItemNoUpdate(3);h.assertValueEqual(repaired.getDamageValue(),20,"Mounted hammer repairs exactly one ingot's worth");h.assertTrue(repaired.has(DataComponents.CUSTOM_NAME),"Repair retains its name");
+        var repaired=bench.removeItemNoUpdate(3);h.assertValueEqual(repaired.getDamageValue(),expectedRepairDamage,"One ingot restores a quarter of head life regardless of hammer-family durability multiplier");h.assertTrue(repaired.has(DataComponents.CUSTOM_NAME),"Repair retains its name");
         player.setShiftKeyDown(true);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,repaired);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stoneHammer);ToolAssembly.use(h.getLevel(),bench,player,net.minecraft.world.InteractionHand.MAIN_HAND);
         h.assertTrue(bench.getItem(5).isEmpty()&&ToolParts.shape(bench.getItem(0)).equals("hammer")&&!bench.getItem(1).isEmpty()&&!bench.getItem(2).isEmpty(),"Shift with a working hammer still dismantles an already mounted assembly");
@@ -103,7 +103,7 @@ public final class ToolTests {
     }
     @GameTest public void partSwapsDoNotChangeWearOrHarvestTier(GameTestHelper h){
         var tool=build("wooden_handle");tool.setDamageValue(1);var initial=ToolParts.extract(tool,0);int units=ToolParts.melt(initial)[1];
-        for(int i=0;i<50;i++)tool=ToolParts.assemble(ToolParts.extract(tool,0),item(i%2==0?"reinforced_handle":"wooden_handle"),item("copper_clamp"),i%2==0?item("fiber_wrap"):ItemStack.EMPTY);
+        for(int i=0;i<50;i++)tool=ToolParts.assemble(ToolParts.extract(tool,0),item(i%2==0?"bronze_standard_handle":"wooden_handle"),item("copper_clamp"),i%2==0?item("fiber_wrap"):ItemStack.EMPTY);
         h.assertValueEqual(ToolParts.melt(ToolParts.extract(tool,0))[1],units,"Swapping parts fifty times does not heal or wear head");
         h.assertTrue(ToolParts.wear(initial).equals(ToolParts.wear(ToolParts.extract(tool,0))),"Exact head life fraction retained");
         h.assertFalse(tool.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),"Reinforced handle cannot upgrade copper mining tier");
@@ -127,7 +127,7 @@ public final class ToolTests {
         h.succeed();
     }
     @GameTest public void nativeCombiningCannotLoseModularParts(GameTestHelper h){
-        var first=build("wooden_handle");first.setDamageValue(100);var second=build("reinforced_handle");second.setDamageValue(100);
+        var first=build("wooden_handle");first.setDamageValue(100);var second=build("bronze_standard_handle");second.setDamageValue(100);
         var input=net.minecraft.world.item.crafting.CraftingInput.of(2,1,java.util.List.of(first,second));
         h.assertFalse(net.minecraft.world.item.crafting.RepairItemRecipe.INSTANCE.matches(input,h.getLevel()),"Crafting cannot erase both part sets");
         var vanillaA=new ItemStack(Items.IRON_PICKAXE);vanillaA.setDamageValue(100);var vanillaB=vanillaA.copy();
@@ -210,7 +210,7 @@ public final class ToolTests {
         var tool=ToolParts.assemble(item("bronze_axe_head"),item("wooden_handle"),item("cord_binding"),ItemStack.EMPTY);((ModularToolItem)tool.getItem()).hurtEnemy(tool,target,player);target.removeEffect(net.minecraft.world.effect.MobEffects.SLOWNESS);
         var head=ToolParts.extract(tool,0);long deadline=ModularToolItem.parts(head).getLongOr("trait_staggering_until",0);
         h.assertTrue(deadline>h.getLevel().getGameTime(),"Extracted bronze head carries its active cooldown");
-        var rebuilt=ToolParts.assemble(head,item("reinforced_handle"),item("cord_binding"),ItemStack.EMPTY);
+        var rebuilt=ToolParts.assemble(head,item("bronze_standard_handle"),item("cord_binding"),ItemStack.EMPTY);
         ((ModularToolItem)rebuilt.getItem()).hurtEnemy(rebuilt,target,player);h.assertFalse(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Changing handles cannot bypass the head's cooldown");
         var repaired=ToolParts.repair(rebuilt,item("bronze_ingot"));h.assertFalse(repaired.isEmpty(),"Fixture repairs the damaged bronze head");
         ((ModularToolItem)repaired.getItem()).hurtEnemy(repaired,target,player);h.assertFalse(target.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS),"Material repair does not reset combat cooldown");
@@ -237,23 +237,21 @@ public final class ToolTests {
         ((ModularToolItem)axe.getItem()).mineBlock(axe,h.getLevel(),Blocks.OAK_LOG.defaultBlockState(),h.absolutePos(new BlockPos(1,2,1)),player);
         h.assertValueEqual(axe.getDamageValue(),4,"Ordinary mining does not receive free native-action wear");h.succeed();
     }
-    @GameTest public void handleBalanceChangesActualAttackTempo(GameTestHelper h){
-        var ordinary=build("wooden_handle");var light=build("light_handle");var reinforced=build("reinforced_handle");
+    @GameTest public void rodMaterialsChangeHandlingWithoutChangingHarvestTier(GameTestHelper h){
+        var ordinary=build("wooden_handle");var light=build("aluminum_standard_handle");var heavy=build("tungsten_standard_handle");
         var attribute=net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED;double base=attribute.value().getDefaultValue();
         double normalSpeed=ordinary.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
         double lightSpeed=light.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
-        double heavySpeed=reinforced.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
-        h.assertTrue(Math.abs(normalSpeed-1.2)<0.00001,"Ordinary handle retains baseline attack tempo");
-        h.assertTrue(Math.abs(lightSpeed-normalSpeed*1.08)<0.00001,"Light handle improves actual attacks per second, not the negative modifier");
-        h.assertTrue(Math.abs(heavySpeed-normalSpeed*.97)<0.00001,"Reinforcement trades attack tempo for head life");
-        h.assertTrue(light.getMaxDamage()<ordinary.getMaxDamage()&&reinforced.getMaxDamage()>ordinary.getMaxDamage(),"Handling trade-offs retain their durability costs");
-        h.assertFalse(light.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),"Faster handling never upgrades the copper head tier");h.succeed();
+        double heavySpeed=heavy.get(DataComponents.ATTRIBUTE_MODIFIERS).compute(attribute,base,net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        h.assertTrue(lightSpeed>normalSpeed&&heavySpeed<normalSpeed,"Material changes actual attacks per second without alternate rod shapes");
+        h.assertTrue(light.getMaxDamage()<ordinary.getMaxDamage()&&heavy.getMaxDamage()>ordinary.getMaxDamage(),"Light and heavy materials retain clear durability tradeoffs");
+        h.assertFalse(light.isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()),"A faster rod never upgrades the copper head tier");h.succeed();
     }
-    @GameTest public void complexHandlesCannotBypassTheirAssemblyIngredients(GameTestHelper h){
-        h.assertFalse(ToolParts.shapingChoices(new ItemStack(Items.COPPER_INGOT)).stream().anyMatch(p->p.form().id().equals("hollow_handle")),"A bare ingot cannot bypass the ceramic core and pipe assembly");
-        var plankChoices=ToolParts.shapingChoices(new ItemStack(Items.OAK_PLANKS));
-        h.assertFalse(plankChoices.stream().anyMatch(p->p.form().id().equals("reinforced_handle")),"A bare plank cannot bypass reinforcing fittings and cord");
-        h.assertTrue(plankChoices.stream().anyMatch(p->p.form().id().equals("standard_handle")),"Plain wooden handles remain directly shapeable");h.succeed();
+    @GameTest public void oneRodShapeCanBeShapedWithoutCreatingMetal(GameTestHelper h){
+        var copper=ToolDefinitions.find("copper","standard_handle",false);var plan=ToolParts.shaping(new ItemStack(Items.COPPER_INGOT),copper);
+        h.assertValueEqual(plan.count(),1,"One ingot is the paid input");h.assertValueEqual(plan.result().getCount(),2,"One ingot gives two standard rods");
+        h.assertValueEqual(ToolParts.melt(plan.result())[1]*plan.result().getCount(),9000,"Remelting rods returns at most the paid metal");
+        h.assertTrue(ToolDefinitions.parts().stream().filter(p->p.form().category().equals("handle")).allMatch(p->p.form().id().equals("standard_handle")),"Only ordinary rods exist");h.succeed();
     }
     @GameTest public void headConversionsAndDisassemblyRetainAnvilHistory(GameTestHelper h){
         var nativeTool=new ItemStack(Items.IRON_PICKAXE);var name=net.minecraft.network.chat.Component.literal("Workshop favorite");
@@ -264,7 +262,7 @@ public final class ToolTests {
         h.assertTrue(name.equals(assembled.get(DataComponents.CUSTOM_NAME)),"Head conversion keeps the named favorite");
         assembled.set(DataComponents.REPAIR_COST,15);
         var extracted=ToolParts.extract(assembled,0);
-        var rebuilt=ToolParts.assemble(extracted,item("reinforced_handle"),item("cord_binding"),ItemStack.EMPTY);
+        var rebuilt=ToolParts.assemble(extracted,item("bronze_standard_handle"),item("cord_binding"),ItemStack.EMPTY);
         h.assertValueEqual(rebuilt.getOrDefault(DataComponents.REPAIR_COST,0),15,"Disassembly cannot reset anvil cost");
         h.assertTrue(name.equals(rebuilt.get(DataComponents.CUSTOM_NAME)),"Disassembly retains the name with the primary head");
         rebuilt.remove(DataComponents.CUSTOM_NAME);
@@ -276,7 +274,7 @@ public final class ToolTests {
     }
     @GameTest public void headEnchantmentsStayWithTheHead(GameTestHelper h){
         var tool=build("wooden_handle");var enchantment=h.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(net.minecraft.world.item.enchantment.Enchantments.UNBREAKING);tool.enchant(enchantment,1);
-        var head=ToolParts.extract(tool,0);var retained=ToolParts.assemble(head,item("reinforced_handle"),item("cord_binding"),ItemStack.EMPTY);
+        var head=ToolParts.extract(tool,0);var retained=ToolParts.assemble(head,item("bronze_standard_handle"),item("cord_binding"),ItemStack.EMPTY);
         h.assertTrue(retained.get(DataComponents.ENCHANTMENTS).equals(tool.get(DataComponents.ENCHANTMENTS)),"Handle changes retain head enchantments");
         var replacement=ToolParts.assemble(item("bronze_pickaxe_head"),ToolParts.extract(tool,1),ToolParts.extract(tool,2),ItemStack.EMPTY);
         h.assertTrue(replacement.getEnchantments().isEmpty(),"New head cannot copy old enchantments");h.assertFalse(head.getEnchantments().isEmpty(),"Old enchanted head remains the sole carrier");h.succeed();

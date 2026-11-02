@@ -15,6 +15,11 @@ public final class TestJeiProbe implements IModPlugin {
     public static void showCopper(String machine){
         var type=io.github.kpaakeh.smog.compat.jei.CopperCategory.TYPES.get(machine);var manager=runtime.getRecipeManager();
         if(type==null||manager.createRecipeLookup(type).get().findAny().isEmpty())throw new IllegalStateException("Missing copper JEI category: "+machine);
+        if(machine.equals("tool_workbench")){
+            var examples=manager.createRecipeLookup(type).get().toList();
+            long assemblies=examples.stream().filter(recipe->io.github.kpaakeh.smog.copper.ModularToolItem.configured(recipe.result())).count();
+            if(assemblies!=10||examples.size()>24)throw new IllegalStateException("JEI tool examples expanded into a material matrix: "+assemblies+" assemblies, "+examples.size()+" pages");
+        }
         runtime.getRecipesGui().showTypes(List.of(type));
     }
     public static void showMultiblocks() {
@@ -23,8 +28,8 @@ public final class TestJeiProbe implements IModPlugin {
     }
     public static void showCoredCasting(){
         var type=io.github.kpaakeh.smog.compat.jei.CopperCategory.TYPES.get("casting_table");var manager=runtime.getRecipeManager();
-        var pages=manager.createRecipeLookup(type).get().filter(recipe->io.github.kpaakeh.smog.copper.CopperWorkshops.is(recipe.result(),"smog:hollow_copper_handle")&&recipe.inputs().stream().anyMatch(io.github.kpaakeh.smog.copper.CastingProcesses::core)).toList();
-        if(pages.isEmpty()||pages.stream().anyMatch(recipe->recipe.fluidUnits()!=6750))throw new IllegalStateException("Cored copper casting missing from JEI or its metal amount differs");
+        var pages=manager.createRecipeLookup(type).get().filter(recipe->io.github.kpaakeh.smog.copper.CopperWorkshops.is(recipe.result(),"smog:copper_standard_handle")&&recipe.inputs().stream().anyMatch(io.github.kpaakeh.smog.copper.CastingProcesses::core)).toList();
+        if(pages.isEmpty()||pages.stream().anyMatch(recipe->recipe.fluidUnits()!=4500))throw new IllegalStateException("Cored copper casting missing from JEI or its metal amount differs");
         runtime.getRecipesGui().showRecipes(manager.getRecipeCategory(type),pages,List.of());
     }
     public static void showSolar() {

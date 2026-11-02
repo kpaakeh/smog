@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "id": "smog:hollow_copper_handle"
+      "id": "smog:copper_standard_handle"
     },
     "title": {
       "translate": "advancements.smog.copper.hollow.title"
@@ -20,7 +20,7 @@
       "conditions": {
         "items": [
           {
-            "items": "smog:hollow_copper_handle"
+            "items": "smog:copper_standard_handle"
           }
         ]
       }

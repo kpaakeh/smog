@@ -13,6 +13,16 @@
       "harvest_tier": "stone",
       "casting": false,
       "shaping": true
+    },
+    "handle": {
+      "forms": [
+        "standard_handle"
+      ],
+      "shaping": true,
+      "speed_multiplier": 0.9,
+      "durability_multiplier": 1.03,
+      "handling_multiplier": 0.9,
+      "material_units": 4500
     }
   },
   "repair_ingredient": "#minecraft:stone_tool_materials",

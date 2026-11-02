@@ -27,30 +27,38 @@ public final class CopperWorkshops {
         List<RecipePreview> result=new ArrayList<>();
         for(var recipe:WashingRecipes.all())result.add(new RecipePreview("washing_trough",List.of(recipe.ingredients(),new ItemStack(Items.WATER_BUCKET)),ItemStack.EMPTY,recipe.result(),"jei.smog.copper.washing",recipe.water()));
         for(var seed:BuiltInRegistries.ITEM)if(seed.getDefaultInstance().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ModBlocks.id("oil_seeds"))))result.add(new RecipePreview("lever_press",List.of(new ItemStack(seed,8)),ItemStack.EMPTY,new ItemStack(item("smog:seed_cake")),"jei.smog.copper.pressing"));
-        for(var part:ToolDefinitions.parts())if(part.cast()){
-            var input=new ItemStack(item(part.item().toString()));result.add(new RecipePreview("tool_workbench",List.of(input),toolRequirement(ToolParts.finish(input)),ToolParts.finish(input),"jei.smog.copper.tools"));
+        // These are teaching examples, not the Cartesian product of every material and part.
+        var castExample=ToolDefinitions.find("copper","pickaxe_head",true);
+        if(castExample!=null){var input=new ItemStack(item(castExample.item().toString()));var finished=ToolParts.finish(input);result.add(new RecipePreview("tool_workbench",List.of(input),toolRequirement(finished),finished,"jei.smog.copper.finishing"));}
+        for(var schema:ToolDefinitions.templates()){
+            var assembled=ToolParts.example(schema,"copper");if(assembled.isEmpty())continue;var inputs=ToolParts.components(assembled).stream().filter(s->!s.isEmpty()).toList();result.add(new RecipePreview("tool_workbench",inputs,toolRequirement(assembled),assembled,"jei.smog.copper.tools"));
         }
-        for(var schema:ToolDefinitions.templates())for(String material:ToolDefinitions.parts().stream().filter(p->p.form().category().equals("head")).map(p->p.material().id()).distinct().toList()){
-            var assembled=ToolParts.example(schema,material);if(assembled.isEmpty())continue;var inputs=ToolParts.components(assembled).stream().filter(s->!s.isEmpty()).toList();result.add(new RecipePreview("tool_workbench",inputs,toolRequirement(assembled),assembled,"jei.smog.copper.tools"));
-        }
-        for(var candidate:BuiltInRegistries.ITEM){var input=candidate.getDefaultInstance();if(ToolParts.nativeSource(input)!=null)result.add(new RecipePreview("tool_workbench",List.of(input),toolRequirement(ToolParts.finish(input)),ToolParts.finish(input),"jei.smog.copper.tools"));}
-        for(var candidate:ToolParts.repairIngredients()){var input=new ItemStack(candidate,64);for(var part:ToolParts.shapingChoices(input)){var shaped=ToolParts.shaping(input,part);result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(candidate,shaped.count())),toolRequirement(shaped.result()),shaped.result(),"jei.smog.copper.shaping"));}}
+        var nativeExample=new ItemStack(Items.IRON_PICKAXE);var nativeHead=ToolParts.finish(nativeExample);
+        if(!nativeHead.isEmpty())result.add(new RecipePreview("tool_workbench",List.of(nativeExample),toolRequirement(nativeHead),nativeHead,"jei.smog.copper.conversion"));
+        var shapedExamples=new java.util.HashSet<String>();
+        for(var candidate:ToolParts.repairIngredients()){var input=new ItemStack(candidate,64);for(var part:ToolParts.shapingChoices(input)){
+            if(!java.util.Set.of("copper","stone","wood","cord","fiber").contains(part.material().id()))continue;
+            String exampleKey=part.form().category()+"/"+!part.material().molten().isEmpty();if(!shapedExamples.add(exampleKey))continue;
+            var shaped=ToolParts.shaping(input,part);result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(candidate,shaped.count())),toolRequirement(shaped.result()),shaped.result(),"jei.smog.copper.shaping"));
+        }}
         for(var source:BuiltInRegistries.ITEM)if(source.getDefaultInstance().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ModBlocks.id("fiber_sources"))))result.add(new RecipePreview("lever_press",List.of(new ItemStack(source,8)),new ItemStack(item("smog:fiber_press_basket")),new ItemStack(item("smog:plant_fiber"),4),"jei.smog.copper.fiber_pressing"));
         for(var recipe:POTTERY)result.add(new RecipePreview("potter_table",List.of(new ItemStack(item(recipe.input),recipe.count)),ItemStack.EMPTY,new ItemStack(item(recipe.output),recipe.outputCount),"jei.smog.copper.pottery"));
         for(int metal=0;metal<MoltenMetalStorage.NAMES.length;metal++)for(int mold=0;mold<MOLDS.length;mold++){
             var cast=castResult(metal,mold);if(cast.isEmpty())continue;
+            if(ToolDefinitions.part(cast)!=null&&metal!=0)continue;
             result.add(new RecipePreview("casting_table",List.of(new ItemStack(item(namespace(metal)+MoltenMetalStorage.NAMES[metal]+"_ingot"),Math.max(1,(castCost(metal,mold)+8999)/9000))),new ItemStack(item("smog:"+MOLDS[mold])),cast,"jei.smog.copper.casting",castCost(metal,mold)));
-            if(extraForm(mold)<0)for(String style:List.of("sand_","metal_")){String variant=style+MOLDS[mold];if(BuiltInRegistries.ITEM.containsKey(ModBlocks.id(variant)))result.add(new RecipePreview("casting_table",List.of(new ItemStack(item(namespace(metal)+MoltenMetalStorage.NAMES[metal]+"_ingot"))),new ItemStack(item("smog:"+variant)),cast,"jei.smog.copper.casting",castCost(metal,mold)));}
         }
         for(var firing:FIRING)result.add(new RecipePreview("ceramic_kiln",List.of(new ItemStack(item(firing.input),8)),ItemStack.EMPTY,new ItemStack(item(firing.output),8),"jei.smog.copper.firing"));
-        for(var candidate:BuiltInRegistries.ITEM){var stack=candidate.getDefaultInstance();var amount=melt(stack);if(amount!=null)result.add(new RecipePreview("copper_hearth",List.of(stack),ItemStack.EMPTY,new ItemStack(item("smog:molten_"+MoltenMetalStorage.NAMES[amount[0]]+"_bucket")),"jei.smog.copper.melting"));}
+        for(var candidate:BuiltInRegistries.ITEM){var stack=candidate.getDefaultInstance();if(candidate instanceof ToolPartItem||candidate instanceof ModularToolItem)continue;var amount=melt(stack);if(amount!=null)result.add(new RecipePreview("copper_hearth",List.of(stack),ItemStack.EMPTY,new ItemStack(item("smog:molten_"+MoltenMetalStorage.NAMES[amount[0]]+"_bucket")),"jei.smog.copper.melting"));}
+        var remeltExample=ToolDefinitions.find("copper","pickaxe_head",false);
+        if(remeltExample!=null)result.add(new RecipePreview("copper_hearth",List.of(new ItemStack(item(remeltExample.item().toString()))),ItemStack.EMPTY,new ItemStack(item("smog:molten_copper_bucket")),"jei.smog.copper.melting"));
         for(var alloy:Alloying.recipes()){var inputs=new ArrayList<ItemStack>();for(var input:alloy.ingredients().entrySet()){int metal=Arrays.asList(MoltenMetalStorage.NAMES).indexOf(input.getKey());inputs.add(new ItemStack(item(namespace(metal)+input.getKey()+"_ingot"),input.getValue()));}int metal=Arrays.asList(MoltenMetalStorage.NAMES).indexOf(alloy.output());result.add(new RecipePreview("copper_hearth",inputs,alloy.closed()?new ItemStack(item("smog:closed_crucible_insert")):ItemStack.EMPTY,new ItemStack(item(namespace(metal)+alloy.output()+"_ingot"),alloy.total()),"jei.smog.copper.alloy"));}
         for(int metal=0;metal<MoltenMetalStorage.NAMES.length;metal++){String name=MoltenMetalStorage.NAMES[metal];var block=item(namespace(metal)+name+"_block");if(block!=Items.AIR)result.add(new RecipePreview("casting_basin",List.of(new ItemStack(item(namespace(metal)+name+"_ingot"),9)),ItemStack.EMPTY,new ItemStack(block),"jei.smog.copper.casting"));}
         var patterns=new LinkedHashMap<String,ItemStack>();patterns.put("ingot",new ItemStack(Items.COPPER_INGOT));patterns.put("plate",new ItemStack(item("smog:copper_plate")));patterns.put("fitting",new ItemStack(item("smog:copper_fitting")));patterns.put("pipe",new ItemStack(item("smog:copper_pipe_part")));for(var form:ToolDefinitions.headForms()){var head=ToolDefinitions.find("copper",form.id(),false);if(head!=null)patterns.put(form.id().replaceFirst("_head$",""),new ItemStack(item(head.item().toString())));}
-        patterns.forEach((shape,sample)->{result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(item("smog:molding_sand")),sample),ToolParts.example(ToolDefinitions.template("hammer"),"stone"),MoldMaking.sandMold(shape),"jei.smog.copper.imprint"));result.add(new RecipePreview("casting_table",List.of(new ItemStack(Items.GOLD_INGOT,2)),sample,MoldMaking.metalMold(shape),"jei.smog.copper.mold_making"));});
-        for(int metal=0;metal<MoltenMetalStorage.NAMES.length;metal++){
+        patterns.forEach((shape,sample)->{if(shape.equals("ingot")||shape.equals("pickaxe"))result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(item("smog:molding_sand")),sample),ToolParts.example(ToolDefinitions.template("hammer"),"stone"),MoldMaking.sandMold(shape),"jei.smog.copper.imprint"));result.add(new RecipePreview("casting_table",List.of(new ItemStack(Items.GOLD_INGOT,2)),sample,MoldMaking.metalMold(shape),"jei.smog.copper.mold_making"));});
+        for(int metal=0;metal<1;metal++){
             var part=CastingProcesses.hollowPart(metal);if(part==null)continue;
-            for(String style:List.of("","sand_","metal_")){
+            for(String style:List.of("")){
                 var mold=item("smog:"+style+"pipe_mold");if(mold==Items.AIR)continue;
                 result.add(new RecipePreview("casting_table",List.of(new ItemStack(item(namespace(metal)+MoltenMetalStorage.NAMES[metal]+"_ingot")),new ItemStack(item("smog:ceramic_core"))),new ItemStack(mold),new ItemStack(item(part.item().toString())),"jei.smog.copper.casting",ToolParts.units(part)));
             }

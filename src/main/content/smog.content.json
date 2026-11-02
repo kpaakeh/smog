@@ -2778,6 +2778,32 @@
       ]
     }
   ],
+  "concentrate_smelting": [
+    {
+      "input": "smog:copper_concentrate",
+      "output": "minecraft:copper_ingot",
+      "count": 2,
+      "experience": 1.4,
+      "smelting_ticks": 400,
+      "blasting_ticks": 200
+    },
+    {
+      "input": "smog:iron_concentrate",
+      "output": "minecraft:iron_ingot",
+      "count": 2,
+      "experience": 1.4,
+      "smelting_ticks": 400,
+      "blasting_ticks": 200
+    },
+    {
+      "input": "smog:gold_concentrate",
+      "output": "minecraft:gold_ingot",
+      "count": 2,
+      "experience": 1.4,
+      "smelting_ticks": 400,
+      "blasting_ticks": 200
+    }
+  ],
   "washing": [
     {
       "input": "minecraft:raw_copper",
@@ -3553,67 +3579,6 @@
       }
     },
     {
-      "name": "short_handle",
-      "unlock": "minecraft:stick",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:stick"
-        ],
-        "result": {
-          "id": "smog:short_handle",
-          "count": 2
-        }
-      }
-    },
-    {
-      "name": "light_handle",
-      "unlock": "minecraft:bamboo",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "minecraft:bamboo",
-          "minecraft:string"
-        ],
-        "result": {
-          "id": "smog:light_handle",
-          "count": 2
-        }
-      }
-    },
-    {
-      "name": "reinforced_handle",
-      "unlock": "smog:wooden_handle",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:wooden_handle",
-          "smog:copper_fitting",
-          "minecraft:string"
-        ],
-        "result": {
-          "id": "smog:reinforced_handle",
-          "count": 1
-        }
-      }
-    },
-    {
-      "name": "hollow_copper_handle",
-      "unlock": "smog:copper_pipe_part",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:copper_pipe_part",
-          "smog:copper_fitting",
-          "smog:ceramic_core"
-        ],
-        "result": {
-          "id": "smog:hollow_copper_handle",
-          "count": 1
-        }
-      }
-    },
-    {
       "name": "cord_binding",
       "unlock": "minecraft:string",
       "data": {
@@ -4119,6 +4084,45 @@
   ],
   "translations": {
     "en_us": {
+      "jei.smog.example_label": "Representative recipe",
+      "jei.smog.example_materials": "Example materials. Parts can use other compatible materials; the anvil shows the actual result.",
+      "jei.smog.copper.finishing": "Hammer-finish a casting. The same operation works for every head material.",
+      "jei.smog.copper.conversion": "Recover a head from a vanilla tool; its wear, name and enchantments are retained.",
+      "tool.smog.tip.durability": "Durability",
+      "tool.smog.tip.material": "Material",
+      "tool.smog.tip.traits": "Traits",
+      "tool.smog.tip.properties": "Properties",
+      "tool.smog.tip.damage": "Attack damage",
+      "tool.smog.tip.attack_speed": "Attacks / second",
+      "tool.smog.tip.mining_speed": "Mining speed",
+      "tool.smog.tip.head_damage": "Head damage",
+      "tool.smog.tip.speed_factor": "Speed factor",
+      "tool.smog.tip.life_factor": "Durability factor",
+      "tool.smog.tip.tier": "Harvest tier",
+      "tool.smog.tip.repair": "Repair material",
+      "tool.smog.tip.trait_details": "Material effects",
+      "tool.smog.tip.construction": "Construction",
+      "tool.smog.tip.part.head": "Head",
+      "tool.smog.tip.part.handle": "Rod",
+      "tool.smog.tip.part.binding": "Binding",
+      "tool.smog.tip.part.wrap": "Grip wrap",
+      "tool.smog.tip.part_type": "Part",
+      "tool.smog.tip.content": "Metal content",
+      "tool.smog.tip.keys": "Ctrl · properties    Alt · construction",
+      "tool.smog.tip.trait.work_hardening": "Work hardening",
+      "tool.smog.tip.trait.staggering": "Staggering",
+      "tool.smog.tip.trait.marking": "Marking",
+      "tool.smog.tip.trait.grip": "Secure grip",
+      "tool.smog.tip.use.pickaxe": "Mining stone and ores",
+      "tool.smog.tip.use.axe": "Chopping wood",
+      "tool.smog.tip.use.saw": "Tree felling · sneak for one block",
+      "tool.smog.tip.use.shovel": "Digging soil",
+      "tool.smog.tip.use.hammer": "Mining 3×3×1 · workshop hammer",
+      "tool.smog.tip.use.hoe": "Tilling soil",
+      "tool.smog.tip.use.sword": "Balanced melee blade",
+      "tool.smog.tip.use.katana": "Fast blade · lower damage",
+      "tool.smog.tip.use.machete": "Heavy blade · higher damage",
+      "tool.smog.tip.use.sickle": "Right-click · harvest and replant 3×1×3",
       "gui.smog.pottery.input": "Material",
       "gui.smog.pottery.choose": "Shape",
       "gui.smog.pottery.output": "Result",
@@ -4159,7 +4163,7 @@
       "tool.smog.preview_speed": "Peak mining speed: %s → %s (%s)",
       "tool.smog.preview_speed_family": "%s: %s → %s (%s)",
       "tool.smog.preview_conditions": "Base values; enchantments and situational traits apply during use.",
-      "gui.smog.casting.core_slot": "Optional ceramic core: pipe mold → hollow handle; the core is consumed.",
+      "gui.smog.casting.core_slot": "Optional ceramic mandrel: pipe mold → standard rod; the mandrel is consumed.",
       "gui.smog.casting.mold_slot": "Casting mold or sample for making a metal cast",
       "message.smog.assembly_fixed": "At %s, %s, %s: required part — %s.",
       "tag.item.smog.copper_masonry": "Foundry Masonry",
@@ -4248,8 +4252,8 @@
       "advancements.smog.copper.bench.description": "Prepare a copper anvil.",
       "advancements.smog.copper.tools.title": "A tool of your own",
       "advancements.smog.copper.tools.description": "Obtain a modular pickaxe with a head, handle and binding of your choice.",
-      "advancements.smog.copper.hollow.title": "Shaped around a core",
-      "advancements.smog.copper.hollow.description": "Obtain a hollow copper handle. A core in a pipe mold shapes the cavity.",
+      "advancements.smog.copper.hollow.title": "A rod for every tool",
+      "advancements.smog.copper.hollow.description": "Obtain a copper rod for a modular tool.",
       "advancements.smog.copper.water.title": "Water on site",
       "advancements.smog.copper.water.description": "Make a hand pump for finite water orders.",
       "advancements.smog.copper.fiber.title": "Without hunting",
@@ -4454,6 +4458,45 @@
       "tool.smog.preview_use_sickle": "Right-click: harvest and replant mature crops in 3×1×3"
     },
     "ru_ru": {
+      "jei.smog.example_label": "Пример изготовления",
+      "jei.smog.example_materials": "Материалы показаны для примера. Детали могут быть из других совместимых материалов; точный результат виден на наковальне.",
+      "jei.smog.copper.finishing": "Доводка отливки молотом. Та же операция применяется к головкам из других материалов.",
+      "jei.smog.copper.conversion": "Получение головки из ванильного инструмента с сохранением износа, имени и чар.",
+      "tool.smog.tip.durability": "Прочность",
+      "tool.smog.tip.material": "Материал",
+      "tool.smog.tip.traits": "Свойства",
+      "tool.smog.tip.properties": "Характеристики",
+      "tool.smog.tip.damage": "Урон",
+      "tool.smog.tip.attack_speed": "Атак в секунду",
+      "tool.smog.tip.mining_speed": "Скорость добычи",
+      "tool.smog.tip.head_damage": "Урон головки",
+      "tool.smog.tip.speed_factor": "Множитель скорости",
+      "tool.smog.tip.life_factor": "Множитель прочности",
+      "tool.smog.tip.tier": "Уровень добычи",
+      "tool.smog.tip.repair": "Материал ремонта",
+      "tool.smog.tip.trait_details": "Эффекты материалов",
+      "tool.smog.tip.construction": "Состав",
+      "tool.smog.tip.part.head": "Головка",
+      "tool.smog.tip.part.handle": "Стержень",
+      "tool.smog.tip.part.binding": "Крепление",
+      "tool.smog.tip.part.wrap": "Обмотка",
+      "tool.smog.tip.part_type": "Часть",
+      "tool.smog.tip.content": "Содержание металла",
+      "tool.smog.tip.keys": "Ctrl · характеристики    Alt · состав",
+      "tool.smog.tip.trait.work_hardening": "Наклёп",
+      "tool.smog.tip.trait.staggering": "Ошеломление",
+      "tool.smog.tip.trait.marking": "Метка",
+      "tool.smog.tip.trait.grip": "Цепкий хват",
+      "tool.smog.tip.use.pickaxe": "Добыча камня и руд",
+      "tool.smog.tip.use.axe": "Рубка древесины",
+      "tool.smog.tip.use.saw": "Валка дерева · Shift для одного блока",
+      "tool.smog.tip.use.shovel": "Земляные работы",
+      "tool.smog.tip.use.hammer": "Добыча 3×3×1 · работа в мастерской",
+      "tool.smog.tip.use.hoe": "Вспашка земли",
+      "tool.smog.tip.use.sword": "Сбалансированный клинок",
+      "tool.smog.tip.use.katana": "Быстрый клинок · меньше урон",
+      "tool.smog.tip.use.machete": "Тяжёлый клинок · больше урон",
+      "tool.smog.tip.use.sickle": "ПКМ · сбор и посадка 3×1×3",
       "gui.smog.pottery.input": "Материал",
       "gui.smog.pottery.choose": "Форма",
       "gui.smog.pottery.output": "Итог",
@@ -4494,7 +4537,7 @@
       "tool.smog.preview_speed": "Максимальная скорость добычи: %s → %s (%s)",
       "tool.smog.preview_speed_family": "%s: %s → %s (%s)",
       "tool.smog.preview_conditions": "Базовые значения; чары и ситуативные свойства действуют при работе.",
-      "gui.smog.casting.core_slot": "Необязательный керамический стержень: трубная форма → полая рукоять; стержень расходуется.",
+      "gui.smog.casting.core_slot": "Необязательная керамическая оснастка: трубная форма → обычный стержень; оснастка расходуется.",
       "gui.smog.casting.mold_slot": "Литейная форма или образец для металлической оснастки",
       "message.smog.assembly_fixed": "На %s, %s, %s нужна деталь: %s.",
       "tag.item.smog.copper_masonry": "Литейная кладка",
@@ -4583,8 +4626,8 @@
       "advancements.smog.copper.bench.description": "Подготовьте медную наковальню.",
       "advancements.smog.copper.tools.title": "Свой инструмент",
       "advancements.smog.copper.tools.description": "Получите составную кирку: головка, рукоять и крепление выбираются отдельно.",
-      "advancements.smog.copper.hollow.title": "Пустота по форме",
-      "advancements.smog.copper.hollow.description": "Получите полую медную рукоять. В трубной форме стержень задаёт полость.",
+      "advancements.smog.copper.hollow.title": "Основа инструмента",
+      "advancements.smog.copper.hollow.description": "Получите медный стержень для составного инструмента.",
       "advancements.smog.copper.water.title": "Вода на месте",
       "advancements.smog.copper.water.description": "Изготовьте ручную помпу для конечных заказов воды.",
       "advancements.smog.copper.fiber.title": "Без охоты",

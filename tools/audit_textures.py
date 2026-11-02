@@ -38,6 +38,7 @@ for fluid in content['fluids']:
     if fluid['name'].startswith('molten_'):used.add('block/'+fluid['name']+'_surface.png')
 used.update(['block/workshop_water_surface.png','block/plant_oil_surface.png'])
 if any(m.get('name')=='copper_hearth' for m in content.get('machines',[])):used.update(['gui/smeltery.png','block/smeltery_fuel_surface.png','block/blazing_fuel_surface.png'])
+used.update('gui/sprites/tooltip/workshop_'+kind+'.png' for kind in ['background','frame'])
 textures=SOURCE/'assets/smog/textures';actual={p.relative_to(textures).as_posix() for p in textures.rglob('*.png')}
 unused=sorted(actual-used);absent=sorted(used-actual)
 print('Active PNGs:',len(actual),'Unused:',len(unused),'Missing:',len(absent))

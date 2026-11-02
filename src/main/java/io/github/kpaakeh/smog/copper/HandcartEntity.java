@@ -24,6 +24,7 @@ public final class HandcartEntity extends AbstractMinecartContainer {
     @Override public ItemStack getPickResult(){return new ItemStack(getDropItem());}
     @Override public boolean isRideable(){return false;}
     @Override protected double getMaxSpeed(ServerLevel level){return .24;}
+    @Override public float maxUpStep(){return pulling()?1.05f:super.maxUpStep();}
     public boolean pulling(){return puller!=null;}
     public void pull(Player player){puller=player.getUUID();}
     @Override public InteractionResult interact(Player player,InteractionHand hand,Vec3 location){

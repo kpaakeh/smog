@@ -88,70 +88,14 @@
       "category": "handle",
       "variant": "standard",
       "name": {
-        "en_us": "Standard Handle",
-        "ru_ru": "Обычная рукоять"
+        "en_us": "Rod",
+        "ru_ru": "Стержень"
       },
       "aliases": {
         "wood": "wooden_handle"
       },
       "prototype_shape": "wooden_handle",
       "material_units": 4500
-    },
-    {
-      "id": "light_handle",
-      "category": "handle",
-      "variant": "light",
-      "name": {
-        "en_us": "Light Handle",
-        "ru_ru": "Лёгкая рукоять"
-      },
-      "aliases": {
-        "wood": "light_handle"
-      },
-      "prototype_shape": "light_handle",
-      "material_units": 4500
-    },
-    {
-      "id": "reinforced_handle",
-      "category": "handle",
-      "variant": "reinforced",
-      "name": {
-        "en_us": "Reinforced Handle",
-        "ru_ru": "Усиленная рукоять"
-      },
-      "aliases": {
-        "wood": "reinforced_handle"
-      },
-      "prototype_shape": "reinforced_handle",
-      "material_units": 9000
-    },
-    {
-      "id": "short_handle",
-      "category": "handle",
-      "variant": "short",
-      "name": {
-        "en_us": "Short Handle",
-        "ru_ru": "Короткая рукоять"
-      },
-      "aliases": {
-        "wood": "short_handle"
-      },
-      "prototype_shape": "short_handle",
-      "material_units": 2250
-    },
-    {
-      "id": "hollow_handle",
-      "category": "handle",
-      "variant": "hollow",
-      "name": {
-        "en_us": "Hollow Handle",
-        "ru_ru": "Полая рукоять"
-      },
-      "aliases": {
-        "copper": "hollow_copper_handle"
-      },
-      "prototype_shape": "hollow_copper_handle",
-      "material_units": 6750
     },
     {
       "id": "binding",
@@ -279,10 +223,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -296,7 +237,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 0,
+      "attack_speed": 1.2,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 1,
+      "durability_multiplier": 1
     },
     {
       "id": "axe",
@@ -318,10 +264,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -335,7 +278,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 5,
+      "attack_speed": 0.9,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 1,
+      "durability_multiplier": 1
     },
     {
       "id": "saw",
@@ -357,10 +305,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -374,7 +319,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 1,
+      "attack_speed": 1,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 0.7,
+      "durability_multiplier": 1.6
     },
     {
       "id": "shovel",
@@ -396,10 +346,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -413,7 +360,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 0.5,
+      "attack_speed": 1,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 1,
+      "durability_multiplier": 1
     },
     {
       "id": "hammer",
@@ -435,10 +387,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -452,7 +401,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 3,
+      "attack_speed": 0.8,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 0.55,
+      "durability_multiplier": 1.6
     },
     {
       "id": "hoe",
@@ -474,10 +428,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -491,7 +442,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 0,
+      "attack_speed": 2.5,
+      "head_damage_multiplier": 0,
+      "mining_speed_multiplier": 1,
+      "durability_multiplier": 1
     },
     {
       "id": "sword",
@@ -513,9 +469,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "short_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -529,7 +483,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 2,
+      "attack_speed": 1.6,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 0.35,
+      "durability_multiplier": 1
     },
     {
       "id": "katana",
@@ -551,9 +510,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "short_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -567,7 +524,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 1,
+      "attack_speed": 2,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 0.35,
+      "durability_multiplier": 0.85
     },
     {
       "id": "machete",
@@ -589,9 +551,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "short_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -605,7 +565,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 3,
+      "attack_speed": 1.1,
+      "head_damage_multiplier": 1,
+      "mining_speed_multiplier": 0.6,
+      "durability_multiplier": 1.15
     },
     {
       "id": "sickle",
@@ -627,10 +592,7 @@
           "id": "handle",
           "category": "handle",
           "forms": [
-            "standard_handle",
-            "light_handle",
-            "reinforced_handle",
-            "hollow_handle"
+            "standard_handle"
           ]
         },
         {
@@ -644,7 +606,12 @@
         }
       ],
       "max_support_speed_multiplier": 1.15,
-      "max_support_durability_multiplier": 1.3
+      "max_support_durability_multiplier": 1.3,
+      "attack_damage_bonus": 0,
+      "attack_speed": 1.6,
+      "head_damage_multiplier": 0,
+      "mining_speed_multiplier": 1,
+      "durability_multiplier": 1.25
     }
   ],
   "base_display": {

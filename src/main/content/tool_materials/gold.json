@@ -7,7 +7,13 @@
   "color": "F8D34E",
   "profiles": {
     "head": {
-      "traits": [{"id":"marking","duration_ticks":60,"cooldown_ticks":60}],
+      "traits": [
+        {
+          "id": "marking",
+          "duration_ticks": 60,
+          "cooldown_ticks": 60
+        }
+      ],
       "durability": 32,
       "mining_speed": 12,
       "attack_damage": 0,
@@ -18,13 +24,13 @@
     },
     "handle": {
       "forms": [
-        "standard_handle",
-        "short_handle",
-        "hollow_handle"
+        "standard_handle"
       ],
-      "speed_multiplier": 1,
-      "durability_multiplier": 0.85,
-      "shaping": true
+      "shaping": true,
+      "speed_multiplier": 1.06,
+      "durability_multiplier": 0.75,
+      "handling_multiplier": 1.06,
+      "material_units": 4500
     },
     "binding": {
       "forms": [

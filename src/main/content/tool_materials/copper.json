@@ -7,7 +7,14 @@
   "color": "D58659",
   "profiles": {
     "head": {
-      "traits": [{"id":"work_hardening","max_stacks":4,"speed_per_stack":0.04,"timeout_ticks":100}],
+      "traits": [
+        {
+          "id": "work_hardening",
+          "max_stacks": 4,
+          "speed_per_stack": 0.04,
+          "timeout_ticks": 100
+        }
+      ],
       "durability": 200,
       "mining_speed": 5,
       "attack_damage": 3,
@@ -18,11 +25,13 @@
     },
     "handle": {
       "forms": [
-        "hollow_handle"
+        "standard_handle"
       ],
-      "shaping": false,
-      "speed_multiplier": 0.98,
-      "durability_multiplier": 1.05
+      "shaping": true,
+      "speed_multiplier": 1,
+      "durability_multiplier": 1.08,
+      "handling_multiplier": 0.96,
+      "material_units": 4500
     },
     "binding": {
       "forms": [

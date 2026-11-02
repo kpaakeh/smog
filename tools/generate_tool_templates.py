@@ -71,6 +71,7 @@ for form in DATA['forms']:
  if category=='head':
   im=head(form)
   for raw in [False,True]:save(ASSETS/('textures/item/tool_molds/'+('unfired_' if raw else '')+form['id']+'.png'),mold(im,raw))
+  save(ASSETS/('textures/item/casting_molds/'+form['id'].replace('_head','_mold')+'.png'),gray(mold(im,False)))
   cast=im.copy();d=ImageDraw.Draw(cast);d.line((9,7,6,11),fill=(85,85,85,255),width=2);d.rectangle((4,11,7,13),fill=(130,130,130,255));d.point((5,11),fill=(230,230,230,255));save(ASSETS/('textures/item/tool_forms/cast_'+form['id']+'.png'),cast)
  elif category=='handle':im=handle(form)
  else:

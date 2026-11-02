@@ -86,6 +86,9 @@ publishing {
 }
 
 // Run the copper scene in isolation; legacy foundation scenes keep their default behavior.
+if(providers.gradleProperty('multiplayerTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.multiplayerTest=true'; vmArg '-Xmx1G' }
+}
 if(providers.gradleProperty('copperTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.copperTest=true' }
 }
@@ -96,4 +99,21 @@ if(providers.gradleProperty('testLanguage').isPresent()) {
     def testLanguage=providers.gradleProperty('testLanguage').get()
     if(!(testLanguage in ['en_us','ru_ru']))throw new GradleException('testLanguage must be en_us or ru_ru')
     loom.runs.named('clientGameTest') { vmArg "-Dsmog.testLanguage=$testLanguage" }
+}
+
+// Isolated GameTest worlds are reused by Loom; their historical wire links otherwise
+// accumulate until the production 512-link cap prevents unrelated fresh fixtures.
+def smogGameTestWireFile = layout.buildDirectory.file('run/gameTest/world/dimensions/minecraft/overworld/data/smog/wires.dat')
+def smogGameTestBuildRoot = layout.buildDirectory
+tasks.named('runGameTest') {
+    doFirst {
+        def buildRoot = smogGameTestBuildRoot.get().asFile.canonicalFile
+        def savedWires = smogGameTestWireFile.get().asFile.canonicalFile
+        if (!savedWires.path.startsWith(buildRoot.path + File.separator)) {
+            throw new GradleException('GameTest wire cleanup escaped the build directory')
+        }
+        if (savedWires.exists() && !savedWires.delete()) {
+            throw new GradleException('Cannot reset the isolated GameTest wire fixture')
+        }
+    }
 }

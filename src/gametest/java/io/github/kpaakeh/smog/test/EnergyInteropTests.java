@@ -26,6 +26,10 @@ public final class EnergyInteropTests {
         var storage=new SimpleEnergyStorage(capacity,Long.MAX_VALUE,0);
         EXTERNAL.put(pos,storage);h.getLevel().setBlockAndUpdate(pos,Blocks.IRON_BLOCK.defaultBlockState());return storage;
     }
+    private static void connect(GameTestHelper h,WireLink link){
+        var wires=WireData.get(h.getLevel());
+        h.assertTrue(wires.add(link),"Test wire creation failed; saved links="+wires.all().size()+", sample="+wires.all().stream().limit(2).toList()+", requested="+link);
+    }
     @GameTest public void eachConductorTransfersItsRatedAmount(GameTestHelper h) {
         if(!registered){EnergyStorage.SIDED.registerForBlocks((level,pos,state,entity,side)->EXTERNAL.get(pos),Blocks.IRON_BLOCK);registered=true;}
         try {
@@ -33,7 +37,7 @@ public final class EnergyInteropTests {
                 int y=2+material.ordinal()*3;
                 var source=machine(h,material.connectorId(),0,y,1);var end=machine(h,material.connectorId(),5,y,1);
                 var receiver=sink(h,end.getBlockPos().east(),10000);
-                WireData.get(h.getLevel()).add(new WireLink(source.getBlockPos(),end.getBlockPos(),material));
+                connect(h,new WireLink(source.getBlockPos(),end.getBlockPos(),material));
                 try(var tx=Transaction.openOuter()) {h.assertValueEqual(source.energyStorage().insert(material.transfer,tx),(long)material.transfer,"Input accepts material rating "+material);tx.commit();}
                 EnergyNetwork.tick(h.getLevel());
                 h.assertValueEqual(receiver.getAmount(),(long)material.transfer,"Wire reaches rated throughput "+material);
@@ -78,7 +82,7 @@ public final class EnergyInteropTests {
 
             var wired=machine(h,"solid_generator",0,1,4);var a=machine(h,"connector_lv",1,1,4);var b=machine(h,"connector_lv",6,1,4);
             var remote=sink(h,b.getBlockPos().east(),1000);
-            WireData.get(h.getLevel()).add(new WireLink(a.getBlockPos(),b.getBlockPos(),ConductorMaterial.COPPER));wired.energy(100);
+            connect(h,new WireLink(a.getBlockPos(),b.getBlockPos(),ConductorMaterial.COPPER));wired.energy(100);
             EnergyNetwork.tick(h.getLevel());h.assertValueEqual(remote.getAmount(),32L,"Wires push to third-party sink at the remote connector");
             EnergyNetwork.tick(h.getLevel());h.assertValueEqual(remote.getAmount(),32L,"Multiple updates cannot bypass per-tick source limit");
 
@@ -100,7 +104,7 @@ public final class EnergyInteropTests {
             }
 
             var ingress=machine(h,"connector_lv",0,6,1);var exit=machine(h,"connector_lv",5,6,1);var target=machine(h,"electric_furnace",6,6,1);
-            WireData.get(h.getLevel()).add(new WireLink(ingress.getBlockPos(),exit.getBlockPos(),ConductorMaterial.COPPER));
+            connect(h,new WireLink(ingress.getBlockPos(),exit.getBlockPos(),ConductorMaterial.COPPER));
             try(var transaction=Transaction.openOuter()) {
                 var port=EnergyStorage.SIDED.find(h.getLevel(),ingress.getBlockPos(),Direction.WEST);
                 h.assertValueEqual(port.insert(32,transaction),32L,"Connector accepts an external push");transaction.commit();

@@ -18,7 +18,13 @@ import io.github.kpaakeh.smog.registry.ModBlocks;
 
 /** Native tool components determine harvesting. A spent head disables work without deleting the assembly. */
 public final class ModularToolItem extends Item {
-    public ModularToolItem(Properties properties){super(properties.stacksTo(1).durability(250));}
+    public ModularToolItem(Properties properties){super(properties.stacksTo(1).durability(250).component(DataComponents.TOOLTIP_STYLE,ModBlocks.id("workshop")).component(DataComponents.TOOLTIP_DISPLAY,TooltipDisplay.DEFAULT.withHidden(DataComponents.ATTRIBUTE_MODIFIERS,true).withHidden(DataComponents.CONTAINER,true)));}
+    @Override public Component getName(ItemStack stack){
+        if(!configured(stack))return super.getName(stack);
+        var schema=ToolParts.schema(stack);var components=ToolParts.components(stack);var head=ToolDefinitions.part(components.get(ToolDefinitions.primary(schema)));
+        if(head==null)return super.getName(stack);
+        return Component.translatable("tool.smog.template."+schema.id()).append(" · ").append(Component.translatable("tool.smog.material."+head.material().id()));
+    }
     public static CompoundTag parts(ItemStack stack){return stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();}
     public static boolean configured(ItemStack stack){return stack.getItem() instanceof ModularToolItem&&ToolParts.schema(stack)!=null&&stack.has(DataComponents.CONTAINER);}
     public static boolean broken(ItemStack stack){return !configured(stack)||stack.getDamageValue()>=stack.getMaxDamage();}
@@ -50,13 +56,6 @@ public final class ModularToolItem extends Item {
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,TooltipDisplay display,java.util.function.Consumer<Component> lines,TooltipFlag flag){
         super.appendHoverText(stack,context,display,lines,flag);
-        if(!configured(stack)){lines.accept(Component.translatable("tool.smog.unconfigured"));return;}
-        var schema=ToolParts.schema(stack);var components=ToolParts.components(stack);
-        if(ToolParts.hammerAssembly(stack))lines.accept(Component.translatable("tool.smog.mount_hammer"));
-        for(int i=0;i<components.size();i++)if(!components.get(i).isEmpty())lines.accept(Component.translatable("tool.smog.part_"+schema.roles().get(i).category(),components.get(i).getHoverName()));
-        for(var component:components){var head=ToolDefinitions.part(component);if(head==null||!head.form().category().equals("head"))continue;var profile=head.material().profile(head.form());lines.accept(Component.translatable("tool.smog.tier",Component.translatable("tool.smog.tier."+ToolDefinitions.string(profile,"harvest_tier","wooden"))));}
-        ToolTraits.tooltip(stack,lines);
-        var mining=stack.get(DataComponents.TOOL);if(mining!=null)lines.accept(Component.translatable("tool.smog.speed",String.format(java.util.Locale.ROOT,"%.2f",mining.rules().stream().flatMap(r->r.speed().stream()).max(Float::compare).orElse(1f))));
-        lines.accept(Component.translatable(broken(stack)?"tool.smog.broken":"tool.smog.durability",Math.max(0,stack.getMaxDamage()-stack.getDamageValue()),stack.getMaxDamage()));
+        ToolTooltip.append(stack,lines);
     }
 }

@@ -7,7 +7,13 @@
   "color": "B8874D",
   "profiles": {
     "head": {
-      "traits": [{"id":"staggering","duration_ticks":20,"cooldown_ticks":60}],
+      "traits": [
+        {
+          "id": "staggering",
+          "duration_ticks": 20,
+          "cooldown_ticks": 60
+        }
+      ],
       "durability": 320,
       "mining_speed": 6,
       "attack_damage": 3,
@@ -24,13 +30,13 @@
     },
     "handle": {
       "forms": [
-        "standard_handle",
-        "short_handle",
-        "hollow_handle"
+        "standard_handle"
       ],
-      "speed_multiplier": 1,
-      "durability_multiplier": 1.08,
-      "shaping": true
+      "shaping": true,
+      "speed_multiplier": 0.98,
+      "durability_multiplier": 1.18,
+      "handling_multiplier": 0.94,
+      "material_units": 4500
     }
   },
   "repair_item": "smog:bronze_ingot",

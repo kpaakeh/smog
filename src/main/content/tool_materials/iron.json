@@ -17,12 +17,13 @@
     },
     "handle": {
       "forms": [
-        "standard_handle",
-        "short_handle",
-        "hollow_handle"
+        "standard_handle"
       ],
-      "durability_multiplier": 1.08,
-      "shaping": true
+      "shaping": true,
+      "speed_multiplier": 0.98,
+      "durability_multiplier": 1.15,
+      "handling_multiplier": 0.93,
+      "material_units": 4500
     },
     "binding": {
       "forms": [

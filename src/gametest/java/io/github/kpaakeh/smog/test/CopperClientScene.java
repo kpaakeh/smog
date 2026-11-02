@@ -97,7 +97,12 @@ public final class CopperClientScene {
             world.getServer().runOnServer(server->{server.getPlayerList().getPlayers().getFirst().openMenu((MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,-3)));});
             context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-tool-workbench-gui");
             hover(context,20,24);context.takeScreenshot("copper-tool-comparison-tooltip");
-            hover(context,85,67);context.takeScreenshot("copper-tool-traits-tooltip");context.setScreen(()->null);
+            hover(context,85,67);context.takeScreenshot("copper-tool-tooltip-overview");
+            context.getInput().holdControl();context.waitTicks(3);context.takeScreenshot("copper-tool-tooltip-properties");
+            context.runOnClient(mc->{var tool=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("pickaxe"),"copper");var lines=tool.getTooltipLines(net.minecraft.world.item.Item.TooltipContext.of(mc.level),mc.player,net.minecraft.world.item.TooltipFlag.NORMAL);if(lines.stream().noneMatch(line->line.getString().contains("Характеристики")||line.getString().contains("Properties")))throw new IllegalStateException("SDL Ctrl did not expand tool properties");});
+            context.getInput().releaseControl();context.getInput().holdAlt();context.waitTicks(3);context.takeScreenshot("copper-tool-tooltip-construction");
+            context.runOnClient(mc->{var tool=io.github.kpaakeh.smog.copper.ToolParts.example(io.github.kpaakeh.smog.copper.ToolDefinitions.template("pickaxe"),"copper");var lines=tool.getTooltipLines(net.minecraft.world.item.Item.TooltipContext.of(mc.level),mc.player,net.minecraft.world.item.TooltipFlag.NORMAL);if(lines.stream().noneMatch(line->line.getString().equals("Состав")||line.getString().equals("Construction")))throw new IllegalStateException("SDL Alt did not expand tool construction");});
+            context.getInput().releaseAlt();context.setScreen(()->null);
             world.getServer().runCommand("tp @a 0.5 102 -5.5 0 45");context.getInput().lookAt(new BlockPos(0,100,-3));context.waitTicks(12);context.takeScreenshot("copper-tool-workbench-world");
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);});
             for(String tabId:java.util.List.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools")){
@@ -154,7 +159,7 @@ public final class CopperClientScene {
                 var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));table.setItem(3,ItemStack.EMPTY);
                 table.setItem(1,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("pipe_mold")));table.setItem(2,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("ceramic_core"),2));
                 try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
-                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),3375,tx)!=3375)throw new IllegalStateException("Cored partial casting fixture rejected");tx.commit();
+                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),2250,tx)!=2250)throw new IllegalStateException("Cored partial casting fixture rejected");tx.commit();
                 }
                 server.getPlayerList().getPlayers().getFirst().openMenu(table);
             });
@@ -163,11 +168,11 @@ public final class CopperClientScene {
             world.getServer().runOnServer(server->{
                 var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));
                 try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){
-                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),3375,tx)!=3375)throw new IllegalStateException("Cored top-up fixture rejected");tx.commit();
+                    if(table.castingFluid.insert(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(0),2250,tx)!=2250)throw new IllegalStateException("Cored top-up fixture rejected");tx.commit();
                 }
             });
             context.waitTicks(60);
-            world.getServer().runOnServer(server->{var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));if(!table.getItem(3).is(io.github.kpaakeh.smog.copper.ToolParts.item("hollow_copper_handle"))||table.getItem(2).getCount()!=1)throw new IllegalStateException("Cored casting did not produce one handle and consume one core");});
+            world.getServer().runOnServer(server->{var table=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(2,100,-3));if(!table.getItem(3).is(io.github.kpaakeh.smog.copper.ToolParts.item("copper_standard_handle"))||table.getItem(2).getCount()!=1)throw new IllegalStateException("Cored casting did not produce one handle and consume one core");});
             context.takeScreenshot("copper-casting-core-ready-world");
             context.runOnClient(mc->TestJeiProbe.showMultiblocks());context.waitTicks(8);context.takeScreenshot("copper-jei-structure-size-range");context.setScreen(()->null);            world.getServer().runCommand("advancement grant @a from smog:copper/root");context.waitTicks(10);
             context.setScreen(()->{var mc=net.minecraft.client.Minecraft.getInstance();return new net.minecraft.client.gui.screens.advancements.AdvancementsScreen(mc.player.connection.getAdvancements());});
