@@ -49,7 +49,7 @@ public final class SmelteryGui {
     }
     public static void marks(GuiGraphicsExtractor g,int x,int y,int w,int h){for(int offset=8;offset<h;offset+=8){int length=offset%32==0?5:3;g.fill(x,y+offset,x+length,y+offset+1,0xFF373737);g.fill(x+w-length,y+offset,x+w,y+offset+1,0xFF373737);}}
     public static int click(MachineMenu menu,double mouseX,double mouseY,int x,int y,int button){
-        if(button==1)return -1;
+        if(button!=com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT)return -1;
         if(mouseX>=x+TX&&mouseX<x+TX+TW&&mouseY>=y+TY&&mouseY<y+TY+TH){for(var layer:layers(menu))if(mouseY>=y+layer.y()&&mouseY<y+layer.y()+layer.height())return Smeltery.SELECT+layer.metal();}
 
         return -1;

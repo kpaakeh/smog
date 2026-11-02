@@ -29,7 +29,7 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
             var metal=CopperWorkshops.melt(stack);
             if(metal!=null&&recipe.description().endsWith("melting"))slot.addRichTooltipCallback((view,tooltip)->io.github.kpaakeh.smog.copper.MetalProcessing.requirements(metal[0]).forEach(tooltip::add));
             if(metal!=null&&(recipe.description().endsWith("casting")||recipe.description().endsWith("alloy")||recipe.description().endsWith("mold_making")))slot.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(metal[0]).getFluid(),recipe.fluidUnits()>0?recipe.fluidUnits():(long)metal[1]*stack.getCount()).setFluidRenderer(recipe.fluidUnits()>0?recipe.fluidUnits():(long)metal[1]*stack.getCount(),false,16,16);
-            else if(recipe.machine().equals("washing_trough")&&stack.is(net.minecraft.world.item.Items.WATER_BUCKET))slot.addFluidStack(net.minecraft.world.level.material.Fluids.WATER,81000).setFluidRenderer(81000,false,16,16);
+            else if(recipe.machine().equals("washing_trough")&&stack.is(net.minecraft.world.item.Items.WATER_BUCKET)){long water=recipe.fluidUnits()>0?recipe.fluidUnits():81000;slot.addFluidStack(net.minecraft.world.level.material.Fluids.WATER,water).setFluidRenderer(81000,false,16,16);fluidTooltip(slot,water);}
             else slot.add(stack);
             if(metal!=null&&(recipe.description().endsWith("casting")||recipe.description().endsWith("alloy")||recipe.description().endsWith("mold_making")))fluidTooltip(slot,recipe.fluidUnits()>0?recipe.fluidUnits():(long)metal[1]*stack.getCount());
         }

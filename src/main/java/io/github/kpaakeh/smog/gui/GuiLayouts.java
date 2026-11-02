@@ -44,6 +44,7 @@ public final class GuiLayouts {
         for(int i=0;i<count;i++)toolSlots.add(new SlotPosition(io.github.kpaakeh.smog.copper.ToolDefinitions.slot(i),8+(i%9)*18,36+(i/9)*18,false));
         toolSlots.add(new SlotPosition(5,8,61+extraRows*18,false));toolSlots.add(new SlotPosition(3,141,61+extraRows*18,true));
         register("tool_workbench",176,190+extraRows*18,toolSlots,ModBlocks.id("textures/gui/copper_workshop.png"));
+        register("potter_table",248,210,List.of(new SlotPosition(0,24,53,false),new SlotPosition(3,216,53,true)),ModBlocks.id("textures/gui/copper_workshop.png"));
         register("manual_workshop",176,190,List.of(new SlotPosition(0,26,35,false),new SlotPosition(3,134,35,true)),ModBlocks.id("textures/gui/copper_workshop.png"));
         register("water_supply",176,190,List.of(),ModBlocks.id("textures/gui/copper_workshop.png"));
         register("casting_table",176,190,List.of(new SlotPosition(2,52,35,false),new SlotPosition(1,71,35,false),new SlotPosition(3,134,35,true)),ModBlocks.id("textures/gui/copper_workshop.png"));

@@ -21,10 +21,11 @@ public final class CopperWorkshops {
     public record Pottery(String input,int count,String output,int outputCount){}
     private static final int U=MoltenMetalStorage.QUARTER;
     private static final List<Pottery> POTTERY=new ArrayList<>(),FIRING=new ArrayList<>();
+    public static List<Pottery> potteryRecipes(){return List.copyOf(POTTERY);}
     public record RecipePreview(String machine,List<ItemStack> inputs,ItemStack tool,ItemStack result,String description,long fluidUnits){public RecipePreview(String machine,List<ItemStack> inputs,ItemStack tool,ItemStack result,String description){this(machine,inputs,tool,result,description,-1);}}
     public static List<RecipePreview> recipes(){
         List<RecipePreview> result=new ArrayList<>();
-        result.add(new RecipePreview("washing_trough",List.of(new ItemStack(Items.RAW_COPPER,8),new ItemStack(Items.WATER_BUCKET)),ItemStack.EMPTY,new ItemStack(item("smog:copper_concentrate"),5),"jei.smog.copper.washing"));
+        for(var recipe:WashingRecipes.all())result.add(new RecipePreview("washing_trough",List.of(recipe.ingredients(),new ItemStack(Items.WATER_BUCKET)),ItemStack.EMPTY,recipe.result(),"jei.smog.copper.washing",recipe.water()));
         for(var seed:BuiltInRegistries.ITEM)if(seed.getDefaultInstance().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ModBlocks.id("oil_seeds"))))result.add(new RecipePreview("lever_press",List.of(new ItemStack(seed,8)),ItemStack.EMPTY,new ItemStack(item("smog:seed_cake")),"jei.smog.copper.pressing"));
         for(var part:ToolDefinitions.parts())if(part.cast()){
             var input=new ItemStack(item(part.item().toString()));result.add(new RecipePreview("tool_workbench",List.of(input),new ItemStack(item("smog:stone_work_hammer")),ToolParts.finish(input),"jei.smog.copper.tools"));
@@ -66,7 +67,7 @@ public final class CopperWorkshops {
     public static void initialize(){
         try(var stream=CopperWorkshops.class.getResourceAsStream("/smog.content.json")){
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
-            Smeltery.initialize(root);Alloying.initialize(root);
+            Smeltery.initialize(root);Alloying.initialize(root);WashingRecipes.initialize(root);
             if(root.has("casting_forms"))for(var value:root.getAsJsonArray("casting_forms")){var o=value.getAsJsonObject();var outputs=new java.util.LinkedHashMap<String,String>();o.getAsJsonObject("outputs").entrySet().forEach(e->outputs.put(e.getKey(),e.getValue().getAsString()));EXTRA_FORMS.add(new ExtraForm(o.get("item").getAsString(),o.get("units").getAsInt(),o.get("single_use").getAsBoolean(),outputs));}
             if(root.has("items"))for(var value:root.getAsJsonArray("items")){var o=value.getAsJsonObject();if(o.has("kind")&&o.get("kind").getAsString().equals("mold_variant"))MOLD_VARIANTS.put(o.get("name").getAsString(),o.get("base_mold").getAsString());}
             MOLDS=java.util.stream.Stream.concat(java.util.Arrays.stream(MOLDS),EXTRA_FORMS.stream().map(f->f.item().replace("smog:",""))).toArray(String[]::new);
@@ -102,7 +103,7 @@ public final class CopperWorkshops {
         var shape=m.complexShape();return shape==null?0:shape.internalVolume(false)*8*MoltenMetalStorage.INGOT;
     }
     public static int threshold(MachineEntity m){return workshop(m,"ceramic_kiln")?400:capacity(m)>64*U?800:600;}
-    public static int data(MachineEntity m,int index){var s=m.copper;if(Smeltery.handles(m)&&index>=20)return Smeltery.data(m,index);if(Smeltery.vessel(m)&&index>=20)return CastingProcesses.data(m,index);return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?100:workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->workshop(m,"casting_basin")?1:ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
+    public static int data(MachineEntity m,int index){var s=m.copper;if(Smeltery.handles(m)&&index>=20)return Smeltery.data(m,index);if(Smeltery.vessel(m)&&index>=20)return CastingProcesses.data(m,index);return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?ManualWorkshops.workTime(m):workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->workshop(m,"casting_basin")?1:ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
     public static void tick(ServerLevel level,MachineEntity m){
         if(workshop(m,"hand_bellows")&&level.getGameTime()%40==0&&BronzeDrive.connected(m))pump(level,m);
         if(Ropeway.handles(m))Ropeway.tick(level,m);
@@ -127,11 +128,10 @@ public final class CopperWorkshops {
         if(stack.isEmpty())return null;
         if(stack.getItem() instanceof ModularToolItem||ToolDefinitions.part(stack)!=null)return ToolParts.melt(stack);
         if(BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("smog")&&MOLD_VARIANTS.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath())&&BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().startsWith("metal_"))return new int[]{Arrays.asList(MoltenMetalStorage.NAMES).indexOf("gold"),2*MoltenMetalStorage.INGOT};
-        if(is(stack,"smog:copper_concentrate"))return new int[]{0,2*MoltenMetalStorage.INGOT};
+        var concentrate=WashingRecipes.concentrate(stack);if(concentrate!=null)return concentrate;
         if(is(stack,"smog:metal_residue")){var data=stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.EMPTY).copyTag();int kind=data.contains("metal_name")?java.util.Arrays.asList(MoltenMetalStorage.NAMES).indexOf(data.getStringOr("metal_name","")):data.getIntOr("metal",-1),amount=data.getIntOr("units",0);return kind>=0&&kind<MoltenMetalStorage.NAMES.length&&amount>0&&amount<MoltenMetalStorage.INGOT?new int[]{kind,amount}:null;}
         for(int k=0;k<MoltenMetalStorage.NAMES.length;k++){
             String n=MoltenMetalStorage.NAMES[k],ns=namespace(k);
-            if(is(stack,"smog:"+n+"_relief"))return new int[]{k,MoltenMetalStorage.INGOT};
             if(tagged(stack,"c:nuggets/"+n)||is(stack,ns+n+"_nugget"))return new int[]{k,1000};
             if(tagged(stack,"c:dusts/"+n))return new int[]{k,4*U};
             if(tagged(stack,"c:ingots/"+n)||is(stack,ns+n+"_ingot"))return new int[]{k,4*U};
@@ -184,13 +184,6 @@ public final class CopperWorkshops {
         if(working(m,BuiltInRegistries.ITEM.getKey(input.getItem()).toString(),200,1)){input.shrink(batch);output(m,result);s.work=0;}
     }
     public static boolean button(MachineEntity m,int id){if(Smeltery.vessel(m))return false;if(ToolAssembly.handles(m))return ToolAssembly.button(m,id);var s=m.copper;if(ManualWorkshops.handles(m)){if(id==22&&m.assembled()){ManualWorkshops.queue(m);return true;}return false;}
-        if((id==20||id==21)&&workshop(m,"potter_table")){int max=POTTERY.size();s.selection=Math.floorMod(s.selection+(id==20?-1:1),Math.max(1,max));s.work=0;m.setChanged();return true;}
-        if(id==22&&workshop(m,"potter_table")&&!POTTERY.isEmpty()){
-            var recipe=POTTERY.get(Math.floorMod(s.selection,POTTERY.size()));var input=m.getItem(0);
-            if(!is(input,recipe.input)||input.getCount()<recipe.count){s.status=2;return true;}
-            var result=new ItemStack(item(recipe.output),recipe.outputCount);int batch=Math.min(Math.min(8,input.getCount()/recipe.count),outputSpace(m,result)/recipe.outputCount);if(batch<=0){s.status=5;return true;}result.setCount(recipe.outputCount*batch);
-            if(!m.canOutput(result)){s.status=5;return true;}input.shrink(recipe.count*batch);output(m,result);s.status=0;return true;
-        }
         return false;
     }
     public static boolean pump(ServerLevel level,MachineEntity bellows){

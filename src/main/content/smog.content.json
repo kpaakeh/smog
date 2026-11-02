@@ -69,8 +69,7 @@
         "smog:unfired_ingot_mold",
         "smog:unfired_plate_mold",
         "smog:unfired_fitting_mold",
-        "smog:unfired_pipe_mold",
-        "smog:unfired_relief_mold"
+        "smog:unfired_pipe_mold"
       ]
     },
     {
@@ -432,50 +431,6 @@
       "tab": "copper_age",
       "model": "smog:block/closed_crucible_insert",
       "texture": "smog:block/firebrick_casing"
-    },
-    {
-      "name": "copper_relief",
-      "display": "Copper Relief Panel",
-      "display_ru": "Медный рельеф",
-      "tab": "copper_age",
-      "texture": "minecraft:block/copper_block",
-      "model": "smog:block/copper_relief",
-      "hardness": 2,
-      "mining_level": "stone",
-      "horizontal": true
-    },
-    {
-      "name": "bronze_relief",
-      "display": "Bronze Relief Panel",
-      "display_ru": "Бронзовый рельеф",
-      "tab": "copper_age",
-      "texture": "minecraft:block/iron_block",
-      "model": "smog:block/bronze_relief",
-      "hardness": 2,
-      "mining_level": "stone",
-      "horizontal": true
-    },
-    {
-      "name": "silver_relief",
-      "display": "Silver Relief Panel",
-      "display_ru": "Серебряный рельеф",
-      "tab": "copper_age",
-      "texture": "minecraft:block/iron_block",
-      "model": "smog:block/silver_relief",
-      "hardness": 2,
-      "mining_level": "stone",
-      "horizontal": true
-    },
-    {
-      "name": "gold_relief",
-      "display": "Gold Relief Panel",
-      "display_ru": "Золотой рельеф",
-      "tab": "copper_age",
-      "texture": "minecraft:block/gold_block",
-      "model": "smog:block/gold_relief",
-      "hardness": 2,
-      "mining_level": "stone",
-      "horizontal": true
     },
     {
       "name": "smeltery_glass",
@@ -905,7 +860,7 @@
     {
       "name": "tool_workbench",
       "display": "Toolmaker Workbench",
-      "display_ru": "Верстак инструментальщика",
+      "display_ru": "Медная наковальня",
       "kind": "COPPER_WORKSHOP",
       "hardness": 2,
       "capacity": 1,
@@ -1648,7 +1603,7 @@
     {
       "name": "molten_copper",
       "display": "Molten Copper",
-      "display_ru": "Расплав: медь",
+      "display_ru": "Расплавленная медь",
       "color": "ED913F",
       "tick_delay": 30,
       "infinite": false,
@@ -1661,7 +1616,7 @@
     {
       "name": "molten_tin",
       "display": "Molten Tin",
-      "display_ru": "Расплав: олово",
+      "display_ru": "Расплавленное олово",
       "color": "F0CD97",
       "tick_delay": 30,
       "infinite": false,
@@ -1674,7 +1629,7 @@
     {
       "name": "molten_bronze",
       "display": "Molten Bronze",
-      "display_ru": "Расплав: бронза",
+      "display_ru": "Расплавленная бронза",
       "color": "DFA64B",
       "tick_delay": 30,
       "infinite": false,
@@ -1696,7 +1651,7 @@
     {
       "name": "molten_lead",
       "display": "Molten Lead",
-      "display_ru": "Расплав: свинец",
+      "display_ru": "Расплавленный свинец",
       "color": "857E9C",
       "tick_delay": 30,
       "infinite": false,
@@ -1709,7 +1664,7 @@
     {
       "name": "molten_zinc",
       "display": "Molten Zinc",
-      "display_ru": "Расплав: цинк",
+      "display_ru": "Расплавленный цинк",
       "color": "B2C0BB",
       "tick_delay": 30,
       "infinite": false,
@@ -1722,7 +1677,7 @@
     {
       "name": "molten_aluminum",
       "display": "Molten Aluminum",
-      "display_ru": "Расплав: алюминий",
+      "display_ru": "Расплавленный алюминий",
       "color": "D3DDE0",
       "tick_delay": 30,
       "infinite": false,
@@ -1735,7 +1690,7 @@
     {
       "name": "molten_silver",
       "display": "Molten Silver",
-      "display_ru": "Расплав: серебро",
+      "display_ru": "Расплавленное серебро",
       "color": "D5E4ED",
       "tick_delay": 30,
       "infinite": false,
@@ -1748,7 +1703,7 @@
     {
       "name": "molten_gold",
       "display": "Molten Gold",
-      "display_ru": "Расплав: золото",
+      "display_ru": "Расплавленное золото",
       "color": "F8C54B",
       "tick_delay": 30,
       "infinite": false,
@@ -1761,7 +1716,7 @@
     {
       "name": "molten_brass",
       "display": "Molten Brass",
-      "display_ru": "Расплав: латунь",
+      "display_ru": "Расплавленная латунь",
       "color": "D6AF4C",
       "tick_delay": 30,
       "infinite": false,
@@ -1774,7 +1729,7 @@
     {
       "name": "molten_iron",
       "display": "Molten Iron",
-      "display_ru": "Расплав: железо",
+      "display_ru": "Расплавленное железо",
       "color": "D8D8D8",
       "tick_delay": 30,
       "infinite": false,
@@ -1787,7 +1742,7 @@
     {
       "name": "molten_nickel",
       "display": "Molten Nickel",
-      "display_ru": "Расплав: никель",
+      "display_ru": "Расплавленный никель",
       "color": "A8AA83",
       "tick_delay": 30,
       "infinite": false,
@@ -1800,7 +1755,7 @@
     {
       "name": "molten_manganese",
       "display": "Molten Manganese",
-      "display_ru": "Расплав: марганец",
+      "display_ru": "Расплавленный марганец",
       "color": "78808C",
       "tick_delay": 30,
       "infinite": false,
@@ -1813,7 +1768,7 @@
     {
       "name": "molten_chromium",
       "display": "Molten Chromium",
-      "display_ru": "Расплав: хром",
+      "display_ru": "Расплавленный хром",
       "color": "8DAAA7",
       "tick_delay": 30,
       "infinite": false,
@@ -1826,7 +1781,7 @@
     {
       "name": "molten_titanium",
       "display": "Molten Titanium",
-      "display_ru": "Расплав: титан",
+      "display_ru": "Расплавленный титан",
       "color": "8F9FB3",
       "tick_delay": 30,
       "infinite": false,
@@ -1839,7 +1794,7 @@
     {
       "name": "molten_tungsten",
       "display": "Molten Tungsten",
-      "display_ru": "Расплав: вольфрам",
+      "display_ru": "Расплавленный вольфрам",
       "color": "6D7886",
       "tick_delay": 30,
       "infinite": false,
@@ -1852,7 +1807,7 @@
     {
       "name": "molten_molybdenum",
       "display": "Molten Molybdenum",
-      "display_ru": "Расплав: молибден",
+      "display_ru": "Расплавленный молибден",
       "color": "8E9FAB",
       "tick_delay": 30,
       "infinite": false,
@@ -1865,7 +1820,7 @@
     {
       "name": "molten_uranium",
       "display": "Molten Uranium",
-      "display_ru": "Расплав: уран",
+      "display_ru": "Расплавленный уран",
       "color": "7F964D",
       "tick_delay": 30,
       "infinite": false,
@@ -1878,7 +1833,7 @@
     {
       "name": "molten_lithium",
       "display": "Molten Lithium",
-      "display_ru": "Расплав: литий",
+      "display_ru": "Расплавленный литий",
       "color": "C3BED4",
       "tick_delay": 30,
       "infinite": false,
@@ -1891,7 +1846,7 @@
     {
       "name": "molten_steel",
       "display": "Molten Steel",
-      "display_ru": "Расплав: сталь",
+      "display_ru": "Расплавленная сталь",
       "color": "66717B",
       "tick_delay": 30,
       "infinite": false,
@@ -1904,7 +1859,7 @@
     {
       "name": "molten_cast_iron",
       "display": "Molten Cast Iron",
-      "display_ru": "Расплав: чугун",
+      "display_ru": "Расплавленный чугун",
       "color": "665D59",
       "tick_delay": 30,
       "infinite": false,
@@ -1917,7 +1872,7 @@
     {
       "name": "molten_wrought_iron",
       "display": "Molten Wrought Iron",
-      "display_ru": "Расплав: кричное железо",
+      "display_ru": "Расплавленное кричное железо",
       "color": "A4A19A",
       "tick_delay": 30,
       "infinite": false,
@@ -1930,7 +1885,7 @@
     {
       "name": "molten_stainless_steel",
       "display": "Molten Stainless Steel",
-      "display_ru": "Расплав: нержавеющая сталь",
+      "display_ru": "Расплавленная нержавеющая сталь",
       "color": "B5BFC1",
       "tick_delay": 30,
       "infinite": false,
@@ -1943,7 +1898,7 @@
     {
       "name": "molten_tool_steel",
       "display": "Molten Tool Steel",
-      "display_ru": "Расплав: инструментальная сталь",
+      "display_ru": "Расплавленная инструментальная сталь",
       "color": "69747D",
       "tick_delay": 30,
       "infinite": false,
@@ -1956,7 +1911,7 @@
     {
       "name": "molten_duralumin",
       "display": "Molten Duralumin",
-      "display_ru": "Расплав: дюралюминий",
+      "display_ru": "Расплавленный дюралюминий",
       "color": "B4C6CF",
       "tick_delay": 30,
       "infinite": false,
@@ -1969,7 +1924,7 @@
     {
       "name": "molten_cupronickel",
       "display": "Molten Cupronickel",
-      "display_ru": "Расплав: мельхиор",
+      "display_ru": "Расплавленный мельхиор",
       "color": "B2B8AB",
       "tick_delay": 30,
       "infinite": false,
@@ -1982,7 +1937,7 @@
     {
       "name": "molten_constantan",
       "display": "Molten Constantan",
-      "display_ru": "Расплав: константан",
+      "display_ru": "Расплавленный константан",
       "color": "B18C77",
       "tick_delay": 30,
       "infinite": false,
@@ -1995,7 +1950,7 @@
     {
       "name": "molten_invar",
       "display": "Molten Invar",
-      "display_ru": "Расплав: инвар",
+      "display_ru": "Расплавленный инвар",
       "color": "9AABA4",
       "tick_delay": 30,
       "infinite": false,
@@ -2008,7 +1963,7 @@
     {
       "name": "molten_electrum",
       "display": "Molten Electrum",
-      "display_ru": "Расплав: электрум",
+      "display_ru": "Расплавленный электрум",
       "color": "E6D58E",
       "tick_delay": 30,
       "infinite": false,
@@ -2021,7 +1976,7 @@
     {
       "name": "molten_nichrome",
       "display": "Molten Nichrome",
-      "display_ru": "Расплав: нихром",
+      "display_ru": "Расплавленный нихром",
       "color": "B9AD9F",
       "tick_delay": 30,
       "infinite": false,
@@ -2034,7 +1989,7 @@
     {
       "name": "molten_solder",
       "display": "Molten Tin-Lead Solder",
-      "display_ru": "Расплав: припой",
+      "display_ru": "Расплавленный припой",
       "color": "B7BAC0",
       "tick_delay": 30,
       "infinite": false,
@@ -2047,7 +2002,7 @@
     {
       "name": "molten_tungsten_steel",
       "display": "Molten Tungsten Steel",
-      "display_ru": "Расплав: вольфрамовая сталь",
+      "display_ru": "Расплавленная вольфрамовая сталь",
       "color": "535E6C",
       "tick_delay": 30,
       "infinite": false,
@@ -2060,7 +2015,7 @@
     {
       "name": "molten_titanium_alloy",
       "display": "Molten Titanium Alloy",
-      "display_ru": "Расплав: титановый сплав",
+      "display_ru": "Расплавленный титановый сплав",
       "color": "A9B9CB",
       "tick_delay": 30,
       "infinite": false,
@@ -2073,7 +2028,7 @@
     {
       "name": "molten_nickel_superalloy",
       "display": "Molten Nickel Superalloy",
-      "display_ru": "Расплав: никелевый жаропрочный сплав",
+      "display_ru": "Расплавленный никелевый жаропрочный сплав",
       "color": "B4A385",
       "tick_delay": 30,
       "infinite": false,
@@ -2086,7 +2041,7 @@
     {
       "name": "molten_aluminum_bronze",
       "display": "Molten Aluminum Bronze",
-      "display_ru": "Расплав: алюминиевая бронза",
+      "display_ru": "Расплавленная алюминиевая бронза",
       "color": "BFA35E",
       "tick_delay": 30,
       "infinite": false,
@@ -2099,7 +2054,7 @@
     {
       "name": "molten_netherite",
       "display": "Molten Netherite",
-      "display_ru": "Расплав: незерит",
+      "display_ru": "Расплавленный незерит",
       "color": "655C63",
       "tick_delay": 30,
       "infinite": false,
@@ -2252,6 +2207,31 @@
       "tab": "copper_age"
     },
     {
+      "name": "tin_concentrate",
+      "display": "Tin Concentrate",
+      "display_ru": "Оловянный концентрат",
+      "tab": "copper_age",
+      "model": "smog:item/tin_dust"
+    },    {
+      "name": "lead_concentrate",
+      "display": "Lead Concentrate",
+      "display_ru": "Свинцовый концентрат",
+      "tab": "copper_age",
+      "model": "smog:item/lead_dust"
+    },    {
+      "name": "iron_concentrate",
+      "display": "Iron Concentrate",
+      "display_ru": "Железный концентрат",
+      "tab": "copper_age",
+      "model": "smog:item/wrought_iron_dust"
+    },    {
+      "name": "gold_concentrate",
+      "display": "Gold Concentrate",
+      "display_ru": "Золотой концентрат",
+      "tab": "copper_age",
+      "model": "minecraft:item/gold_nugget"
+    },
+    {
       "name": "seed_cake",
       "display": "Seed Cake",
       "display_ru": "Растительный жмых",
@@ -2306,36 +2286,6 @@
       "name": "molding_sand",
       "display": "Molding Sand",
       "display_ru": "Формовочная смесь",
-      "tab": "copper_age"
-    },
-    {
-      "name": "relief_pattern",
-      "display": "Wooden Relief Pattern",
-      "display_ru": "Деревянная модель рельефа",
-      "tab": "copper_age"
-    },
-    {
-      "name": "wax_relief_model",
-      "display": "Wax Relief Model",
-      "display_ru": "Восковая модель рельефа",
-      "tab": "copper_age"
-    },
-    {
-      "name": "sand_relief_mold",
-      "display": "Sand Relief Mold",
-      "display_ru": "Песчаная форма рельефа",
-      "tab": "copper_age"
-    },
-    {
-      "name": "unfired_relief_mold",
-      "display": "Unfired Investment Mold",
-      "display_ru": "Сырая оболочковая форма",
-      "tab": "copper_age"
-    },
-    {
-      "name": "relief_mold",
-      "display": "Investment Relief Mold",
-      "display_ru": "Оболочковая форма рельефа",
       "tab": "copper_age"
     },
     {
@@ -2828,6 +2778,82 @@
           "max": 150
         }
       ]
+    }
+  ],
+  "washing": [
+    {
+      "input": "minecraft:raw_copper",
+      "count": 8,
+      "output": "smog:copper_concentrate",
+      "output_count": 5,
+      "water": 81000,
+      "ticks": 100,
+      "metal": "copper",
+      "metal_units": 18000
+    },
+    {
+      "input": "smog:raw_tin",
+      "count": 8,
+      "output": "smog:tin_concentrate",
+      "output_count": 5,
+      "water": 81000,
+      "ticks": 100,
+      "metal": "tin",
+      "metal_units": 18000
+    },
+    {
+      "input": "smog:raw_lead",
+      "count": 8,
+      "output": "smog:lead_concentrate",
+      "output_count": 5,
+      "water": 81000,
+      "ticks": 100,
+      "metal": "lead",
+      "metal_units": 18000
+    },
+    {
+      "input": "minecraft:raw_iron",
+      "count": 8,
+      "output": "smog:iron_concentrate",
+      "output_count": 5,
+      "water": 81000,
+      "ticks": 100,
+      "metal": "iron",
+      "metal_units": 18000
+    },
+    {
+      "input": "minecraft:raw_gold",
+      "count": 8,
+      "output": "smog:gold_concentrate",
+      "output_count": 5,
+      "water": 81000,
+      "ticks": 100,
+      "metal": "gold",
+      "metal_units": 18000
+    },
+    {
+      "input": "minecraft:gravel",
+      "count": 4,
+      "output": "minecraft:flint",
+      "output_count": 1,
+      "water": 20250,
+      "ticks": 80
+    },
+    {
+      "input": "minecraft:red_sand",
+      "count": 4,
+      "output": "minecraft:sand",
+      "output_count": 4,
+      "water": 20250,
+      "ticks": 60
+    },
+    {
+      "input": "minecraft:mud",
+      "count": 4,
+      "output": "minecraft:clay_ball",
+      "output_count": 8,
+      "water": 40500,
+      "ticks": 80
     }
   ],
   "pottery": [
@@ -3968,66 +3994,6 @@
       }
     },
     {
-      "name": "relief_pattern",
-      "unlock": "#minecraft:planks",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "#minecraft:planks",
-          "minecraft:stick"
-        ],
-        "result": {
-          "id": "smog:relief_pattern",
-          "count": 1
-        }
-      }
-    },
-    {
-      "name": "wax_relief_model",
-      "unlock": "smog:relief_pattern",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:relief_pattern",
-          "minecraft:honeycomb"
-        ],
-        "result": {
-          "id": "smog:wax_relief_model",
-          "count": 1
-        }
-      }
-    },
-    {
-      "name": "sand_relief_mold",
-      "unlock": "smog:relief_pattern",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:relief_pattern",
-          "smog:molding_sand"
-        ],
-        "result": {
-          "id": "smog:sand_relief_mold",
-          "count": 1
-        }
-      }
-    },
-    {
-      "name": "unfired_relief_mold",
-      "unlock": "smog:wax_relief_model",
-      "data": {
-        "type": "minecraft:crafting_shapeless",
-        "ingredients": [
-          "smog:wax_relief_model",
-          "minecraft:clay_ball"
-        ],
-        "result": {
-          "id": "smog:unfired_relief_mold",
-          "count": 1
-        }
-      }
-    },
-    {
       "name": "ceramic_core",
       "unlock": "minecraft:brick",
       "data": {
@@ -4170,14 +4136,28 @@
     {
       "input": "smog:unfired_firebrick",
       "output": "smog:firebrick"
-    },
-    {
-      "input": "smog:unfired_relief_mold",
-      "output": "smog:relief_mold"
     }
   ],
   "translations": {
     "en_us": {
+      "gui.smog.pottery.input": "Material",
+      "gui.smog.pottery.choose": "Shape",
+      "gui.smog.pottery.output": "Result",
+      "gui.smog.pottery.cost": "%s × %s",
+      "gui.smog.pottery.take": "Load material, select a shape, then take the result to craft.",
+      "gui.smog.amount.blocks.one": "%s block",
+      "gui.smog.amount.blocks.ending_one": "%s blocks",
+      "gui.smog.amount.blocks.few": "%s blocks",
+      "gui.smog.amount.blocks.many": "%s blocks",
+      "gui.smog.amount.ingots.one": "%s ingot",
+      "gui.smog.amount.ingots.ending_one": "%s ingots",
+      "gui.smog.amount.ingots.few": "%s ingots",
+      "gui.smog.amount.ingots.many": "%s ingots",
+      "gui.smog.amount.nuggets.one": "%s nugget",
+      "gui.smog.amount.nuggets.ending_one": "%s nuggets",
+      "gui.smog.amount.nuggets.few": "%s nuggets",
+      "gui.smog.amount.nuggets.many": "%s nuggets",
+      "gui.smog.amount.nuggets.fraction": "%s nuggets",
       "itemGroup.smog.blocks": "Smog: Blocks",
       "itemGroup.smog.mechanisms": "Smog: Mechanisms",
       "itemGroup.smog.controllers": "Smog: Controllers",
@@ -4263,9 +4243,9 @@
       "message.smog.controller_missing": "Place a hearth or kiln controller in the structure wall",
       "message.smog.manual_workshop": "Fluid: %s mB | Queued batches: %s. Load ingredients, then use with an empty hand.",
       "message.smog.manual_queued": "Queued batches: %s. Repeated clicks do not speed up work.",
-      "jei.smog.copper.washing": "8 raw copper + 1 bucket of water → 5 concentrate; each yields 2 ingots.",
+      "jei.smog.copper.washing": "Wash primary ores or sort gravel, red sand and mud. Water and output amounts are shown in the recipe.",
       "jei.smog.copper.pressing": "8 seeds → 250 mB oil + seed cake. Start empty-handed; extract with bottles or pipes.",
-      "jei.smog.guide.washing": "Build the 3 × 1 × 2 layout and assemble with the configurator. Add water by bucket or compatible pipe. Load raw copper and use empty-handed to queue batches. Ingots cannot be washed.",
+      "jei.smog.guide.washing": "Assemble the 3 × 1 × 2 trough with the configurator. Supply water by bucket or pipe. Wash raw copper, tin, lead, iron or gold in batches of eight for five concentrate; each melts to two ingots. Also separate flint from gravel, wash red sand into sand, or extract clay from mud. Start a finite queue empty-handed or with the GUI button. Finished metal and concentrate cannot be washed again.",
       "jei.smog.guide.pressing": "Build the 3 × 2 × 2 layout. Load seeds, then use empty-handed to queue batches. Extract oil with bottles, buckets or pipes. Seed cake is compostable. This press does not make metal plates.",
       "message.smog.assembly_edge": "Component on an edge or corner at %s, %s, %s; use masonry here.",
       "message.smog.assembly_block": "Check block at %s, %s, %s: complete the shell and keep the chamber empty.",
@@ -4287,7 +4267,7 @@
       "advancements.smog.copper.kiln.title": "Firing in batches",
       "advancements.smog.copper.kiln.description": "Prepare a kiln controller for batch ceramic firing.",
       "advancements.smog.copper.bench.title": "Piece by piece",
-      "advancements.smog.copper.bench.description": "Prepare a tool workbench.",
+      "advancements.smog.copper.bench.description": "Prepare a copper anvil.",
       "advancements.smog.copper.tools.title": "A tool of your own",
       "advancements.smog.copper.tools.description": "Obtain a modular pickaxe with a head, handle and binding of your choice.",
       "advancements.smog.copper.hollow.title": "Shaped around a core",
@@ -4394,8 +4374,9 @@
       "gui.smog.smeltery.inputs": "Slots: %s",
       "gui.smog.smeltery.quantity": "Volume: %s ingots",
       "gui.smog.smeltery.select": "Left click: select bottom layer · Right click with container: fill",
-      "gui.smog.amount.blocks": "%s blk",
-      "gui.smog.amount.ingots": "%s ing",
+      "gui.smog.amount.blocks": "%s blocks",
+      "gui.smog.amount.ingots": "%s ingots",
+      "gui.smog.amount.nuggets": "%s nuggets",
       "gui.smog.smeltery.fuel": "Stored: %s",
       "gui.smog.smeltery.temperature": "Heat: %s · Fuel limit: %s",
       "gui.smog.smeltery.fuel_cursor": "Carried container: left click to empty, right click to fill",
@@ -4490,6 +4471,24 @@
       "item.smog.loading_crane.help_2": "Red controller marker: one rising redstone pulse per batch"
     },
     "ru_ru": {
+      "gui.smog.pottery.input": "Материал",
+      "gui.smog.pottery.choose": "Форма",
+      "gui.smog.pottery.output": "Итог",
+      "gui.smog.pottery.cost": "%s × %s",
+      "gui.smog.pottery.take": "Положите материал, выберите форму и заберите результат. Материал расходуется только при получении изделия.",
+      "gui.smog.amount.blocks.one": "%s блок",
+      "gui.smog.amount.blocks.ending_one": "%s блок",
+      "gui.smog.amount.blocks.few": "%s блока",
+      "gui.smog.amount.blocks.many": "%s блоков",
+      "gui.smog.amount.ingots.one": "%s слиток",
+      "gui.smog.amount.ingots.ending_one": "%s слиток",
+      "gui.smog.amount.ingots.few": "%s слитка",
+      "gui.smog.amount.ingots.many": "%s слитков",
+      "gui.smog.amount.nuggets.one": "%s самородок",
+      "gui.smog.amount.nuggets.ending_one": "%s самородок",
+      "gui.smog.amount.nuggets.few": "%s самородка",
+      "gui.smog.amount.nuggets.many": "%s самородков",
+      "gui.smog.amount.nuggets.fraction": "%s самородка",
       "itemGroup.smog.blocks": "Smog: Блоки",
       "itemGroup.smog.mechanisms": "Smog: Механизмы",
       "itemGroup.smog.controllers": "Smog: Контроллеры",
@@ -4557,7 +4556,7 @@
       "jei.smog.guide.firebox": "Функциональная топка Smog в полу или стене комплекса, одна на установку. Это не ванильная печь с отдельным инвентарём. ПКМ топливом по собранной установке загружает общее топливо. Воронка сбоку контроллера также подаёт топливо.",
       "jei.smog.guide.spout": "Жидкостный порт — блок стенки, он сам не разливает металл. Прикрепите снаружи литейный краник и откройте его ПКМ. Расплав из краника льётся вниз: под ним нужен стол или желоб. Насадка не является частью стенки. Порт сохраняет подключение внешних труб и контейнеров. Поворот — только Shift+ПКМ настройщиком.",
       "jei.smog.guide.lining": "Огнеупорные кирпичи делаются из печной массы и обжигаются, четыре кирпича дают блок кладки. Кладка заменяет обычные кирпичи и части пола. Чем больше футеровки, тем медленнее остывает установка. Единая кирпичная текстура сохраняет 16 пикселей на блок.",
-      "jei.smog.guide.molds": "Керамические формы сохраняются как стартовый вариант. Песчаную форму отпечатай на верстаке инструментальщика: формовочная смесь в первый слот, подходящая готовая головка, инструмент или простая металлическая деталь во второй; удар молотом. Образец остаётся, расходуется только смесь. Песчаная форма одноразовая. Для многоразовой металлической формы положи образец на литейный стол и залей 2 слитка золота; после охлаждения получишь оснастку, образец сохраняется. Повторная переплавка оснастки возвращает те же 2 слитка золота. Формы зависят от геометрии детали, а не её материала.",
+      "jei.smog.guide.molds": "Керамические формы сохраняются как стартовый вариант. Песчаную форму отпечатай на медной наковальне: формовочная смесь в первый слот, подходящая готовая головка, инструмент или простая металлическая деталь во второй; удар молотом. Образец остаётся, расходуется только смесь. Песчаная форма одноразовая. Для многоразовой металлической формы положи образец на литейный стол и залей 2 слитка золота; после охлаждения получишь оснастку, образец сохраняется. Повторная переплавка оснастки возвращает те же 2 слитка золота. Формы зависят от геометрии детали, а не её материала.",
       "jei.smog.guide.configurator": "ПКМ по контроллеру собирает комплекс по его правилам. Shift+ПКМ разбирает и поворачивает контроллер. По части собранной установки работает тот же контроллер. До сборки Shift+ПКМ по сливу, вводу или желобу поворачивает отдельную деталь. Сообщения отображаются над хотбаром.",
       "jei.smog.guide.residue": "Сохраняет точное количество металла, оставшееся после работы труб или разрушения бака. Переплавьте остаток обратно в очаге: материал не округляется и не теряется.",
       "jei.smog.guide.parts": "Медные и бронзовые детали получаются литьём. Пластина содержит один слиток, фитинг — четверть, трубный элемент — половину. Переплавка возвращает ровно исходное количество металла. Эти детали сохраняются для следующих устройств медной эпохи.",
@@ -4575,9 +4574,9 @@
       "message.smog.controller_missing": "Нужен контроллер литейного очага или печи обжига в стене конструкции",
       "message.smog.manual_workshop": "Жидкость: %s мВ | Заказано партий: %s. Загрузите сырьё и нажмите пустой рукой.",
       "message.smog.manual_queued": "Заказано партий: %s. Повторный клик не ускоряет работу.",
-      "jei.smog.copper.washing": "8 необработанной меди + 1 ведро воды → 5 концентрата. Каждый даёт 2 слитка.",
+      "jei.smog.copper.washing": "Обогащение первичной руды и промывка гравия, красного песка, грязи. Количество воды и результат указаны в рецепте.",
       "jei.smog.copper.pressing": "8 семян → 250 мВ масла + жмых. Запуск пустой рукой; масло забирается бутылкой или трубой.",
-      "jei.smog.guide.washing": "Соберите лоток 3 × 1 × 2 по схеме и нажмите настройщиком. Вода подаётся ведром или совместимой трубой. Загрузите необработанную медь и нажмите пустой рукой: заказ обрабатывается партиями. Слитки промывать нельзя.",
+      "jei.smog.guide.washing": "Соберите лоток 3 × 1 × 2 настройщиком и подайте воду ведром или трубой. Восемь единиц необработанной меди, олова, свинца, железа или золота дают пять концентрата по два слитка. Из гравия извлекается кремень, красный песок отмывается до обычного, из грязи выделяется глина. Запустите конечную очередь пустой рукой или кнопкой GUI. Готовые металлы и концентраты повторно не промываются.",
       "jei.smog.guide.pressing": "Соберите пресс 3 × 2 × 2 по схеме. Загрузите семена и нажмите пустой рукой. Один заказ обрабатывает загруженные партии без повторных ударов. Масло забирается бутылкой, ведром или трубой; жмых идёт в компост. Металлические пластины здесь не производятся.",
       "message.smog.assembly_edge": "Компонент на ребре или в углу: %s, %s, %s. Здесь нужна кладка.",
       "message.smog.assembly_block": "Проверьте блок на %s, %s, %s: оболочка должна быть целой, камера — пустой.",
@@ -4599,7 +4598,7 @@
       "advancements.smog.copper.kiln.title": "Обжиг партиями",
       "advancements.smog.copper.kiln.description": "Подготовьте контроллер печи для серийного обжига керамики.",
       "advancements.smog.copper.bench.title": "Всё по частям",
-      "advancements.smog.copper.bench.description": "Подготовьте верстак инструментальщика.",
+      "advancements.smog.copper.bench.description": "Подготовьте медную наковальню.",
       "advancements.smog.copper.tools.title": "Свой инструмент",
       "advancements.smog.copper.tools.description": "Получите составную кирку: головка, рукоять и крепление выбираются отдельно.",
       "advancements.smog.copper.hollow.title": "Пустота по форме",
@@ -4706,8 +4705,9 @@
       "gui.smog.smeltery.inputs": "Слоты: %s",
       "gui.smog.smeltery.quantity": "Объём: %s слитка",
       "gui.smog.smeltery.select": "ЛКМ: выбрать нижний слой · ПКМ с ёмкостью: наполнить",
-      "gui.smog.amount.blocks": "%s бл.",
-      "gui.smog.amount.ingots": "%s сл.",
+      "gui.smog.amount.blocks": "%s блоков",
+      "gui.smog.amount.ingots": "%s слитков",
+      "gui.smog.amount.nuggets": "%s самородков",
       "gui.smog.smeltery.fuel": "Запас: %s",
       "gui.smog.smeltery.temperature": "Нагрев: %s · Предел топлива: %s",
       "gui.smog.smeltery.fuel_cursor": "Ёмкость на курсоре: ЛКМ — залить, ПКМ — забрать",
@@ -4862,30 +4862,7 @@
       ]
     }
   ],
-  "casting_forms": [
-    {
-      "item": "smog:sand_relief_mold",
-      "units": 9000,
-      "single_use": true,
-      "outputs": {
-        "copper": "smog:copper_relief",
-        "bronze": "smog:bronze_relief",
-        "silver": "smog:silver_relief",
-        "gold": "smog:gold_relief"
-      }
-    },
-    {
-      "item": "smog:relief_mold",
-      "units": 9000,
-      "single_use": true,
-      "outputs": {
-        "copper": "smog:copper_relief",
-        "bronze": "smog:bronze_relief",
-        "silver": "smog:silver_relief",
-        "gold": "smog:gold_relief"
-      }
-    }
-  ],
+  "casting_forms": [],
   "casting_metals": [
     {
       "id": "copper",

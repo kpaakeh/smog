@@ -10,12 +10,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
+    private final PotteryGui potteryGui=new PotteryGui();
     private Button rateButton,powerButton,previous,next,craft;
     public MachineScreen(MachineMenu menu,Inventory inventory,Component title) {
-        super(menu,inventory,title,menu.layout.width,menu.layout.height);inventoryLabelY=menu.layout.height-94;if(menu.layout.id.equals("smeltery")){inventoryLabelX=80;titleLabelX=80;}
+        super(menu,inventory,title,menu.layout.width,menu.layout.height);inventoryLabelY=menu.layout.height-94;if(menu.pottery())inventoryLabelX=44;if(menu.layout.id.equals("smeltery")){inventoryLabelX=80;titleLabelX=80;}
     }
     @Override protected void init() {
         super.init();
+        if(menu.pottery())return;
         if(menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin"))return;
         if(menu.layout.id.equals("smeltery")){
             addRenderableWidget(Button.builder(Component.literal("<"),button->send(io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS)).bounds(leftPos+7,topPos+imageHeight-25,20,18).build());
@@ -59,7 +61,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     @Override public void containerTick(){super.containerTick();refreshButtons();}
     @Override public void extractBackground(GuiGraphicsExtractor g,int mouseX,int mouseY,float partial) {
-        int x=leftPos,y=topPos;if(menu.layout.id.equals("smeltery")){SmelteryGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}
+        int x=leftPos,y=topPos;if(menu.pottery()){potteryGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}if(menu.layout.id.equals("smeltery")){SmelteryGui.draw(menu,font,g,x,y,mouseX,mouseY);return;}
         if(menu.layout.id.equals("tool_workbench")&&imageHeight>190){
             g.blit(RenderPipelines.GUI_TEXTURED,menu.layout.texture,x,y,0,0,176,94,176,190);
             for(int extra=0;extra<imageHeight-190;extra+=18)g.blit(RenderPipelines.GUI_TEXTURED,menu.layout.texture,x,y+94+extra,0,76,176,18,176,190);
@@ -81,6 +83,13 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             GuiTextures.draw(g,"copper_progress_empty",x+99,y+35,24,16);
             int work=24*Math.clamp(menu.data.get(0),0,Math.max(1,menu.data.get(1)))/Math.max(1,menu.data.get(1));
             GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,work,16,24,16);
+            if(kind==5&&mouseX>=x+97&&mouseX<x+125&&mouseY>=y+33&&mouseY<y+53){
+                var washing=io.github.kpaakeh.smog.copper.WashingRecipes.find(menu.container.getItem(0));
+                if(washing!=null)textTooltip(g,java.util.List.of(
+                    Component.literal(washing.count()+" × ").append(washing.ingredients().getHoverName()).append(" → ").append(Component.literal(washing.outputCount()+" × ")).append(washing.result().getHoverName()),
+                    Component.translatable("block.minecraft.water").append(": ").append(io.github.kpaakeh.smog.copper.FluidAmounts.format(washing.water(),true))
+                ),mouseX,mouseY);
+            }
             if(menu.data.get(2)>0)GuiTextures.draw(g,"copper_lit_progress",x+49,y+36,14,14);
             if(kind==5||kind==6)g.text(font,Component.literal(menu.data.get(19)+" / 8000 mB"),x+7,y+20,0xFF404040,false);
             else if(kind==2)fittedText(g,net.minecraft.world.item.Item.byId(menu.data.get(12)).getDefaultInstance().getHoverName(),x+7,y+20,162,mouseX,mouseY);
@@ -115,7 +124,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if(mouseX>=x+142 && mouseX<x+162 && mouseY>=y+18 && mouseY<y+74)
             g.setTooltipForNextFrame(Component.literal(menu.energy()+" FE | "+rate+" FE/t"),mouseX,mouseY);
     }
-    @Override public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event,boolean doubleClick){if(menu.layout.id.equals("smeltery")&&(event.button()==0||event.button()==1)){int action=SmelteryGui.click(menu,event.x(),event.y(),leftPos,topPos,event.button());if(action>=0){send(action);return true;}}return super.mouseClicked(event,doubleClick);}
+    @Override public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event,boolean doubleClick){if(menu.pottery()){int choice=potteryGui.click(menu,event.x(),event.y(),leftPos,topPos,event.button());if(choice>=0){send(choice);return true;}}if(menu.layout.id.equals("smeltery")&&event.button()==com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT){int action=SmelteryGui.click(menu,event.x(),event.y(),leftPos,topPos,event.button());if(action>=0){send(action);return true;}}return super.mouseClicked(event,doubleClick);}
     @Override protected void extractLabels(GuiGraphicsExtractor g,int mouseX,int mouseY){
         int width=imageWidth-titleLabelX-7;
         g.text(font,font.width(title)<=width?title:Component.literal(font.plainSubstrByWidth(title.getString(),Math.max(0,width-font.width("…")))+"…"),titleLabelX,titleLabelY,0xFF404040,false);

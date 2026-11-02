@@ -109,13 +109,32 @@ public final class CopperClientScene {
                 context.waitTicks(5);context.takeScreenshot("copper-creative-"+tabId);
             }
             context.setScreen(()->null);
+            world.getServer().runOnServer(server->{
+                var pos=new BlockPos(-2,100,-3);var level=server.overworld();level.setBlockAndUpdate(pos,block("potter_table").defaultBlockState());var potter=(MachineEntity)level.getBlockEntity(pos);potter.setItem(0,new ItemStack(Items.CLAY_BALL,16));potter.sync();server.getPlayerList().getPlayers().getFirst().openMenu(potter);
+            });
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen screen&&screen.getMenu().pottery());context.waitTicks(8);context.takeScreenshot("copper-pottery-picker");
+            hover(context,124,40);context.getInput().pressMouse(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT);context.waitTicks(6);
+            context.runOnClient(mc->{var menu=((io.github.kpaakeh.smog.gui.MachineScreen)mc.gui.screen()).getMenu();if(menu.potterySelection()!=1||menu.container.getItem(0).getCount()!=16)throw new IllegalStateException("Pottery selection must not consume clay");});
+            context.takeScreenshot("copper-pottery-selected");hover(context,224,61);context.getInput().pressMouse(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT);context.waitTicks(6);
+            world.getServer().runOnServer(server->{var potter=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(-2,100,-3));if(potter.getItem(0).getCount()!=14||!potter.getItem(3).isEmpty())throw new IllegalStateException("Taking pottery must consume exactly one recipe without storing a duplicate: input="+potter.getItem(0)+", stored="+potter.getItem(3)+", cursor="+server.getPlayerList().getPlayers().getFirst().containerMenu.getCarried());});
+            context.takeScreenshot("copper-pottery-taken");context.setScreen(()->null);
             world.getServer().runCommand("tp @a -4.5 102 -3.5 0 35");context.getInput().lookAt(new BlockPos(-5,100,0));context.waitTicks(20);context.takeScreenshot("copper-washing-and-water");
             world.getServer().runOnServer(server->{
                 var hearth=(MachineEntity)server.overworld().getBlockEntity(new BlockPos(0,100,0));
                 hearth.copper.tin=2*9000;hearth.copper.bronze=3*9000;hearth.sync();
                 server.getPlayerList().getPlayers().getFirst().openMenu(hearth);
             });
-            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-smeltery-multiple-layers-gui");context.setScreen(()->null);
+            context.waitFor(mc->mc.gui.screen() instanceof io.github.kpaakeh.smog.gui.MachineScreen);context.waitTicks(10);context.takeScreenshot("copper-smeltery-multiple-layers-gui");
+            int liquidY=context.computeOnClient(mc->{var menu=((io.github.kpaakeh.smog.gui.MachineScreen)mc.gui.screen()).getMenu();var layer=io.github.kpaakeh.smog.gui.SmelteryGui.layers(menu).getFirst();return layer.y()+layer.height()/2;});
+            hover(context,100,liquidY);context.takeScreenshot("copper-smeltery-volume-units");
+            context.getInput().holdShift();context.waitTicks(3);
+            context.runOnClient(mc->{if(!io.github.kpaakeh.smog.gui.FluidAmountText.format(1000).getString().contains("mB"))throw new IllegalStateException("SDL left Shift did not enable exact mB");});
+            context.takeScreenshot("copper-smeltery-volume-millibuckets");context.getInput().releaseShift();
+            context.getInput().holdKey(com.mojang.blaze3d.platform.InputConstants.KEY_RSHIFT);context.waitTicks(3);
+            context.runOnClient(mc->{if(!io.github.kpaakeh.smog.gui.FluidAmountText.format(1000).getString().contains("mB"))throw new IllegalStateException("SDL right Shift did not enable exact mB");});
+            context.getInput().releaseKey(com.mojang.blaze3d.platform.InputConstants.KEY_RSHIFT);context.waitTicks(2);
+            context.runOnClient(mc->{if(io.github.kpaakeh.smog.gui.FluidAmountText.format(1000).getString().contains("mB"))throw new IllegalStateException("Releasing Shift must restore block/ingot/nugget units");});
+            context.setScreen(()->null);
             world.getServer().runOnServer(server->{
                 var level=server.overworld();var pos=new BlockPos(2,100,-3);level.setBlockAndUpdate(pos,block("casting_table").defaultBlockState());
                 var table=(MachineEntity)level.getBlockEntity(pos);table.setItem(1,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("ingot_mold")));

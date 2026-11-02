@@ -35,7 +35,8 @@ public final class CopperTests {
                 }
                 checked++;
             }
-            if(checked<70)problems.add("Not every catalog recipe was checked: "+checked);
+            int expectedCount=0;for(var entry:root.getAsJsonArray("crafting")){String type=entry.getAsJsonObject().getAsJsonObject("data").get("type").getAsString();if(type.equals("minecraft:crafting_shaped")||type.equals("minecraft:crafting_shapeless"))expectedCount++;}
+            if(checked!=expectedCount||checked==0)problems.add("Not every catalog recipe was checked: "+checked+" / "+expectedCount);
             h.assertTrue(problems.isEmpty(),"All workshop crafting problems ("+problems.size()+"): "+String.join("; ",problems));h.succeed();
         }
     }
@@ -140,31 +141,17 @@ public final class CopperTests {
         }
         h.succeed();
     }
-    @GameTest public void potteryRepeatsWorldBatchWithoutAddingMoreClay(GameTestHelper h){
+    @GameTest public void potteryWorldInteractionOpensMenuWithoutInsertingOrCrafting(GameTestHelper h){
         var pos=h.absolutePos(new BlockPos(3,2,3));set(h,pos,block("potter_table"));
-        var table=(MachineEntity)h.getLevel().getBlockEntity(pos);table.serverTick();table.copper.selection=0;
-        var player=h.makeMockServerPlayerInLevel();
-        var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
-        player.setItemInHand(hand,new ItemStack(Items.CLAY_BALL,32));
+        var table=(MachineEntity)h.getLevel().getBlockEntity(pos);table.serverTick();
+        var player=h.makeMockServerPlayerInLevel();player.setPos(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5);
+        var hand=net.minecraft.world.InteractionHand.MAIN_HAND;player.setItemInHand(hand,new ItemStack(Items.CLAY_BALL,32));
         io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
-        h.assertTrue(player.getItemInHand(hand).isEmpty(),"Initial world insertion stores the supplied clay");
-        h.assertValueEqual(table.getItem(0).getCount(),16,"First batch consumes sixteen of the thirty-two clay balls");
-        h.assertTrue(table.getItem(3).is(item("unfired_ingot_mold")),"The selected pottery recipe produces ingot molds");
-        h.assertValueEqual(table.getItem(3).getCount(),8,"First world batch produces eight molds");
-        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
-        h.assertTrue(table.getItem(3).isEmpty(),"Empty-hand interaction collects the first batch");
-        h.assertValueEqual(table.getItem(0).getCount(),16,"Collecting output does not consume the next batch");
-        // Inventory.add may put the collected molds into the selected hotbar slot.
-        // Free that hand while keeping every collected item; no new clay is supplied.
-        if(!player.getItemInHand(hand).isEmpty()){var collected=player.getItemInHand(hand);player.setItemInHand(hand,ItemStack.EMPTY);player.getInventory().setItem(9,collected);}
-        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
-        h.assertTrue(table.getItem(0).isEmpty(),"Another empty-hand interaction processes the existing clay without new input");
-        h.assertTrue(table.getItem(3).is(item("unfired_ingot_mold")),"Repeated batch keeps the selected recipe");
-        h.assertValueEqual(table.getItem(3).getCount(),8,"Repeated world batch produces exactly eight molds");
-        io.github.kpaakeh.smog.copper.CopperInteractions.use(h.getLevel(),table,player,hand,pos);
-        h.assertValueEqual(player.getInventory().countItem(item("unfired_ingot_mold")),16,"Both collected batches conserve the exact recipe yield");
-        h.assertTrue(table.getItem(3).isEmpty(),"Both finished batches have been collected");h.succeed();
+        h.assertTrue(player.containerMenu instanceof io.github.kpaakeh.smog.gui.MachineMenu menu&&menu.layout.id.equals("potter_table"),"World use opens the dedicated pottery GUI");
+        h.assertValueEqual(player.getItemInHand(hand).getCount(),32,"Opening the screen does not insert or consume held clay");
+        h.assertTrue(table.getItem(0).isEmpty()&&table.getItem(3).isEmpty(),"World use never performs an automatic batch");h.succeed();
     }
+
     private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width){return hearth(h,origin,width,3);}
     private static MachineEntity hearth(GameTestHelper h,BlockPos origin,int width,int height){
         int left=width/2;
@@ -272,6 +259,71 @@ public final class CopperTests {
         for(int i=0;i<100;i++)CopperWorkshops.tick(h.getLevel(),m);
         h.assertValueEqual(m.getItem(0).getCount(),8,"Exactly eight raw copper per batch");h.assertValueEqual(m.getItem(3).getCount(),5,"Five concentrate per batch");h.assertValueEqual(m.copper.processFluid,0,"One bucket consumed");
         h.assertValueEqual(CopperWorkshops.melt(m.getItem(3))[1],18000,"Concentrate melts to two ingots");h.succeed();
+    }
+    @GameTest public void washingEnrichesFivePrimaryMetalsButNeverFinishedMetal(GameTestHelper h){
+        var m=manual(h,"washing_trough",h.absolutePos(new BlockPos(5,2,4)));
+        for(var recipe:io.github.kpaakeh.smog.copper.WashingRecipes.all()){
+            if(recipe.metal().isEmpty())continue;
+            m.setItem(0,recipe.ingredients());m.setItem(3,ItemStack.EMPTY);m.copper.processFluid=recipe.water();m.copper.queued=0;
+            h.assertValueEqual(io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m),1,"One primary-ore batch is queued");
+            for(int i=0;i<recipe.ticks();i++)CopperWorkshops.tick(h.getLevel(),m);
+            h.assertTrue(m.getItem(0).isEmpty(),"Washing consumes the actual primary ore");
+            h.assertTrue(ItemStack.isSameItemSameComponents(m.getItem(3),recipe.result()),"Concentrate retains metal identity: "+recipe.metal());
+            h.assertValueEqual(m.getItem(3).getCount(),5,"Eight raw ore yields five concentrate");
+            var melt=CopperWorkshops.melt(m.getItem(3));h.assertTrue(melt!=null,"Concentrate has a real melting route");
+            h.assertValueEqual(melt[0],java.util.Arrays.asList(io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES).indexOf(recipe.metal()),"Concentrate melts to its own metal");
+            h.assertValueEqual(melt[1],18000,"Every concentrate holds two ingots, a total 25 percent bonus");
+            h.assertValueEqual(m.copper.processFluid,0,"Only the configured water is consumed");
+            h.assertFalse(m.canPlaceItem(0,m.getItem(3)),"Concentrate cannot be enriched twice");
+        }
+        for(var metal:java.util.List.of(Items.COPPER_INGOT,Items.IRON_INGOT,Items.GOLD_INGOT,Items.IRON_NUGGET,Items.GOLD_NUGGET))h.assertFalse(m.canPlaceItem(0,new ItemStack(metal)),"Finished metal is never a washing input");
+        h.succeed();
+    }
+    @GameTest public void washingSeparatesUsefulMineralInputsWithExactWaterAndFiniteQueue(GameTestHelper h){
+        var m=manual(h,"washing_trough",h.absolutePos(new BlockPos(5,2,4)));
+        for(var recipe:io.github.kpaakeh.smog.copper.WashingRecipes.all()){
+            if(!recipe.metal().isEmpty())continue;
+            m.setItem(0,recipe.ingredients());m.setItem(3,new ItemStack(Items.STICK,64));m.copper.processFluid=recipe.water();m.copper.queued=0;
+            io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m);
+            for(int i=0;i<recipe.ticks()+1;i++)CopperWorkshops.tick(h.getLevel(),m);
+            h.assertValueEqual(m.getItem(0).getCount(),recipe.count(),"Blocked output preserves mineral input");
+            h.assertValueEqual(m.copper.processFluid,recipe.water(),"Blocked output preserves water");
+            m.setItem(3,ItemStack.EMPTY);m.copper.processFluid=recipe.water()-1;
+            for(int i=0;i<recipe.ticks();i++)CopperWorkshops.tick(h.getLevel(),m);
+            h.assertTrue(m.getItem(3).isEmpty(),"A partial water supply cannot complete the batch");
+            m.copper.processFluid=recipe.water();
+            for(int i=0;i<recipe.ticks();i++)CopperWorkshops.tick(h.getLevel(),m);
+            h.assertTrue(ItemStack.isSameItemSameComponents(m.getItem(3),recipe.result()),"Separation gives the configured useful output");
+            h.assertValueEqual(m.getItem(3).getCount(),recipe.outputCount(),"Exact separation yield");h.assertValueEqual(m.copper.processFluid,0,"Exact recipe water consumption");
+            h.assertValueEqual(m.copper.queued,0,"The manual order ends");
+            for(int i=0;i<recipe.ticks();i++)CopperWorkshops.tick(h.getLevel(),m);
+            h.assertValueEqual(m.getItem(3).getCount(),recipe.outputCount(),"Idle washing cannot duplicate the output");
+        }
+        h.succeed();
+    }
+    @GameTest public void changingWashingInputCannotReusePreviousProgress(GameTestHelper h){
+        var m=manual(h,"washing_trough",h.absolutePos(new BlockPos(5,2,4)));m.setItem(0,new ItemStack(Items.RAW_COPPER,8));m.copper.processFluid=162000;
+        io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m);for(int i=0;i<50;i++)CopperWorkshops.tick(h.getLevel(),m);
+        m.setItem(0,new ItemStack(Items.RAW_IRON,8));for(int i=0;i<50;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(3).isEmpty(),"Changing ore resets progress instead of carrying copper work into iron");
+        h.assertValueEqual(m.copper.processFluid,162000,"Changing inputs does not consume water early");
+        for(int i=0;i<50;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(3).is(item("iron_concentrate")),"The new full batch produces iron concentrate");
+        h.assertValueEqual(m.copper.processFluid,81000,"Exactly one batch of water is consumed");h.succeed();
+    }
+    @GameTest public void washingSmallBatchesKeepFiniteOrderAndProgressAcrossSaveLoad(GameTestHelper h){
+        var m=manual(h,"washing_trough",h.absolutePos(new BlockPos(5,2,4)));m.setItem(0,new ItemStack(Items.GRAVEL,64));m.copper.processFluid=162000;
+        h.assertValueEqual(io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m),8,"One order is capped at eight batches, matching the persisted state");
+        for(int i=0;i<45;i++)CopperWorkshops.tick(h.getLevel(),m);
+        io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m);h.assertValueEqual(m.copper.work,45,"Repeated order does not restart progress");
+        var saved=m.saveCustomOnly(h.getLevel().registryAccess());m.loadCustomOnly(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING,h.getLevel().registryAccess(),saved));
+        h.assertValueEqual(m.copper.queued,8,"The full allowed order survives save/load without being truncated");h.assertValueEqual(m.copper.work,45,"Partial progress survives save/load");
+        for(int i=45;i<8*80;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertValueEqual(m.getItem(0).getCount(),32,"Only the ordered eight four-item batches are consumed");h.assertValueEqual(m.getItem(3).getCount(),8,"One flint per ordered batch");h.assertValueEqual(m.copper.processFluid,0,"Exactly eight quarter buckets consumed");
+        for(int i=0;i<160;i++)CopperWorkshops.tick(h.getLevel(),m);h.assertValueEqual(m.getItem(0).getCount(),32,"An idle washer never starts the remaining half-stack automatically");
+        m.copper.processFluid=162000;h.assertValueEqual(io.github.kpaakeh.smog.copper.ManualWorkshops.queue(m),8,"A new explicit order accepts the remaining half-stack");
+        for(int i=0;i<8*80;i++)CopperWorkshops.tick(h.getLevel(),m);
+        h.assertTrue(m.getItem(0).isEmpty(),"Two explicit orders complete all sixteen batches");h.assertValueEqual(m.getItem(3).getCount(),16,"Sixteen batches retain exact combined yield");h.assertValueEqual(m.copper.queued,0,"The second finite order also ends");h.succeed();
     }
     @GameTest public void pressingQueuesAndPausesWithoutDuplication(GameTestHelper h){
         var m=manual(h,"lever_press",h.absolutePos(new BlockPos(5,2,4)));m.setItem(0,new ItemStack(Items.WHEAT_SEEDS,16));

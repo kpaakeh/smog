@@ -54,6 +54,7 @@ public final class CopperInteractions {
             }else player.sendOverlayMessage(LoadingCrane.queue(m));return InteractionResult.SUCCESS;
         }
         if(ToolAssembly.handles(m))return ToolAssembly.use(level,m,player,hand);
+        if(CopperWorkshops.workshop(m,"potter_table")){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(player.isShiftKeyDown()&&!held.isEmpty()&&(WaterSupply.handles(m)||ManualWorkshops.handles(m))){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(WaterSupply.handles(m)){
             if(FluidStorageUtil.interactWithFluidStorage(m.processFluid,player,hand))return InteractionResult.SUCCESS;
@@ -77,11 +78,9 @@ public final class CopperInteractions {
             }
             return InteractionResult.PASS;
         }
-        if(player.isShiftKeyDown()&&!held.isEmpty()&&CopperWorkshops.workshop(m,"potter_table")){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(player.isShiftKeyDown()&&held.isEmpty()){
             if(Smeltery.vessel(m)&&!CastingProcesses.locked(m)&&take(m,player,2))return InteractionResult.SUCCESS;
             if(Smeltery.vessel(m)&&!CastingProcesses.locked(m)&&take(m,player,1)){m.copper.work=0;return InteractionResult.SUCCESS;}
-            if(CopperWorkshops.workshop(m,"potter_table")){CopperWorkshops.button(m,21);player.sendOverlayMessage(Component.translatable("message.smog.mold_selected",Item.byId(CopperWorkshops.data(m,12)).getDefaultInstance().getHoverName()));m.sync();return InteractionResult.SUCCESS;}
             player.openMenu(m);return InteractionResult.SUCCESS;
         }
         if(CopperWorkshops.workshop(m,"hand_bellows")){boolean worked=CopperWorkshops.pump(level,m);player.sendOverlayMessage(Component.translatable(worked?"message.smog.bellows":"message.smog.bellows_disconnected"));return InteractionResult.SUCCESS;}
@@ -97,14 +96,6 @@ public final class CopperInteractions {
             if(CastingProcesses.locked(m)){if(player.isShiftKeyDown()&&held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}player.sendOverlayMessage(m.smeltery.filled>=m.smeltery.required&&m.smeltery.cooling>0?Component.translatable("message.smog.casting_cooling",(m.smeltery.cooling+19)/20):Component.translatable("message.smog.casting_locked",FluidAmounts.format(m.smeltery.filled,player.isShiftKeyDown()),FluidAmounts.format(m.smeltery.required,player.isShiftKeyDown())));return InteractionResult.SUCCESS;}
             if(!CopperWorkshops.workshop(m,"casting_basin")&&(CopperWorkshops.mold(held)>=0||MoldMaking.pattern(held)!=null)){take(m,player,1);m.setItem(1,held.split(1));m.copper.work=0;m.sync();return InteractionResult.SUCCESS;}
             if(held.isEmpty()){take(m,player,3);return InteractionResult.SUCCESS;}
-        }else if(CopperWorkshops.workshop(m,"potter_table")){
-            if(!held.isEmpty()&&put(m,0,held)){CopperWorkshops.button(m,22);m.sync();return InteractionResult.SUCCESS;}
-            if(held.isEmpty()){
-                if(take(m,player,3))return InteractionResult.SUCCESS;
-                CopperWorkshops.button(m,22);m.sync();
-                player.sendOverlayMessage(Component.translatable("message.smog.mold_selected",Item.byId(CopperWorkshops.data(m,12)).getDefaultInstance().getHoverName()));
-                return InteractionResult.SUCCESS;
-            }
         }else if(CopperWorkshops.workshop(m,"ceramic_kiln")){
             if(held.has(DataComponents.COOKING_FUEL)&&put(m,2,held))return InteractionResult.SUCCESS;
             if(!held.isEmpty()&&put(m,0,held))return InteractionResult.SUCCESS;

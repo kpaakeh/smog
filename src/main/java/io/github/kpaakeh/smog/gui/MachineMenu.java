@@ -13,23 +13,74 @@ public final class MachineMenu extends AbstractContainerMenu {
     public final ContainerData data;
     private final int openingWorkers;
     private int viewPage;
+    private int potterySelection;
+    private final net.minecraft.world.SimpleContainer potteryResult=new net.minecraft.world.SimpleContainer(1);
+    public static final int POTTERY_SELECT=1000;
+    public boolean pottery(){return layout.id.equals("potter_table");}
     public MachineMenu(GuiLayouts.Layout layout,int id,Inventory inventory,Container container,ContainerData data) {
-        super(layout.type,id);this.layout=layout;this.container=container;this.data=layout.id.equals("smeltery")?new ContainerData(){public int getCount(){return data.getCount();}public int get(int index){return index==23?viewPage:data.get(index);}public void set(int index,int value){if(index==23)viewPage=value;else data.set(index,value);}}:data;openingWorkers=container instanceof MachineEntity machine&&io.github.kpaakeh.smog.copper.Smeltery.handles(machine)?io.github.kpaakeh.smog.copper.Smeltery.workers(machine):-1;
+        super(layout.type,id);this.layout=layout;this.container=container;this.data=layout.id.equals("smeltery")?new ContainerData(){public int getCount(){return data.getCount();}public int get(int index){return index==23?viewPage:data.get(index);}public void set(int index,int value){if(index==23)viewPage=value;else data.set(index,value);}}:layout.id.equals("potter_table")?new ContainerData(){public int getCount(){return data.getCount();}public int get(int index){return index==6?potterySelection:data.get(index);}public void set(int index,int value){if(index==6)potterySelection=value;else data.set(index,value);}}:data;openingWorkers=container instanceof MachineEntity machine&&io.github.kpaakeh.smog.copper.Smeltery.handles(machine)?io.github.kpaakeh.smog.copper.Smeltery.workers(machine):-1;
         checkContainerSize(container,layout.inventorySize);checkContainerDataCount(data,DATA_SIZE);
-        for(var position:layout.slots)addSlot(new Slot(container,position.index(),position.x(),position.y()) {
+        for(var position:layout.slots)addSlot(new Slot(pottery()&&position.output()?potteryResult:container,pottery()&&position.output()?0:position.index(),position.x(),position.y()) {
             @Override public int getMaxStackSize(){return layout.id.equals("smeltery")&&position.index()!=2?1:super.getMaxStackSize();}
             @Override public int getMaxStackSize(ItemStack stack){return layout.id.equals("smeltery")&&position.index()!=2?1:super.getMaxStackSize(stack);}
             @Override public boolean isActive(){if(!layout.id.equals("smeltery"))return true;int worker=io.github.kpaakeh.smog.copper.Smeltery.worker(position.index());return worker<0||worker/io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE==MachineMenu.this.data.get(23)&&(worker<MachineMenu.this.data.get(22)||!container.getItem(position.index()).isEmpty());}
             @Override public boolean mayPickup(Player player){return !(container instanceof MachineEntity machine&&(io.github.kpaakeh.smog.copper.ToolAssembly.handles(machine)&&machine.copper.queued>0||(position.index()==1||position.index()==2)&&io.github.kpaakeh.smog.copper.CastingProcesses.locked(machine)));}
             @Override public boolean mayPlace(ItemStack stack) { return isActive()&&!position.output() && container.canPlaceItem(position.index(),stack); }
         });
-        addStandardInventorySlots(inventory,layout.id.equals("smeltery")?80:8,layout.height-82);addDataSlots(this.data);
+        addStandardInventorySlots(inventory,layout.id.equals("smeltery")?80:pottery()?44:8,layout.height-82);addDataSlots(this.data);
+        if(pottery())refreshPottery();
+    }
+    public java.util.List<Integer> potteryChoices(){
+        var recipes=io.github.kpaakeh.smog.copper.CopperWorkshops.potteryRecipes();var input=container.getItem(0);
+        return java.util.stream.IntStream.range(0,recipes.size()).filter(i->input.isEmpty()||io.github.kpaakeh.smog.copper.CopperWorkshops.is(input,recipes.get(i).input())).boxed().toList();
+    }
+    public int potterySelection(){return data.get(6);}
+    private void refreshPottery(){
+        if(!(container instanceof MachineEntity))return;
+        var input=container.getItem(0);var choices=potteryChoices();
+        if(!choices.contains(potterySelection)){potterySelection=choices.isEmpty()?0:choices.getFirst();}
+        var result=container.getItem(3).copy();
+        if(result.isEmpty()){
+            var recipes=io.github.kpaakeh.smog.copper.CopperWorkshops.potteryRecipes();
+            if(potterySelection>=0&&potterySelection<recipes.size()){
+                var recipe=recipes.get(potterySelection);
+                if(io.github.kpaakeh.smog.copper.CopperWorkshops.is(input,recipe.input())&&input.getCount()>=recipe.count())result=new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse(recipe.output())),recipe.outputCount());
+            }
+        }
+        if(!ItemStack.matches(potteryResult.getItem(0),result))potteryResult.setItem(0,result);
+    }
+    private void consumePottery(){
+        if(!container.getItem(3).isEmpty())container.removeItemNoUpdate(3);
+        else container.removeItem(0,io.github.kpaakeh.smog.copper.CopperWorkshops.potteryRecipes().get(potterySelection).count());
+        container.setChanged();refreshPottery();
+    }
+    @Override public void broadcastChanges(){if(pottery())refreshPottery();super.broadcastChanges();}
+    @Override public boolean canTakeItemForPickAll(ItemStack stack,Slot slot){return slot.container!=potteryResult&&super.canTakeItemForPickAll(stack,slot);}
+    @Override public void clicked(int slot,int button,ContainerInput action,Player player){
+        if(!pottery()||slot!=1){super.clicked(slot,button,action,player);return;}
+        if(!(container instanceof MachineEntity)||!stillValid(player))return;
+        refreshPottery();var result=potteryResult.getItem(0).copy();if(result.isEmpty())return;
+        if(action==ContainerInput.QUICK_MOVE){quickMoveStack(player,slot);broadcastChanges();return;}
+        if(action==ContainerInput.PICKUP&&(button==0||button==1)){
+            var carried=getCarried();if(!carried.isEmpty()&&(!ItemStack.isSameItemSameComponents(carried,result)||carried.getCount()+result.getCount()>carried.getMaxStackSize()))return;
+            consumePottery();if(carried.isEmpty())setCarried(result);else carried.grow(result.getCount());
+        }else if(action==ContainerInput.SWAP&&(button>=0&&button<9||button==40)){
+            var target=player.getInventory().getItem(button);if(!target.isEmpty()&&(!ItemStack.isSameItemSameComponents(target,result)||target.getCount()+result.getCount()>target.getMaxStackSize()))return;
+            consumePottery();if(target.isEmpty())player.getInventory().setItem(button,result);else target.grow(result.getCount());
+        }else if(action==ContainerInput.THROW&&getCarried().isEmpty()){
+            consumePottery();player.drop(result,false,net.minecraft.util.Prediction.SERVER_ONLY);
+        }else if(action==ContainerInput.CLONE&&player.isCreative()&&getCarried().isEmpty())setCarried(result.copyWithCount(result.getMaxStackSize()));
+        broadcastChanges();
     }
     public int energy() { return (data.get(2)&65535)|((data.get(3)&65535)<<16); }
     public int capacity() { return (data.get(4)&65535)|((data.get(5)&65535)<<16); }
     @Override public boolean stillValid(Player player) { return container.stillValid(player)&&(openingWorkers<0||container instanceof MachineEntity machine&&machine.assembled()&&io.github.kpaakeh.smog.copper.Smeltery.workers(machine)==openingWorkers); }
     @Override public boolean clickMenuButton(Player player,int id) {
         if(!stillValid(player) || !(container instanceof MachineEntity machine))return false;
+        if(pottery()){
+            int choice=id-POTTERY_SELECT;if(!potteryChoices().contains(choice))return false;
+            potterySelection=choice;refreshPottery();broadcastChanges();return true;
+        }
         if(io.github.kpaakeh.smog.copper.Smeltery.handles(machine)){
             var state=machine.smeltery;int count=io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length;
             if(id==io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS||id==io.github.kpaakeh.smog.copper.Smeltery.NEXT)viewPage=Math.floorMod(viewPage+(id==io.github.kpaakeh.smog.copper.Smeltery.NEXT?1:-1),Math.max(1,(io.github.kpaakeh.smog.copper.Smeltery.visibleWorkers(machine)+io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE-1)/io.github.kpaakeh.smog.copper.Smeltery.PAGE_SIZE));
@@ -41,6 +92,18 @@ public final class MachineMenu extends AbstractContainerMenu {
         broadcastChanges();return true;
     }
     @Override public ItemStack quickMoveStack(Player player,int index) {
+        if(pottery()&&index==1){
+            if(!(container instanceof MachineEntity)||!stillValid(player))return ItemStack.EMPTY;
+            refreshPottery();var original=potteryResult.getItem(0).copy();if(original.isEmpty())return ItemStack.EMPTY;
+            for(int batch=0;batch<64;batch++){
+                var result=potteryResult.getItem(0).copy();if(result.isEmpty()||!ItemStack.isSameItemSameComponents(result,original))break;
+                int space=0;for(int i=layout.slots.size();i<slots.size();i++){var target=slots.get(i);var old=target.getItem();if(target.mayPlace(result)&&(old.isEmpty()||ItemStack.isSameItemSameComponents(old,result)))space+=Math.max(0,target.getMaxStackSize(result)-old.getCount());}
+                if(space<result.getCount())break;
+                if(!moveItemStackTo(result,layout.slots.size(),slots.size(),true)||!result.isEmpty())break;
+                consumePottery();
+            }
+            broadcastChanges();return original;
+        }
         if(index<0 || index>=slots.size())return ItemStack.EMPTY;
         Slot slot=slots.get(index);if(!slot.isActive()||!slot.mayPickup(player)||!slot.hasItem())return ItemStack.EMPTY;
         ItemStack stack=slot.getItem(),original=stack.copy();int count=layout.slots.size();

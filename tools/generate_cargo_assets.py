@@ -32,9 +32,7 @@ if not target.exists():
     r,g,b,a=im.getpixel((x,y));v=max(r,g,b)/255;im.putpixel((x,y),(round(v*190),round(v*150),round(v*90),a))
   im.save(target)
 
-for metal,texture in [('copper','minecraft:block/copper_block'),('bronze','smog:block/bronze_block'),('silver','smog:block/silver_block'),('gold','minecraft:block/gold_block')]:
- model(metal+'_relief',[box([0,0,14],[16,16,16],'metal'),box([2,2,12],[14,14,14],'metal'),box([4,4,10],[12,6,12],'metal'),box([7,6,10],[9,12,12],'metal')],{'metal':texture})
-for name,source,color in [('molding_sand','sand',(185,160,111)),('relief_pattern','oak_planks',(155,113,67)),('wax_relief_model','honeycomb',(227,181,72)),('sand_relief_mold','sand',(180,153,97)),('unfired_relief_mold','clay',(155,136,118)),('relief_mold','bricks',(143,119,86)),('ceramic_core','brick',(168,131,87))]:
+for name,source,color in [('molding_sand','sand',(185,160,111)),('ceramic_core','brick',(168,131,87))]:
  target=A/('textures/item/'+name+'.png')
  if target.exists():continue
  with ZipFile(ROOT/'.gradle-user-home/caches/fabric-loom/26.3/minecraft-client.jar') as archive:
@@ -43,7 +41,4 @@ for name,source,color in [('molding_sand','sand',(185,160,111)),('relief_pattern
   for y in range(im.height):
    for x in range(im.width):
     r,g,b,a=im.getpixel((x,y));v=max(r,g,b)/255;im.putpixel((x,y),tuple(round(v*c) for c in color)+(a,))
-  if 'mold' in name or name in {'relief_pattern','wax_relief_model'}:
-   from PIL import ImageDraw
-   d=ImageDraw.Draw(im);d.rectangle((3,3,12,12),fill=tuple(round(c*.45) for c in color)+(255,));d.line((5,6,10,6),fill=color+(255,),width=2);d.line((8,6,8,10),fill=color+(255,),width=2)
   im.save(target)
