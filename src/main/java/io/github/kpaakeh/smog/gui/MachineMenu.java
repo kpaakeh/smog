@@ -27,7 +27,7 @@ public final class MachineMenu extends AbstractContainerMenu {
             @Override public boolean mayPickup(Player player){return !(container instanceof MachineEntity machine&&(io.github.kpaakeh.smog.copper.ToolAssembly.handles(machine)&&machine.copper.queued>0||(position.index()==1||position.index()==2)&&io.github.kpaakeh.smog.copper.CastingProcesses.locked(machine)));}
             @Override public boolean mayPlace(ItemStack stack) { return isActive()&&!position.output() && container.canPlaceItem(position.index(),stack); }
         });
-        addStandardInventorySlots(inventory,layout.id.equals("smeltery")?80:pottery()?44:8,layout.height-82);addDataSlots(this.data);
+        addStandardInventorySlots(inventory,layout.id.equals("smeltery")?80:8,layout.height-82);addDataSlots(this.data);
         if(pottery())refreshPottery();
     }
     public java.util.List<Integer> potteryChoices(){

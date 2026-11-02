@@ -13,7 +13,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private final PotteryGui potteryGui=new PotteryGui();
     private Button rateButton,powerButton,previous,next,craft;
     public MachineScreen(MachineMenu menu,Inventory inventory,Component title) {
-        super(menu,inventory,title,menu.layout.width,menu.layout.height);inventoryLabelY=menu.layout.height-94;if(menu.pottery())inventoryLabelX=44;if(menu.layout.id.equals("smeltery")){inventoryLabelX=80;titleLabelX=80;}
+        super(menu,inventory,title,menu.layout.width,menu.layout.height);inventoryLabelY=menu.layout.height-94;if(menu.pottery())titleLabelY--;if(menu.layout.id.equals("smeltery")){inventoryLabelX=80;titleLabelX=80;}
     }
     @Override protected void init() {
         super.init();
@@ -125,6 +125,9 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if(mouseX>=x+142 && mouseX<x+162 && mouseY>=y+18 && mouseY<y+74)
             g.setTooltipForNextFrame(Component.literal(menu.energy()+" FE | "+rate+" FE/t"),mouseX,mouseY);
     }
+    @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical){if(menu.pottery()&&potteryGui.scroll(menu,vertical))return true;return super.mouseScrolled(x,y,horizontal,vertical);}
+    @Override public boolean mouseDragged(net.minecraft.client.input.MouseButtonEvent event,double dx,double dy){if(menu.pottery()&&potteryGui.drag(menu,event.y(),topPos))return true;return super.mouseDragged(event,dx,dy);}
+    @Override public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent event){if(menu.pottery())potteryGui.release();return super.mouseReleased(event);}
     @Override public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event,boolean doubleClick){if(menu.pottery()){int choice=potteryGui.click(menu,event.x(),event.y(),leftPos,topPos,event.button());if(choice>=0){send(choice);return true;}}if(menu.layout.id.equals("smeltery")&&event.button()==com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT){int action=SmelteryGui.click(menu,event.x(),event.y(),leftPos,topPos,event.button());if(action>=0){send(action);return true;}}return super.mouseClicked(event,doubleClick);}
     @Override protected void extractLabels(GuiGraphicsExtractor g,int mouseX,int mouseY){
         int width=imageWidth-titleLabelX-7;
