@@ -9,7 +9,7 @@ public class SmogClient implements ClientModInitializer {
             int mode=0;
             if(com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_LCONTROL)||com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_RCONTROL))mode|=io.github.kpaakeh.smog.copper.ToolTooltip.PROPERTIES;
             if(com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_LALT)||com.mojang.blaze3d.platform.InputConstants.isKeyDown(com.mojang.blaze3d.platform.InputConstants.KEY_RALT))mode|=io.github.kpaakeh.smog.copper.ToolTooltip.CONSTRUCTION;
-            return mode;
+            return (mode&io.github.kpaakeh.smog.copper.ToolTooltip.PROPERTIES)!=0?io.github.kpaakeh.smog.copper.ToolTooltip.PROPERTIES:mode;
         });
         net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback.EVENT.register((stack,context,flag,lines)->{
             if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ModularToolItem||stack.getItem() instanceof io.github.kpaakeh.smog.copper.ToolPartItem){

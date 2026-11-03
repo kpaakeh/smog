@@ -1,0 +1,32 @@
+import groovy.json.JsonOutput
+abstract class GenerateTextureReviewCards extends DefaultTask {
+ @InputDirectory abstract DirectoryProperty getTexturesDirectory()
+ @OutputDirectory abstract DirectoryProperty getTargetDirectory()
+ @TaskAction void generate(){
+  def base=texturesDirectory.get().asFile.toPath();def out=targetDirectory.get().asFile
+  def cards=[]
+  texturesDirectory.get().asFile.eachFileRecurse { f -> if(f.isFile()&&f.name.endsWith('.png'))cards.add(base.relativize(f.toPath()).toString().replace('\\','/').replaceAll(/\.png$/,'')) }
+  cards.sort();def manifest=[]
+  cards.eachWithIndex { texture,index ->
+   def id=String.format('texture_%04d',index);manifest.add([id:id,texture:'smog:'+texture])
+   def sprite='smog:'+texture
+   if(texture.startsWith('gui/')){def copied=new File(out,'assets/smog_tests/textures/item/'+id+'.png');copied.parentFile.mkdirs();copied.bytes=base.resolve(texture+'.png').toFile().bytes;sprite='smog_tests:item/'+id}
+   [('models/item/'+id+'.json'):[parent:'minecraft:item/generated',textures:[layer0:sprite]],('items/'+id+'.json'):[model:[type:'minecraft:model',model:'smog_tests:item/'+id,tints:[[type:'minecraft:custom_model_data',index:0,default:0xFFFFFF]]]]].each { path,data ->
+    def file=new File(out,'assets/smog_tests/'+path);file.parentFile.mkdirs();file.text=JsonOutput.toJson(data)
+   }
+  }
+  new File(out,'smog-texture-review.json').text=JsonOutput.toJson(manifest)
+ }
+}
+def textureReviewResources=layout.buildDirectory.dir('generated/textureReviewResources')
+def textureCards=tasks.register('generateTextureReviewCards',GenerateTextureReviewCards){dependsOn tasks.named('processResources');texturesDirectory=layout.buildDirectory.dir('resources/main/assets/smog/textures');targetDirectory=textureReviewResources}
+sourceSets.gametest.resources.srcDir(textureReviewResources)
+tasks.named('processGametestResources'){dependsOn textureCards}
+if(providers.gradleProperty('textureReviewTest').isPresent()){loom.runs.named('clientGameTest'){vmArg '-Dsmog.textureReviewTest=true'}}
+
+
+if(providers.gradleProperty('textureReviewPages').isPresent()){
+ def pages=providers.gradleProperty('textureReviewPages').get()
+ if(!(pages==~/[0-9,]+/))throw new GradleException('textureReviewPages must be comma-separated indices')
+ loom.runs.named('clientGameTest'){vmArg '-Dsmog.textureReviewPages='+pages}
+}

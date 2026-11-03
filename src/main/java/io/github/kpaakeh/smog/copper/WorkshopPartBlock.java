@@ -13,10 +13,15 @@ import net.minecraft.world.level.block.state.properties.*;
 /** Movable ports and channels have an editable direction, independent of controller location. */
 public class WorkshopPartBlock extends Block {
     public static final BooleanProperty OPEN=BlockStateProperties.OPEN;
+    public static final BooleanProperty POWERED=BlockStateProperties.POWERED;
     public static final EnumProperty<Direction> FACING=BlockStateProperties.HORIZONTAL_FACING;
-    public WorkshopPartBlock(Properties properties){super(properties);registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH).setValue(OPEN,false));}
-    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){builder.add(FACING,OPEN);}
+    public WorkshopPartBlock(Properties properties){super(properties);registerDefaultState(stateDefinition.any().setValue(FACING,Direction.NORTH).setValue(OPEN,false).setValue(POWERED,false));}
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){builder.add(FACING,OPEN,POWERED);}
     private String partName(){return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath();}
+    private boolean waterControl(){return partName().equals("water_valve")||partName().equals("water_outlet");}
+    private void updatePower(BlockState state,Level level,BlockPos pos){if(!level.isClientSide()&&waterControl()){boolean powered=level.hasNeighborSignal(pos);if(state.getValue(POWERED)!=powered)level.setBlock(pos,state.setValue(POWERED,powered),Block.UPDATE_CLIENTS);}}
+    @Override protected void neighborChanged(BlockState state,Level level,BlockPos pos,Block neighbor,net.minecraft.world.level.redstone.Orientation orientation,boolean moved){updatePower(state,level,pos);}
+    @Override protected void onPlace(BlockState state,Level level,BlockPos pos,BlockState old,boolean moved){if(!old.is(this))updatePower(state,level,pos);}
     private boolean attachment(){return partName().equals("casting_faucet")||partName().equals("air_nozzle");}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){
         if(attachment()){

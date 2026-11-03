@@ -34,14 +34,14 @@ public final class ModularToolItem extends Item {
         stack.setDamageValue(Math.min(stack.getMaxDamage(),stack.getDamageValue()+wear));if(broken(stack))stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);
     }
     @Override public void inventoryTick(ItemStack stack,ServerLevel level,net.minecraft.world.entity.Entity holder,net.minecraft.world.entity.EquipmentSlot slot){
-        ToolTraits.tick(stack,level);
+        ToolTraits.tick(stack,level);if(holder instanceof LivingEntity living)ToolTraits.heldTick(stack,level,living);
         if(broken(stack)){stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);return;}
         if(!stack.has(DataComponents.ATTRIBUTE_MODIFIERS)){var restored=ToolParts.assemble(ToolParts.schema(stack),ToolParts.components(stack));if(restored.has(DataComponents.ATTRIBUTE_MODIFIERS))stack.set(DataComponents.ATTRIBUTE_MODIFIERS,restored.get(DataComponents.ATTRIBUTE_MODIFIERS));}
     }
     @Override public void hurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){if(!(attacker instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(!broken(stack))ToolTraits.hit(stack,target,attacker);wear(stack,attacker.level(),2);}}
     @Override public float getDestroySpeed(ItemStack stack,BlockState state){return broken(stack)?.2f:ToolTraits.miningSpeed(stack,state,super.getDestroySpeed(stack,state));}
     @Override public boolean isCorrectToolForDrops(ItemStack stack,BlockState state){return !broken(stack)&&super.isCorrectToolForDrops(stack,state);}
-    @Override public boolean mineBlock(ItemStack stack,Level level,BlockState state,BlockPos pos,LivingEntity user){if(!level.isClientSide()&&state.getDestroySpeed(level,pos)!=0&&!(user instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(level instanceof ServerLevel server&&!broken(stack))ToolTraits.mined(stack,server,state);wear(stack,level,1);if(user instanceof net.minecraft.server.level.ServerPlayer player)ToolActions.afterMined(stack,(ServerLevel)level,state,pos,player);}return true;}
+    @Override public boolean mineBlock(ItemStack stack,Level level,BlockState state,BlockPos pos,LivingEntity user){if(!level.isClientSide()&&state.getDestroySpeed(level,pos)!=0&&!(user instanceof net.minecraft.world.entity.player.Player p&&p.isCreative())){if(level instanceof ServerLevel server&&!broken(stack)){ToolTraits.mined(stack,server,state);ToolTraits.harvested(stack,user,state);}wear(stack,level,1);if(user instanceof net.minecraft.server.level.ServerPlayer player)ToolActions.afterMined(stack,(ServerLevel)level,state,pos,player);}return true;}
     @Override public void postHurtEnemy(ItemStack stack,LivingEntity target,LivingEntity attacker){}
     @Override public InteractionResult useOn(UseOnContext context){
         var stack=context.getItemInHand();if(broken(stack))return InteractionResult.PASS;
@@ -52,6 +52,7 @@ public final class ModularToolItem extends Item {
         var originalTransformer=stack.get(DataComponents.BLOCK_TRANSFORMER);boolean had=stack.has(DataComponents.UNBREAKABLE);stack.set(DataComponents.UNBREAKABLE,net.minecraft.util.Unit.INSTANCE);
         InteractionResult result;
         try{result=InteractionResult.PASS;for(var delegate:delegates){var transformer=delegate.getDefaultInstance().get(DataComponents.BLOCK_TRANSFORMER);if(transformer==null)continue;stack.set(DataComponents.BLOCK_TRANSFORMER,transformer);result=delegate.useOn(context);if(result.consumesAction())break;}}finally{if(originalTransformer==null)stack.remove(DataComponents.BLOCK_TRANSFORMER);else stack.set(DataComponents.BLOCK_TRANSFORMER,originalTransformer);if(!had)stack.remove(DataComponents.UNBREAKABLE);}
+        if(result.consumesAction())ToolTraits.used(stack,context);
         if(result.consumesAction()&&(context.getPlayer()==null||!context.getPlayer().isCreative()))wear(stack,context.getLevel(),context.getLevel().isClientSide()?1:ToolTraits.useWear(stack));return result;
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,TooltipDisplay display,java.util.function.Consumer<Component> lines,TooltipFlag flag){

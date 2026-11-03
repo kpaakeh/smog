@@ -10,7 +10,13 @@
       "forms": [
         "binding"
       ],
-      "durability_multiplier": 1
+      "durability_multiplier": 1,
+      "traits": [
+        {
+          "id": "grip",
+          "every": 6
+        }
+      ]
     }
   },
   "repair_ingredient": "minecraft:string"

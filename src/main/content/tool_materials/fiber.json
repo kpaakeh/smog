@@ -11,7 +11,12 @@
         "wrap"
       ],
       "speed_multiplier": 1.03,
-      "durability_multiplier": 1.02
+      "durability_multiplier": 1.02,
+      "traits": [
+        {
+          "id": "breathing"
+        }
+      ]
     }
   },
   "repair_ingredient": "smog:plant_fiber"

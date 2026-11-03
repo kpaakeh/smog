@@ -100,7 +100,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             validId(baseModel)
             if (!entry.model) write("assets/smog/models/block/${name}.json", [parent:'minecraft:block/cube_all', textures:[all:texture]])
             def variants = ['':[model:baseModel]]
-            if(entry.horizontal){variants=[:];[north:0,east:90,south:180,west:270].each { facing,rotation -> if(entry.valve){variants["facing=$facing,open=false"]=[model:baseModel,y:rotation];variants["facing=$facing,open=true"]=[model:"smog:block/${name}_open",y:rotation]}else variants["facing=$facing"]=[model:baseModel,y:rotation] }}
+            if(entry.horizontal){variants=[:];[north:0,east:90,south:180,west:270].each { facing,rotation -> if(entry.valve){if(name in ["water_valve","water_outlet"]){[false,true].each { opened -> [false,true].each { powered -> variants["facing=$facing,open=$opened,powered=$powered"]=[model:opened&&!powered?"smog:block/${name}_open":baseModel,y:rotation] } }}else{variants["facing=$facing,open=false"]=[model:baseModel,y:rotation];variants["facing=$facing,open=true"]=[model:"smog:block/${name}_open",y:rotation]}}else variants["facing=$facing"]=[model:baseModel,y:rotation] }}
             if (machine) {
                 boolean modular=(root.complex_multiblocks ?: []).any { it.controller=="smog:$name" }
                 def assembled = entry.assembled_model ?: "smog:block/${name}_assembled"

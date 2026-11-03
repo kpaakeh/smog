@@ -34,7 +34,7 @@ public final class ToolTraits {
         if(!profile.has("traits"))return;
         var seen=new HashSet<String>();
         for(var value:profile.getAsJsonArray("traits")){var p=value.getAsJsonObject();String id=p.get("id").getAsString();
-            if(!Set.of("work_hardening","staggering","marking","grip").contains(id))throw new IllegalArgumentException("Unknown tool trait: "+id);
+            if(!Set.of("work_hardening","staggering","marking","grip","cultivation","impact","magnetic","quenching","sapping","breathing","insulation").contains(id))throw new IllegalArgumentException("Unknown tool trait: "+id);
             if(!seen.add(id))throw new IllegalArgumentException("Duplicate tool trait: "+id);
             var allowed=switch(id){case "work_hardening"->Set.of("id","max_stacks","speed_per_stack","timeout_ticks");case "grip"->Set.of("id","every");default->Set.of("id","duration_ticks","cooldown_ticks");};
             for(String key:p.keySet())if(!allowed.contains(key))throw new IllegalArgumentException("Unknown parameter for "+id+": "+key);
@@ -62,6 +62,7 @@ public final class ToolTraits {
     }
     public static void mined(ItemStack stack,ServerLevel level,BlockState state){
         if(!stack.isCorrectToolForDrops(state))return;
+        if(has(stack,"magnetic")){var data=ModularToolItem.parts(stack);data.putLong("trait_magnetic_until",level.getGameTime()+40);save(stack,data);}
         for(var t:traits(stack))if(t.id().equals("work_hardening")&&matches(t,state)){
             var data=ModularToolItem.parts(stack);long now=level.getGameTime();int count=now>=data.getLongOr("trait_work_until",0)?0:Math.clamp(data.getIntOr("trait_work_stacks",0),0,number(t,"max_stacks",4));
             data.putInt("trait_work_stacks",Math.min(number(t,"max_stacks",4),count+1));data.putLong("trait_work_until",now+number(t,"timeout_ticks",100));save(stack,data);return;
@@ -72,31 +73,55 @@ public final class ToolTraits {
     public static void hit(ItemStack stack,LivingEntity target,LivingEntity attacker){
         if(!(attacker.level() instanceof ServerLevel level)||target.level()!=level||!target.isAlive()||target instanceof net.minecraft.world.entity.player.Player)return;
         var seen=new HashSet<String>();
-        for(var t:traits(stack)){if(!seen.add(t.id())||!Set.of("staggering","marking").contains(t.id()))continue;var data=ModularToolItem.parts(stack);String key="trait_"+t.id()+"_until";
+        for(var t:traits(stack)){if(!seen.add(t.id())||!Set.of("staggering","marking","impact","quenching","sapping").contains(t.id()))continue;var data=ModularToolItem.parts(stack);String key="trait_"+t.id()+"_until";
             if(level.getGameTime()<data.getLongOr(key,0))continue;
-            if(target.addEffect(new MobEffectInstance(t.id().equals("staggering")?MobEffects.SLOWNESS:MobEffects.GLOWING,number(t,"duration_ticks",20),0),attacker)){
+            boolean applied=switch(t.id()){
+                case "impact"->{var away=target.position().subtract(attacker.position()).multiply(1,0,1).normalize().scale(.35);target.push(away.x,.08,away.z);yield true;}
+                case "quenching"->{boolean burning=target.isOnFire();if(burning)target.clearFire();yield burning;}
+                default->target.addEffect(new MobEffectInstance(t.id().equals("staggering")?MobEffects.SLOWNESS:t.id().equals("sapping")?MobEffects.WEAKNESS:MobEffects.GLOWING,number(t,"duration_ticks",20),0),attacker);
+            };
+            if(applied){
                 data.putLong(key,level.getGameTime()+number(t,"cooldown_ticks",60));save(stack,data);
             }
         }
     }
     /** Saves wear on every Nth successful native use, never restores existing damage. */
     public static int useWear(ItemStack stack){
-        for(var t:traits(stack))if(t.id().equals("grip")){var data=ModularToolItem.parts(stack);int every=Math.max(2,number(t,"every",4)),count=(Math.floorMod(data.getIntOr("trait_grip_uses",0),every)+1)%every;data.putInt("trait_grip_uses",count);save(stack,data);return count==0?0:1;}return 1;
+        int every=traits(stack).stream().filter(t->t.id().equals("grip")).mapToInt(t->Math.max(2,number(t,"every",4))).min().orElse(0);if(every==0)return 1;var data=ModularToolItem.parts(stack);int count=(Math.floorMod(data.getIntOr("trait_grip_uses",0),every)+1)%every;data.putInt("trait_grip_uses",count);save(stack,data);return count==0?0:1;
     }
     /** Cooldowns follow the part which grants the trait; dismantling is not a free reset. */
     public static void exportRuntime(ItemStack tool,ItemStack part){
         var data=ModularToolItem.parts(part);var runtime=ModularToolItem.parts(tool);boolean changed=false;
         for(var t:fromPart(ToolDefinitions.part(part))){
-            if(t.id().equals("staggering")||t.id().equals("marking")){String key="trait_"+t.id()+"_until";data.putLong(key,Math.max(data.getLongOr(key,0),runtime.getLongOr(key,0)));changed=true;}
+            if(Set.of("staggering","marking","impact","quenching","sapping").contains(t.id())){String key="trait_"+t.id()+"_until";data.putLong(key,Math.max(data.getLongOr(key,0),runtime.getLongOr(key,0)));changed=true;}
             if(t.id().equals("grip")){data.putInt("trait_grip_uses",runtime.getIntOr("trait_grip_uses",0));changed=true;}
         }if(changed)save(part,data);
     }
     public static void importRuntime(List<ItemStack> parts,ItemStack tool){
         var data=ModularToolItem.parts(tool);boolean changed=false,grip=false;
         for(var part:parts)for(var t:fromPart(ToolDefinitions.part(part))){var stored=ModularToolItem.parts(part);
-            if(t.id().equals("staggering")||t.id().equals("marking")){String key="trait_"+t.id()+"_until";data.putLong(key,Math.max(data.getLongOr(key,0),stored.getLongOr(key,0)));changed=true;}
+            if(Set.of("staggering","marking","impact","quenching","sapping").contains(t.id())){String key="trait_"+t.id()+"_until";data.putLong(key,Math.max(data.getLongOr(key,0),stored.getLongOr(key,0)));changed=true;}
             if(t.id().equals("grip")&&!grip){data.putInt("trait_grip_uses",Math.floorMod(stored.getIntOr("trait_grip_uses",0),Math.max(2,number(t,"every",4))));changed=true;grip=true;}
         }if(changed)save(tool,data);
+    }
+    private static boolean has(ItemStack stack,String id){return traits(stack).stream().anyMatch(t->t.id().equals(id));}
+    /** Passive effects require an equipped, usable tool; inventory storage never grants them. */
+    public static void heldTick(ItemStack stack,ServerLevel level,LivingEntity holder){
+        if(ModularToolItem.broken(stack)||(holder.getMainHandItem()!=stack&&holder.getOffhandItem()!=stack))return;
+        if(has(stack,"insulation")&&holder.getTicksFrozen()>0)holder.setTicksFrozen(Math.max(0,holder.getTicksFrozen()-2));
+        if(has(stack,"magnetic")&&level.getGameTime()<ModularToolItem.parts(stack).getLongOr("trait_magnetic_until",0)){
+            for(var drop:level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,holder.getBoundingBox().inflate(2.5),e->!e.hasPickUpDelay()&&e.isAlive()&&(e.getOwner()==null||e.getOwner()==holder))){
+                var pull=holder.position().add(0,.5,0).subtract(drop.position());if(pull.lengthSqr()>.25)drop.setDeltaMovement(drop.getDeltaMovement().add(pull.normalize().scale(.035)));
+            }
+        }
+    }
+    public static void harvested(ItemStack stack,LivingEntity holder,BlockState state){
+        if(stack.isCorrectToolForDrops(state)&&has(stack,"breathing")&&holder.isUnderWater())holder.setAirSupply(Math.min(holder.getMaxAirSupply(),holder.getAirSupply()+4));
+    }
+    public static void used(ItemStack stack,net.minecraft.world.item.context.UseOnContext context){
+        if(!(context.getLevel() instanceof ServerLevel level)||!has(stack,"cultivation"))return;
+        var pos=context.getClickedPos();var state=level.getBlockState(pos);
+        if(state.is(net.minecraft.world.level.block.Blocks.FARMLAND))level.setBlockAndUpdate(pos,state.setValue(net.minecraft.world.level.block.FarmlandBlock.MOISTURE,7));
     }
     private static String displayNumber(double value){return String.format(Locale.ROOT,"%.2f",value).replaceAll("\\.?0+$","");}
     /** Values come from the same profile parameters as the behavior, not fixed prose. */
@@ -108,9 +133,10 @@ public final class ToolTraits {
                 case "staggering"->Component.translatable("tool.smog.trait.staggering",displayNumber(number(t,"duration_ticks",20)/20.0),displayNumber(number(t,"cooldown_ticks",60)/20.0));
                 case "marking"->Component.translatable("tool.smog.trait.marking",displayNumber(number(t,"duration_ticks",20)/20.0),displayNumber(number(t,"cooldown_ticks",60)/20.0));
                 case "grip"->Component.translatable("tool.smog.trait.grip",number(t,"every",4));
+                case "impact","quenching","sapping"->Component.translatable("tool.smog.trait."+t.id(),displayNumber(number(t,"duration_ticks",20)/20.0),displayNumber(number(t,"cooldown_ticks",60)/20.0));
                 default->Component.translatable("tool.smog.trait."+t.id());
             };
-            lines.accept(description);
+            lines.accept(Component.translatable("tool.smog.tip.trait."+t.id()).append(": ").append(description));
         }
     }
 }

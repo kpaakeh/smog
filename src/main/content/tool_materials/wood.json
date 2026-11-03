@@ -22,7 +22,12 @@
       "attack_damage": 1,
       "harvest_tier": "wooden",
       "casting": false,
-      "shaping": true
+      "shaping": true,
+      "traits": [
+        {
+          "id": "cultivation"
+        }
+      ]
     }
   },
   "repair_ingredient": "#minecraft:planks",

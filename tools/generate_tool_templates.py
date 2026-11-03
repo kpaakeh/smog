@@ -28,8 +28,13 @@ def head(form):
   return gray(im)
  # Shared hand-edited masks for forms without a vanilla equivalent.
  im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
- points={'hammer':[(6,1),(9,1),(15,7),(15,10),(12,10),(6,4)],'saw':[(5,7),(10,2),(14,1),(15,2),(15,5),(13,7),(12,6),(11,9),(10,8),(9,11),(8,10),(7,12),(5,10)],'katana':[(5,10),(8,6),(11,2),(14,0),(14,3),(11,7),(8,10),(6,12)],'machete':[(6,9),(10,3),(15,1),(15,5),(10,10),(7,12)],'sickle':[(7,7),(8,4),(11,1),(14,2),(15,5),(14,8),(11,9),(12,7),(13,5),(12,4),(10,5),(9,8)]}[form['prototype_shape']]
- d.polygon(points,fill=(160,160,160,255));d.line(points+[points[0]],fill=(60,60,60,255));d.line(points[:2],fill=(245,245,245,255));return im
+ points={'hammer':[(6,1),(9,1),(15,7),(15,10),(12,10),(6,4)],'saw':[(5,7),(10,2),(14,1),(15,2),(15,5),(13,7),(12,6),(11,9),(10,8),(9,11),(8,10),(7,12),(5,10)],'katana':[(5,10),(8,6),(11,2),(14,0),(14,3),(11,7),(8,10),(6,12)],'machete':[(6,9),(10,3),(15,1),(15,5),(10,10),(7,12)],'sickle':[(4,2),(7,0),(11,0),(14,2),(15,5),(14,8),(10,10),(8,9),(9,7),(12,6),(12,3),(10,2),(7,2),(5,3)]}[form['prototype_shape']]
+ d.polygon(points,fill=(196,196,196,255));d.line(points+[points[0]],fill=(48,48,48,255))
+ # Broad coherent bevels, never random noise: a dark back and bright cutting edge.
+ accents={'hammer':[(7,2),(9,2),(14,7)],'saw':[(6,7),(11,2),(14,2)],'katana':[(6,10),(9,6),(13,1)],'machete':[(7,9),(11,4),(14,2)],'sickle':[(5,2),(7,1),(11,1),(13,2),(14,5),(13,7),(10,9)]}
+ d.line(accents[form['prototype_shape']],fill=(255,255,255,255),width=1)
+ if form['prototype_shape']=='sickle':d.line([(10,7),(12,6),(12,3),(10,2)],fill=(112,112,112,255))
+ return im
 
 def handle(form):
  im=source('minecraft:item/iron_pickaxe')
@@ -49,12 +54,12 @@ def handle(form):
  return im
 
 def clean(im):
- result=im.copy();tones=[92,156,212,248]
+ result=im.copy();tones=[52,120,220,255]
  for y in range(16):
   for x in range(16):
    r,g,b,a=im.getpixel((x,y))
    if a:
-    v=tones[min(3,max(r,g,b)//64)];result.putpixel((x,y),(v,v,v,255))
+    v=min(tones,key=lambda tone:abs(tone-max(r,g,b)));result.putpixel((x,y),(v,v,v,255))
  return result
 
 def overlay(form):
@@ -73,7 +78,7 @@ def overlay(form):
 
 def save(path,im):
  path.parent.mkdir(parents=True,exist_ok=True)
- if FORCE or PARTS_ONLY and path.parent.name in ['tool_forms','tool_overlays'] or not path.exists():im.save(path)
+ if FORCE or PARTS_ONLY and (path.parent.name in ['tool_forms','tool_overlays'] or 'sickle' in path.stem) or not path.exists():im.save(path)
 
 def mold(mask,raw):
  colors=[(45,52,62),(67,76,88),(100,111,123),(129,142,154),(159,174,185),(188,203,213),(216,228,235)] if raw else [(46,38,31),(70,57,45),(99,80,61),(128,105,80),(155,132,103),(184,160,126),(209,186,151)]

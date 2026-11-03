@@ -13,7 +13,14 @@
       "harvest_tier": "stone",
       "casting": true,
       "shaping": true,
-      "shaping_extra_units": 9000
+      "shaping_extra_units": 9000,
+      "traits": [
+        {
+          "id": "quenching",
+          "duration_ticks": 1,
+          "cooldown_ticks": 40
+        }
+      ]
     },
     "handle": {
       "forms": [

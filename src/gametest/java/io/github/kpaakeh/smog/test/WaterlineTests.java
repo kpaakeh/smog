@@ -12,6 +12,12 @@ import net.minecraft.world.level.block.*;
 
 public final class WaterlineTests {
     private static Block block(String name){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(name));}
+    @GameTest public void redstoneClosureHasAnExplicitVisualStateAndKeepsTheManualSetting(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(3,3,3));for(String name:java.util.List.of("water_valve","water_outlet")){
+            h.getLevel().setBlockAndUpdate(pos,block(name).defaultBlockState().setValue(WorkshopPartBlock.OPEN,true));h.getLevel().setBlockAndUpdate(pos.east(),Blocks.REDSTONE_BLOCK.defaultBlockState());var powered=h.getLevel().getBlockState(pos);
+            h.assertTrue(powered.getValue(WorkshopPartBlock.POWERED),"Client-visible state follows actual redstone");h.assertTrue(powered.getValue(WorkshopPartBlock.OPEN),"Signal override does not erase the manual setting");h.getLevel().setBlockAndUpdate(pos.east(),Blocks.AIR.defaultBlockState());h.assertFalse(h.getLevel().getBlockState(pos).getValue(WorkshopPartBlock.POWERED),"Removing power restores the open visual state");h.getLevel().setBlockAndUpdate(pos,Blocks.AIR.defaultBlockState());
+        }h.succeed();
+    }
     @GameTest public void externalTankTriesValidSideAfterShorterRejectedApproach(GameTestHelper h){
         var source=h.absolutePos(new BlockPos(3,3,3));var level=h.getLevel();
         level.setBlock(source,block("water_tank").defaultBlockState(),Block.UPDATE_ALL);

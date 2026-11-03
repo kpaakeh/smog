@@ -20,8 +20,8 @@ public final class ToolTooltip {
     public static void append(ItemStack stack,java.util.function.Consumer<Component> output){lines(stack,viewerMode.getAsInt()).forEach(output);}
     private static MutableComponent text(String key,Object...args){return Component.translatable("tool.smog.tip."+key,args);}
     private static MutableComponent color(Component value,int color){return value.copy().withStyle(s->s.withColor(color).withItalic(false));}
-    private static Component row(String key,Object value){return color(text(key),LABEL).append(color(Component.literal("  "),LABEL)).append(color(value instanceof Component c?c:Component.literal(String.valueOf(value)),VALUE));}
-    private static Component heading(String key){return color(text(key),ACCENT);}
+    private static Component row(String key,Object value){return color(text(key),LABEL).append(color(Component.literal(": "),LABEL)).append(color(value instanceof Component c?c:Component.literal(String.valueOf(value)),VALUE));}
+    private static Component heading(String key){return color(text(key).append(":"),ACCENT);}
     private static String number(double value){return String.format(Locale.ROOT,"%.2f",value).replaceAll("\\.?0+$","");}
     private static int materialColor(int color){
         int r=(color>>16)&255,g=(color>>8)&255,b=color&255;double brightness=.2126*r+.7152*g+.0722*b;
@@ -44,7 +44,7 @@ public final class ToolTooltip {
         }
         var traits=new LinkedHashMap<String,ToolTraits.Trait>();for(var trait:ToolTraits.traits(stack))traits.putIfAbsent(trait.id(),trait);
         if(!traits.isEmpty()){
-            var summary=color(text("traits"),LABEL).append("  ");int n=0;
+            var summary=color(text("traits"),LABEL).append(": ");int n=0;
             for(var trait:traits.values()){if(n++>0)summary.append(color(Component.literal(" · "),LABEL));summary.append(color(text("trait."+trait.id()),materialColor(trait.source().color())));}
             lines.add(summary);
         }

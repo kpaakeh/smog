@@ -75,9 +75,9 @@ public final class ToolActionTests {
         var p=player(h,"sickle",center);var tool=p.getMainHandItem();var context=new UseOnContext(p,InteractionHand.MAIN_HAND,new BlockHitResult(Vec3.atCenterOf(center),Direction.UP,center,false));
         h.assertTrue(tool.useOn(context).consumesAction(),"Right-click harvests the mature crop area");
         for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++)h.assertValueEqual(level.getBlockState(center.offset(x,0,z)).getValue(CropBlock.AGE),x==1&&z==1?2:0,"Mature carrots are replanted and young carrots preserved");
-        h.assertValueEqual(tool.getDamageValue(),8,"Only the eight mature plants consume durability");
+        h.assertValueEqual(tool.getDamageValue(),7,"Eight mature plants charge wear; cord grip saves the sixth use");
         int before=level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new AABB(center).inflate(3)).stream().mapToInt(e->e.getItem().getCount()).sum();
         h.assertTrue(before>0,"Harvest leaves actual produce after reserving one carrot per planted crop");tool.useOn(context);
-        h.assertValueEqual(tool.getDamageValue(),8,"Clicking immature replanted crops again creates no extra harvest or wear");h.succeed();
+        h.assertValueEqual(tool.getDamageValue(),7,"Clicking immature replanted crops again creates no extra harvest or wear");h.succeed();
     }
 }

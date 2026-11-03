@@ -13,7 +13,14 @@
       "harvest_tier": "stone",
       "casting": true,
       "shaping": true,
-      "shaping_extra_units": 9000
+      "shaping_extra_units": 9000,
+      "traits": [
+        {
+          "id": "sapping",
+          "duration_ticks": 30,
+          "cooldown_ticks": 100
+        }
+      ]
     },
     "handle": {
       "forms": [

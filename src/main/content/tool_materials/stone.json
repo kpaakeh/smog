@@ -12,7 +12,14 @@
       "attack_damage": 2,
       "harvest_tier": "stone",
       "casting": false,
-      "shaping": true
+      "shaping": true,
+      "traits": [
+        {
+          "id": "impact",
+          "duration_ticks": 1,
+          "cooldown_ticks": 40
+        }
+      ]
     },
     "handle": {
       "forms": [

@@ -72,6 +72,8 @@ public final class VisualReviewClientScene {
                 }
             });
             camera(context,server,-9.5,104,10,FLOW.offset(0,0,1),"visual-flow-direct-and-channel");
+            camera(context,server,-15.5,100.2,13.5,FLOW.offset(-3,0,1),"visual-flow-direct-close");
+            camera(context,server,-3,100.2,13,FLOW.offset(4,-1,1),"visual-flow-channel-close");
             server.runOnServer(s->{for(var target:java.util.List.of(FLOW.offset(-3,-1,1),FLOW.offset(5,-1,1))){var m=machine(s.overworld(),target);if(m.smeltery.filled<=0)throw new IllegalStateException("Visual flow has no actual received metal: "+target);m.enabled(false);m.sync();}});
             server.runOnServer(s->{var level=s.overworld();level.setBlockAndUpdate(STAGES,block("casting_table").defaultBlockState());var m=machine(level,STAGES);m.enabled(false);m.setItem(1,new ItemStack(item("ingot_mold")));m.sync();});
             camera(context,server,-15.5,102,5.5,STAGES,"visual-casting-empty");

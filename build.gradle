@@ -126,3 +126,11 @@ apply from: 'gradle/decor.gradle'
 if(providers.gradleProperty("scaleReviewTest").isPresent()) { loom.runs.named("clientGameTest") { vmArg "-Dsmog.scaleReviewTest=true" } }
 
 if(providers.gradleProperty("catalogVisualTest").isPresent()) { loom.runs.named("clientGameTest") { vmArg "-Dsmog.catalogVisualTest=true" } }
+
+apply from: 'gradle/texture-review.gradle'
+
+if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureTest=true"}}
+
+if(providers.gradleProperty("closureWorldOnly").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureWorldOnly=true"}}
+
+if(providers.gradleProperty("closureDecorOnly").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureDecorOnly=true"}}

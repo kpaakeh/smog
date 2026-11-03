@@ -11,7 +11,12 @@
         "wrap"
       ],
       "speed_multiplier": 1.02,
-      "durability_multiplier": 1
+      "durability_multiplier": 1,
+      "traits": [
+        {
+          "id": "insulation"
+        }
+      ]
     }
   },
   "repair_ingredient": "#minecraft:wool"

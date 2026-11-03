@@ -29,7 +29,8 @@
       "io.github.kpaakeh.smog.test.ToolMaterialInteropTests",
       "io.github.kpaakeh.smog.test.WorkshopFinaleTests",
       "io.github.kpaakeh.smog.test.ManualWorkshopStatusTests",
-      "io.github.kpaakeh.smog.test.UtilityStatusTests"
+      "io.github.kpaakeh.smog.test.UtilityStatusTests",
+      "io.github.kpaakeh.smog.test.EarlyMaterialTraitTests"
     ],
     "fabric-client-gametest": [
       "io.github.kpaakeh.smog.test.ClientFoundationTests"
@@ -38,7 +39,8 @@
       "io.github.kpaakeh.smog.test.TestJeiProbe"
     ],
     "main": [
-      "io.github.kpaakeh.smog.test.TestIndustryContent"
+      "io.github.kpaakeh.smog.test.TestIndustryContent",
+      "io.github.kpaakeh.smog.test.TextureReviewCards"
     ]
   },
   "depends": {

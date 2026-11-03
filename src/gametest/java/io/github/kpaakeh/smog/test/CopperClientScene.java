@@ -21,7 +21,7 @@ public final class CopperClientScene {
         });
         context.getInput().setCursorPos(position[0],position[1]);context.waitTicks(3);
     }
-    private static String language(ClientGameTestContext context,String requested){
+    static String language(ClientGameTestContext context,String requested){
         var previous=new java.util.concurrent.atomic.AtomicReference<String>();
         var reload=new java.util.concurrent.atomic.AtomicReference<java.util.concurrent.CompletableFuture<Void>>();
         context.runOnClient(mc->{
