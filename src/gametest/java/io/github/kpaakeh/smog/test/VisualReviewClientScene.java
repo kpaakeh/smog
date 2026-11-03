@@ -84,12 +84,17 @@ public final class VisualReviewClientScene {
             server.runOnServer(s->{var level=s.overworld();Multiblocks.get(ModBlocks.id("loading_crane")).parts().forEach((offset,part)->level.setBlockAndUpdate(CRANE.offset(offset),part.block().defaultBlockState()));level.setBlockAndUpdate(CRANE,block("loading_crane").defaultBlockState());var m=machine(level,CRANE);if(!m.tryAssemble())throw new IllegalStateException("Visual crane did not assemble");m.enabled(false);for(boolean second:new boolean[]{false,true})level.setBlockAndUpdate(LoadingCrane.bay(m,second),Blocks.BARREL.defaultBlockState());((Container)level.getBlockEntity(LoadingCrane.bay(m,false))).setItem(0,new ItemStack(Items.COBBLESTONE,64));LoadingCrane.queue(m);m.sync();});
             camera(context,server,32.5,105,10.5,CRANE.offset(0,-2,2),"visual-crane-start");
             int[] steps={25,45,50,50};String[] phases={"pickup","raised-travel","delivery","finished"};
-            for(int phase=0;phase<steps.length;phase++){int ticks=steps[phase];server.runOnServer(s->{var m=machine(s.overworld(),CRANE);for(int tick=0;tick<ticks;tick++)LoadingCrane.tick(s.overworld(),m);m.sync();});context.waitTicks(6);context.takeScreenshot("visual-crane-"+phases[phase]);}
+            for(int phase=0;phase<steps.length;phase++){int ticks=steps[phase];server.runOnServer(s->{var m=machine(s.overworld(),CRANE);for(int tick=0;tick<ticks;tick++)LoadingCrane.tick(s.overworld(),m);m.sync();});context.waitTicks(6);context.takeScreenshot("visual-crane-"+phases[phase]);camera(context,server,CRANE.getX()+9,CRANE.getY()+1,CRANE.getZ()+2,CRANE.offset(0,-2,2),"visual-crane-side-"+phases[phase]);}
             server.runOnServer(s->{var m=machine(s.overworld(),CRANE);if(((Container)s.overworld().getBlockEntity(LoadingCrane.bay(m,true))).getItem(0).getCount()!=64)throw new IllegalStateException("Visual crane never delivered its cargo");});
             server.runCommand("time set noon");server.runCommand("fill -4 99 46 34 99 84 minecraft:stone");
             server.runOnServer(s->{var blocks=io.github.kpaakeh.smog.registry.DecorBlocks.all();for(int index=0;index<blocks.size();index++)s.overworld().setBlockAndUpdate(new BlockPos((index%14)*2,100,50+(index/14)*2),blocks.get(index).defaultBlockState());});
             camera(context,server,13,123,40,new BlockPos(13,100,64),"visual-decor-all-families");
             camera(context,server,7,104,45,new BlockPos(7,100,52),"visual-decor-refractory-close");
+            for(String material:java.util.List.of("firebrick","limestone","fluorite","phosphorite","kaolin","dolomite","rock_salt","graphite")){
+                int[] index={0};server.runOnServer(a->{index[0]=io.github.kpaakeh.smog.registry.DecorBlocks.all().indexOf(block("polished_"+material));});
+                int px=(index[0]%14)*2,pz=50+(index[0]/14)*2;camera(context,server,px+3.5,103.5,pz-4,new BlockPos(px,100,pz),"visual-decor-close-"+material);
+            }
+
         }
     }
 }

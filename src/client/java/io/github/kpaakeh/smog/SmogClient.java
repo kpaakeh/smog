@@ -13,7 +13,7 @@ public class SmogClient implements ClientModInitializer {
         });
         net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback.EVENT.register((stack,context,flag,lines)->{
             if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ModularToolItem||stack.getItem() instanceof io.github.kpaakeh.smog.copper.ToolPartItem){
-                var mc=net.minecraft.client.Minecraft.getInstance();var wrapped=io.github.kpaakeh.smog.gui.ToolTooltipLayout.wrap(lines,mc.font,Math.max(120,Math.min(260,mc.getWindow().getGuiScaledWidth()-24)));
+                var mc=net.minecraft.client.Minecraft.getInstance();var wrapped=io.github.kpaakeh.smog.gui.ToolTooltipLayout.fit(lines,mc.font,Math.max(120,Math.min(260,mc.getWindow().getGuiScaledWidth()-24)),mc.getWindow().getGuiScaledHeight());
                 lines.clear();lines.addAll(wrapped);
             }
             if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.WorkshopCanisterItem&&!lines.isEmpty()){

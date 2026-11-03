@@ -27,7 +27,9 @@
       "io.github.kpaakeh.smog.test.VanillaToolTransportTests",
       "io.github.kpaakeh.smog.test.ToolTooltipTests",
       "io.github.kpaakeh.smog.test.ToolMaterialInteropTests",
-      "io.github.kpaakeh.smog.test.WorkshopFinaleTests"
+      "io.github.kpaakeh.smog.test.WorkshopFinaleTests",
+      "io.github.kpaakeh.smog.test.ManualWorkshopStatusTests",
+      "io.github.kpaakeh.smog.test.UtilityStatusTests"
     ],
     "fabric-client-gametest": [
       "io.github.kpaakeh.smog.test.ClientFoundationTests"

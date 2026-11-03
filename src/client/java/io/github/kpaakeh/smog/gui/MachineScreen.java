@@ -61,8 +61,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if(mouseX>=x&&mouseX<x+width&&mouseY>=y&&mouseY<y+font.lineHeight)textTooltip(g,java.util.List.of(text),mouseX,mouseY);
     }
     private void refreshButtons(){
-        if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null){craft.visible=kind==2||kind==5||kind==7&&!io.github.kpaakeh.smog.copper.ToolAssembly.requiresHammer(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));craft.active=menu.data.get(13)==0;}}
-        if(menu.layout.id.equals("water_supply")&&craft!=null){craft.visible=menu.data.get(21)==1;craft.active=menu.data.get(8)>0;}
+        if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null){craft.visible=kind==2||kind==5||kind==7&&!io.github.kpaakeh.smog.copper.ToolAssembly.requiresHammer(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));craft.active=menu.data.get(13)==0;if(kind==5){craft.setMessage(Component.translatable("gui.smog.manual.start"));craft.active=menu.data.get(31)==9;}}}
+        if(menu.layout.id.equals("water_supply")&&craft!=null){craft.visible=menu.data.get(21)==1;craft.active=menu.data.get(8)>0&&menu.data.get(36)==2;}
                 if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
         if(rateButton!=null)rateButton.visible=menu.data.get(11)==MachineSpec.Kind.TRANSFORMER.ordinal();
     }
@@ -90,10 +90,17 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 var fluid=net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.core.registries.BuiltInRegistries.FLUID.byId(menu.data.get(20)));
                 fittedText(g,menu.data.get(23)==0&&menu.data.get(24)==0?Component.translatable("gui.smog.fluid.empty"):net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes.getName(fluid),x+7,y+20,162,mouseX,mouseY);
                 fittedText(g,io.github.kpaakeh.smog.copper.FluidAmounts.format((menu.data.get(23)&65535)|((long)(menu.data.get(24)&65535)<<16),true).copy().append(" / 8000 mB"),x+7,y+35,162,mouseX,mouseY);
-                g.text(font,Component.translatable("gui.smog.fluid.rate"),x+7,y+50,0xFF404040,false);
+                fittedText(g,Component.translatable("gui.smog.utility.water_"+menu.data.get(36)),x+7,y+50,162,mouseX,mouseY);
+                if(menu.data.get(21)!=1)g.text(font,Component.translatable("gui.smog.fluid.rate"),x+7,y+65,0xFF404040,false);
                 if(menu.data.get(21)==1)g.text(font,Component.translatable("gui.smog.pump.remaining",io.github.kpaakeh.smog.copper.FluidAmounts.format((menu.data.get(25)&65535)|((long)(menu.data.get(26)&65535)<<16),true)),x+7,y+65,0xFF404040,false);
-                if(menu.layout.id.equals("water_supply")&&craft!=null){craft.visible=menu.data.get(21)==1;craft.active=menu.data.get(8)>0;}
+                if(menu.layout.id.equals("water_supply")&&craft!=null){craft.visible=menu.data.get(21)==1;craft.active=menu.data.get(8)>0&&menu.data.get(36)==2;}
                 if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)>0?"gui.smog.on":"gui.smog.off"));return;
+            }
+            if(kind==8||kind==9){
+                fittedText(g,Component.translatable("gui.smog.utility."+(kind==8?"crane_":"rope_")+menu.data.get(36)),x+7,y+20,162,mouseX,mouseY);
+                GuiTextures.draw(g,"copper_progress_empty",x+99,y+35,24,16);GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,Math.clamp(24*menu.data.get(0)/Math.max(1,menu.data.get(1)),0,24),16,24,16);
+                fittedText(g,Component.translatable("gui.smog.utility.cargo",menu.data.get(38)),x+60,y+60,109,mouseX,mouseY);
+                fittedText(g,Component.translatable(kind==8?"gui.smog.utility.crane_hint":"gui.smog.utility.rope_hint"),x+60,y+76,109,mouseX,mouseY);return;
             }
             GuiTextures.draw(g,"copper_progress_empty",x+99,y+35,24,16);
             int work=24*Math.clamp(menu.data.get(0),0,Math.max(1,menu.data.get(1)))/Math.max(1,menu.data.get(1));
@@ -110,7 +117,16 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             else if(kind==2)fittedText(g,net.minecraft.world.item.Item.byId(menu.data.get(12)).getDefaultInstance().getHoverName(),x+7,y+20,162,mouseX,mouseY);
             else if(kind==1)g.text(font,Component.translatable("conductor.smog."+io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES[Math.floorMod(menu.data.get(6),io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES.length)]),x+7,y+20,0xFF404040,false);
             else g.text(font,Component.translatable("gui.smog.copper.heat",menu.data.get(2),menu.data.get(3)),x+7,y+20,0xFF404040,false);
-            fittedText(g,Component.translatable("gui.smog.copper.status_"+menu.data.get(7)),x+7,y+55,162,mouseX,mouseY);
+            if(kind==5){
+                int state=menu.data.get(31);var status=Component.translatable("gui.smog.manual.state_"+state);
+                fittedText(g,status,x+7,y+55,162,mouseX,mouseY);
+                if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+54&&mouseY<y+65){
+                    int needed=(menu.data.get(32)&65535)|((menu.data.get(33)&65535)<<16),available=(menu.data.get(34)&65535)|((menu.data.get(35)&65535)<<16);
+                    Object need=state==6||state==7?io.github.kpaakeh.smog.copper.FluidAmounts.format(needed,true):needed;
+                    Object have=state==6||state==7?io.github.kpaakeh.smog.copper.FluidAmounts.format(available,true):available;
+                    textTooltip(g,java.util.List.of(status,Component.translatable("gui.smog.manual.detail_"+state,need,have)),mouseX,mouseY);
+                }
+            }else fittedText(g,Component.translatable("gui.smog.copper.status_"+menu.data.get(7)),x+7,y+55,162,mouseX,mouseY);
             if(kind==0){
                 g.text(font,Component.literal("Cu "+menu.data.get(9)/4.0+" | Sn "+menu.data.get(10)/4.0),x+50,y+65,0xFF404040,false);
                 g.text(font,Component.literal("Br "+menu.data.get(11)/4.0+" | "+menu.data.get(4)/4.0+"/"+menu.data.get(5)/4.0),x+50,y+75,0xFF404040,false);

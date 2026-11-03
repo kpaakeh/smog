@@ -9,6 +9,13 @@ import net.minecraft.network.chat.*;
 public final class ToolTooltipLayout {
     private static final Pattern WORDS=Pattern.compile("\\S+\\s*|\\s+");
     private ToolTooltipLayout(){}
+    public static List<Component> fit(List<Component> lines,Font font,int width,int height){
+        var wrapped=wrap(lines,font,width);int maximum=Math.max(1,(height-16)/(font.lineHeight+1));
+        if(wrapped.size()<=maximum)return wrapped;
+        // Keep every property and material description; remove only decoration and the key reminder.
+        var compact=lines.stream().filter(line->!line.getString().isBlank()).filter(line->!(line.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t&&t.getKey().equals("tool.smog.tip.keys"))).toList();
+        return wrap(compact,font,width);
+    }
     public static List<Component> wrap(List<Component> lines,Font font,int width){
         var output=new ArrayList<Component>();
         for(int index=0;index<lines.size();index++){

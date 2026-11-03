@@ -122,3 +122,7 @@ if(providers.gradleProperty('visualReviewTest').isPresent()) {
 }
 
 apply from: 'gradle/decor.gradle'
+
+if(providers.gradleProperty("scaleReviewTest").isPresent()) { loom.runs.named("clientGameTest") { vmArg "-Dsmog.scaleReviewTest=true" } }
+
+if(providers.gradleProperty("catalogVisualTest").isPresent()) { loom.runs.named("clientGameTest") { vmArg "-Dsmog.catalogVisualTest=true" } }

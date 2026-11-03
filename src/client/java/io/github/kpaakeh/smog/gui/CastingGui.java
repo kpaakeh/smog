@@ -21,10 +21,11 @@ public final class CastingGui {
         GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,stage==4?24:Math.clamp((int)(24L*progress/total),0,24),16,24,16);
         if(required>0){
             var volume=Component.translatable("gui.smog.casting.volume",FluidAmountText.format(filled),FluidAmountText.format(required));
-            g.text(font,font.width(volume)<=162?volume:Component.literal(font.plainSubstrByWidth(volume.getString(),152)+"…"),x+7,y+70,0xFF404040,false);
-            if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+69&&mouseY<y+80)g.setTooltipForNextFrame(volume,mouseX,mouseY);
+            g.text(font,Component.translatable("gui.smog.casting.filled",FluidAmountText.format(filled)),x+7,y+69,0xFF404040,false);
+            g.text(font,Component.translatable("gui.smog.casting.required",FluidAmountText.format(required)),x+7,y+81,0xFF404040,false);
+            if(mouseX>=x+7&&mouseX<x+169&&mouseY>=y+68&&mouseY<y+92)g.setTooltipForNextFrame(volume,mouseX,mouseY);
         }
-        if(stage==3)g.text(font,Component.translatable("gui.smog.casting.cooling",(menu.data.get(24)+19)/20),x+7,y+82,0xFF404040,false);
+        if(stage==3)g.text(font,Component.translatable("gui.smog.casting.cooling",(menu.data.get(24)+19)/20),x+7,y+55,0xFF404040,false);
         if(menu.layout.id.equals("casting_table")){
             if(menu.container.getItem(2).isEmpty()&&mouseX>=x+52&&mouseX<x+68&&mouseY>=y+35&&mouseY<y+51)g.setTooltipForNextFrame(Component.translatable("gui.smog.casting.core_slot"),mouseX,mouseY);
             if(menu.container.getItem(1).isEmpty()&&mouseX>=x+71&&mouseX<x+87&&mouseY>=y+35&&mouseY<y+51)g.setTooltipForNextFrame(Component.translatable("gui.smog.casting.mold_slot"),mouseX,mouseY);
