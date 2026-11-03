@@ -24,7 +24,7 @@ public final class ModBlocks {
         Identifier id = id(name);
         B block = factory.apply(properties.setId(ResourceKey.create(Registries.BLOCK, id)));
         Registry.register(BuiltInRegistries.BLOCK, id, block);
-        if(withItem){var itemProperties=new Item.Properties().setId(ResourceKey.create(Registries.ITEM,id)).useBlockDescriptionPrefix();Registry.register(BuiltInRegistries.ITEM,id,name.equals("rope_anchor")||name.equals("loading_crane")?new WorkshopControlItem(block,itemProperties):new BlockItem(block,itemProperties));}
+        if(withItem){var itemProperties=new Item.Properties().setId(ResourceKey.create(Registries.ITEM,id)).useBlockDescriptionPrefix();Registry.register(BuiltInRegistries.ITEM,id,name.equals("rope_anchor")||name.equals("loading_crane")||name.equals("bronze_drive")?new WorkshopControlItem(block,itemProperties):new BlockItem(block,itemProperties));}
         return block;
     }
 }

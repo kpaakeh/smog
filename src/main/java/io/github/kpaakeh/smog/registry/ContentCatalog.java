@@ -17,6 +17,7 @@ public final class ContentCatalog {
     private ContentCatalog() {}
     private static float hardness(JsonObject o) { return o.has("hardness") ? o.get("hardness").getAsFloat() : 3; }
     public static void initialize() {
+        var preexistingItems=new java.util.HashSet<net.minecraft.world.item.Item>();net.minecraft.core.registries.BuiltInRegistries.ITEM.forEach(preexistingItems::add);
         try (var stream = ContentCatalog.class.getResourceAsStream("/smog.content.json")) {
             if (stream == null) throw new IllegalStateException("Missing content catalog");
             JsonObject root = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
@@ -77,7 +78,7 @@ public final class ContentCatalog {
                     throw new IllegalArgumentException("Unknown multiblock block: " + ingredient.value());
             }
             DecorBlocks.initialize();
-            ModCreativeTabs.initialize(root);
+            ModCreativeTabs.initialize(root,preexistingItems);
         } catch (IOException e) { throw new IllegalStateException("Unable to read content catalog", e); }
     }
 }

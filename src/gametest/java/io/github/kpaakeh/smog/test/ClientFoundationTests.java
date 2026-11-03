@@ -68,7 +68,7 @@ public final class ClientFoundationTests implements FabricClientGameTest {
                 var mc=net.minecraft.client.Minecraft.getInstance();
                 return new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,mc.level.enabledFeatures(),true);
             });
-            for(String tab:java.util.List.of("ores","blocks")) {
+            for(String tab:java.util.List.of("materials","blocks")) {
                 context.runOnClient(mc -> {
                     var screen=(net.fabricmc.fabric.api.client.creativetab.v1.FabricCreativeModeInventoryScreen)mc.gui.screen();
                     var target=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab));

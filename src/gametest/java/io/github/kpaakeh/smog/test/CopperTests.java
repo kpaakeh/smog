@@ -423,7 +423,7 @@ public final class CopperTests {
 
     @GameTest public void workshopAdvancementTreeLoadsAndClayUnlocksItsRoot(GameTestHelper h){
         var manager=h.getLevel().getServer().getAdvancements();
-        for(String name:java.util.List.of("root","pottery","foundry","casting","kiln","bench","tools","hollow","washing","water","pressing","fiber","cart","crane","ropeway","bronze")){
+        for(String name:java.util.List.of("root","pottery","foundry","casting","kiln","bench","tools","hollow","washing","water","pressing","fiber","cart","crane","ropeway","bronze","bronze_parts","drive","commissioning","mechanized")){
             var node=manager.get(ModBlocks.id("copper/"+name));h.assertTrue(node!=null,"Workshop advancement loads: "+name);h.assertTrue(node.value().display().isPresent(),"Workshop node has a display: "+name);
             if(!name.equals("root"))h.assertTrue(node.value().parent().isPresent()&&manager.get(node.value().parent().get())!=null,"Every branch has a loaded parent: "+name);
         }

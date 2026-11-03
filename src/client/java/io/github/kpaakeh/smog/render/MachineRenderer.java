@@ -117,7 +117,7 @@ public final class MachineRenderer implements BlockEntityRenderer<MachineEntity,
             else if(machine.smeltery.filled>0){int metal=java.util.Arrays.asList(io.github.kpaakeh.smog.copper.MoltenMetalStorage.NAMES).indexOf(machine.smeltery.pourMetal);if(metal>=0){boolean basin=kind.equals("casting_basin");float fill=machine.smeltery.filled/(float)Math.max(1,machine.smeltery.required);surfaces.add(basin?new MoltenRendering.Surface(.14f,.22f+.6f*fill,.14f,.72f,.72f,metal,true):new MoltenRendering.Surface(.32f,.782f+.025f*fill,.38f,.36f,.24f,metal,true));}}
 
         }else if((io.github.kpaakeh.smog.copper.ManualWorkshops.handles(machine)||io.github.kpaakeh.smog.copper.LoadingCrane.handles(machine))||io.github.kpaakeh.smog.copper.WaterSupply.handles(machine)){
-            if(storage.processFluid>0&&!kind.equals("hand_water_pump"))surfaces.add(new MoltenRendering.Surface(.14f,.35f+.3f*storage.processFluid/io.github.kpaakeh.smog.copper.WorkshopFluidStorage.CAPACITY,.14f,.72f,.72f,kind.equals("lever_press")?-2:-1,false));
+            if(storage.processFluid>0&&!kind.equals("hand_water_pump"))surfaces.add(new MoltenRendering.Surface(.14f,.35f+.3f*storage.processFluid/io.github.kpaakeh.smog.copper.WorkshopFluidStorage.CAPACITY,.14f,.72f,.72f,kind.equals("lever_press")||kind.equals("water_tank")&&machine.processFluid.resource().getFluid()==net.minecraft.core.registries.BuiltInRegistries.FLUID.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("plant_oil"))?-2:-1,false));
             if(!machine.getItem(0).isEmpty())addItem(shown,machine.getItem(0),.5f,.8f,.5f,machine);
             if(!machine.getItem(3).isEmpty())addItem(shown,machine.getItem(3),.5f,.9f,.5f,machine);
         }else if(kind.equals("potter_table")){

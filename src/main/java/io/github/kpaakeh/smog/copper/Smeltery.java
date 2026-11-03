@@ -92,8 +92,8 @@ public final class Smeltery {
         for(int n=0;n<count;n++){
             var input=m.getItem(slot(n));var recipe=CopperWorkshops.melt(input);String key=BuiltInRegistries.ITEM.getKey(input.getItem())+":"+input.getComponents().hashCode();if(!key.equals(m.smeltery.inputs[n])){m.smeltery.progress[n]=0;m.smeltery.inputs[n]=key;}
             if(recipe==null)continue;if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}if(!MetalProcessing.safe(m,recipe[0])){m.copper.status=MetalProcessing.problem(m,recipe[0]);continue;}if(!m.smeltery.fuelActive){m.copper.status=m.smeltery.fuelHeat>0&&m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])?4:3;continue;}if(m.copper.heat<CopperWorkshops.meltingHeat(recipe[0])||m.smeltery.fuelHeat<CopperWorkshops.meltingHeat(recipe[0])){m.copper.status=4;continue;}
-            int total=duration(recipe[1]);m.smeltery.progress[n]=advance(m.copper,m.smeltery.progress[n],total,recipe[1],m.smeltery.fuelSpeed);
-            if(m.smeltery.progress[n]>=total){if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}m.copper.metal(recipe[0],m.copper.metal(recipe[0])+recipe[1]);input.shrink(1);m.smeltery.progress[n]=0;}
+            int priorAir=m.copper.bellowsUnits();int total=duration(recipe[1]);m.smeltery.progress[n]=advance(m.copper,m.smeltery.progress[n],total,recipe[1],m.smeltery.fuelSpeed);
+            if(m.smeltery.progress[n]>=total){if(m.copper.total()+recipe[1]>CopperWorkshops.capacity(m)){m.copper.status=5;continue;}m.copper.metal(recipe[0],m.copper.metal(recipe[0])+recipe[1]);input.shrink(1);m.smeltery.progress[n]=0;WorkshopFinale.melted(m,m.copper.bellowsUnits()<priorAir);}
         }
         m.copper.work=m.smeltery.progress[0];CopperWorkshops.alloy(m);m.setChanged();
     }

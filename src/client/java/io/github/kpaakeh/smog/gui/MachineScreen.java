@@ -19,6 +19,11 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         super.init();
         if(menu.pottery())return;
         if(menu.layout.id.equals("casting_table")||menu.layout.id.equals("casting_basin"))return;
+        if(menu.layout.id.equals("water_supply")){
+            powerButton=addRenderableWidget(Button.builder(Component.translatable(menu.data.get(8)>0?"gui.smog.on":"gui.smog.off"),button->send(0)).bounds(leftPos+118,topPos+80,50,16).build());
+            craft=addRenderableWidget(Button.builder(Component.translatable("gui.smog.pump.prime"),button->send(23)).bounds(leftPos+8,topPos+80,104,16).build());
+            return;
+        }
         if(menu.layout.id.equals("smeltery")){
             addRenderableWidget(Button.builder(Component.literal("<"),button->send(io.github.kpaakeh.smog.copper.Smeltery.PREVIOUS)).bounds(leftPos+7,topPos+imageHeight-25,20,18).build());
             addRenderableWidget(Button.builder(Component.literal(">"),button->send(io.github.kpaakeh.smog.copper.Smeltery.NEXT)).bounds(leftPos+43,topPos+imageHeight-25,20,18).build());
@@ -57,7 +62,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
     private void refreshButtons(){
         if(previous!=null){int kind=menu.data.get(14);previous.visible=next.visible=kind==2||kind==7;previous.active=next.active=menu.data.get(13)==0;if(craft!=null){craft.visible=kind==2||kind==5||kind==7&&!io.github.kpaakeh.smog.copper.ToolAssembly.requiresHammer(menu.container,io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)),menu.data.get(15));craft.active=menu.data.get(13)==0;}}
-        if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
+        if(menu.layout.id.equals("water_supply")&&craft!=null){craft.visible=menu.data.get(21)==1;craft.active=menu.data.get(8)>0;}
+                if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)==1?"gui.smog.on":"gui.smog.off"));
         if(rateButton!=null)rateButton.visible=menu.data.get(11)==MachineSpec.Kind.TRANSFORMER.ordinal();
     }
     @Override public void containerTick(){super.containerTick();refreshButtons();}
@@ -80,7 +86,15 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 if(!preview.isEmpty()){g.fakeItem(preview,x+79,y+imageHeight-129);if(mouseX>=x+79&&mouseX<x+95&&mouseY>=y+imageHeight-129&&mouseY<y+imageHeight-113)g.setTooltipForNextFrame(font,preview,mouseX,mouseY);}
                 GuiTextures.draw(g,"copper_progress_empty",x+106,y+imageHeight-129,24,16);GuiTextures.crop(g,"copper_progress_full",x+106,y+imageHeight-129,0,0,24*Math.clamp(menu.data.get(0),0,40)/40,16,24,16);
                 g.text(font,Component.literal(font.plainSubstrByWidth((menu.data.get(13)>0?Component.translatable("tool.smog.preview_queue",menu.data.get(13)):(io.github.kpaakeh.smog.copper.ToolAssembly.shapingMode(menu.container)||!io.github.kpaakeh.smog.copper.MoldMaking.preview(menu.container).isEmpty())&&!preview.isEmpty()?preview.getHoverName():Component.translatable("tool.smog.template."+io.github.kpaakeh.smog.copper.ToolDefinitions.at(menu.data.get(6)).id())).getString(),120)),x+47,y+imageHeight-106,0xFF404040,false);return;}
-            if(kind==6){g.text(font,Component.literal(menu.data.get(19)+" / 8000 mB"),x+7,y+20,0xFF404040,false);return;}
+            if(kind==6){
+                var fluid=net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.core.registries.BuiltInRegistries.FLUID.byId(menu.data.get(20)));
+                fittedText(g,menu.data.get(23)==0&&menu.data.get(24)==0?Component.translatable("gui.smog.fluid.empty"):net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes.getName(fluid),x+7,y+20,162,mouseX,mouseY);
+                fittedText(g,io.github.kpaakeh.smog.copper.FluidAmounts.format((menu.data.get(23)&65535)|((long)(menu.data.get(24)&65535)<<16),true).copy().append(" / 8000 mB"),x+7,y+35,162,mouseX,mouseY);
+                g.text(font,Component.translatable("gui.smog.fluid.rate"),x+7,y+50,0xFF404040,false);
+                if(menu.data.get(21)==1)g.text(font,Component.translatable("gui.smog.pump.remaining",io.github.kpaakeh.smog.copper.FluidAmounts.format((menu.data.get(25)&65535)|((long)(menu.data.get(26)&65535)<<16),true)),x+7,y+65,0xFF404040,false);
+                if(menu.layout.id.equals("water_supply")&&craft!=null){craft.visible=menu.data.get(21)==1;craft.active=menu.data.get(8)>0;}
+                if(powerButton!=null)powerButton.setMessage(Component.translatable(menu.data.get(8)>0?"gui.smog.on":"gui.smog.off"));return;
+            }
             GuiTextures.draw(g,"copper_progress_empty",x+99,y+35,24,16);
             int work=24*Math.clamp(menu.data.get(0),0,Math.max(1,menu.data.get(1)))/Math.max(1,menu.data.get(1));
             GuiTextures.crop(g,"copper_progress_full",x+99,y+35,0,0,work,16,24,16);

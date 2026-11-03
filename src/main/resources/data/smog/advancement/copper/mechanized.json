@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:bronze_drive"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.mechanized.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.mechanized.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "smog:copper/commissioning",
+  "criteria": {
+    "completed": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "completed"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  }
+}

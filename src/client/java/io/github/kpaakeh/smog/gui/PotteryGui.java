@@ -19,7 +19,7 @@ public final class PotteryGui {
     public void draw(MachineMenu menu,Font font,GuiGraphicsExtractor g,int x,int y,int mouseX,int mouseY){
         if(input!=menu.container.getItem(0).getItem()){input=menu.container.getItem(0).getItem();offset=0;dragging=false;}
         g.blit(RenderPipelines.GUI_TEXTURED,Identifier.withDefaultNamespace("textures/gui/container/stonecutter.png"),x,y,0,0,176,166,256,256);
-        g.blitSprite(RenderPipelines.GUI_TEXTURED,sprite(rows(menu)>0?"scroller":"scroller_disabled"),x+119,y+15+(int)(41*offset),12,15);
+        g.blitSprite(RenderPipelines.GUI_TEXTURED,sprite(rows(menu)>0&&!menu.container.getItem(0).isEmpty()?"scroller":"scroller_disabled"),x+119,y+15+(int)(41*offset),12,15);
         if(menu.container.getItem(0).isEmpty())return;
         var choices=menu.potteryChoices();var recipes=CopperWorkshops.potteryRecipes();int start=start(menu);
         for(int cell=0;cell<12&&start+cell<choices.size();cell++){
@@ -31,7 +31,7 @@ public final class PotteryGui {
         }
     }
     public int click(MachineMenu menu,double mx,double my,int x,int y,int button){
-        dragging=false;if(button!=0||menu.container.getItem(0).isEmpty())return -1;
+        dragging=false;if(button!=com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT||menu.container.getItem(0).isEmpty())return -1;
         if(rows(menu)>0&&mx>=x+119&&mx<x+131&&my>=y+9&&my<y+65){dragging=true;drag(menu,my,y);return -1;}
         var choices=menu.potteryChoices();int start=start(menu);
         for(int cell=0;cell<12&&start+cell<choices.size();cell++){int px=x+52+(cell%4)*16,py=y+14+(cell/4)*18;if(mx>=px&&mx<px+16&&my>=py&&my<py+18)return MachineMenu.POTTERY_SELECT+choices.get(start+cell);}

@@ -70,17 +70,17 @@ public final class ResourceGenerationTests {
         h.assertTrue(TestIndustryContent.fixture(BuiltInRegistries.ITEM.getValue(ModBlocks.id("electric_furnace"))),"System test fixture remains separate");
         h.succeed();
     }
-    @GameTest public void creativeCategoriesAreDisjointAndToolsExistOnlyInTheirTabs(GameTestHelper h) throws IOException {
+    @GameTest public void creativeCatalogIsCompleteAndToolsExistOnlyInTheirTabs(GameTestHelper h) throws IOException {
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
-        var expected=java.util.Set.of("copper_age","blocks","mechanisms","controllers","tool_parts","tools");
+        var expected=java.util.Set.of("copper_age","materials","blocks","mechanisms","controllers","tool_parts","tools");
         var actual=BuiltInRegistries.CREATIVE_MODE_TAB.keySet().stream().filter(id->id.getNamespace().equals("smog")).map(net.minecraft.resources.Identifier::getPath).collect(java.util.stream.Collectors.toSet());
-        h.assertTrue(actual.equals(expected),"Exactly the six requested Smog tabs exist");
+        h.assertTrue(actual.equals(expected),"Functional tabs and the chapter overview exist");
         var owner=new java.util.HashMap<net.minecraft.world.item.Item,String>();int examples=0;
         for(String id:expected){var stacks=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(id)).getDisplayItems();h.assertFalse(stacks.isEmpty(),"Category is useful: "+id);
             var seen=new java.util.ArrayList<net.minecraft.world.item.ItemStack>();
             for(var stack:stacks){
-                h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"Fixtures never leak into "+id);
-                String previous=owner.putIfAbsent(stack.getItem(),id);h.assertTrue(previous==null||previous.equals(id),"One category owns each item: "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
+                h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"Fixtures never leak into "+id+": "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
+                String previous=id.equals("copper_age")?null:owner.putIfAbsent(stack.getItem(),id);h.assertTrue(previous==null||previous.equals(id),"One category owns each item: "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
                 h.assertFalse(seen.stream().anyMatch(s->net.minecraft.world.item.ItemStack.isSameItemSameComponents(s,stack)),"No duplicate entry within "+id);seen.add(stack);
                 if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ToolPartItem)h.assertTrue(id.equals("tool_parts"),"Final and cast parts belong only to Tool Parts");
                 if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ModularToolItem){examples++;h.assertTrue(id.equals("tools"),"Modular tools belong only to Tools");h.assertTrue(io.github.kpaakeh.smog.copper.ModularToolItem.configured(stack),"No empty modular tool shells");}
@@ -94,6 +94,21 @@ public final class ResourceGenerationTests {
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
             for(var value:root.getAsJsonArray("machines")){var machine=value.getAsJsonObject();var item=BuiltInRegistries.ITEM.getValue(ModBlocks.id(machine.get("name").getAsString()));h.assertTrue((machine.has("multiblock")?"controllers":"mechanisms").equals(owner.get(item)),"Only actual multiblock controllers enter Controllers");}
         }
+        var audit=new com.google.gson.JsonObject();
+        for(String category:expected){var entries=new com.google.gson.JsonArray();for(var stack:BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(category)).getDisplayItems())entries.add(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());audit.add(category,entries);}
+        var report=java.nio.file.Path.of("..","..","review","creative-catalog.json");java.nio.file.Files.createDirectories(report.getParent());java.nio.file.Files.writeString(report,new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(audit));
+        var chapter=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("copper_age")).getDisplayItems();
+        for(String name:java.util.List.of("copper_hearth","ceramic_kiln","washing_trough","lever_press","loading_crane","copper_water_pipe","water_tank"))h.assertTrue(chapter.stream().anyMatch(stack->stack.is(BuiltInRegistries.ITEM.getValue(ModBlocks.id(name)))),"Chapter includes its controller or utility: "+name);
+        for(var item:BuiltInRegistries.ITEM)if(BuiltInRegistries.ITEM.getKey(item).getNamespace().equals("smog")&&!TestIndustryContent.fixture(item)&&!(item instanceof io.github.kpaakeh.smog.copper.ModularToolItem))h.assertTrue(owner.containsKey(item),"Every production item is discoverable: "+BuiltInRegistries.ITEM.getKey(item));
         h.succeed();
+    }
+    @GameTest public void russianNamesUseVanillaGrammarAndNoCatalogSeparators(GameTestHelper h) throws IOException {
+        var production=net.fabricmc.loader.api.FabricLoader.getInstance().getModContainer("smog").orElseThrow().findPath("assets/smog/lang/ru_ru.json").orElseThrow();
+        try(var stream=java.nio.file.Files.newInputStream(production)){
+            var names=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
+            var expected=java.util.Map.of("block.smog.limestone_bricks","Известняковые кирпичи","block.smog.limestone_bricks_stairs","Ступеньки из известняковых кирпичей","item.smog.copper_cast_saw_head","Отлитое медное полотно пилы","item.smog.cord_binding","Верёвочное крепление","item.smog.raw_tin","Рудное олово","item.smog.molten_copper_bucket","Ведро расплавленной меди","tool.smog.named.pickaxe.copper","Медная кирка");
+            expected.forEach((key,value)->h.assertTrue(names.has(key)&&names.get(key).getAsString().equals(value),"Natural Russian name: "+key+" actual="+names.get(key)+" expected="+value+" resource="+production));
+            for(var entry:names.entrySet())if((entry.getKey().startsWith("block.smog.")||entry.getKey().startsWith("item.smog."))&&!entry.getKey().contains(".help")&&!entry.getKey().contains(".unlink"))h.assertFalse(entry.getValue().getAsString().contains(":")||entry.getValue().getAsString().contains(" — "),"No catalog-style separator in item names: "+entry.getKey());
+        }h.succeed();
     }
 }

@@ -31,6 +31,6 @@ public final class ManualWorkshops {
         if(level.getGameTime()%20==0)level.sendParticles(wash?net.minecraft.core.particles.ParticleTypes.SPLASH:net.minecraft.core.particles.ParticleTypes.CRIT,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.8,m.getBlockPos().getZ()+.5,2,.2,.05,.2,0);
         if(s.work<(s.air>0&&!wash?80:workTime(m)))return;
         if(!wash&&s.air>0)s.air--;input.shrink(batch);s.processFluid+=fibers?0:wash?-fluid:fluid;s.queued--;s.work=0;s.status=0;
-        if(m.getItem(3).isEmpty())m.setItem(3,output);else m.getItem(3).grow(output.getCount());m.sync();
+        if(m.getItem(3).isEmpty())m.setItem(3,output);else m.getItem(3).grow(output.getCount());if(drive)WorkshopFinale.pressed(m);m.sync();
     }
 }

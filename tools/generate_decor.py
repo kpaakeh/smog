@@ -27,6 +27,19 @@ def recolor(vanilla,color,target):
    r,g,b,a=image.getpixel((x,y));ratio=(.2126*r+.7152*g+.0722*b)/max(1,mean)
    result.putpixel((x,y),tuple(max(0,min(255,round(c*ratio))) for c in color)+(a,))
  target.parent.mkdir(parents=True,exist_ok=True);result.save(target)
+def russian(family,style,shape=None):
+ adj={'firebrick':'огнеупорн','limestone':'известняков','fluorite':'флюоритов','phosphorite':'фосфоритов','kaolin':'каолинов','dolomite':'доломитов','rock_salt':'солян','graphite':'графитов'}[family['stem']]
+ base=family['ru'].lower()
+ if family['stem']=='firebrick' and not shape and style in ['base','polished']:return ('Полированные ' if style=='polished' else 'Огнеупорные ')+('огнеупорные кирпичи' if style=='polished' else 'кирпичи')
+ if not shape:
+  return {'base':base,'polished':('полированная ' if family['stem']=='rock_salt' else 'полированный ')+base,'bricks':adj+'ые кирпичи','tiles':adj+'ый плитняк','chiseled':'резные '+adj+'ые кирпичи','cracked_bricks':'потрескавшиеся '+adj+'ые кирпичи','mossy_bricks':'замшелые '+adj+'ые кирпичи'}[style].capitalize()
+ noun={'stairs':'ступеньки','slab':'плита','wall':'ограда'}[shape]
+ if style in ['base','polished'] and family['stem']!='firebrick':
+  plural=shape=='stairs';prefix=('полированные ' if plural else 'полированная ') if style=='polished' else ''
+  return (prefix+adj+('ые ' if plural else 'ая ')+noun).capitalize()
+ material={'base':adj+'ых кирпичей','bricks':adj+'ых кирпичей','tiles':adj+'ого плитняка','polished':'полированных '+adj+'ых кирпичей','chiseled':'резных '+adj+'ых кирпичей','cracked_bricks':'потрескавшихся '+adj+'ых кирпичей','mossy_bricks':'замшелых '+adj+'ых кирпичей'}[style]
+ return (noun+' из '+material).capitalize()
+
 def loot(name,slab=False):
  item={'type':'minecraft:item','name':'smog:'+name,'modifier':[]}
  if slab:item['modifier'].append({'type':'minecraft:set_count','count':2,'condition':{'type':'minecraft:match_block','blocks':'smog:'+name,'state':{'type':'double'}}})
@@ -47,7 +60,7 @@ with ZipFile(JAR) as jar:
     write('assets/smog/blockstates/'+name+'.json',{'variants':{'':{'model':'smog:block/'+name}}})
     write('assets/smog/models/block/'+name+'.json',{'parent':'minecraft:block/cube_all','textures':{'all':'smog:block/'+texture}})
     write('assets/smog/items/'+name+'.json',{'model':{'type':'minecraft:model','model':'smog:block/'+name}});loot(name);tag('block','mineable/pickaxe',name)
-    labels={'polished':('Polished '+family['en'],'Полированный блок: '+family['ru']),'bricks':(family['en']+' Bricks','Кирпичи: '+family['ru']),'tiles':(family['en']+' Tiles','Плитняк: '+family['ru']),'chiseled':('Chiseled '+family['en'],'Резной блок: '+family['ru']),'cracked_bricks':('Cracked '+family['en']+' Bricks','Треснувшие кирпичи: '+family['ru']),'mossy_bricks':('Mossy '+family['en']+' Bricks','Мшистые кирпичи: '+family['ru'])};en['block.smog.'+name],ru['block.smog.'+name]=labels[style]
+    labels={'polished':('Polished '+family['en'],'Полированный блок: '+family['ru']),'bricks':(family['en']+' Bricks','Кирпичи: '+family['ru']),'tiles':(family['en']+' Tiles','Плитняк: '+family['ru']),'chiseled':('Chiseled '+family['en'],'Резной блок: '+family['ru']),'cracked_bricks':('Cracked '+family['en']+' Bricks','Треснувшие кирпичи: '+family['ru']),'mossy_bricks':('Mossy '+family['en']+' Bricks','Мшистые кирпичи: '+family['ru'])};en['block.smog.'+name]=labels[style][0];ru['block.smog.'+name]=russian(family,style)
     if style=='cracked_bricks':recipe(name+'_smelting',{'type':'minecraft:smelting','ingredient':'smog:'+named(family,'bricks'),'result':{'id':'smog:'+name},'experience':0.1,'cookingtime':200})
     elif style=='mossy_bricks':
      for ingredient in ['vine','moss_block']:recipe(name+'_from_'+ingredient,{'type':'minecraft:crafting_shapeless','ingredients':['smog:'+named(family,'bricks'),'minecraft:'+ingredient],'result':{'id':'smog:'+name}})
@@ -60,7 +73,7 @@ with ZipFile(JAR) as jar:
     target=stem+'_'+shape
     if target in seen:continue
     seen.add(target);entries.append({'name':target,'kind':shape,'parent':name});tag('block','mineable/pickaxe',target);tag('block',shape+'s',target);tag('item',shape+'s',target)
-    label={'stairs':(' Stairs',' — ступени'),'slab':(' Slab',' — плита'),'wall':(' Wall',' — ограда')}[shape];style_en=en.get('block.smog.'+name,family['en']);style_ru=ru.get('block.smog.'+name,family['ru']);en['block.smog.'+target]=style_en+label[0];ru['block.smog.'+target]=style_ru+label[1]
+    label={'stairs':(' Stairs',' — ступени'),'slab':(' Slab',' — плита'),'wall':(' Wall',' — ограда')}[shape];style_en=en.get('block.smog.'+name,family['en']);style_ru=ru.get('block.smog.'+name,family['ru']);en['block.smog.'+target]=style_en+label[0];ru['block.smog.'+target]=russian(family,style,shape)
     source='stone_stairs' if shape=='stairs' else 'stone_slab' if shape=='slab' else 'cobblestone_wall'
     states=jar.read('assets/minecraft/blockstates/'+source+'.json').decode().replace('minecraft:block/'+source,'smog:block/'+target)
     if shape=='slab':states=states.replace('minecraft:block/stone','smog:block/'+name)

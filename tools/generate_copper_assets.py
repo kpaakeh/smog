@@ -221,7 +221,7 @@ model('workshop_support',[box([1,0,1],[5,16,5],'log'),box([11,0,11],[15,16,15],'
 model('press_frame',[box([0,0,0],[4,16,4],'log'),box([12,0,12],[16,16,16],'log'),box([0,12,0],[16,16,16],'wood')],woodparts)
 model('press_basket',[box([1,0,1],[15,3,15],'wood')]+[box([x,3,z],[x+2,13,z+2],'wood') for x in range(1,15,3) for z in range(1,15,3) if x in [1,13] or z in [1,13]],woodparts)
 model('lever_press',[box([0,0,0],[16,4,16],'wood'),box([1,4,1],[4,16,4],'log'),box([12,4,12],[15,16,15],'log'),box([4,6,4],[12,8,12],'wood'),box([7,8,7],[9,15,9],'metal'),box([3,14,7],[13,16,9],'wood')],woodparts)
-sprite('copper_concentrate',remap(image('item/raw_copper'),COPPER))
+# Concentrates are maintained by tools/recolor_concentrates.py (vanilla raw-ore recolors).
 sprite('seed_cake',remap(image('item/dried_kelp'),FIRED))
 sprite('plant_oil_bottle',tint(image('item/honey_bottle'),(210,161,57)))
 sprite('lubricating_compound',tint(image('item/slime_ball'),(85,77,46)))

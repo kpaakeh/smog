@@ -11,13 +11,14 @@ tasks.register('generateDecor',Exec) {
 }
 sourceSets.main.resources.srcDir(decorDirectory)
 tasks.named('generateContent') {
-    dependsOn('generateDecor');inputs.file('src/main/content/decor.json')
+    dependsOn('generateDecor');inputs.file('src/main/content/decor.json');inputs.file('tools/normalize_localization.py')
     doLast {
         def fragments=new JsonSlurper().parse(new File(decorDirectoryFile,'decor.fragments.json'))
         def content=contentDirectoryFile
         ['en_us','ru_ru'].each { language ->
             def file=new File(content,"assets/smog/lang/${language}.json");def data=new JsonSlurper().parse(file);data.putAll(fragments[language]);file.setText(JsonOutput.prettyPrint(JsonOutput.toJson(data))+'\n','UTF-8')
         }
+        execOperations.exec { commandLine 'C:/Users/carba/AppData/Local/Programs/Python/Python312/python.exe','tools/normalize_localization.py' }
         fragments.tags.each { path,values ->
             def file=new File(content,path);def data=file.exists()?new JsonSlurper().parse(file):[replace:false,values:[]];data.values.addAll(values);data.values=data.values.unique();file.parentFile.mkdirs();file.setText(JsonOutput.prettyPrint(JsonOutput.toJson(data))+'\n','UTF-8')
         }

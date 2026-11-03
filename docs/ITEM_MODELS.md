@@ -1,7 +1,7 @@
-# Item models
+# Модели предметов
 
-Place your Minecraft Java Block/Item model JSON here, for example `configurator.json`.
-Set `"model": "smog:item/configurator"` on the `wrench` entry in `src/main/content/smog.content.json`.
-The active configurator uses the old wrench item ID for saved-world compatibility. No replacement configurator model is supplied.
-Texture references: `smog:item/<name>`, PNGs under `assets/smog/textures/item`.
-Use the model's `display` section for inventory and hand transforms. See `docs/INDUSTRY.md`.
+Исходные модели находятся в `src/main/resources/assets/smog/models/item/`, текстуры — в `assets/smog/textures/item/`. Активный настройщик имеет ID `smog:configurator`; старые ключи и электрические устройства существуют только в тестовом содержимом, если явно не указано обратное.
+
+Составные инструменты используют общие нейтральные маски `tool_forms/` и небольшие крепления/обмотки `tool_overlays/`. Палитра задаётся материалом, индивидуальные цветные PNG для каждой комбинации не нужны. Генератор `tools/generate_tool_templates.py --refresh-parts` обновляет части; обычная сборка не запускает перерисовку авторских PNG. Размер масок 16 × 16, прозрачность и место стыка сохраняются. Порядок моделей: стержень, головка, крепление, обмотка; индексы компонентов и характеристик от этого не меняются.
+
+Новые инструменты и части не назначают собственный `TOOLTIP_STYLE`. Старый идентификатор `smog:workshop` поддерживается алиасами на ванильные спрайты в `assets/minecraft/atlases/gui.json`, без собственных фоновых PNG. Модели используют стандартные разделы `display` для руки и инвентаря.

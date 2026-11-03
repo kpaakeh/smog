@@ -45,7 +45,7 @@ public class FoundationTests {
         }
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(),true,level.registryAccess());
         for(String tab:io.github.kpaakeh.smog.registry.ModCreativeTabs.IDS)h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(tab)).hasAnyItems(),"Creative tab has contents: "+tab);
-        var resourceItems=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("blocks")).getDisplayItems().stream().map(net.minecraft.world.item.ItemStack::getItem).collect(java.util.stream.Collectors.toSet());for(var ore:ModOres.all())for(var form:ore.contents())h.assertTrue(resourceItems.contains(form.asItem()),"Resource form stays discoverable in Blocks: "+ore.name());
+        for(var ore:ModOres.all())for(var form:ore.contents()){String category=form.asItem() instanceof net.minecraft.world.item.BlockItem?"blocks":"materials";h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id(category)).getDisplayItems().stream().anyMatch(stack->stack.is(form.asItem())),"Resource form stays discoverable in its functional category: "+ore.name());}
         h.succeed();
     }
     @GameTest public void zoneGeometryMovementAndPersistence(GameTestHelper h) {

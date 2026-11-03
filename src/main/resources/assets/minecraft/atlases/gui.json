@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:gui/sprites/tooltip/background",
+      "sprite": "smog:tooltip/workshop_background"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:gui/sprites/tooltip/frame",
+      "sprite": "smog:tooltip/workshop_frame"
+    }
+  ]
+}

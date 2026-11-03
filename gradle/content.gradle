@@ -8,6 +8,7 @@ abstract class GenerateSmogContent extends DefaultTask {
     @InputFile abstract RegularFileProperty getToolTemplatesFile()
     @OutputDirectory abstract DirectoryProperty getTargetDirectory()
     @javax.inject.Inject abstract FileSystemOperations getFileSystem()
+    @javax.inject.Inject abstract org.gradle.process.ExecOperations getExecOperations()
     @TaskAction void generate() {
         def root = new JsonSlurper().parse(catalogFile.get().asFile)
         def materialData=[materials:toolMaterialsDirectory.get().asFile.listFiles().findAll { it.isFile()&&it.name.endsWith('.json') }.sort { it.name }.collect { new JsonSlurper().parse(it) }]
@@ -260,7 +261,9 @@ abstract class GenerateSmogContent extends DefaultTask {
             }
             if(entry.kind=='modular_tool') {
                 def schema=root.tool_templates.find { it.id==entry.template };def layers=[]
-                schema.parts.eachWithIndex { role,partIndex ->
+                // Keep the shaft behind its head; material component indices remain unchanged.
+                def renderOrder=(0..<schema.parts.size()).toList().sort { index -> [handle:0,head:1,binding:2,wrap:3].get(schema.parts[index].category,4) }
+                renderOrder.each { partIndex -> def role=schema.parts[partIndex]
                     def options=[]
                     root.tool_forms.findAll { form -> form.category==role.category&&(!role.forms||form.id in role.forms) }.each { form ->
                         def layerModel="tool_layers/${schema.id}_${role.id}_${form.id}";def offset=role.offset?:[0,0,0];def visualGroup=form.category in ['binding','wrap']?'tool_overlays':'tool_forms'

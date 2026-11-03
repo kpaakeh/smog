@@ -12,7 +12,7 @@ import net.minecraft.world.item.component.TooltipDisplay;
 public final class ToolTooltipTests {
     private static boolean section(java.util.List<Component> lines,String name){return lines.stream().anyMatch(line->line.getContents() instanceof TranslatableContents text&&text.getKey().equals("tool.smog.tip."+name));}
     @GameTest public void viewsStayCompactAndExposeOnlyRequestedDetails(GameTestHelper h){
-        var tool=ToolParts.example(ToolDefinitions.template("pickaxe"),"copper");var before=tool.copy();
+        var tool=ToolParts.example(ToolDefinitions.template("pickaxe"),"copper");var before=tool.copy();h.assertFalse(tool.has(DataComponents.TOOLTIP_STYLE),"Tools use vanilla tooltip background and frame");
         var overview=ToolTooltip.lines(tool,0);var properties=ToolTooltip.lines(tool,ToolTooltip.PROPERTIES);var construction=ToolTooltip.lines(tool,ToolTooltip.CONSTRUCTION);
         h.assertTrue(overview.size()<=7,"Overview is a short tooltip, not the full property dump");
         h.assertFalse(section(overview,"properties")||section(overview,"construction"),"Default view hides expanded sections");
@@ -29,7 +29,7 @@ public final class ToolTooltipTests {
             for(int mode=0;mode<4;mode++)h.assertTrue(!ToolTooltip.lines(tool,mode).isEmpty(),"Configured tools always have useful text");
         }
         for(var part:ToolDefinitions.parts()){
-            var stack=new ItemStack(ToolParts.item(part.item().toString()));
+            var stack=new ItemStack(ToolParts.item(part.item().toString()));h.assertFalse(stack.has(DataComponents.TOOLTIP_STYLE),"Parts use vanilla tooltip styling");
             h.assertTrue(section(ToolTooltip.lines(stack,ToolTooltip.PROPERTIES),"properties"),"Every part supports properties");
             h.assertTrue(section(ToolTooltip.lines(stack,ToolTooltip.CONSTRUCTION),"construction"),"Every part supports construction");
         }

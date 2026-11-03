@@ -13,7 +13,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 /** Three readable views of the same live stats: overview, Ctrl properties, Alt construction. */
 public final class ToolTooltip {
     public static final int PROPERTIES=1,CONSTRUCTION=2;
-    public static final int ACCENT=0x71CFC3,LABEL=0xA5B4BC,VALUE=0xE5E1D8,COMBAT=0xE49D87;
+    public static final int ACCENT=0xAAAAAA,LABEL=0xAAAAAA,VALUE=0xAAAAAA,COMBAT=0xFF5555;
     private static IntSupplier viewerMode=()->0;
     private ToolTooltip(){}
     public static void viewerMode(IntSupplier supplier){viewerMode=Objects.requireNonNull(supplier);}
@@ -21,7 +21,7 @@ public final class ToolTooltip {
     private static MutableComponent text(String key,Object...args){return Component.translatable("tool.smog.tip."+key,args);}
     private static MutableComponent color(Component value,int color){return value.copy().withStyle(s->s.withColor(color).withItalic(false));}
     private static Component row(String key,Object value){return color(text(key),LABEL).append(color(Component.literal("  "),LABEL)).append(color(value instanceof Component c?c:Component.literal(String.valueOf(value)),VALUE));}
-    private static Component heading(String key){return color(text(key),ACCENT).withStyle(s->s.withBold(true));}
+    private static Component heading(String key){return color(text(key),ACCENT);}
     private static String number(double value){return String.format(Locale.ROOT,"%.2f",value).replaceAll("\\.?0+$","");}
     private static int materialColor(int color){
         int r=(color>>16)&255,g=(color>>8)&255,b=color&255;double brightness=.2126*r+.7152*g+.0722*b;
@@ -29,7 +29,7 @@ public final class ToolTooltip {
         double lift=(145-brightness)/(255-brightness);
         return ((int)Math.round(r+(255-r)*lift)<<16)|((int)Math.round(g+(255-g)*lift)<<8)|(int)Math.round(b+(255-b)*lift);
     }
-    private static Component material(ToolDefinitions.Part part){return color(Component.translatable("tool.smog.material."+part.material().id()),materialColor(part.color()));}
+    private static Component material(ToolDefinitions.Part part){return color(Component.translatable("tool.smog.material."+part.material().id()),VALUE);}
     public static List<Component> lines(ItemStack stack,int mode){
         var lines=new ArrayList<Component>();var direct=ToolDefinitions.part(stack);boolean assembled=ModularToolItem.configured(stack);
         if(direct==null&&!assembled){lines.add(color(Component.translatable("tool.smog.unconfigured"),COMBAT));return List.copyOf(lines);}

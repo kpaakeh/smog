@@ -18,12 +18,12 @@ import io.github.kpaakeh.smog.registry.ModBlocks;
 
 /** Native tool components determine harvesting. A spent head disables work without deleting the assembly. */
 public final class ModularToolItem extends Item {
-    public ModularToolItem(Properties properties){super(properties.stacksTo(1).durability(250).component(DataComponents.TOOLTIP_STYLE,ModBlocks.id("workshop")).component(DataComponents.TOOLTIP_DISPLAY,TooltipDisplay.DEFAULT.withHidden(DataComponents.ATTRIBUTE_MODIFIERS,true).withHidden(DataComponents.CONTAINER,true)));}
+    public ModularToolItem(Properties properties){super(properties.stacksTo(1).durability(250).component(DataComponents.TOOLTIP_DISPLAY,TooltipDisplay.DEFAULT.withHidden(DataComponents.ATTRIBUTE_MODIFIERS,true).withHidden(DataComponents.CONTAINER,true)));}
     @Override public Component getName(ItemStack stack){
         if(!configured(stack))return super.getName(stack);
         var schema=ToolParts.schema(stack);var components=ToolParts.components(stack);var head=ToolDefinitions.part(components.get(ToolDefinitions.primary(schema)));
         if(head==null)return super.getName(stack);
-        return Component.translatable("tool.smog.template."+schema.id()).append(" · ").append(Component.translatable("tool.smog.material."+head.material().id()));
+        return Component.translatable("tool.smog.named."+schema.id()+"."+head.material().id());
     }
     public static CompoundTag parts(ItemStack stack){return stack.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();}
     public static boolean configured(ItemStack stack){return stack.getItem() instanceof ModularToolItem&&ToolParts.schema(stack)!=null&&stack.has(DataComponents.CONTAINER);}

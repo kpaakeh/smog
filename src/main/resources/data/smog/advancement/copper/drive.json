@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "smog:bronze_drive"
+    },
+    "title": {
+      "translate": "advancements.smog.copper.drive.title"
+    },
+    "description": {
+      "translate": "advancements.smog.copper.drive.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "smog:copper/bronze_parts",
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "smog:bronze_drive"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

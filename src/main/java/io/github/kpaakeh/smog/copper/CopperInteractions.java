@@ -23,6 +23,7 @@ public final class CopperInteractions {
     private static boolean take(MachineEntity m,Player player,int slot){if(m.getItem(slot).isEmpty())return false;var stack=m.removeItemNoUpdate(slot);player.getInventory().add(stack);if(!stack.isEmpty())Containers.dropItemStack(player.level(),player.getX(),player.getY(),player.getZ(),stack);m.sync();return true;}
     public static InteractionResult use(ServerLevel level,MachineEntity m,Player player,InteractionHand hand,BlockPos clicked){
         var held=player.getItemInHand(hand);
+        if(held.isEmpty()&&level.getBlockState(clicked).is(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("bronze_drive")))&&player instanceof net.minecraft.server.level.ServerPlayer user){WorkshopFinale.use(level,clicked,user);return InteractionResult.SUCCESS;}
         if(Smeltery.fuelTank(m)){
             if(held.is(Items.BLAZE_POWDER)&&m.smelteryFuel.resource().equals(net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.world.level.material.Fluids.LAVA))&&m.smeltery.fuelAmount>0){int powder=2*((m.smeltery.fuelAmount+80999)/81000);if(!player.isCreative()&&held.getCount()<powder){player.sendOverlayMessage(Component.translatable("message.smog.fuel_powder",powder));return InteractionResult.SUCCESS;}int amount=m.smeltery.fuelAmount;var target=net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant.of(net.minecraft.core.registries.BuiltInRegistries.FLUID.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("blazing_fuel")));try(var tx=net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()){if(m.smelteryFuel.extract(m.smelteryFuel.resource(),amount,tx)!=amount||m.smelteryFuel.insert(target,amount,tx)!=amount)return InteractionResult.FAIL;tx.commit();}if(!player.isCreative())held.shrink(powder);player.sendOverlayMessage(Component.translatable("message.smog.fuel_prepared"));return InteractionResult.SUCCESS;}
 
@@ -59,7 +60,7 @@ public final class CopperInteractions {
         if(WaterSupply.handles(m)){
             if(FluidStorageUtil.interactWithFluidStorage(m.processFluid,player,hand))return InteractionResult.SUCCESS;
             if(CopperWorkshops.workshop(m,"hand_water_pump")&&held.isEmpty())player.sendOverlayMessage(Component.translatable(WaterSupply.prime(level,m)?"message.smog.pump_ready":"message.smog.pump_missing_water"));
-            else player.sendOverlayMessage(Component.translatable("message.smog.water_supply",m.copper.processFluid/81));
+            else player.sendOverlayMessage(Component.translatable("message.smog.fluid_supply",net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes.getName(m.processFluid.resource()),FluidAmounts.format(m.copper.processFluid,true)));
             return InteractionResult.SUCCESS;
         }
         if(ManualWorkshops.handles(m)){

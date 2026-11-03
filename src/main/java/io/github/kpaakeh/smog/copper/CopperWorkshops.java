@@ -115,14 +115,14 @@ public final class CopperWorkshops {
         var shape=m.complexShape();return shape==null?0:shape.internalVolume(false)*8*MoltenMetalStorage.INGOT;
     }
     public static int threshold(MachineEntity m){return workshop(m,"ceramic_kiln")?400:capacity(m)>64*U?800:600;}
-    public static int data(MachineEntity m,int index){var s=m.copper;if(Smeltery.handles(m)&&index>=20)return Smeltery.data(m,index);if(Smeltery.vessel(m)&&index>=20)return CastingProcesses.data(m,index);return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?ManualWorkshops.workTime(m):workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->workshop(m,"casting_basin")?1:ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;default->0;};}
+    public static int data(MachineEntity m,int index){var s=m.copper;if(Smeltery.handles(m)&&index>=20)return Smeltery.data(m,index);if(Smeltery.vessel(m)&&index>=20)return CastingProcesses.data(m,index);return switch(index){case 0->s.work;case 1->ManualWorkshops.handles(m)?ManualWorkshops.workTime(m):workshop(m,"casting_table")?100:workshop(m,"ceramic_kiln")?200:80;case 2->s.heat;case 3->threshold(m);case 4->s.total()/U;case 5->capacity(m)/U;case 6->s.selection;case 7->m.multiblockController()&&!m.assembled()?1:s.status;case 8->m.enabled()?1:0;case 9->s.copper/U;case 10->s.tin/U;case 11->s.bronze/U;case 12->workshop(m,"potter_table")&&!POTTERY.isEmpty()?Item.getId(item(POTTERY.get(Math.floorMod(s.selection,POTTERY.size())).output)):0;case 13->s.queued;case 14->workshop(m,"casting_basin")?1:ToolAssembly.handles(m)?7:WaterSupply.handles(m)?6:ManualWorkshops.handles(m)?5:workshop(m,"casting_table")?1:workshop(m,"potter_table")?2:workshop(m,"ceramic_kiln")?4:0;case 15->ToolAssembly.handles(m)?ToolAssembly.activePart(m):m.complexShape()==null?0:m.complexShape().width();case 16->m.complexShape()==null?0:m.complexShape().depth();case 17->ToolAssembly.handles(m)&&ToolAssembly.shapingMode(m)?ToolAssembly.shapingPlan(m).count():m.complexShape()==null?0:m.complexShape().height();case 18->s.air;case 19->s.processFluid/81;case 23->s.processFluid&65535;case 24->s.processFluid>>>16;case 25->s.pumpBudget&65535;case 26->s.pumpBudget>>>16;case 21->workshop(m,"hand_water_pump")?1:0;case 22->s.pumpBudget/81;case 20->WaterSupply.handles(m)?net.minecraft.core.registries.BuiltInRegistries.FLUID.getId(m.processFluid.resource().getFluid()):0;default->0;};}
     public static void tick(ServerLevel level,MachineEntity m){
-        if(workshop(m,"hand_bellows")&&level.getGameTime()%40==0&&BronzeDrive.connected(m))pump(level,m);
+        if(workshop(m,"hand_bellows")&&level.getGameTime()%40==0&&BronzeDrive.connected(m))pump(level,m,true);
         if(Ropeway.handles(m))Ropeway.tick(level,m);
         else if(LoadingCrane.handles(m))LoadingCrane.tick(level,m);
         else if(ToolAssembly.handles(m))ToolAssembly.tick(level,m);
         else if(WaterSupply.handles(m))WaterSupply.tick(level,m);
-        else if(ManualWorkshops.handles(m))ManualWorkshops.tick(level,m);
+        else if(ManualWorkshops.handles(m)){ManualWorkshops.tick(level,m);if(workshop(m,"lever_press")&&level.getGameTime()%10==0)WaterSupply.transfer(level,m,8100);}
         else if(Smeltery.handles(m))Smeltery.tick(level,m);
         else if(Smeltery.vessel(m))CastingProcesses.tick(level,m);
         else if(workshop(m,"ceramic_kiln"))kiln(level,m);
@@ -195,17 +195,23 @@ public final class CopperWorkshops {
         if(!m.canOutput(result)){heat(level,m,false);s.status=5;return;}heat(level,m,true);if(s.heat<threshold(m)){s.status=s.burn==0?3:4;return;}s.status=0;
         if(working(m,BuiltInRegistries.ITEM.getKey(input.getItem()).toString(),200,1)){input.shrink(batch);output(m,result);s.work=0;}
     }
-    public static boolean button(MachineEntity m,int id){if(Smeltery.vessel(m))return false;if(ToolAssembly.handles(m))return ToolAssembly.button(m,id);var s=m.copper;if(ManualWorkshops.handles(m)){if(id==22&&m.assembled()){ManualWorkshops.queue(m);return true;}return false;}
+    public static boolean button(MachineEntity m,int id){if(Smeltery.vessel(m))return false;if(ToolAssembly.handles(m))return ToolAssembly.button(m,id);if(WaterSupply.handles(m)){if(id==23&&workshop(m,"hand_water_pump")&&m.getLevel() instanceof ServerLevel level)return WaterSupply.prime(level,m);return false;}var s=m.copper;if(ManualWorkshops.handles(m)){if(id==22&&m.assembled()){ManualWorkshops.queue(m);return true;}return false;}
         return false;
     }
-    public static boolean pump(ServerLevel level,MachineEntity bellows){
+    public static MachineEntity bellowsTarget(ServerLevel level,MachineEntity bellows){
         for(var side:Direction.values()){
             var nozzle=bellows.getBlockPos().relative(side);if(!level.hasChunkAt(nozzle))continue;var state=level.getBlockState(nozzle);
             if(!state.is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("air_nozzle")))||!state.getValue(WorkshopPartBlock.OPEN))continue;
             var port=nozzle.relative(state.getValue(WorkshopPartBlock.FACING).getOpposite());if(!level.hasChunkAt(port)||!level.getBlockState(port).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("air_intake"))))continue;
             var owner=ComplexFormationData.get(level).owner(port);
-            if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&m.assembled()){m.copper.fillBellows();m.sync();level.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD,nozzle.getX()+.5,nozzle.getY()+.5,nozzle.getZ()+.5,3,.1,.1,.1,.02);return true;}
-        }return false;
+            if(owner!=null&&level.hasChunkAt(owner)&&level.getBlockEntity(owner) instanceof MachineEntity m&&m.assembled())return m;
+        }return null;
+    }
+    public static boolean pump(ServerLevel level,MachineEntity bellows){return pump(level,bellows,false);}
+    public static boolean pump(ServerLevel level,MachineEntity bellows,boolean automatic){
+        var target=bellowsTarget(level,bellows);if(target==null)return false;
+        target.copper.fillBellows();target.copper.poweredBellowsAt=automatic?level.getGameTime():Long.MIN_VALUE;target.copper.poweredBellowsPos=bellows.getBlockPos().asLong();target.sync();
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD,bellows.getBlockPos().getX()+.5,bellows.getBlockPos().getY()+.8,bellows.getBlockPos().getZ()+.5,3,.1,.1,.1,.02);return true;
     }
     public static void dropMetal(ServerLevel level,MachineEntity m){if(!workshop(m,"copper_hearth"))return;
         for(int kind=0;kind<MoltenMetalStorage.NAMES.length;kind++){int units=m.copper.metal(kind);while(units>=MoltenMetalStorage.INGOT){int ingots=Math.min(64,units/MoltenMetalStorage.INGOT);Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+.5,m.getBlockPos().getZ()+.5,new ItemStack(item(namespace(kind)+MoltenMetalStorage.NAMES[kind]+"_ingot"),ingots));units-=ingots*MoltenMetalStorage.INGOT;}

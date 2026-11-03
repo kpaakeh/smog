@@ -6,6 +6,7 @@ import json,sys
 from PIL import Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1];ASSETS=ROOT/'src/main/resources/assets/smog';DATA=json.loads((ROOT/'src/main/content/tool_templates.json').read_text(encoding='utf-8'))
 FORCE='--refresh-tool-templates' in sys.argv
+PARTS_ONLY='--refresh-parts' in sys.argv
 Z=ZipFile(ROOT/'.gradle-user-home/caches/fabric-loom/26.3/minecraft-client.jar')
 def source(name):return Image.open(BytesIO(Z.read('assets/'+name.split(':')[0]+'/textures/'+name.split(':')[1]+'.png'))).convert('RGBA')
 def gray(im):
@@ -47,16 +48,32 @@ def handle(form):
  elif form['id']=='hollow_handle':d.rectangle((1,13,3,15),fill=(205,205,205,255));d.point((2,14),fill=(30,30,30,255))
  return im
 
+def clean(im):
+ result=im.copy();tones=[92,156,212,248]
+ for y in range(16):
+  for x in range(16):
+   r,g,b,a=im.getpixel((x,y))
+   if a:
+    v=tones[min(3,max(r,g,b)//64)];result.putpixel((x,y),(v,v,v,255))
+ return result
+
 def overlay(form):
- im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im);x,y=(4,10) if form['category']=='wrap' else (8,6)
- d.line((x,y,x+2,y+2),fill=(45,45,45,255),width=3);d.line((x,y-1,x+2,y+1),fill=(225,225,225,255),width=2)
- if form['category']=='wrap':d.line((x+1,y-2,x+3,y),fill=(160,160,160,255),width=2)
- if form['id']=='clamp':d.rectangle((7,5,11,8),outline=(245,245,245,255));d.point((8,6),fill=(45,45,45,255))
+ im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
+ if form['category']=='wrap':
+  # One continuous grip band; no bright checkerboard islands across the handle.
+  for x in range(3,7):
+   y=16-x;d.point((x,y),fill=(156,156,156,255));d.point((x,y-1),fill=(212,212,212,255))
+  d.point((3,12),fill=(248,248,248,255))
+ else:
+  # A small diagonal joint, not a white box painted across the whole head.
+  for x,y,v in [(8,6,156),(9,7,212),(8,7,212),(7,7,156),(8,8,156)]:d.point((x,y),fill=(v,v,v,255))
+  if form['id']=='clamp':d.point((9,6),fill=(248,248,248,255));d.point((7,8),fill=(92,92,92,255))
  return im
+
 
 def save(path,im):
  path.parent.mkdir(parents=True,exist_ok=True)
- if FORCE or not path.exists():im.save(path)
+ if FORCE or PARTS_ONLY and path.parent.name in ['tool_forms','tool_overlays'] or not path.exists():im.save(path)
 
 def mold(mask,raw):
  colors=[(45,52,62),(67,76,88),(100,111,123),(129,142,154),(159,174,185),(188,203,213),(216,228,235)] if raw else [(46,38,31),(70,57,45),(99,80,61),(128,105,80),(155,132,103),(184,160,126),(209,186,151)]
@@ -69,12 +86,12 @@ def mold(mask,raw):
 for form in DATA['forms']:
  category=form['category']
  if category=='head':
-  im=head(form)
+  im=clean(head(form))
   for raw in [False,True]:save(ASSETS/('textures/item/tool_molds/'+('unfired_' if raw else '')+form['id']+'.png'),mold(im,raw))
   save(ASSETS/('textures/item/casting_molds/'+form['id'].replace('_head','_mold')+'.png'),gray(mold(im,False)))
-  cast=im.copy();d=ImageDraw.Draw(cast);d.line((9,7,6,11),fill=(85,85,85,255),width=2);d.rectangle((4,11,7,13),fill=(130,130,130,255));d.point((5,11),fill=(230,230,230,255));save(ASSETS/('textures/item/tool_forms/cast_'+form['id']+'.png'),cast)
- elif category=='handle':im=handle(form)
+  cast=im.copy();d=ImageDraw.Draw(cast);d.line((8,7,7,9),fill=(156,156,156,255),width=1);d.point((7,10),fill=(212,212,212,255));save(ASSETS/('textures/item/tool_forms/cast_'+form['id']+'.png'),cast)
+ elif category=='handle':im=clean(handle(form))
  else:
-  base='minecraft:item/iron_nugget' if form['id']=='clamp' else 'minecraft:item/string';im=gray(source(base));save(ASSETS/('textures/item/tool_overlays/'+form['id']+'.png'),overlay(form))
+  base='minecraft:item/iron_nugget' if form['id']=='clamp' else 'minecraft:item/string';im=clean(gray(source(base)));save(ASSETS/('textures/item/tool_overlays/'+form['id']+'.png'),overlay(form))
  save(ASSETS/('textures/item/tool_forms/'+form['id']+'.png'),im)
 print('Shared grayscale tool templates:',len(DATA['forms']),'; materials require no additional PNGs.')

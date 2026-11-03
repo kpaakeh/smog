@@ -28,8 +28,9 @@ public class WorkshopPartBlock extends Block {
         return defaultBlockState().setValue(FACING,context.getHorizontalDirection().getOpposite());
     }
     @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,net.minecraft.world.phys.BlockHitResult hit){
+        if(partName().equals("bronze_drive")){if(level instanceof net.minecraft.server.level.ServerLevel server&&player instanceof net.minecraft.server.level.ServerPlayer user)WorkshopFinale.use(server,pos,user);return InteractionResult.SUCCESS;}
         if(!attachment()&&!partName().equals("water_valve")&&!partName().equals("water_outlet"))return InteractionResult.PASS;
-        if(!level.isClientSide()){boolean open=!state.getValue(OPEN);level.setBlock(pos,state.setValue(OPEN,open),Block.UPDATE_ALL);player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(open?"message.smog.valve_open":"message.smog.valve_closed"));}
+        if(!level.isClientSide()){boolean open=!state.getValue(OPEN);level.setBlock(pos,state.setValue(OPEN,open),Block.UPDATE_ALL);player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(open&&(partName().equals("water_valve")||partName().equals("water_outlet"))&&level.hasNeighborSignal(pos)?"message.smog.valve_powered":open?"message.smog.valve_open":"message.smog.valve_closed"));}
         return InteractionResult.SUCCESS;
     }
     @Override protected BlockState rotate(BlockState state,Rotation rotation){return state.setValue(FACING,rotation.rotate(state.getValue(FACING)));}
@@ -41,6 +42,7 @@ public class WorkshopPartBlock extends Block {
         var shape=WorkshopShapes.shape(name,state.getValue(FACING));return shape==null?super.getShape(state,level,pos,context):shape;
     }
     @Override protected InteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,InteractionHand hand,net.minecraft.world.phys.BlockHitResult hit){
+        if(stack.isEmpty()&&partName().equals("bronze_drive"))return useWithoutItem(state,level,pos,player,hit);
         if(stack.getItem() instanceof ConfiguratorItem tool)return tool.useOn(new net.minecraft.world.item.context.UseOnContext(player,hand,hit));
         return super.useItemOn(stack,state,level,pos,player,hand,hit);
     }

@@ -36,6 +36,7 @@ public final class SmogJeiPlugin implements IModPlugin {
             if(Machines.all().stream().anyMatch(machine->machine.spec().kind()==kind))registration.addRecipeCategories(new ProcessingCategory(registration.getJeiHelpers().getGuiHelper(),kind));
     }
     @Override public void registerRecipes(IRecipeRegistration registration) {
+        registration.addIngredientInfo(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(ModBlocks.id("bronze_drive")),Component.translatable("jei.smog.guide.finale"));
         var fuelPages=new ArrayList<SmelteryFuelCategory.Page>();
         for(var fuel:io.github.kpaakeh.smog.copper.Smeltery.fuels()){fuelPages.add(new SmelteryFuelCategory.Page(fuel,false));if(fuel.fluid().equals("smog:blazing_fuel"))fuelPages.add(new SmelteryFuelCategory.Page(fuel,true));}
         registration.addRecipes(SmelteryFuelCategory.TYPE,fuelPages);

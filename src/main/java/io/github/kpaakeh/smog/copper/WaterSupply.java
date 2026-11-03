@@ -26,21 +26,27 @@ public final class WaterSupply {
         }
         transfer(level,m,8100);m.sync();
     }
-    public static boolean connects(net.minecraft.world.level.LevelReader level,net.minecraft.core.BlockPos pos){
+    /** Face is the face of the neighboring block touched by a pipe. */
+    public static boolean connects(net.minecraft.world.level.LevelReader level,net.minecraft.core.BlockPos pos,Direction face){
         if(!level.hasChunkAt(pos))return false;var state=level.getBlockState(pos);String name=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
-        if(state.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet"))return true;
-        if(level.getBlockEntity(pos) instanceof MachineEntity machine)return handles(machine)||CopperWorkshops.workshop(machine,"washing_trough");
-        return level instanceof ServerLevel server&&FluidStorage.SIDED.find(server,pos,null)!=null;
+        if(state.getBlock() instanceof WaterPipeBlock)return true;
+        if(name.equals("smog:water_valve"))return face.getAxis()==state.getValue(WorkshopPartBlock.FACING).getAxis();
+        if(name.equals("smog:water_outlet"))return face==state.getValue(WorkshopPartBlock.FACING).getOpposite();
+        if(level.getBlockEntity(pos) instanceof MachineEntity machine)return handles(machine)||ManualWorkshops.handles(machine);
+        return level instanceof ServerLevel server&&FluidStorage.SIDED.find(server,pos,face)!=null;
     }
-    private record Sink(net.fabricmc.fabric.api.transfer.v1.storage.Storage<net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant> storage,net.minecraft.core.BlockPos outlet){}
+    private static boolean open(ServerLevel level,net.minecraft.core.BlockPos pos,net.minecraft.world.level.block.state.BlockState state){return state.getValue(WorkshopPartBlock.OPEN)&&!level.hasNeighborSignal(pos);}
+    private record Visit(net.minecraft.core.BlockPos pos,int distance){}
+    private record Sink(net.fabricmc.fabric.api.transfer.v1.storage.Storage<net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant> storage,net.minecraft.core.BlockPos outlet,MachineEntity reservoir){}
     private static java.util.List<Sink> sinks(ServerLevel level,MachineEntity source){
-        var result=new java.util.ArrayList<Sink>();var queue=new java.util.ArrayDeque<net.minecraft.core.BlockPos>();var seen=new java.util.HashSet<net.minecraft.core.BlockPos>();var start=source.getBlockPos();queue.add(start);seen.add(start);
-        while(!queue.isEmpty()&&seen.size()<=256){
-            var current=queue.removeFirst();var state=level.getBlockState(current);String currentName=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
+        var result=new java.util.ArrayList<Sink>();var queue=new java.util.ArrayDeque<Visit>();var seen=new java.util.HashSet<net.minecraft.core.BlockPos>();var start=source.getBlockPos();queue.add(new Visit(start,0));seen.add(start);
+        while(!queue.isEmpty()){
+            var visit=queue.removeFirst();var current=visit.pos();var state=level.getBlockState(current);String currentName=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
             if(currentName.equals("smog:water_outlet")){
-                if(state.getValue(WorkshopPartBlock.OPEN)&&level.hasChunkAt(current.below())){var storage=FluidStorage.SIDED.find(level,current.below(),Direction.UP);if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,current));}continue;
+                if(open(level,current,state)&&visit.distance()<16&&level.hasChunkAt(current.below())){var storage=FluidStorage.SIDED.find(level,current.below(),Direction.UP);if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,current,level.getBlockEntity(current.below()) instanceof MachineEntity target&&CopperWorkshops.workshop(target,"water_tank")?target:null));}continue;
             }
-            if(currentName.equals("smog:water_valve")&&!state.getValue(WorkshopPartBlock.OPEN))continue;
+            if(currentName.equals("smog:water_valve")&&!open(level,current,state))continue;
+            if(visit.distance()>=16)continue;
             for(var side:Direction.values()){
                 if(currentName.equals("smog:water_valve")&&side.getAxis()!=state.getValue(WorkshopPartBlock.FACING).getAxis())continue;
                 var pos=current.relative(side);if(!level.hasChunkAt(pos)||Math.abs(pos.getX()-start.getX())>16||Math.abs(pos.getY()-start.getY())>16||Math.abs(pos.getZ()-start.getZ())>16||seen.contains(pos))continue;
@@ -48,19 +54,22 @@ public final class WaterSupply {
                 if(name.equals("smog:water_valve")&&side.getAxis()!=next.getValue(WorkshopPartBlock.FACING).getAxis())continue;
                 if(name.equals("smog:water_outlet")&&side!=next.getValue(WorkshopPartBlock.FACING))continue;
                 // Visit conduit positions once, but probe each accessible side of terminal tanks.
-                if(next.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet")){seen.add(pos);queue.add(pos);continue;}
-                if(level.getBlockEntity(pos) instanceof MachineEntity other&&(CopperWorkshops.workshop(other,"hand_water_pump")||CopperWorkshops.workshop(other,"water_tank")&&!CopperWorkshops.workshop(source,"hand_water_pump")))continue;
-                var storage=FluidStorage.SIDED.find(level,pos,side.getOpposite());if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,null));
+                if(next.getBlock() instanceof WaterPipeBlock||name.equals("smog:water_valve")||name.equals("smog:water_outlet")){if(seen.size()<256){seen.add(pos);queue.add(new Visit(pos,visit.distance()+1));}continue;}
+                if(level.getBlockEntity(pos) instanceof MachineEntity other&&(CopperWorkshops.workshop(other,"hand_water_pump")||CopperWorkshops.workshop(other,"lever_press")))continue;
+                var storage=FluidStorage.SIDED.find(level,pos,side.getOpposite());if(storage!=null&&storage!=source.processFluid)result.add(new Sink(storage,null,level.getBlockEntity(pos) instanceof MachineEntity target&&CopperWorkshops.workshop(target,"water_tank")?target:null));
             }
         }return result;
     }
     public static int transfer(ServerLevel level,MachineEntity source,int limit){
-        int budget=Math.min(limit,source.copper.processFluid),total=0;if(budget<=0)return 0;
+        int budget=Math.min(limit,source.copper.processFluid),total=0;if(budget<=0||!source.enabled()||!WorkshopFluidStorage.pipeCompatible(source.processFluid.resource()))return 0;
         for(var sink:sinks(level,source)){
             if(budget<=0)break;
             try(var tx=Transaction.openOuter()){
-                long accepted=sink.storage.insert(source.processFluid.resource(),budget,tx);long removed=source.processFluid.extract(source.processFluid.resource(),accepted,tx);
-                if(accepted==removed&&accepted>0){tx.commit();budget-=accepted;total+=accepted;if(sink.outlet!=null)level.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH,sink.outlet.getX()+.5,sink.outlet.getY()+.1,sink.outlet.getZ()+.5,3,.04,.2,.04,0);}
+                var fluid=source.processFluid.resource();int allowance=budget;
+                // Passive reservoirs equalize; they never pump a filled tank back into an emptier one forever.
+                if(sink.reservoir!=null&&CopperWorkshops.workshop(source,"water_tank"))allowance=Math.min(allowance,Math.max(0,(source.copper.processFluid-sink.reservoir.copper.processFluid)/2));
+                long accepted=sink.storage.insert(fluid,allowance,tx);long removed=source.processFluid.extract(fluid,accepted,tx);
+                if(accepted==removed&&accepted>0){tx.commit();budget-=accepted;total+=accepted;if(sink.outlet!=null&&fluid.getFluid()==Fluids.WATER)level.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH,sink.outlet.getX()+.5,sink.outlet.getY()+.1,sink.outlet.getZ()+.5,3,.04,.2,.04,0);}
             }
         }return total;
     }
