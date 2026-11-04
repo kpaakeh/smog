@@ -18,8 +18,18 @@ import net.minecraft.world.phys.Vec3;
 
 /** Moving JSON sub-models share the static model's palette, scale, origin and lighting. */
 public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,BronzeRenderer.State> {
+    private static final org.joml.Quaternionf[][] BEVEL_ORIENTATIONS=new org.joml.Quaternionf[6][6];
+    static {
+        for(var facing:Direction.values())for(var output:Direction.values())if(facing.getAxis()!=output.getAxis()){
+            var x=new org.joml.Vector3f(output.getStepX(),output.getStepY(),output.getStepZ());var z=new org.joml.Vector3f(-facing.getStepX(),-facing.getStepY(),-facing.getStepZ());var y=new org.joml.Vector3f(z).cross(x);
+            BEVEL_ORIENTATIONS[facing.ordinal()][output.ordinal()]=new org.joml.Quaternionf().setFromNormalized(new org.joml.Matrix3f().setColumn(0,x).setColumn(1,y).setColumn(2,z));
+        }
+    }
     public static final class State extends BlockEntityRenderState {
         public ItemStackRenderState moving=new ItemStackRenderState();
+        public ItemStackRenderState outputMoving=new ItemStackRenderState();
+        public Direction output=Direction.EAST;
+        public boolean bevel;
         public String animation="none";
         public Direction facing=Direction.NORTH;
         public float angle;
@@ -30,15 +40,23 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
     @Override public void extractRenderState(BronzeEntity entity,State state,float partial,Vec3 camera,ModelFeatureRenderer.CrumblingOverlay overlay){
         BlockEntityRenderer.super.extractRenderState(entity,state,partial,camera,overlay);
         state.animation=BronzeContent.entry(entity.id()).animation();state.facing=entity.getBlockState().getValue(BronzeBlock.FACING);state.angle=entity.angle(partial);
+        state.bevel=entity.getBlockState().getBlock() instanceof BronzeAngleBlock;
+        if(state.bevel)state.output=BronzeAngleBlock.output(entity.getBlockState());
         if(entity.id().equals("bronze_shaft")||entity.id().equals("bronze_shaft_support"))state.facing=BronzeShaft.canonical(state.facing);
         if(entity.getBlockState().getValue(BronzeBlock.ASSEMBLED))state.animation="none";
         if(state.animation.equals("none"))return;
         var stack=new ItemStack(entity.getBlockState().getBlock());stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of("moving"),List.of()));
         items.updateForTopItem(state.moving,stack,ItemDisplayContext.NONE,entity.getLevel(),null,0);
+        if(state.bevel){stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of("moving_output"),List.of()));items.updateForTopItem(state.outputMoving,stack,ItemDisplayContext.NONE,entity.getLevel(),null,0);}
     }
     @Override public void submit(State state,PoseStack pose,SubmitNodeCollector collector,CameraRenderState camera){
         if(state.animation.equals("none"))return;
         pose.pushPose();pose.translate(.5,.5,.5);
+        if(state.bevel){
+            pose.rotate(BEVEL_ORIENTATIONS[state.facing.ordinal()][state.output.ordinal()]);
+            pose.pushPose();pose.rotate(Axis.ZP.rotationDegrees(state.angle));state.moving.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();
+            pose.rotate(Axis.XP.rotationDegrees(-state.angle));state.outputMoving.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();return;
+        }
         switch(state.facing){case EAST->pose.rotate(Axis.YP.rotationDegrees(-90));case SOUTH->pose.rotate(Axis.YP.rotationDegrees(-180));case WEST->pose.rotate(Axis.YP.rotationDegrees(-270));case UP->pose.rotate(Axis.XP.rotationDegrees(90));case DOWN->pose.rotate(Axis.XP.rotationDegrees(270));default->{}}
         switch(state.animation){
             case "rotate_x"->pose.rotate(Axis.XP.rotationDegrees(state.angle));

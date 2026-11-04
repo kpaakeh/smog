@@ -32,19 +32,19 @@
     },
     "facing=up,assembled=false": {
       "model": "smog:block/bronze_bucket_bottom",
-      "x": 90
+      "x": 270
     },
     "facing=up,assembled=true": {
       "model": "smog:block/bronze_bucket_bottom_inventory",
-      "x": 90
+      "x": 270
     },
     "facing=down,assembled=false": {
       "model": "smog:block/bronze_bucket_bottom",
-      "x": 270
+      "x": 90
     },
     "facing=down,assembled=true": {
       "model": "smog:block/bronze_bucket_bottom_inventory",
-      "x": 270
+      "x": 90
     }
   }
 }

@@ -75,10 +75,11 @@
     },
     {
       "id": "bronze_hand_crank",
-      "ru": "Ручной вороток",
+      "ru": "Рукоятка",
       "group": "network",
-      "en": "Bronze Hand Crank",
-      "animation": "rotate_z"
+      "en": "Crank Handle",
+      "animation": "rotate_z",
+      "axis": true
     },
     {
       "id": "bronze_batch_gate",

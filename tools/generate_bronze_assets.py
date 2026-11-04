@@ -113,7 +113,8 @@ def geometry(entry):
         moving = ring(radius=7 if n == 'bronze_flywheel' else 6, inner=4, depth=3, texture='wood')
         moving += [box((2, 7, 6), (14, 9, 9)), box((7, 2, 6), (9, 14, 9)), box((5.5, 5.5, 4), (10.5, 10.5, 12), 'metal')]
         if n == 'bronze_hand_crank':
-            moving = [box((6, 6, 5), (10, 10, 12), 'metal'), box((7, 7, 4), (9, 14, 6), 'metal'), box((7, 12, 0), (10, 15, 5))]
+            fixed = ring(radius=4,inner=2.5,depth=1.5,center=(8,8,15.25))
+            moving = [box((7,7,8),(9,9,16),'metal'),box((7,7,7),(9,13,9),'metal'),box((7,12,3),(9,14,7)),box((7,12,2.5),(9,14,3),'dark')]
     elif n == 'bronze_cam_block':
         fixed = frame()
         moving = [box((6, 6, 0), (10, 10, 16), 'metal')] + ring(radius=4, inner=0, depth=4, center=(9.5, 8, 8))
@@ -283,17 +284,18 @@ def icon(entry):
     path = ASSETS / 'textures/item' / (n + '.png');path.parent.mkdir(parents=True, exist_ok=True);im.save(path)
 
 
-def shaft_envelope(elements):
+def shaft_envelope(elements, axis=2):
     """Conservative swept collision, authored from the rotating model's cuboids.
 
     Half-pixel strips preserve a round, narrow envelope; a turning square axle
     never clips through an entity between its four stationary corner poses.
     """
     intervals = {}
+    u,v=[i for i in range(3) if i!=axis]
     for e in elements:
         a, b = e['from'], e['to']
-        radius = max(math.hypot(x-8, y-8) for x in (a[0], b[0]) for y in (a[1], b[1]))
-        intervals[(a[2], b[2])] = max(intervals.get((a[2], b[2]), 0), radius)
+        radius = max(math.hypot(x-8, y-8) for x in (a[u], b[u]) for y in (a[v], b[v]))
+        intervals[(a[axis], b[axis])] = max(intervals.get((a[axis], b[axis]), 0), radius)
     result = []
     for (z, zz), radius in intervals.items():
         start = math.floor(-radius*2)/2
@@ -303,7 +305,8 @@ def shaft_envelope(elements):
             nearest = 0 if x <= 0 <= xx else min(abs(x), abs(xx))
             if nearest < radius:
                 height = math.ceil(math.sqrt(radius*radius-nearest*nearest)*2)/2
-                result.append({'from': [8+x, 8-height, z], 'to': [8+xx, 8+height, zz]})
+                a,b=[0,0,0],[0,0,0];a[u],a[v],a[axis]=8+x,8-height,z;b[u],b[v],b[axis]=8+xx,8+height,zz
+                result.append({'from': a, 'to': b})
             x += .5
     return result
 
@@ -341,6 +344,58 @@ def write_support_variants(n, base, fixed, moving, collision):
     write(ASSETS/'blockstates'/(n+'.json'),{'variants':variants})
 
 
+def orient_boxes(elements,x,y,z):
+    from itertools import product
+    output=[]
+    for e in elements:
+        corners=[[8+sum((p[j]-8)*basis[i] for j,basis in enumerate((x,y,z))) for i in range(3)] for p in product(*zip(e['from'],e['to']))]
+        a=[min(p[i] for p in corners) for i in range(3)];b=[max(p[i] for p in corners) for i in range(3)]
+        output.append(cuboid(a,b,next(iter(e['faces'].values()))['texture'][1:]) if 'faces' in e else {'from':a,'to':b})
+    return output
+
+
+def write_angle_assets():
+    n='bronze_angle_gearbox'
+    fixed=[cuboid((1,0,1),(15,2,15))]
+    for x in (1,13):
+        for z in (1,13):fixed.append(cuboid((x,2,z),(x+2,14,z+2)))
+    fixed+=ring(radius=5,inner=3.75,depth=1.5,center=(8,8,14.5))
+    fixed+=ring('x',radius=5,inner=3.75,depth=1.5,center=(14.5,8,8))
+    rotor=[cuboid((6,6,11.5),(10,10,16))]
+    for z,radius in ((9,2),(10,3),(11,4)):rotor+=ring(radius=radius,inner=0,depth=1,center=(8,8,z+.5))
+    core=list(rotor)
+    def teeth(offset):
+        result=[]
+        for angle in range(0,360,30):
+            x,y=8+4*math.cos(math.radians(angle+offset)),8+4*math.sin(math.radians(angle+offset))
+            result.append(cuboid((x-.65,y-.65,11),(x+.65,y+.65,12),'metal'))
+        return result
+    rotor+=teeth(0)
+    output_rotor=orient_boxes(core+teeth(15),(0,0,-1),(0,1,0),(1,0,0))
+    collision=[{'from':e['from'],'to':e['to']} for e in fixed]+shaft_envelope(rotor)+shaft_envelope(output_rotor,0)
+    textures_map={t:'smog:block/bronze_workshop_'+t for t in ('wood','metal','dark','stone','rope','ceramic')};textures_map['particle']=textures_map['wood']
+    base={'parent':'minecraft:block/block','textures':textures_map}
+    write(ASSETS/'models/block'/(n+'.json'),{**base,'elements':exterior(fixed)})
+    write(ASSETS/'models/block'/(n+'_inventory.json'),{**base,'elements':exterior(fixed+rotor+output_rotor),'smog_collision':collision})
+    for suffix,elements in (('_moving',rotor),('_moving_output',output_rotor)):
+        write(ASSETS/'models/block'/(n+suffix+'.json'),{**base,'elements':exterior(elements)})
+    cases=[{'when':value,'model':{'type':'minecraft:model','model':'smog:block/'+n+suffix}} for value,suffix in [('moving','_moving'),('moving_output','_moving_output')]]
+    write(ASSETS/'items'/(n+'.json'),{'model':{'type':'minecraft:select','property':'minecraft:custom_model_data','index':0,'cases':cases,'fallback':{'type':'minecraft:model','model':'smog:block/'+n+'_inventory'}}})
+    directions={'east':(1,0,0),'west':(-1,0,0),'up':(0,1,0),'down':(0,-1,0),'south':(0,0,1),'north':(0,0,-1)};variants={}
+    for facing,front in directions.items():
+        for output,x in directions.items():
+            if sum(a*b for a,b in zip(front,x)):continue
+            z=tuple(-v for v in front);y=(z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]);name=n+'_'+facing+'_'+output
+            write(ASSETS/'models/block'/(name+'.json'),{**base,'elements':exterior(orient_boxes(fixed,x,y,z))})
+            write(ASSETS/'models/block'/(name+'_inventory.json'),{**base,'elements':exterior(orient_boxes(fixed+rotor+output_rotor,x,y,z)),'smog_collision':orient_boxes(collision,x,y,z)})
+            for assembled in ('false','true'):variants['facing='+facing+',output='+output+',assembled='+assembled]={'model':'smog:block/'+name+('_inventory' if assembled=='true' else '')}
+        for output,vec in directions.items():
+            if not sum(a*b for a,b in zip(front,vec)):continue
+            fallback='east' if facing in ('up','down') else {'north':'east','east':'south','south':'west','west':'north'}[facing]
+            for assembled in ('false','true'):variants['facing='+facing+',output='+output+',assembled='+assembled]=variants['facing='+facing+',output='+fallback+',assembled='+assembled]
+    write(ASSETS/'blockstates'/(n+'.json'),{'variants':variants})
+
+
 def main():
     import argparse
     parser=argparse.ArgumentParser();parser.add_argument('--only',nargs='+');selected=parser.parse_args().only
@@ -348,12 +403,14 @@ def main():
     textures()
     for b in catalog['blocks']:
         if selected and b['id'] not in selected:continue
+        if b['id']=='bronze_angle_gearbox':
+            write_angle_assets();continue
         n = b['id']; fixed, moving = geometry(b)
         textures_map = {t: 'smog:block/bronze_workshop_' + t for t in ('wood', 'metal', 'dark', 'stone', 'rope', 'ceramic')}
         textures_map['particle'] = textures_map['wood']
         base = {'parent': 'minecraft:block/block', 'textures': textures_map, 'elements': exterior(fixed)}
         write(ASSETS / 'models/block' / (n + '.json'), base)
-        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
+        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
         write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': collision})
         # Physical cuboids are metadata on a valid model, not fake unbakeable models.
         old_collision = ASSETS / 'models/block' / (n + '_collision.json')
@@ -369,8 +426,8 @@ def main():
         for face, angle in [('north', 0), ('east', 90), ('south', 180), ('west', 270), ('up', 0), ('down', 0)]:
             model = {'model': 'smog:block/' + n}
             if angle:model['y'] = angle
-            if face == 'up':model['x'] = 90
-            if face == 'down':model['x'] = 270
+            if face == 'up':model['x'] = 270
+            if face == 'down':model['x'] = 90
             variants['facing=' + face + ',assembled=false'] = model
             variants['facing=' + face + ',assembled=true'] = {**model, 'model': 'smog:block/' + n + '_inventory'}
         write(ASSETS / 'blockstates' / (n + '.json'), {'variants': variants})

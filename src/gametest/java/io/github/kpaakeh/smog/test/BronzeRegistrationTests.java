@@ -10,6 +10,22 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 
 public final class BronzeRegistrationTests {
+    @GameTest public void verticalStaticModelsAndCollisionUseTheSameFrontAsTheirRenderer(GameTestHelper h){
+        var pos=h.absolutePos(new BlockPos(4,4,4));
+        for(var entry:BronzeContent.blocks()){
+            if(entry.block() instanceof BronzeAngleBlock||entry.block() instanceof BronzeSupportBlock)continue;
+            var source=entry.block().defaultBlockState().getShape(h.getLevel(),pos);
+            for(var facing:java.util.List.of(Direction.UP,Direction.DOWN)){
+                var boxes=entry.block().defaultBlockState().setValue(BronzeBlock.FACING,facing).getShape(h.getLevel(),pos).toAabbs();
+                source.forAllBoxes((x,y,z,xx,yy,zz)->{
+                    for(double a:new double[]{x,xx})for(double b:new double[]{y,yy})for(double c:new double[]{z,zz}){
+                        double v=facing==Direction.UP?1-c:c,w=facing==Direction.UP?b:1-b;
+                        h.assertTrue(boxes.stream().anyMatch(box->a>=box.minX-1e-6&&a<=box.maxX+1e-6&&v>=box.minY-1e-6&&v<=box.maxY+1e-6&&w>=box.minZ-1e-6&&w<=box.maxZ+1e-6),"Vertical world model and rendered front disagree: "+entry.id()+"/"+facing);
+                    }
+                });
+            }
+        }h.succeed();
+    }
     public static void place(net.minecraft.server.level.ServerLevel level,BlockPos origin,Direction facing,BronzeBlueprints.Blueprint drawing){
         var rotation=BronzeBlueprints.rotation(facing);
         for(var cell:drawing.cells()){

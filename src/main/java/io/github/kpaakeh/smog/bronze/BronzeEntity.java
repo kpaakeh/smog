@@ -11,6 +11,7 @@ import net.minecraft.world.level.storage.*;
 public final class BronzeEntity extends BlockEntity {
     private String blueprint="";
     private long motionStart,motionEnd;
+    private boolean reverseCrank;
     private float phase,speed;
     private long phaseTick;
     private boolean simulationAttached;
@@ -20,6 +21,8 @@ public final class BronzeEntity extends BlockEntity {
     public String blueprint(){return blueprint;}
     public float angle(float partial){return level==null||!level.isClientSide()&&!simulationAttached?phase:(float)RotationTimeline.wrap(phase+speed*(level.getGameTime()-phaseTick+partial)*RotationTimeline.DEGREES_PER_TICK);}
     public boolean cranking(){return level!=null&&level.getGameTime()<motionEnd;}
+    public long crankStarted(){return motionStart;}
+    public RotationRate crankRate(){return RotationRate.NOMINAL.multiply(RotationRate.of((reverseCrank?-1:1)*BronzeShaft.handedness(getBlockState().getValue(BronzeBlock.FACING)),1));}
     public boolean moving(){return cranking()||level!=null&&(level.isClientSide()||simulationAttached)&&speed!=0;}
     private void motion(BronzeNetwork.Result result){
         float next=(float)result.rate().value();float at=(float)result.phase();
@@ -47,7 +50,7 @@ public final class BronzeEntity extends BlockEntity {
         if(level!=null){claims().entrySet().removeIf(e->e.getValue().equals(worldPosition));if(getBlockState().getValue(BronzeBlock.ASSEMBLED))level.setBlock(worldPosition,getBlockState().setValue(BronzeBlock.ASSEMBLED,false),Block.UPDATE_CLIENTS);sync();}
     }
     public void inspect(net.minecraft.world.entity.player.Player player){
-        if(BronzeNetwork.node(id())){var result=BronzeNetwork.query(level,worldPosition);var message=Component.translatable("message.smog.bronze_network."+result.status());String speedText=result.rate().denominator().equals(java.math.BigInteger.ONE)?result.rate().numerator().abs().toString():result.rate().numerator().abs()+"/"+result.rate().denominator();if(player.isShiftKeyDown())message.append(" ").append(Component.translatable("message.smog.bronze_network.details",result.required(),result.available(),result.rate().numerator().signum()==0?"—":speedText,Component.translatable("message.smog.bronze_network."+(result.rate().numerator().signum()==0?"stopped":result.rate().numerator().signum()<0?"reverse":"forward"))));player.sendOverlayMessage(message);return;}
+        if(BronzeNetwork.node(id())){var result=BronzeNetwork.query(level,worldPosition);var displayed=id().equals("bronze_hand_crank")?result.rate().multiply(RotationRate.of(BronzeShaft.handedness(getBlockState().getValue(BronzeBlock.FACING)),1)):result.rate();var message=Component.translatable("message.smog.bronze_network."+result.status());String speedText=displayed.denominator().equals(java.math.BigInteger.ONE)?displayed.numerator().toString():displayed.numerator()+"/"+displayed.denominator();if(player.isShiftKeyDown())message.append(" ").append(Component.translatable("message.smog.bronze_network.details",result.required(),result.available(),displayed.numerator().signum()==0?"—":speedText,Component.translatable("message.smog.bronze_network."+(displayed.numerator().signum()==0?"stopped":displayed.numerator().signum()<0?"reverse":"forward"))));player.sendOverlayMessage(message);return;}
         var variants=BronzeBlueprints.forController(id());
         if(id().equals("bronze_mine_hoist"))variants=BronzeBlueprints.hoistCandidates(level,worldPosition,getBlockState().getValue(BronzeBlock.FACING));
         if(variants.isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.bronze_registered"));return;}
@@ -71,8 +74,11 @@ public final class BronzeEntity extends BlockEntity {
         var text=Component.empty();for(String id:expected.split(" / ")){if(!text.getSiblings().isEmpty())text.append(" / ");text.append(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(net.minecraft.resources.Identifier.parse(id)).getName());}return text;
     }
     public void crank(){
+        crank(false);
+    }
+    public void crank(boolean reverse){
         if(level==null)return;
-        motionStart=level.getGameTime();motionEnd=motionStart+80;BronzeNetwork.invalidate(level);sync();
+        reverseCrank=reverse;motionStart=level.getGameTime();motionEnd=motionStart+6;BronzeNetwork.invalidate(level);sync();
     }
     public void tick(){
         if(!simulationAttached){phaseTick=level.getGameTime();speed=0;simulationAttached=true;}
@@ -82,8 +88,8 @@ public final class BronzeEntity extends BlockEntity {
         var result=BronzeBlueprints.inspect(level,worldPosition,getBlockState().getValue(BronzeBlock.FACING),definition);
         if(result.loaded()&&(!result.complete()||!claim(definition)))disassemble();
     }
-    @Override protected void saveAdditional(ValueOutput output){super.saveAdditional(output);output.putString("blueprint",blueprint);output.putLong("motion_start",motionStart);output.putLong("motion_end",motionEnd);output.putFloat("phase",angle(0));output.putFloat("speed",speed);output.putLong("phase_tick",level==null?phaseTick:level.getGameTime());}
-    @Override protected void loadAdditional(ValueInput input){super.loadAdditional(input);blueprint=input.getStringOr("blueprint","");motionStart=input.getLongOr("motion_start",0);motionEnd=input.getLongOr("motion_end",0);phase=input.getFloatOr("phase",0);speed=input.getFloatOr("speed",0);phaseTick=input.getLongOr("phase_tick",0);simulationAttached=false;}
+    @Override protected void saveAdditional(ValueOutput output){super.saveAdditional(output);output.putString("blueprint",blueprint);output.putLong("motion_start",motionStart);output.putLong("motion_end",motionEnd);output.putBoolean("reverse_crank",reverseCrank);output.putFloat("phase",angle(0));output.putFloat("speed",speed);output.putLong("phase_tick",level==null?phaseTick:level.getGameTime());}
+    @Override protected void loadAdditional(ValueInput input){super.loadAdditional(input);blueprint=input.getStringOr("blueprint","");motionStart=input.getLongOr("motion_start",0);motionEnd=input.getLongOr("motion_end",0);reverseCrank=input.getBooleanOr("reverse_crank",false);phase=input.getFloatOr("phase",0);speed=input.getFloatOr("speed",0);phaseTick=input.getLongOr("phase_tick",0);simulationAttached=false;}
     @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket(){return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);}
     @Override public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries){return saveCustomOnly(registries);}
 }

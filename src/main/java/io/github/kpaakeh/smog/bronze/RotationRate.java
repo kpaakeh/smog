@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 /** Exact signed tempo ratio. Transmission chains do not round a quarter turn to zero. */
 public record RotationRate(BigInteger numerator,BigInteger denominator) {
+    public static final int MAX_SPEED=512;
     public static final RotationRate ZERO=of(0,1),ONE=of(1,1);
     public static final RotationRate NOMINAL=of(16,1);
     public RotationRate {
@@ -13,8 +14,9 @@ public record RotationRate(BigInteger numerator,BigInteger denominator) {
     }
     public static RotationRate of(long numerator,long denominator){return new RotationRate(BigInteger.valueOf(numerator),BigInteger.valueOf(denominator));}
     public RotationRate multiply(RotationRate other){return new RotationRate(numerator.multiply(other.numerator),denominator.multiply(other.denominator));}
+    public RotationRate divide(RotationRate other){return new RotationRate(numerator.multiply(other.denominator),denominator.multiply(other.numerator));}
     public RotationRate negate(){return new RotationRate(numerator.negate(),denominator);}
     public double value(){return numerator.doubleValue()/denominator.doubleValue();}
     public boolean belowMinimum(){return numerator.signum()!=0&&numerator.abs().compareTo(denominator)<0;}
-    public boolean aboveMaximum(){return numerator.abs().compareTo(denominator.multiply(BigInteger.valueOf(64)))>0;}
+    public boolean aboveMaximum(){return numerator.abs().compareTo(denominator.multiply(BigInteger.valueOf(MAX_SPEED)))>0;}
 }

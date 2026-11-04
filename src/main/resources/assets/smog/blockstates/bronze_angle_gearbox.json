@@ -1,50 +1,220 @@
 {
   "variants": {
-    "facing=north,assembled=false": {
-      "model": "smog:block/bronze_angle_gearbox"
+    "facing=east,output=up,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_east_up"
     },
-    "facing=north,assembled=true": {
-      "model": "smog:block/bronze_angle_gearbox_inventory"
+    "facing=east,output=up,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_east_up_inventory"
     },
-    "facing=east,assembled=false": {
-      "model": "smog:block/bronze_angle_gearbox",
-      "y": 90
+    "facing=east,output=down,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_east_down"
     },
-    "facing=east,assembled=true": {
-      "model": "smog:block/bronze_angle_gearbox_inventory",
-      "y": 90
+    "facing=east,output=down,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_east_down_inventory"
     },
-    "facing=south,assembled=false": {
-      "model": "smog:block/bronze_angle_gearbox",
-      "y": 180
+    "facing=east,output=south,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_east_south"
     },
-    "facing=south,assembled=true": {
-      "model": "smog:block/bronze_angle_gearbox_inventory",
-      "y": 180
+    "facing=east,output=south,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_east_south_inventory"
     },
-    "facing=west,assembled=false": {
-      "model": "smog:block/bronze_angle_gearbox",
-      "y": 270
+    "facing=east,output=north,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_east_north"
     },
-    "facing=west,assembled=true": {
-      "model": "smog:block/bronze_angle_gearbox_inventory",
-      "y": 270
+    "facing=east,output=north,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_east_north_inventory"
     },
-    "facing=up,assembled=false": {
-      "model": "smog:block/bronze_angle_gearbox",
-      "x": 90
+    "facing=east,output=east,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_east_south"
     },
-    "facing=up,assembled=true": {
-      "model": "smog:block/bronze_angle_gearbox_inventory",
-      "x": 90
+    "facing=east,output=east,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_east_south_inventory"
     },
-    "facing=down,assembled=false": {
-      "model": "smog:block/bronze_angle_gearbox",
-      "x": 270
+    "facing=east,output=west,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_east_south"
     },
-    "facing=down,assembled=true": {
-      "model": "smog:block/bronze_angle_gearbox_inventory",
-      "x": 270
+    "facing=east,output=west,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_east_south_inventory"
+    },
+    "facing=west,output=up,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_west_up"
+    },
+    "facing=west,output=up,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_west_up_inventory"
+    },
+    "facing=west,output=down,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_west_down"
+    },
+    "facing=west,output=down,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_west_down_inventory"
+    },
+    "facing=west,output=south,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_west_south"
+    },
+    "facing=west,output=south,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_west_south_inventory"
+    },
+    "facing=west,output=north,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_west_north"
+    },
+    "facing=west,output=north,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_west_north_inventory"
+    },
+    "facing=west,output=east,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_west_north"
+    },
+    "facing=west,output=east,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_west_north_inventory"
+    },
+    "facing=west,output=west,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_west_north"
+    },
+    "facing=west,output=west,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_west_north_inventory"
+    },
+    "facing=up,output=east,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_up_east"
+    },
+    "facing=up,output=east,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_up_east_inventory"
+    },
+    "facing=up,output=west,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_up_west"
+    },
+    "facing=up,output=west,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_up_west_inventory"
+    },
+    "facing=up,output=south,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_up_south"
+    },
+    "facing=up,output=south,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_up_south_inventory"
+    },
+    "facing=up,output=north,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_up_north"
+    },
+    "facing=up,output=north,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_up_north_inventory"
+    },
+    "facing=up,output=up,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_up_east"
+    },
+    "facing=up,output=up,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_up_east_inventory"
+    },
+    "facing=up,output=down,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_up_east"
+    },
+    "facing=up,output=down,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_up_east_inventory"
+    },
+    "facing=down,output=east,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_down_east"
+    },
+    "facing=down,output=east,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_down_east_inventory"
+    },
+    "facing=down,output=west,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_down_west"
+    },
+    "facing=down,output=west,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_down_west_inventory"
+    },
+    "facing=down,output=south,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_down_south"
+    },
+    "facing=down,output=south,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_down_south_inventory"
+    },
+    "facing=down,output=north,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_down_north"
+    },
+    "facing=down,output=north,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_down_north_inventory"
+    },
+    "facing=down,output=up,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_down_east"
+    },
+    "facing=down,output=up,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_down_east_inventory"
+    },
+    "facing=down,output=down,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_down_east"
+    },
+    "facing=down,output=down,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_down_east_inventory"
+    },
+    "facing=south,output=east,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_south_east"
+    },
+    "facing=south,output=east,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_south_east_inventory"
+    },
+    "facing=south,output=west,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_south_west"
+    },
+    "facing=south,output=west,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_south_west_inventory"
+    },
+    "facing=south,output=up,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_south_up"
+    },
+    "facing=south,output=up,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_south_up_inventory"
+    },
+    "facing=south,output=down,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_south_down"
+    },
+    "facing=south,output=down,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_south_down_inventory"
+    },
+    "facing=south,output=south,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_south_west"
+    },
+    "facing=south,output=south,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_south_west_inventory"
+    },
+    "facing=south,output=north,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_south_west"
+    },
+    "facing=south,output=north,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_south_west_inventory"
+    },
+    "facing=north,output=east,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_north_east"
+    },
+    "facing=north,output=east,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_north_east_inventory"
+    },
+    "facing=north,output=west,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_north_west"
+    },
+    "facing=north,output=west,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_north_west_inventory"
+    },
+    "facing=north,output=up,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_north_up"
+    },
+    "facing=north,output=up,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_north_up_inventory"
+    },
+    "facing=north,output=down,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_north_down"
+    },
+    "facing=north,output=down,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_north_down_inventory"
+    },
+    "facing=north,output=south,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_north_east"
+    },
+    "facing=north,output=south,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_north_east_inventory"
+    },
+    "facing=north,output=north,assembled=false": {
+      "model": "smog:block/bronze_angle_gearbox_north_east"
+    },
+    "facing=north,output=north,assembled=true": {
+      "model": "smog:block/bronze_angle_gearbox_north_east_inventory"
     }
   }
 }

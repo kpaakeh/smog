@@ -10,6 +10,13 @@
           "type": "minecraft:model",
           "model": "smog:block/bronze_angle_gearbox_moving"
         }
+      },
+      {
+        "when": "moving_output",
+        "model": {
+          "type": "minecraft:model",
+          "model": "smog:block/bronze_angle_gearbox_moving_output"
+        }
       }
     ],
     "fallback": {

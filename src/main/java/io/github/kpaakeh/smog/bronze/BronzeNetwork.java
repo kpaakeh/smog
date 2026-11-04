@@ -27,7 +27,7 @@ public final class BronzeNetwork {
     private static Source source(Level level,BlockPos pos,BlockState state){
         var external=SOURCES.get(state.getBlock());if(external!=null)return external.apply(level,pos);
         if(id(state).equals("bronze_drive")&&BronzeDrive.working(level,pos))return new Source(16,RotationRate.NOMINAL);
-        if(id(state).equals("bronze_hand_crank")&&level.getBlockEntity(pos) instanceof BronzeEntity crank&&crank.cranking())return new Source(4,RotationRate.NOMINAL);
+        if(id(state).equals("bronze_hand_crank")&&level.getBlockEntity(pos) instanceof BronzeEntity crank&&crank.cranking())return new Source(4,crank.crankRate());
         return null;
     }
     private static String id(BlockState state){var key=BuiltInRegistries.BLOCK.getKey(state.getBlock());return key.getNamespace().equals("smog")?key.getPath():"";}
@@ -38,7 +38,7 @@ public final class BronzeNetwork {
         if(state.getBlock() instanceof BronzeSupportBlock&&!BronzeSupportBlock.mounted(state,level,pos))return Set.of();
         if(n.equals("bronze_clutch")&&(!state.getValue(BronzeBlock.OPEN)||level.hasNeighborSignal(pos)))return Set.of();
         if(sourceBlock(state)||n.equals("bronze_drive_coupler"))return Set.of(f.getOpposite());
-        if(n.equals("bronze_angle_gearbox"))return f.getAxis()==Direction.Axis.Y?Set.of():Set.of(f.getOpposite(),f.getClockWise());
+        if(state.getBlock() instanceof BronzeAngleBlock)return Set.of(f.getOpposite(),BronzeAngleBlock.output(state));
         if(n.equals("bronze_splitter"))return f.getAxis()==Direction.Axis.Y?Set.of():Set.of(f,f.getOpposite(),f.getClockWise(),f.getCounterClockWise());
         return Set.of(f,f.getOpposite());
     }
@@ -60,17 +60,29 @@ public final class BronzeNetwork {
             var state=level.getBlockState(pos);if(!node(state))continue;nodes.put(pos,state);
             for(var side:ports(level,pos,state)){var next=pos.relative(side);if(!level.hasChunkAt(next)){problem="unloaded";continue;}if(ports(level,next,level.getBlockState(next)).contains(side.getOpposite())&&!nodes.containsKey(next))queue.add(next);}
         }
-        var consumers=new LinkedHashMap<BlockPos,Integer>();int power=0;Direction sourceDirection=null;RotationRate rate=null;var roots=new ArrayList<BlockPos>();
+        var roots=nodes.entrySet().stream().filter(e->sourceBlock(e.getValue())).map(Map.Entry::getKey).toList();
+        var root=(roots.isEmpty()?nodes.keySet():roots).stream().min(java.util.Comparator.comparingLong(BlockPos::asLong)).orElse(start);
+        var ratios=new LinkedHashMap<BlockPos,RotationRate>();ratios.put(root,RotationRate.ONE);queue.add(root);
+        while(!queue.isEmpty()){
+            var pos=queue.removeFirst();var state=nodes.get(pos);if(state==null)continue;
+            for(var side:ports(level,pos,state)){
+                var next=pos.relative(side);var other=nodes.get(next);if(other==null||!ports(level,next,other).contains(side.getOpposite()))continue;
+                var ratio=ratios.get(pos).multiply(BronzeKinematics.across(state,side,other));
+                var previous=ratios.putIfAbsent(next,ratio);if(previous==null)queue.add(next);else if(!previous.equals(ratio))problem="direction";
+            }
+        }
+        var consumers=new LinkedHashMap<BlockPos,Integer>();int power=0;RotationRate rate=null;
+        var manual=new ArrayList<Map.Entry<BlockPos,Source>>();
         for(var entry:nodes.entrySet()){
             var pos=entry.getKey();var state=entry.getValue();String n=id(state);
             if(n.equals("bronze_drive_coupler")){var target=pos.relative(facing(state));if(level.hasChunkAt(target)&&level.getBlockEntity(target) instanceof MachineEntity machine)add(consumers,machine);}
-            if(sourceBlock(state))roots.add(pos);
             var source=source(level,pos,state);
+            if(n.equals("bronze_hand_crank")&&source!=null){manual.add(Map.entry(pos,source));source=null;}
             if(source!=null&&source.power()>0&&source.rate().numerator().signum()!=0){
                 if(source.rate().belowMinimum())problem="slow";else if(source.rate().aboveMaximum())problem="fast";
-                var direction=facing(state).getOpposite();var signed=BronzeShaft.handedness(facing(state))<0?source.rate().negate():source.rate();
-                if(sourceDirection!=null&&(sourceDirection!=direction||!rate.equals(signed)))problem="direction";
-                sourceDirection=direction;rate=signed;power+=source.power();
+                var signed=source.rate().divide(ratios.get(pos));
+                if(rate!=null&&!rate.equals(signed))problem="direction";
+                rate=signed;power+=source.power();
             }
             if(n.equals("bronze_drive")){
                 // Account for old direct loads as well: the second output is not free power.
@@ -85,15 +97,19 @@ public final class BronzeNetwork {
                 }if(length>8)problem="support";
             }
         }
+        // An unused handle is back-driven, not a brake. A released/contrary handle
+        // cannot override a running water drive or stop another player's input.
+        manual.sort(java.util.Comparator.<Map.Entry<BlockPos,Source>>comparingLong(e->((BronzeEntity)level.getBlockEntity(e.getKey())).crankStarted()).reversed().thenComparingLong(e->e.getKey().asLong()));
+        for(var entry:manual){var candidate=entry.getValue().rate().divide(ratios.get(entry.getKey()));if(rate==null)rate=candidate;if(rate.equals(candidate))power+=entry.getValue().power();}
         int required=consumers.values().stream().mapToInt(Integer::intValue).sum();
         String status=!problem.isEmpty()?problem:power==0?"source":required>power?"overload":"ready";
         var actual=status.equals("ready")&&rate!=null?rate:RotationRate.ZERO;
-        var root=(roots.isEmpty()?nodes.keySet():roots).stream().min(java.util.Comparator.comparingLong(BlockPos::asLong)).orElse(start);
         var timeline=cache.phases.get(root);
-        if(timeline==null){double seed=nodes.keySet().stream().map(level::getBlockEntity).filter(BronzeEntity.class::isInstance).map(BronzeEntity.class::cast).mapToDouble(entity->entity.angle(0)).findFirst().orElse(0);timeline=new RotationTimeline(level.getGameTime(),seed);cache.phases.put(root,timeline);}
+        if(timeline==null){double seed=nodes.keySet().stream().filter(p->level.getBlockEntity(p) instanceof BronzeEntity).mapToDouble(p->((BronzeEntity)level.getBlockEntity(p)).angle(0)/ratios.get(p).value()).findFirst().orElse(0);timeline=new RotationTimeline(level.getGameTime(),seed);cache.phases.put(root,timeline);}
         double phase=timeline.update(level.getGameTime(),actual);
-        var result=new Result(power,required,status,Map.copyOf(consumers),actual,phase);
-        nodes.keySet().forEach(pos->cache.results.put(pos,result));return result;
+        var immutableConsumers=Map.copyOf(consumers);
+        for(var pos:nodes.keySet()){var ratio=ratios.get(pos);cache.results.put(pos,new Result(power,required,status,immutableConsumers,actual.multiply(ratio),RotationTimeline.wrap(phase*ratio.value())));}
+        return cache.results.getOrDefault(start,new Result(0,0,"source",Map.of(),RotationRate.ZERO,0));
     }
     public static boolean powered(MachineEntity machine){
         var level=machine.getLevel();if(level==null||level.isClientSide())return false;

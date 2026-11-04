@@ -138,6 +138,12 @@ if(providers.gradleProperty('shaftReviewTest').isPresent()) {
 if(providers.gradleProperty('supportReviewTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.supportReviewTest=true' }
 }
+if(providers.gradleProperty('angleReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.angleReviewTest=true' }
+}
+if(providers.gradleProperty('crankReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.crankReviewTest=true' }
+}
 
 if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureTest=true"}}
 
