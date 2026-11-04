@@ -1,0 +1,725 @@
+{
+  "version": "0.0.4",
+  "baseline_commit": "a7e2e09",
+  "protected_author_png_sha256": {
+    "block/chromium_ore.png": "263ef2f7ea738fc4e5a9a382006d1ef3946d1894ee00f18bda53539c338206d4",
+    "block/tungsten_ore.png": "7b1ab8199d93f275196986c6b08b2e2608251efccd3223bac03e74fbb1182eab",
+    "item/crushed_molybdenum_ore.png": "fd54d5895bb6bca8431caaffcf0de00157b1ffcb898cc70d4b7d6772b1888f62",
+    "block/deepslate_rare_earth_ore.png": "0221b9711c427ce4f57f44b37950332d05747b70795150f096ad2799bad2ce21",
+    "block/zinc_ore.png": "67090b443fb08bc23e6d537e0bc3696f6dbed3b4d067a9d672af30239c82a161",
+    "item/crushed_nickel_ore.png": "61b1ccc076e316cbf8c231d3d53909e6885b218c2e5722655a6fdaa9b39db678",
+    "item/crushed_tin_ore.png": "566e129ee0f4ab4c63fbe6dc85f8c4d20ad157dd4c3b177b0f1fb168a65591ed",
+    "block/deepslate_molybdenum_ore.png": "9aee5d4d1bdb30ed4d5bb5c0b4148b5a8525b5ad7a638acfbe766f3c2bfb5b12",
+    "block/deepslate_lithium_ore.png": "fa5dda22907a15581d125450c3a76d2e991eda4bc1e87843515135709a5256c0",
+    "item/crushed_rare_earth_ore.png": "fd19b3c34eec9b5906fe0d1cb7b6b1553b2eee6e8e02a7f176f2894022ce1d44",
+    "block/kaolin.png": "47e1ebf36be1885c9244f7dee1361449c903d3c157a5a2b7dd9b0f23ecd31eb9",
+    "block/manganese_ore.png": "97282ad11bd1eb246fd1cf7ed479e2873ccba2fa8b41e3697c68bf8f52366288",
+    "block/nickel_ore.png": "09890dee1373659fa9d75d00f7afed3a25eeaaf26a7deb286ef0d422a7ab7b40",
+    "block/deepslate_bauxite_ore.png": "ea9e8f0b51604b887d7090b69a69d1e12f9c30a57adef4f79fd2363b056a612f",
+    "item/crushed_lead_ore.png": "c17a5518de9788557dc7edc605b53f94c41ac8831c4ee8825877a52ec8d9e6e2",
+    "block/deepslate_zinc_ore.png": "1e6dcc0c161837b2043d77759e4c84a76711c8715bc7a597e8610172ecdaf930",
+    "item/crushed_uranium_ore.png": "4bd9f50df4a4b0b68fd9d4c97749b6895e02df651646bdf762ea739a8ed1c770",
+    "block/deepslate_tin_ore.png": "fe5b98af778c9da5311f062bd95c0d0842f30ae3a6ae471787b1b861a1adf34f",
+    "block/deepslate_uranium_ore.png": "34ccf07ae41de3a48d841eebda5d863f0af8a65b55222680b9d840e07bac13bd",
+    "block/rare_earth_ore.png": "c2c41d66d69a814a0987aab87262ba8a2fb6635cf5083fe8e03fe46112e64184",
+    "block/lithium_ore.png": "6e16c30bb26c5606efdd44dff6bccb29a0995a1cbcce8bf0e9f22b9b3a4d5b4c",
+    "block/titanium_ore.png": "9157fdd13511a3aa30dd00f00a4eb689ef40d4f91cb6e37c2e45c04a793aa47e",
+    "block/bauxite_ore.png": "b7290166ef10d5fe33aa422fa808c51d3d380a08f9d7d36e0ed0753842f95692",
+    "item/crushed_manganese_ore.png": "2be4f2b81015d14e2ded813124632a6058727b471df2b6b10f6d881b815ac669",
+    "item/configurator.png": "b576d125f7f8dd4d688bb9f19d0dbea0bd1ced7bfa77da6d6e3ed1d29984142c",
+    "block/lead_ore.png": "621c9a585ed9085fb96240f2f4f6bbc9f965c04d2d4f8f85ae65aa485b18d7af",
+    "item/crushed_chromium_ore.png": "360220eb73b356f417ce4e13928008ef43ba1c81c3ff1c078c5b5120f7e68dbf",
+    "block/molybdenum_ore.png": "6ba882d8c6bcb9b60489cdafe9df2a3dfaeab70580cc7ad3227f15cde3b98a55",
+    "block/deepslate_tungsten_ore.png": "6885d1b16dde89335f1f5824729df20c4e938d53f00dc0ab0b6bc417889328e7",
+    "item/crushed_tungsten_ore.png": "c4067c2311a57888fcd45d8471aae2a11eb430219352f425e2af44008d6dff15",
+    "block/deepslate_manganese_ore.png": "1d0f9b1e6bd89168f3f5909e1637c1b720dc5761f522ee887edfdc5da8845af1",
+    "block/uranium_ore.png": "c20a47587c8e374673f9c71e8f5f1b9f562bf538cb17713076c148fea66dcd1e",
+    "item/crushed_bauxite_ore.png": "6196e7812bbec91ac052adb409ccbe891c82561dd133715dd65437d37c7d57db",
+    "item/crushed_titanium_ore.png": "6cc0729aed28ab6d81bc5016adfc273444fe21b5fa9fef9e5872d2f3597a105d",
+    "block/deepslate_lead_ore.png": "524802e3f213311b78386a52ed4a665bad550780802be20ca76b733aaaa4e9e6",
+    "item/crushed_zinc_ore.png": "197ff47f3a9b59633d20e2f7419522ea4cb8b81f19af1ed7f092adbc450cf827",
+    "block/deepslate_chromium_ore.png": "27c68dabfb4d84038609139db7db35799aec5f3b34cd6a2ed11e05dbed6d5b56",
+    "item/crushed_lithium_ore.png": "a268e334a2ed22d9928f0b045e1048010b592875811bdac2268b617c470fef42",
+    "block/deepslate_nickel_ore.png": "be34eed6afaefa329044176f64eda04bbf7ea37d6ea653dafb2e253b380c8c08",
+    "block/deepslate_titanium_ore.png": "f06f3654b9fe2f6016b353d230cec8efc978b568ba41f262e86a7fa903a50991",
+    "block/tin_ore.png": "ba92009d359aeb69958727dd25f82423697141c550896f879dac01e7b0e772f3"
+  },
+  "explicitly_authorized_author_edit": [
+    "block/handcart.png"
+  ],
+  "handcart_geometry_and_uv": "Unchanged; JSON equivalent to baseline and no git diff for model.",
+  "changes": [
+    {
+      "texture": "block/bellows_leather.png",
+      "before_sha256": "590f35142c2397769b8e19400d9ac42a4df7a78df700cfbb7779e6e4d58769b0",
+      "after_sha256": "0deab8ce8368e0b73dc6a48a8de4c6e4269b1e10b485d394ad3357c51f5e6f8a",
+      "reason": "Кожаные складки получили более выраженные светлые рёбра и тёмные впадины."
+    },
+    {
+      "texture": "block/chiseled_graphite.png",
+      "before_sha256": "3c03792f5c817e0e6ce4117f0113f53c0f1203e0465ae389e21cc238431128d2",
+      "after_sha256": "f28dc8c944d12823977e6029280a70917166e45e81a8699adf9fa94899e423e6",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/cracked_graphite_bricks.png",
+      "before_sha256": "5d368db8ffd5edaac638f223f85e42abe217dcbaa01c8b9845a6883bb6732c27",
+      "after_sha256": "424a38d7c2592ca0eccccb0473d96bc34546f0854862611378818dd8085e75f0",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/cracked_phosphorite_bricks.png",
+      "before_sha256": "fb535a302103a1ca7481db8acf309fc074dc3a76196b9dd8d9732a285d9bb1bd",
+      "after_sha256": "d7f7ae36f2dc14e1e11d380ec16ba487dac233177d5b7a384a7b91acb1ed80fb",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/crude_oil_flow.png",
+      "before_sha256": "642da6a32b9733b343f8b08e809dbf804712ff35d631c7ee439c18d5dc220b57",
+      "after_sha256": "29b3f1dc3852795d0241acf399f37c95e8cfea212dd6c3289994550f978cd904",
+      "reason": "Нефть остаётся почти чёрной; блики и потоки различимее, кадры и alpha сохранены."
+    },
+    {
+      "texture": "block/crude_oil_still.png",
+      "before_sha256": "eb5deda1fd6b2b171f9112a3115604be753d9220aa2030121f50155f432819e8",
+      "after_sha256": "436498213a78f3003e2f1e7de446faf980fd66325d1dc489e762e8e81c718785",
+      "reason": "Нефть остаётся почти чёрной; блики и потоки различимее, кадры и alpha сохранены."
+    },
+    {
+      "texture": "block/graphite.png",
+      "before_sha256": "6f62a6ca3ac6a3cf3a40925ba1b6146c27fe7122f361fb947168e2cb1c631d44",
+      "after_sha256": "b62658e906870b9813beeb089fc5e010e969b121291f39e425a53a9799866a06",
+      "reason": "Базальтовый рисунок сохранён; графит остаётся тёмным, но грани различимы."
+    },
+    {
+      "texture": "block/graphite_bricks.png",
+      "before_sha256": "78005400b0f4fee0755a93d13b239e26c36647b971f26ba0fb5a54719b6dbe12",
+      "after_sha256": "d6d1d2aff1edea87a72bfc337916e1b2559dbf267a6efc10fce617f70f0161ac",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/graphite_tiles.png",
+      "before_sha256": "6abecbcaafb509112e1e257f8b5ae6ae0018b1d87eca309ba3b1648321b5cae0",
+      "after_sha256": "2ca604d3ebe4cb9d3eaa62d14f619e7faa20faf77371f73e5601e8f9981d3cdf",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/handcart.png",
+      "before_sha256": "1d3c2ca91069d0b3b79276902fed790f23d502c05bf9317fcf23927b65dfc1b1",
+      "after_sha256": "f8c9860d170a45c31c054c93985e477246828ece8f4c711d80d457afad6f5755",
+      "reason": "Нарисованы деревянные UV-острова в палитре досок и тёмное колесо; модель/UV сохранены, изменение разрешено автором."
+    },
+    {
+      "texture": "block/molten_cast_iron_flow.png",
+      "before_sha256": "85ec0064075c84685daa64448ac2633a67f5a72a01e452a90e776e1c25ad1164",
+      "after_sha256": "11f0a438c790212ee0bae78248da48b51c93b7f83198818a71a5c80d4bec781f",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_cast_iron_still.png",
+      "before_sha256": "6cae4730dddbb81810fedccc0585b6f69d039c2fc3c442b021d3c1bfe7722a6b",
+      "after_sha256": "d2fdf0897bed1f29774bd74b4d2f65cf2bc71254ddd1a9a9fbf5cdf4aa2a0f75",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_cast_iron_surface.png",
+      "before_sha256": "685bbc4dc424b7eb817164ad894f6925dab29060094b206470d13ad899419ee0",
+      "after_sha256": "eb0d645402f24b2ac552c555bb54d7096fc33dc4c32f071861be26c0cc5c7985",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_constantan_flow.png",
+      "before_sha256": "14fe98fabfdf4b7a3d75a3037b67027fec612c01e54682fd31827b546b18471c",
+      "after_sha256": "af0cd12c9e7b63015455bc131c39357190ed50115ffce77fb2d227c6d2e3d53e",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_constantan_still.png",
+      "before_sha256": "c84ba5b7373243811f7a81faeb6c2e2f03e450ecf7461acf4e1da5314fade9f5",
+      "after_sha256": "aeb6217cf94a2b15ce0c67479b2ab4dbcd412bc4f61ee95cb2de3d2ec2946c41",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_constantan_surface.png",
+      "before_sha256": "31f2cbbf0741a53cbc784f0e1d64b86ff5caf3b2b091cad69332fe618b55415f",
+      "after_sha256": "58c35649ea718c363198bf73e3df12d2f21a97689d275c1fb50bd2a79a353d8f",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_lead_flow.png",
+      "before_sha256": "389b1009020b2e19eb8178eaabeb25ac52d92c90b38127a2fbd4ea65ba88090f",
+      "after_sha256": "75b337f2029c7c8e2cfe02483cd5da392dee99238a6986eca1527b52a99cb797",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_lead_still.png",
+      "before_sha256": "ab058a49794db919244b10905334fe5ba4d012384ee29ee9bc6137afde62f2f9",
+      "after_sha256": "f232db3f1d67af2d5fc0e499b0789841d2bbd81fd2acdb5882e2c6d8f76673a0",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_lead_surface.png",
+      "before_sha256": "01a30bd97f3d3d31879692568de7725b76bb137920fc015db3655e9484444a6b",
+      "after_sha256": "91e0af9bb2a9cace06bff0dde12f820f67808f66d14778f2a354a388bb0b9ba6",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_netherite_flow.png",
+      "before_sha256": "68a881cee2c71c7a7e5e4d3e14b881b509fc612c88f5498645b8bb63ba1764a5",
+      "after_sha256": "5867bf88e52626e93861412cc4d1d2bb6646a8f1fb6a8a72df0a1fb6f8a288dc",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_netherite_still.png",
+      "before_sha256": "83af592f8a884116c604e359db81532516bcd4293958128fb98bae43efbe05c3",
+      "after_sha256": "df2dfcbaa82df4c483c43f567a1614a47ec19c952b2bd3ffbc3cea159c3f3ee2",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_netherite_surface.png",
+      "before_sha256": "b1de39d6aab106a324a2025674e9cf03852fb925b442874f7a51c44240d85133",
+      "after_sha256": "b299c3c937c3edc8d29089401ffa229fdb6932474c9d148286c8b08659a54da9",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_nichrome_flow.png",
+      "before_sha256": "d222d9b6513586877f41ddb3ae72b18201b7f5527f9c47681ef9b9afac3d14e2",
+      "after_sha256": "6a1183bef97de73b6b9e6ff5132c9069901ae769c97c1840bfbafc3b6d090706",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_nichrome_still.png",
+      "before_sha256": "baa88126e0c6a84be98592665984d572bac22d9d34e1dab7267567a8fbed7e13",
+      "after_sha256": "235b6ae69718fae0fbb451140cb39914b20d1a74e1c3633eb94071d1cb6e5952",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_nichrome_surface.png",
+      "before_sha256": "d67847bc82bda2654e7f1837af223b97934df3f9120ed542595ebb47d8ccfe17",
+      "after_sha256": "c343c149cb9be67901d90bca296e25943e798c5e063b62dd59dd488020c67b89",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_tungsten_flow.png",
+      "before_sha256": "8706486d7ef8ed9a38c1aeda0d248108bfc838acf49adebe967eaf6075be2d96",
+      "after_sha256": "df6b9b105a2fd84a2547c95e07fd16f4444a1d5f81d94053b0fdb0d8907bec2a",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_tungsten_steel_flow.png",
+      "before_sha256": "51e494273d8695799f566cde6c48218d9c923a50118c2acc0b45ff9f8add7de3",
+      "after_sha256": "6351830808644ccc4357b94463c030526f20a5a127046ab5c54d6fb56902575d",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_tungsten_steel_still.png",
+      "before_sha256": "cae0e70df87a87658395479772520b5f047f28c0a7fb707b3edbfbe24247c843",
+      "after_sha256": "93ca8f72888faa838936d2a1b7b00a8e0d5248ccdf349e35beafc9d90b8dc72c",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_tungsten_steel_surface.png",
+      "before_sha256": "eed586b88f333bba56816f92ee28a8b33710f0bff8d1a8c4c7a77ff11dab791b",
+      "after_sha256": "19a2159ef0afcec1516495fd75eb27112b7260bceeaf2d4401c14478f9134a81",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_tungsten_still.png",
+      "before_sha256": "747c89c59f1dfb62d6f155b7d8885ce8eaac7e72d7ee26c65cdbdad1fbb5e2e2",
+      "after_sha256": "0b4a51113233b82c4a2a202dbd400e7ac3c8cde1bb5c036057002bf42b36a525",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/molten_tungsten_surface.png",
+      "before_sha256": "04fdbe2220411d3d55994982d259a5ee894ec0fe9a4ceade1fd550707b5084bd",
+      "after_sha256": "a0b1d8adbdc3c6f819ce0ca97c3cda71f9760353f25ef07358bf27157171bbbe",
+      "reason": "Разделены светлые прожилки и основа расплава; сохранены цвет металла и анимация."
+    },
+    {
+      "texture": "block/mossy_graphite_bricks.png",
+      "before_sha256": "3894b7e2ce936dad6715c1afe6a27ea84ffaaaf1c20fb78fb6985ab1b958df6c",
+      "after_sha256": "1c533e197957eb788006bcb426969cddc1ae3a5c1c44deeaa9c51b109383333f",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/mossy_phosphorite_bricks.png",
+      "before_sha256": "ad98940e9c41e0034732dbef19d5e7dd3efe5b37487edf2d65ca93e8c7f76e52",
+      "after_sha256": "7405a6acab8b2407796b8aa4b57955604a5cf09a3c8c69dc4c55182219c58e75",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/polished_graphite.png",
+      "before_sha256": "57fcdd14615325e7cb00fe587367299163e632e2ca52815c314e98c2b8ce6981",
+      "after_sha256": "3479b3ea9a582145e46470c1a4da46ab9ff5c5ff581b9f4a666b5f34aef1368c",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "block/polished_phosphorite.png",
+      "before_sha256": "1e0619877213b4776658fa64357e2d7a15191355fb27db379915a877ea4a3c8c",
+      "after_sha256": "0bfb71f0d33d786834adf9e388800de5019b9ae226d1e34abb59e7baad69208d",
+      "reason": "Усилен контраст швов и поверхности; сохранён ванильный узор, отделён цвет мха."
+    },
+    {
+      "texture": "item/aluminum_bronze_dust.png",
+      "before_sha256": "28f372e5ad5432cc775b7ab168a24408f48b9546211928e7c128e35b51c64c74",
+      "after_sha256": "b5f5377c9fe30196bbd1571f4b3f7c42d94df0037e35a8810b52f1eba01e169b",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/aluminum_dust.png",
+      "before_sha256": "23d43eb966e5e6b18bc494db38a9547a30846dc0ae4a0c1d35f251e891b680a2",
+      "after_sha256": "302e96b3c82f8f5f1118987d7adb4516d38211b78965a61befed85a8153bb71f",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/bauxite_dust.png",
+      "before_sha256": "7b1f487c63108a3a9ba74aa8b346cefdfeda60ab5907890e20f14e558c769abf",
+      "after_sha256": "6d89b9b61730a39727e15310bc49a7ed61dc651a80a8d63c367a4f2cb04e8355",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/bauxite_shard.png",
+      "before_sha256": "6b9377fec03a73c02bd205665fdb47e537a00ebd59201157c1440bcfbe98805d",
+      "after_sha256": "5076869342f33dbc735056af484b28ee9ea1111ba326fa92146e68cb6be1b3aa",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/brass_dust.png",
+      "before_sha256": "87d20f11ade8b0bb1b82a2ce5186c4d1b0423a8bd9a919d8ea6ab6ccdf9558db",
+      "after_sha256": "c55f95d84f46d87ba799352c7aae04a1327f0310f555d2463e17d26360e9c14e",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/bronze_fitting.png",
+      "before_sha256": "8f3b56f0b856793f166051dea360b8b0c85f717627fd5b2c77a111f7dcde7f20",
+      "after_sha256": "95784a78bd9fa7e78b3aa786b41f58815bc9d62edd40f2e47864bf580f80e916",
+      "reason": "Два различимых полых звена вместо тонкой вертикальной полосы."
+    },
+    {
+      "texture": "item/bronze_nugget.png",
+      "before_sha256": "cc41155cdf505f8e8e506f14952e3450a5fe220d19d5facb8ee12f68d80c310e",
+      "after_sha256": "72e4b5f0d89c1a3221e1eafc5448409ecda1c7e704dba8e081162c8a55e21254",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/bronze_pipe_part.png",
+      "before_sha256": "9c8cee0f46f545545a9632595a982d91a300b9b4f95e588cf86d6ca5317b7bee",
+      "after_sha256": "cf57050717adab61067bc58b63f912118eeed91208d7afcf410064e49c782bd1",
+      "reason": "Осветлена стенка трубной заготовки; сохранены тёмное отверстие и исходный силуэт."
+    },
+    {
+      "texture": "item/bronze_plate.png",
+      "before_sha256": "2b81e4259aa3d614dacee5cc7a2823ef358bc2927a68bb15d19b269f4624c5e7",
+      "after_sha256": "b70d6c5054b7992a5af1dbae64653efd2399f5e084103a98c9ba6f877c97781f",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/cast_iron_dust.png",
+      "before_sha256": "16837d48adf65e85f892da91fe82fbcb6317fa917e5660eb137e2d48845aaaa5",
+      "after_sha256": "6c701350c3c9a16d237094e8e0d4527f9d7618b60946a064933e1c0e5e051cda",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/ceramic_core.png",
+      "before_sha256": "2c32ae4d2c027c1f024d7dd10b148c29ad97f9d158e9acb8ada67ad2df5bf6f1",
+      "after_sha256": "1f30eb9947f366728b1e2b41368ee47b037bd3957309a914528976a16a940611",
+      "reason": "Светлая керамическая грань отделена от тёмного торца."
+    },
+    {
+      "texture": "item/chromium_dust.png",
+      "before_sha256": "48a00b33d64c5c0ad03e79540c4b69d6a3bdf056a21d45885195a4e2badeba3c",
+      "after_sha256": "930693d5eb7a50cf350fbcf84650c942683b95d837c8b07653baf1fc9fff04ff",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/chromium_shard.png",
+      "before_sha256": "ff2160eaec4c27c7fbd55fd9ab8e811586e282c3d41ad2c716f37b5fcfbe9137",
+      "after_sha256": "8ce6357185973603cab2826770d503b89a473d64a1d18c4af0497f54d8af4397",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/constantan_dust.png",
+      "before_sha256": "c69bd3f37bf77652c36e3a960f9da3fa104c0ff97d179e8a5497909d5c9d0159",
+      "after_sha256": "bb586946ae5ca22ffa15161a557b3e1bb2f36e1dc424eb6431e81c8e1df160f7",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/constantan_nugget.png",
+      "before_sha256": "f8a30930ef992cbff722b52f081509155c744f6c05f10cde0a720b064a8bd738",
+      "after_sha256": "29d947f43e510fd7ab4db727d34b069352b2302756bf463bdcfce88b313c179a",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/constantan_plate.png",
+      "before_sha256": "42da2abc95adb546a2c48067b058fcfcbe92d5bf74ecb100b29778f2083a06c7",
+      "after_sha256": "883e573489c9a752a5b2953e51eb1d6bc62372b12c578c361558a3cc0e38f1b4",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/copper_fitting.png",
+      "before_sha256": "6b9c0b9c92225b9ffc2f1b3bb42ffdf81c8efdcaa80fb7e8bc6a48637832202e",
+      "after_sha256": "eb420db36e48ae239478899c2ca55d8892b70058c30a93d85ac42b05f29eafb4",
+      "reason": "Два различимых полых звена вместо тонкой вертикальной полосы."
+    },
+    {
+      "texture": "item/copper_pipe_part.png",
+      "before_sha256": "8312b5977f3fc58b0efc31cab40eeb1bbca5c56ce8ab4426eaafadf3f1e3c6a1",
+      "after_sha256": "e57e805033a1b74f9ae47e40a11ab4ee11fddba195471e4a99eebdd46270c41e",
+      "reason": "Осветлена стенка трубной заготовки; сохранены тёмное отверстие и исходный силуэт."
+    },
+    {
+      "texture": "item/copper_plate.png",
+      "before_sha256": "668ce769816ca22107a5d8d6b6e419df6401a9b766786ccb69d1abbb79b8fa49",
+      "after_sha256": "e797d335e03b740791aa4be5c00950374cf394eafbf31522f797fe5a95bb741d",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/cupronickel_dust.png",
+      "before_sha256": "9d7a06bcf22f91fe126a5190de966f8011f61ddeaee6dbfa814b8182bb04280a",
+      "after_sha256": "a22c8c13f7b58ae757a37120b2be11eef6d1ee4ac2b40b4839168d656c55aa59",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/dolomite_chunk.png",
+      "before_sha256": "aff9a09098202b8787613e3105bfef941589bb26b6afcdcf7ce6d81fe0c68af8",
+      "after_sha256": "9658673abe45591e64f53ff93ea322cb23274026458eba2639d13ca20ae3ae40",
+      "reason": "Новый угловатый кусок минерала; цвета взяты из соответствующей исходной породы."
+    },
+    {
+      "texture": "item/dolomite_dust.png",
+      "before_sha256": "92b02a7e631abeef7b244fbed89d4821d69420c6d2fde18ce58d867adabace8f",
+      "after_sha256": "e74c15053f261c03ed8ed5ac0fc3c732f2bf92d6d9b63775f2a1fc0183275ff7",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/duralumin_dust.png",
+      "before_sha256": "724d11e941c9b16c74f436ee976a13d2fe0497ab3697b582e99b049807015f2d",
+      "after_sha256": "2bfa086de5b38f146fb50756f280adf48ea10dc4db0f905cf889a62dd4fce405",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/electrum_dust.png",
+      "before_sha256": "ac785ff8d12ec860cc77dc44243ffc67ba81352b0f1b2fe8a4cdf21be6afc2fe",
+      "after_sha256": "3b1202101b44dbf508d33776c634263ef2cae850ddc329e194143fed3df4862e",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/fluorite_chunk.png",
+      "before_sha256": "361cef3ef81af7137e7f35d6d33ce5e704d7263128282046704e7defff2668d7",
+      "after_sha256": "01b0ead93daea8e516aebcf30f6781f8e665d85fd8fb043b07a60f45ba7b0eb9",
+      "reason": "Новый угловатый кусок минерала; цвета взяты из соответствующей исходной породы."
+    },
+    {
+      "texture": "item/fluorite_dust.png",
+      "before_sha256": "2dd10460a0b8e4f59aa6d7c82c4c59bf575ff77f01f5bf1b63ecf4a04b935c57",
+      "after_sha256": "913384e2956ecd89a0e2541efd65e1ce7ba8f6cb7519bd3fb73b016d15c6c0ac",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/freight_rope.png",
+      "before_sha256": "398597a27c67cb6fa64aae373ba7b7d99810ec40dc4c395435e7f5d5671323c2",
+      "after_sha256": "33f9fa1e04ec1ea069325ee9c6372a2a11becc8e45b12397983f5da53ae30bc3",
+      "reason": "Высветлены нити и контрастные стыки; исходный размер и alpha-маска сохранены."
+    },
+    {
+      "texture": "item/graphite_chunk.png",
+      "before_sha256": "d99b24559a92dd28136d5423dac320ef2b680bf6a24902c24c63a0f20d799108",
+      "after_sha256": "a006df64987dd93ffbd2a2de75469f7bab958e8f32a385d4135766eb0c1034dd",
+      "reason": "Новый угловатый кусок минерала; цвета взяты из соответствующей исходной породы."
+    },
+    {
+      "texture": "item/graphite_dust.png",
+      "before_sha256": "dbf577a57c7151244d5c60faeb2c846f2012700ef649067526708d6d1db8e4ef",
+      "after_sha256": "2d03fb5555fef6d33244f2f5a48b001c510a0dd4cdb76675c9f900dbccdc3edb",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/invar_dust.png",
+      "before_sha256": "eac941993436cc1c0c20c91fb17d7cd6ac963023c99d68b06a98b6862cca8b9c",
+      "after_sha256": "3035525a4bd3e69a0f610c35818f6629436f27a30f0f220bc6164e5a59b5d563",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/kaolin_dust.png",
+      "before_sha256": "56497077a79a7643775d976288569393911f539e21622890b972fbd4458c86c1",
+      "after_sha256": "24ce3f10ee19467e89e3110a50269db3db56e58db93d0678978c5a6b57670ff1",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/lead_dust.png",
+      "before_sha256": "b76e7aa50632f7acfcbef63b6a312d66bf3e95d13139432fdcfab91addba1cae",
+      "after_sha256": "2bedbc05a4b8720002e58761d35f449e8ca5ca74ec4b081801197c76c1a4c176",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/lead_shard.png",
+      "before_sha256": "ea49687dafbe470fe7d4b1ee635edfeb67124eab75b2d0aee707a4dba5206f83",
+      "after_sha256": "e081cb1ca326838b8b69643ca62f2d9b381c35aa16653ec7b14098710193570d",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/limestone_chunk.png",
+      "before_sha256": "5f70a6b7d6c291f4513c6811e517fef61e2f04e48435664aba886f5b45a403bc",
+      "after_sha256": "cd680147665bc7c8519687181211aba2a05721664aa2dbfeaa95a5c1ce5072c9",
+      "reason": "Новый угловатый кусок минерала; цвета взяты из соответствующей исходной породы."
+    },
+    {
+      "texture": "item/limestone_dust.png",
+      "before_sha256": "6a0ac457aee3513e3898d2c1703a907ec86a32651362e6c0b4f0210ba8944e29",
+      "after_sha256": "bf2484592ddad52568f17bf8f43c16f3d97e559fedb1a6c7205068e4e84b2613",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/lithium_dust.png",
+      "before_sha256": "935aa3adcf9c5a193448ffd19e664c5c894c221e83579157cab25043cdbc01b2",
+      "after_sha256": "c72a16c1eae45b699db77df898eb64e35d2997a6b8c764d854172a3be6656c9b",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/lithium_shard.png",
+      "before_sha256": "524f0ec2c904ca125ba75d9dfa57cdf28b8487721c48969187add4fa600792b3",
+      "after_sha256": "55815b207b57436db2d789d78326fcbe11cbece7474cf3e715a4cf9a95bb2930",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/lubricating_compound.png",
+      "before_sha256": "225346f3e72ce5341a2a3b18253eedf811b48142a9ea36b7d0b032fc9a8c3b60",
+      "after_sha256": "5a273c8fc071cd2e7a59c45bd3c4863df82077024784df25c01e7706f43d76f8",
+      "reason": "Добавлены читаемые свет и тень маслянистого комка на ванильной основе."
+    },
+    {
+      "texture": "item/manganese_dust.png",
+      "before_sha256": "f2c4ccc163ac64285df63ff0ccce82ddaa0b98e48aa578a35fb9a89354ed6f6c",
+      "after_sha256": "a98041223298b49cbe7042c6b8f9b5769bc65f2eae62dd9a6fbe9fde282432ed",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/manganese_shard.png",
+      "before_sha256": "323c6a85f190a0bf09fee67f9e67a7213b1e0b042f557ae8243168433c3ab8cd",
+      "after_sha256": "4823267e72385b8ea957421a5b5b84bee824f75a580716e26cfc93bc7c72c1e1",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/molybdenum_dust.png",
+      "before_sha256": "d93e492882f11f50cae75fd45791398f173170e1cfb27578d40dea716f34c68c",
+      "after_sha256": "d3a5e6188b51d94bd6de43af81ab29b12402c3c68d77335307e8f5cd27c1a188",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/molybdenum_shard.png",
+      "before_sha256": "a7e429a6bae88d8e3f10b6af471bb7271034f29c7d2830b82645000acf8db8c8",
+      "after_sha256": "8974c3d8d9c2ed5630be50bf250b23feab7b529500441b429f9637945e1a1018",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/nichrome_dust.png",
+      "before_sha256": "f9cdfc324dc8b6e9ba052d226731245c22bdae63f057c5e66a00410440bd741c",
+      "after_sha256": "cea5a078308ac6cf97ee91eefc31612a6df6a4eaa42028885f0d286ed1ad0fd9",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/nichrome_nugget.png",
+      "before_sha256": "089a0f9c4bf414954b4d1f3a914d8347af9730108c29f68d99492187e3f07048",
+      "after_sha256": "2e6291f6fdb760ccacc295383cccd15981adc2128a2b89c7c7ffbeecc1abb259",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/nichrome_plate.png",
+      "before_sha256": "f45d5fae293628e43ec7b88a80d01c0a87e0c1c407c33b361368d0aae571df95",
+      "after_sha256": "c2af2e80ca7caf984977233fa0cd579e743674363fd4153d036225ad4387685d",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/nickel_dust.png",
+      "before_sha256": "f7fbef0d4e1b99926f78df6d86fef7262dd4ade8f646b44a4dc1ef2fce564b5d",
+      "after_sha256": "c62d70189df363a3ed72b47d59b76a0affda9974268ac02e5c6e344f754bb5e8",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/nickel_shard.png",
+      "before_sha256": "a67c5d45dcb003221a07e9f579b4927d4ff0d3335e699f95644268eba2d8faa1",
+      "after_sha256": "d4de93639b6b5282db92807ec5ad83172301a9efbc5a0a698f865bae9a6a697e",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/nickel_superalloy_dust.png",
+      "before_sha256": "8625b656bdd11d11753773a4aca8250812a03f49bcf7a71bbf6f5047fd62bec7",
+      "after_sha256": "d776465727f5a3d36a929dba23b6ee1e7b0ebf83c2855b67608ffa41a8c9f9ee",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/phosphorite_chunk.png",
+      "before_sha256": "8b9594585a8023e9671fcc52b1facf4039bcaf55d538f2675c399929176d57b0",
+      "after_sha256": "138135bb27112528608f3f31012de7ab9cb4b483952c97fdc2a0afbd9fe07e90",
+      "reason": "Новый угловатый кусок минерала; цвета взяты из соответствующей исходной породы."
+    },
+    {
+      "texture": "item/phosphorite_dust.png",
+      "before_sha256": "9579c0f4a6f0ce2e32af5c936ea67c438f61251a1a865ff2001d4422014b9688",
+      "after_sha256": "0ab2d71690d59872a1fbda97d9e179c74a4747f092ee9bc23b5f300c9a744ec1",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/plant_fiber.png",
+      "before_sha256": "3b392c582000586ff453fd5ceff925a9ff592a9c21b111a803ec9230a53d5071",
+      "after_sha256": "33f9fa1e04ec1ea069325ee9c6372a2a11becc8e45b12397983f5da53ae30bc3",
+      "reason": "Высветлены нити и контрастные стыки; исходный размер и alpha-маска сохранены."
+    },
+    {
+      "texture": "item/rare_earth_dust.png",
+      "before_sha256": "54121936d871cb5afb6e316f4b58fd8c5dc8fe8178034cf1d5dae9cb3ad43127",
+      "after_sha256": "bec20025d910ad2239eac124fb09247585a6866a52695fe3d2fbaecb6c4bac8e",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/rare_earth_shard.png",
+      "before_sha256": "644a11c65e3dd661dd1a834a8ed2c948eef6767104b68f5142184c921a24d3ad",
+      "after_sha256": "86c2d1e5eed49684fc3d8738e01bf1a8008fc32a72c60de2cb71cd1aea6d24dc",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/rock_salt_chunk.png",
+      "before_sha256": "9ad2b86ba50cdf90ce52e0f06efb9b7b4cca6cd3c4080c58aebe977c0f69ecca",
+      "after_sha256": "1b0f1771c6c5d90c2cec8ce9dd759f8adf8d5104714c075efc2f50c2a4f4cab0",
+      "reason": "Новый угловатый кусок минерала; цвета взяты из соответствующей исходной породы."
+    },
+    {
+      "texture": "item/rock_salt_dust.png",
+      "before_sha256": "59bcab0db4a1b63150c94fc15799663b6c50255b785c91e1893c35c22beea9ed",
+      "after_sha256": "07416dc21a2ce54db08185fcd6ec8410f71fbab2f5929d095b9a0d4f0e8c6873",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/silver_dust.png",
+      "before_sha256": "999bf3ae684443d1e8988d89ba61db44aa10868dbcef5ef80f82bcb31f1b810e",
+      "after_sha256": "310ccc6749940760a5c966e23043df5d198bfb743090046373ccb634db2aeb51",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/solder_dust.png",
+      "before_sha256": "ce571cb973dd9a37417007476c5850f58add705baa8eccda77b4849b56352b9e",
+      "after_sha256": "93d99732c9dcb2659ce87a53e42473f3c10f7439d07ab8574bb8965f9a67b583",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/stainless_steel_dust.png",
+      "before_sha256": "982dabe24bef9086f696344c61ea0bc6991729e6966383ae3bc51894156abc1f",
+      "after_sha256": "7a5a0cbeecc7998fc76e71699acdce47e4772b4fbe2d5e95e279b174f781b6cd",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/steel_dust.png",
+      "before_sha256": "954b3c9ae03f9e41e5ee3fdfa3af8c38889feb4bba344f294df32ae4f4e6a42a",
+      "after_sha256": "5b6657922519e520c6d4bfdbc96e899e068a0377efd164b7d2ec3c6b2e9e5db9",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/tin_dust.png",
+      "before_sha256": "a9abeab1d309c9f280be4d6b220a726635931f8f37ce5f82b391932a0edbfbe5",
+      "after_sha256": "7a29f9f32ceec6f84dad0d9e2454fda2a110a3cb85518e392e52d22e50f0d089",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/tin_shard.png",
+      "before_sha256": "24163745fca491af23c7677cb603db78ae2e13caf5c62c96e3cafa58d8709f67",
+      "after_sha256": "97f15aa0afa47a865f51541b71e9597430ce670801bb6e8f43623cbc69450bbe",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/titanium_alloy_dust.png",
+      "before_sha256": "d686c5a0d6cd9eee9ca133e834c8cf1cf8b399734eb5ddb9ddcdd5e6297284c8",
+      "after_sha256": "79fc4116e14cb37cadbc4ed86064cd13c45f55841a16a1cf95880a8079cd1254",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/titanium_dust.png",
+      "before_sha256": "b314f7aa582c6634b33a3fb13c990a6ca52e9a0aa2ddbf791a12128cc401b36a",
+      "after_sha256": "2a667892ef03c9ab1bc8504b0b356ae1c9d99dcdf904f60ef085331b7af1c763",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/titanium_shard.png",
+      "before_sha256": "fca2542bc594db10ec64557f501e557d2f80cb720b2f6202ab69aecc23d47f7a",
+      "after_sha256": "4a249a5d3031563fee3a0866ab5e8d85b1dc870bf952b36ff64945ef0f7f20f3",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/tool_overlays/binding.png",
+      "before_sha256": "ebabf27b6a5e8009834bb2280d7c017bceeb99071426e1ac277bd247c6d4e144",
+      "after_sha256": "0b89105fdc93488da25c55e990de3460229489558804abf1113ee839d27d00b4",
+      "reason": "Компактное крепление и обмотка получили различимый рисунок и контрастные грани."
+    },
+    {
+      "texture": "item/tool_overlays/clamp.png",
+      "before_sha256": "441acd77e58afe2a473a2d30aff6b60b4c1735bd79beac52b3f8acc57c7d4c31",
+      "after_sha256": "1f22c0c7cc209fe35a8169be1fa3d30dcb8c69294d00d9cf7ad13573efeeb06c",
+      "reason": "Компактное крепление и обмотка получили различимый рисунок и контрастные грани."
+    },
+    {
+      "texture": "item/tool_overlays/wrap.png",
+      "before_sha256": "f2aec2ba1c8248eb754ac9e0e2d21674ed33518be4fc4998796303950f26aec7",
+      "after_sha256": "05ee490d79943a4472186b1d797ccd8145869c70a88a15a48afcd7578b72ed8a",
+      "reason": "Компактное крепление и обмотка получили различимый рисунок и контрастные грани."
+    },
+    {
+      "texture": "item/tool_steel_dust.png",
+      "before_sha256": "649d2b1552b64623484e637f9e2a8744bbda6a3839b769680cfd48b8a22164e5",
+      "after_sha256": "7b791d4c67b4626306ccd70ba677849f2acf485eacba8a8188af5a9f884509e1",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/tungsten_dust.png",
+      "before_sha256": "9e3a27d348a13e4f9041859cebaca186f0d192fe07738235c41dff70512a6716",
+      "after_sha256": "4d9944bc70b5606117629d9844fa036c395424a6cce05b226e68f0a2a1b4cd10",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/tungsten_shard.png",
+      "before_sha256": "48534c00b28b88af02f96258658e23e469ef5686e0e87fcbbb5ec07245463116",
+      "after_sha256": "f20e9e9ec8261c3e654b05b03c84046e99c4a497d2e6131c94f9d335c025fdd5",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/tungsten_steel_dust.png",
+      "before_sha256": "916d8067b10966a4675cc7df861ce783b77c1a3a8a5b9f024ec137cc3d008448",
+      "after_sha256": "bc08fba8c8c6fb2c67d4ae4d0f0f819ac86f07108c6329118ea7b28a3f7db03b",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/uranium_dust.png",
+      "before_sha256": "d1529ed868e1563acaf272355f81081ddfe66c372acaa9735d43e39bf4a63a7f",
+      "after_sha256": "59d9fd45ddb4af51c7e3e8ddb09e159b316bf7ea795678ef99f41029db611b63",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/uranium_shard.png",
+      "before_sha256": "1f0004e4cfd7a0e0957aa333dea4b3a60736a62caeb2fe8b385861eaa61d4265",
+      "after_sha256": "5c80c6ac1d5fb24764cbf48d5c8e3af53b1daeedcfa4100d19a6ae64488f17ff",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    },
+    {
+      "texture": "item/waxed_cord.png",
+      "before_sha256": "2353e2f2d6437cbc065d416baab67379f53f0984e341fad84dc29498b204385c",
+      "after_sha256": "33f9fa1e04ec1ea069325ee9c6372a2a11becc8e45b12397983f5da53ae30bc3",
+      "reason": "Высветлены нити и контрастные стыки; исходный размер и alpha-маска сохранены."
+    },
+    {
+      "texture": "item/wrought_iron_dust.png",
+      "before_sha256": "f019727c2ab1c26a4e0c78fc2d92a815655d199d37f3259a0a141cc1fb966e28",
+      "after_sha256": "dec72b3b120b1701688cdd2d60c418f70bdf6f03f646b2c28d4febd4aebac84f",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/zinc_dust.png",
+      "before_sha256": "0b06104b91247dc6ec382eef26b0eed41e8d7eb30c25362f467200fef3e9757f",
+      "after_sha256": "2d3329d0daf2ca5b1dea4696e0a403df7b6e0bd1660c0f1f992193490110a445",
+      "reason": "Ванильный силуэт сохранён; новая палитра разделяет обводку, материал и светлую грань."
+    },
+    {
+      "texture": "item/zinc_shard.png",
+      "before_sha256": "620d55c614425499482546ce3d68e1f520af0a07995a7e1d22e5a0dfbaeb206c",
+      "after_sha256": "9127f73b107a1a80b2bb76a5a3df7c1f0eb55e27fa02d43e15c24ceb89356739",
+      "reason": "Новый угловатый обломок с разломами и вкраплениями; RGB-палитра точно из соответствующей сырой руды."
+    }
+  ]
+}

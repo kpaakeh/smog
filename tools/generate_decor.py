@@ -19,13 +19,14 @@ def tag(registry,name,value):tags.setdefault(f'data/minecraft/tags/{registry}/{n
 def named(family,style):
  if style=='base':return family['base']
  return family.get('existing',{}).get(style,('polished_'+family['stem'] if style=='polished' else 'chiseled_'+family['stem'] if style=='chiseled' else 'cracked_'+family['stem']+'_bricks' if style=='cracked_bricks' else 'mossy_'+family['stem']+'_bricks' if style=='mossy_bricks' else family['stem']+'_'+style))
-def recolor(vanilla,color,target):
+def recolor(vanilla,color,target,contrast=1.0,moss=False):
  image=Image.open(BytesIO(vanilla)).convert('RGBA');pixels=list(image.getdata());mean=sum(.2126*r+.7152*g+.0722*b for r,g,b,a in pixels if a)/max(1,sum(a>0 for r,g,b,a in pixels))
  result=Image.new('RGBA',image.size)
  for y in range(image.height):
   for x in range(image.width):
-   r,g,b,a=image.getpixel((x,y));ratio=(.2126*r+.7152*g+.0722*b)/max(1,mean)
-   result.putpixel((x,y),tuple(max(0,min(255,round(c*ratio))) for c in color)+(a,))
+   r,g,b,a=image.getpixel((x,y));ratio=((.2126*r+.7152*g+.0722*b)/max(1,mean))**contrast
+   tint=(99,126,62) if moss and g>r*1.04 and g>b*1.1 else color
+   result.putpixel((x,y),tuple(max(0,min(255,round(c*ratio))) for c in tint)+(a,))
  target.parent.mkdir(parents=True,exist_ok=True);result.save(target)
 def russian(family,style,shape=None):
  adj={'firebrick':'огнеупорн','limestone':'известняков','fluorite':'флюоритов','phosphorite':'фосфоритов','kaolin':'каолинов','dolomite':'доломитов','rock_salt':'солян','graphite':'графитов'}[family['stem']]
@@ -55,7 +56,9 @@ with ZipFile(JAR) as jar:
    name=named(family,style);existing=style=='base' or style in family.get('existing',{})
    texture=family['texture'] if style=='base' or family['stem']=='firebrick' and style=='bricks' else name
    if not existing:
-    recolor(jar.read('assets/minecraft/textures/block/'+styles[style]+'.png'),color,OUT/'assets/smog/textures/block'/f'{texture}.png')
+    repair=family['stem']=='graphite' or family['stem']=='phosphorite' and style in ['polished','cracked_bricks','mossy_bricks']
+    palette=tuple(min(255,c+18) for c in color) if repair and family['stem']=='phosphorite' else color
+    recolor(jar.read('assets/minecraft/textures/block/'+styles[style]+'.png'),palette,OUT/'assets/smog/textures/block'/f'{texture}.png',contrast=1.7 if repair else 1.0,moss=repair and style=='mossy_bricks')
     entries.append({'name':name,'kind':'cube','parent':base});seen.add(name)
     write('assets/smog/blockstates/'+name+'.json',{'variants':{'':{'model':'smog:block/'+name}}})
     write('assets/smog/models/block/'+name+'.json',{'parent':'minecraft:block/cube_all','textures':{'all':'smog:block/'+texture}})

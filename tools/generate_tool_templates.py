@@ -64,15 +64,14 @@ def clean(im):
 
 def overlay(form):
  im=Image.new('RGBA',(16,16));d=ImageDraw.Draw(im)
+ # Compact, distinct weave / U-clamp / spiral grip. Keep the actual joint and handle visible.
  if form['category']=='wrap':
-  # One continuous grip band; no bright checkerboard islands across the handle.
-  for x in range(3,7):
-   y=16-x;d.point((x,y),fill=(156,156,156,255));d.point((x,y-1),fill=(212,212,212,255))
-  d.point((3,12),fill=(248,248,248,255))
+  pixels=[(3,13,80),(3,12,250),(4,12,200),(4,11,110),(5,11,250),(5,10,200),(6,10,100),(6,9,245)]
+ elif form['id']=='clamp':
+  pixels=[(7,6,75),(8,6,255),(9,6,200),(7,7,240),(9,7,90),(7,8,190),(8,8,250),(9,8,70)]
  else:
-  # A small diagonal joint, not a white box painted across the whole head.
-  for x,y,v in [(8,6,156),(9,7,212),(8,7,212),(7,7,156),(8,8,156)]:d.point((x,y),fill=(v,v,v,255))
-  if form['id']=='clamp':d.point((9,6),fill=(248,248,248,255));d.point((7,8),fill=(92,92,92,255))
+  pixels=[(7,6,250),(8,7,90),(9,8,190),(9,6,220),(7,8,175)]
+ for x,y,v in pixels:d.point((x,y),fill=(v,v,v,255))
  return im
 
 

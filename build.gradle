@@ -134,3 +134,7 @@ if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientG
 if(providers.gradleProperty("closureWorldOnly").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureWorldOnly=true"}}
 
 if(providers.gradleProperty("closureDecorOnly").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureDecorOnly=true"}}
+
+if(providers.gradleProperty("texturePolishTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.texturePolishTest=true";vmArg "-Dsmog.reviewDate=2026-11-04"}}
+
+if(providers.gradleProperty("cartTextureReviewTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.cartTextureReviewTest=true";vmArg "-Dsmog.cartReviewFolder=cart-final"}}

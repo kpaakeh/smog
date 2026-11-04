@@ -32,13 +32,22 @@ public final class TextureLightingClientScene {
     }
    }
    server.runCommand("fill -16 107 -16 24 107 16 minecraft:air");server.runCommand("time set noon");
+   // The small overlay masks must also be visible in their real layered assembly.
+   server.runOnServer(a->{for(var f:frames)f.setItem(ItemStack.EMPTY,false);int n=0;for(String metal:List.of("copper","iron"))for(String style:List.of("cord","clamp","wrap")){
+    var schema=io.github.kpaakeh.smog.copper.ToolDefinitions.template("pickaxe");var parts=new ArrayList<>(io.github.kpaakeh.smog.copper.ToolParts.components(io.github.kpaakeh.smog.copper.ToolParts.example(schema,metal)));
+    if(style.equals("clamp"))parts.set(2,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("bronze_clamp")));
+    if(style.equals("wrap"))parts.set(3,new ItemStack(io.github.kpaakeh.smog.copper.ToolParts.item("wool_wrap")));
+    frames.get(n<3?n:n+5).setItem(io.github.kpaakeh.smog.copper.ToolParts.assemble(schema,parts),false);n++;
+   }});
+   server.runCommand("tp @a 1.5 102 5 180 0");context.waitTicks(10);context.getInput().lookAt(new BlockPos(1,103,0));context.waitTicks(5);context.takeScreenshot("tool-overlay-assemblies-day");
+   server.runCommand("time set midnight");server.runCommand("fill -16 107 -16 24 107 16 minecraft:stone");server.runOnServer(a->{for(int i=0;i<32;i++)a.overworld().setBlockAndUpdate(new BlockPos(i%8,104-i/8,0),Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,7));});context.waitTicks(30);context.takeScreenshot("tool-overlay-assemblies-block7");server.runCommand("fill -16 107 -16 24 107 16 minecraft:air");server.runCommand("time set noon");
    for(var schema:io.github.kpaakeh.smog.copper.ToolDefinitions.templates()){
     server.runOnServer(s->{var p=s.getPlayerList().getPlayers().getFirst();p.getInventory().setSelectedSlot(0);p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,io.github.kpaakeh.smog.copper.ToolParts.example(schema,"copper"));p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,io.github.kpaakeh.smog.copper.ToolParts.example(schema,"iron"));p.inventoryMenu.broadcastChanges();});
     context.waitFor(mc->!mc.player.getOffhandItem().isEmpty());context.runOnClient(mc->{mc.setCameraEntity(mc.player);mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);});context.waitTicks(30);context.takeScreenshot("tools-thirdperson-"+schema.id());
    }
    context.runOnClient(mc->{mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);if(mc.gui.hud.isHidden())mc.gui.hud.toggle();});
   }
-  try{var out=Path.of("..","..","review","2026-11-03",selected.isEmpty()?"texture-lighting":"texture-lighting-final");Files.createDirectories(out);Files.write(out.resolve("manifest.csv"),manifest);try(var files=Files.list(Path.of("screenshots"))){for(var p:files.toList())Files.copy(p,out.resolve(p.getFileName()),StandardCopyOption.REPLACE_EXISTING);}}catch(Exception e){throw new RuntimeException(e);}
+  try{var out=Path.of("..","..","review",System.getProperty("smog.reviewDate","2026-11-03"),selected.isEmpty()?"texture-lighting":"texture-lighting-final");Files.createDirectories(out);Files.write(out.resolve("manifest.csv"),manifest);try(var files=Files.list(Path.of("screenshots"))){for(var p:files.toList())Files.copy(p,out.resolve(p.getFileName()),StandardCopyOption.REPLACE_EXISTING);}}catch(Exception e){throw new RuntimeException(e);}
  }
 }
 
