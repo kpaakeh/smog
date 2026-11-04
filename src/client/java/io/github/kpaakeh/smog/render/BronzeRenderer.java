@@ -30,7 +30,7 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
     @Override public void extractRenderState(BronzeEntity entity,State state,float partial,Vec3 camera,ModelFeatureRenderer.CrumblingOverlay overlay){
         BlockEntityRenderer.super.extractRenderState(entity,state,partial,camera,overlay);
         state.animation=BronzeContent.entry(entity.id()).animation();state.facing=entity.getBlockState().getValue(BronzeBlock.FACING);state.angle=entity.angle(partial);
-        if(entity.id().equals("bronze_shaft"))state.facing=BronzeShaft.canonical(state.facing);
+        if(entity.id().equals("bronze_shaft")||entity.id().equals("bronze_shaft_support"))state.facing=BronzeShaft.canonical(state.facing);
         if(entity.getBlockState().getValue(BronzeBlock.ASSEMBLED))state.animation="none";
         if(state.animation.equals("none"))return;
         var stack=new ItemStack(entity.getBlockState().getBlock());stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of("moving"),List.of()));

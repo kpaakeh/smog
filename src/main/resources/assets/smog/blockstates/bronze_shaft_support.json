@@ -1,50 +1,220 @@
 {
   "variants": {
-    "facing=north,assembled=false": {
-      "model": "smog:block/bronze_shaft_support"
+    "facing=east,mount=up,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_up"
     },
-    "facing=north,assembled=true": {
-      "model": "smog:block/bronze_shaft_support_inventory"
+    "facing=east,mount=up,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_up_inventory"
     },
-    "facing=east,assembled=false": {
-      "model": "smog:block/bronze_shaft_support",
-      "y": 90
+    "facing=west,mount=up,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_up"
     },
-    "facing=east,assembled=true": {
-      "model": "smog:block/bronze_shaft_support_inventory",
-      "y": 90
+    "facing=west,mount=up,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_up_inventory"
     },
-    "facing=south,assembled=false": {
-      "model": "smog:block/bronze_shaft_support",
-      "y": 180
+    "facing=east,mount=down,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_down"
     },
-    "facing=south,assembled=true": {
-      "model": "smog:block/bronze_shaft_support_inventory",
-      "y": 180
+    "facing=east,mount=down,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_down_inventory"
     },
-    "facing=west,assembled=false": {
-      "model": "smog:block/bronze_shaft_support",
-      "y": 270
+    "facing=west,mount=down,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_down"
     },
-    "facing=west,assembled=true": {
-      "model": "smog:block/bronze_shaft_support_inventory",
-      "y": 270
+    "facing=west,mount=down,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_down_inventory"
     },
-    "facing=up,assembled=false": {
-      "model": "smog:block/bronze_shaft_support",
-      "x": 90
+    "facing=east,mount=south,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_south"
     },
-    "facing=up,assembled=true": {
-      "model": "smog:block/bronze_shaft_support_inventory",
-      "x": 90
+    "facing=east,mount=south,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_south_inventory"
     },
-    "facing=down,assembled=false": {
-      "model": "smog:block/bronze_shaft_support",
-      "x": 270
+    "facing=west,mount=south,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_south"
     },
-    "facing=down,assembled=true": {
-      "model": "smog:block/bronze_shaft_support_inventory",
-      "x": 270
+    "facing=west,mount=south,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_south_inventory"
+    },
+    "facing=east,mount=north,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_north"
+    },
+    "facing=east,mount=north,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_north_inventory"
+    },
+    "facing=west,mount=north,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_north"
+    },
+    "facing=west,mount=north,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_north_inventory"
+    },
+    "facing=up,mount=east,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_east"
+    },
+    "facing=up,mount=east,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_east_inventory"
+    },
+    "facing=down,mount=east,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_east"
+    },
+    "facing=down,mount=east,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_east_inventory"
+    },
+    "facing=up,mount=west,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_west"
+    },
+    "facing=up,mount=west,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_west_inventory"
+    },
+    "facing=down,mount=west,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_west"
+    },
+    "facing=down,mount=west,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_west_inventory"
+    },
+    "facing=up,mount=south,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_south"
+    },
+    "facing=up,mount=south,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_south_inventory"
+    },
+    "facing=down,mount=south,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_south"
+    },
+    "facing=down,mount=south,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_south_inventory"
+    },
+    "facing=up,mount=north,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_north"
+    },
+    "facing=up,mount=north,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_north_inventory"
+    },
+    "facing=down,mount=north,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_north"
+    },
+    "facing=down,mount=north,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_north_inventory"
+    },
+    "facing=south,mount=east,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_east"
+    },
+    "facing=south,mount=east,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_east_inventory"
+    },
+    "facing=north,mount=east,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_east"
+    },
+    "facing=north,mount=east,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_east_inventory"
+    },
+    "facing=south,mount=west,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_west"
+    },
+    "facing=south,mount=west,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_west_inventory"
+    },
+    "facing=north,mount=west,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_west"
+    },
+    "facing=north,mount=west,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_west_inventory"
+    },
+    "facing=south,mount=up,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_up"
+    },
+    "facing=south,mount=up,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_up_inventory"
+    },
+    "facing=north,mount=up,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_up"
+    },
+    "facing=north,mount=up,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_up_inventory"
+    },
+    "facing=south,mount=down,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_down"
+    },
+    "facing=south,mount=down,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_down_inventory"
+    },
+    "facing=north,mount=down,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_down"
+    },
+    "facing=north,mount=down,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_down_inventory"
+    },
+    "facing=east,mount=east,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_down"
+    },
+    "facing=east,mount=east,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_down_inventory"
+    },
+    "facing=east,mount=west,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_down"
+    },
+    "facing=east,mount=west,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_down_inventory"
+    },
+    "facing=west,mount=east,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_down"
+    },
+    "facing=west,mount=east,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_down_inventory"
+    },
+    "facing=west,mount=west,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_x_down"
+    },
+    "facing=west,mount=west,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_x_down_inventory"
+    },
+    "facing=up,mount=up,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_north"
+    },
+    "facing=up,mount=up,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_north_inventory"
+    },
+    "facing=up,mount=down,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_north"
+    },
+    "facing=up,mount=down,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_north_inventory"
+    },
+    "facing=down,mount=up,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_north"
+    },
+    "facing=down,mount=up,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_north_inventory"
+    },
+    "facing=down,mount=down,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_y_north"
+    },
+    "facing=down,mount=down,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_y_north_inventory"
+    },
+    "facing=south,mount=south,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_down"
+    },
+    "facing=south,mount=south,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_down_inventory"
+    },
+    "facing=south,mount=north,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_down"
+    },
+    "facing=south,mount=north,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_down_inventory"
+    },
+    "facing=north,mount=south,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_down"
+    },
+    "facing=north,mount=south,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_down_inventory"
+    },
+    "facing=north,mount=north,assembled=false": {
+      "model": "smog:block/bronze_shaft_support_z_down"
+    },
+    "facing=north,mount=north,assembled=true": {
+      "model": "smog:block/bronze_shaft_support_z_down_inventory"
     }
   }
 }

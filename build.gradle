@@ -135,6 +135,9 @@ if(providers.gradleProperty('bronzeRegistrationTest').isPresent()) {
 if(providers.gradleProperty('shaftReviewTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.shaftReviewTest=true' }
 }
+if(providers.gradleProperty('supportReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.supportReviewTest=true' }
+}
 
 if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureTest=true"}}
 

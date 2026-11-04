@@ -93,12 +93,12 @@ def geometry(entry):
         fixed = frame()
     elif n in ('bronze_shaft', 'bronze_shaft_support', 'bronze_bearing_block'):
         moving = [box((6, 6, 0), (10, 10, 16)), box((5.5, 5.5, 0), (10.5, 10.5, 2), 'metal'), box((5.5, 5.5, 14), (10.5, 10.5, 16), 'metal')]
-        if n == 'bronze_shaft':
+        if n in ('bronze_shaft', 'bronze_shaft_support'):
             moving = [box((6, 6, 0), (10, 10, 16))]
             moving += ring(radius=3.5, inner=2, depth=1.5, center=(8, 8, .75))
             moving += ring(radius=3.5, inner=2, depth=1.5, center=(8, 8, 15.25))
         if n != 'bronze_shaft':
-            fixed = [box((1, 0, 3), (15, 3, 13), 'stone'), box((2, 3, 4), (5, 12, 12)), box((11, 3, 4), (14, 12, 12))] + ring(radius=5, inner=3, depth=5)
+            fixed = [box((1, 0, 3), (15, 3, 13), 'stone'), box((2, 3, 4), (5, 12, 12)), box((11, 3, 4), (14, 12, 12))] + ring(radius=5, inner=3.75 if n=='bronze_shaft_support' else 3, depth=5)
     elif n in ('bronze_angle_gearbox', 'bronze_reduction_gearbox', 'bronze_splitter', 'bronze_clutch', 'bronze_safety_clutch', 'bronze_drive_coupler'):
         fixed = [box((1, 0, 1), (15, 3, 15)), box((1, 3, 1), (4, 13, 15)), box((12, 3, 1), (15, 13, 15)), box((1, 13, 1), (15, 15, 15))]
         moving = ring(radius=5, inner=2.5, depth=3) + [box((6, 6, 0), (10, 10, 16), 'metal')]
@@ -308,6 +308,39 @@ def shaft_envelope(elements):
     return result
 
 
+def write_support_variants(n, base, fixed, moving, collision):
+    directions={'east':(1,0,0),'west':(-1,0,0),'up':(0,1,0),'down':(0,-1,0),'south':(0,0,1),'north':(0,0,-1)}
+    variants={}
+    for axis, z in [('x',(-1,0,0)),('y',(0,-1,0)),('z',(0,0,1))]:
+        for mount, foot in directions.items():
+            if sum(a*b for a,b in zip(z,foot)):continue
+            y=tuple(-v for v in foot)
+            x=(y[1]*z[2]-y[2]*z[1], y[2]*z[0]-y[0]*z[2], y[0]*z[1]-y[1]*z[0])
+            def transform(elements):
+                result=[]
+                for e in elements:
+                    corners=[[8+sum((p[j]-8)*basis[i] for j,basis in enumerate((x,y,z))) for i in range(3)] for p in __import__('itertools').product(*zip(e['from'],e['to']))]
+                    a=[min(p[i] for p in corners) for i in range(3)];b=[max(p[i] for p in corners) for i in range(3)]
+                    result.append(cuboid(a,b,next(iter(e['faces'].values()))['texture'][1:]) if 'faces' in e else {'from':a,'to':b})
+                return result
+            name=n+'_'+axis+'_'+mount
+            write(ASSETS/'models/block'/(name+'.json'),{**base,'elements':exterior(transform(fixed))})
+            write(ASSETS/'models/block'/(name+'_inventory.json'),{**base,'elements':exterior(transform(fixed+moving)),'smog_collision':transform(collision)})
+            for facing,vector in directions.items():
+                if vector['xyz'.index(axis)]==0:continue
+                for assembled in ('false','true'):
+                    variants['facing='+facing+',mount='+mount+',assembled='+assembled]={'model':'smog:block/'+name+('_inventory' if assembled=='true' else '')}
+    # Unreachable mount/axis pairs still have a valid model for commands and old state migration.
+    for facing,vector in directions.items():
+        axis='xyz'[next(i for i,v in enumerate(vector) if v)]
+        for mount,foot in directions.items():
+            if not sum(a*b for a,b in zip(vector,foot)):continue
+            fallback='down' if axis!='y' else 'north'
+            for assembled in ('false','true'):
+                variants['facing='+facing+',mount='+mount+',assembled='+assembled]={'model':'smog:block/'+n+'_'+axis+'_'+fallback+('_inventory' if assembled=='true' else '')}
+    write(ASSETS/'blockstates'/(n+'.json'),{'variants':variants})
+
+
 def main():
     import argparse
     parser=argparse.ArgumentParser();parser.add_argument('--only',nargs='+');selected=parser.parse_args().only
@@ -320,7 +353,7 @@ def main():
         textures_map['particle'] = textures_map['wood']
         base = {'parent': 'minecraft:block/block', 'textures': textures_map, 'elements': exterior(fixed)}
         write(ASSETS / 'models/block' / (n + '.json'), base)
-        collision=shaft_envelope(fixed+moving) if n=='bronze_shaft' else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
+        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
         write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': collision})
         # Physical cuboids are metadata on a valid model, not fake unbakeable models.
         old_collision = ASSETS / 'models/block' / (n + '_collision.json')
@@ -341,6 +374,8 @@ def main():
             variants['facing=' + face + ',assembled=false'] = model
             variants['facing=' + face + ',assembled=true'] = {**model, 'model': 'smog:block/' + n + '_inventory'}
         write(ASSETS / 'blockstates' / (n + '.json'), {'variants': variants})
+        if n == 'bronze_shaft_support':
+            write_support_variants(n, base, fixed, moving, collision)
         write(DATA / 'loot_table/blocks' / (n + '.json'), {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': 'smog:' + n}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
     for i in catalog['items']:
         if selected:continue

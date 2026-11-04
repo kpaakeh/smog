@@ -15,7 +15,7 @@ import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.*;
 
 /** Physical parts stay in their own world cells, including after assembly. */
-public final class BronzeBlock extends Block implements EntityBlock {
+public class BronzeBlock extends Block implements EntityBlock {
     public static final EnumProperty<Direction> FACING=BlockStateProperties.FACING;
     public static final BooleanProperty ASSEMBLED=BooleanProperty.create("assembled");
     public static final BooleanProperty OPEN=net.minecraft.world.level.block.state.properties.BlockStateProperties.OPEN;

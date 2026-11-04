@@ -35,6 +35,7 @@ public final class BronzeNetwork {
     private static Direction facing(BlockState state){return state.hasProperty(BronzeBlock.FACING)?state.getValue(BronzeBlock.FACING):state.getValue(WorkshopPartBlock.FACING);}
     public static Set<Direction> ports(Level level,BlockPos pos,BlockState state){
         String n=id(state);if(!node(state))return Set.of();var f=facing(state);
+        if(state.getBlock() instanceof BronzeSupportBlock&&!BronzeSupportBlock.mounted(state,level,pos))return Set.of();
         if(n.equals("bronze_clutch")&&(!state.getValue(BronzeBlock.OPEN)||level.hasNeighborSignal(pos)))return Set.of();
         if(sourceBlock(state)||n.equals("bronze_drive_coupler"))return Set.of(f.getOpposite());
         if(n.equals("bronze_angle_gearbox"))return f.getAxis()==Direction.Axis.Y?Set.of():Set.of(f.getOpposite(),f.getClockWise());
