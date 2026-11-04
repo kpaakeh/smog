@@ -28,6 +28,7 @@ public class SmogClient implements ClientModInitializer {
             net.minecraft.client.gui.screens.MenuScreens.register(layout.type,io.github.kpaakeh.smog.gui.MachineScreen::new);
         io.github.kpaakeh.smog.render.ClientWires.initialize();
         io.github.kpaakeh.smog.render.ClientFormations.initialize();
+        net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(io.github.kpaakeh.smog.bronze.BronzeContent.ENTITY_TYPE,io.github.kpaakeh.smog.render.BronzeRenderer::new);
         for (var machine : io.github.kpaakeh.smog.machine.Machines.all())
             net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry.register(machine.entityType(), io.github.kpaakeh.smog.render.MachineRenderer::new);
         net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry.register(context -> new io.github.kpaakeh.smog.render.StructurePreviewRenderer());

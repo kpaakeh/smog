@@ -26,6 +26,14 @@ public final class TestJeiProbe implements IModPlugin {
         var type = runtime.getRecipeManager().getRecipeType(Identifier.fromNamespaceAndPath("smog", "multiblocks")).orElseThrow();
         runtime.getRecipesGui().showTypes(List.of(type));
     }
+    public static void showBronzeBlueprint(String id){
+        var type=io.github.kpaakeh.smog.compat.jei.SmogJeiPlugin.TYPE;var manager=runtime.getRecipeManager();
+        var all=manager.createRecipeLookup(type).get().filter(p->p.controller() instanceof io.github.kpaakeh.smog.bronze.BronzeBlock).toList();
+        if(all.size()!=17)throw new IllegalStateException("Expected 17 concise bronze structure examples, got "+all.size());
+        var pages=all.stream().filter(p->p.structure().id().getPath().equals("bronze_blueprint_"+id)).toList();
+        if(pages.size()!=1)throw new IllegalStateException("Missing bronze drawing "+id);
+        runtime.getRecipesGui().showRecipes(manager.getRecipeCategory(type),pages,List.of());
+    }
     public static void showCoredCasting(){
         var type=io.github.kpaakeh.smog.compat.jei.CopperCategory.TYPES.get("casting_table");var manager=runtime.getRecipeManager();
         var pages=manager.createRecipeLookup(type).get().filter(recipe->io.github.kpaakeh.smog.copper.CopperWorkshops.is(recipe.result(),"smog:copper_standard_handle")&&recipe.inputs().stream().anyMatch(io.github.kpaakeh.smog.copper.CastingProcesses::core)).toList();

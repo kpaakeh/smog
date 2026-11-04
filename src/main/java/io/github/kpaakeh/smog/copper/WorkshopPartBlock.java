@@ -25,6 +25,7 @@ public class WorkshopPartBlock extends Block {
     private boolean attachment(){return partName().equals("casting_faucet")||partName().equals("air_nozzle");}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){
         if(attachment()){
+            if(partName().equals("air_nozzle")){var bronzeFacing=io.github.kpaakeh.smog.bronze.BronzeBlueprints.nozzleFacing(context.getLevel(),context.getClickedPos());if(bronzeFacing!=null)return defaultBlockState().setValue(FACING,bronzeFacing);}
             var side=context.getClickedFace();if(side.getAxis()==Direction.Axis.Y)return null;
             var behind=context.getClickedPos().relative(side.getOpposite());String expected=partName().equals("casting_faucet")?"casting_spout":"air_intake";
             if(!context.getLevel().getBlockState(behind).is(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id(expected))))return null;

@@ -72,7 +72,7 @@ public final class ResourceGenerationTests {
     }
     @GameTest public void creativeCatalogIsCompleteAndToolsExistOnlyInTheirTabs(GameTestHelper h) throws IOException {
         net.minecraft.world.item.CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
-        var expected=java.util.Set.of("copper_age","materials","blocks","mechanisms","controllers","tool_parts","tools");
+        var expected=java.util.Set.of("copper_age","bronze_age","materials","blocks","mechanisms","controllers","tool_parts","tools");
         var actual=BuiltInRegistries.CREATIVE_MODE_TAB.keySet().stream().filter(id->id.getNamespace().equals("smog")).map(net.minecraft.resources.Identifier::getPath).collect(java.util.stream.Collectors.toSet());
         h.assertTrue(actual.equals(expected),"Functional tabs and the chapter overview exist");
         var owner=new java.util.HashMap<net.minecraft.world.item.Item,String>();int examples=0;
@@ -80,7 +80,7 @@ public final class ResourceGenerationTests {
             var seen=new java.util.ArrayList<net.minecraft.world.item.ItemStack>();
             for(var stack:stacks){
                 h.assertFalse(TestIndustryContent.fixture(stack.getItem()),"Fixtures never leak into "+id+": "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
-                String previous=id.equals("copper_age")?null:owner.putIfAbsent(stack.getItem(),id);h.assertTrue(previous==null||previous.equals(id),"One category owns each item: "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
+                String previous=id.equals("copper_age")||id.equals("bronze_age")?null:owner.putIfAbsent(stack.getItem(),id);h.assertTrue(previous==null||previous.equals(id),"One category owns each item: "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
                 h.assertFalse(seen.stream().anyMatch(s->net.minecraft.world.item.ItemStack.isSameItemSameComponents(s,stack)),"No duplicate entry within "+id);seen.add(stack);
                 if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ToolPartItem)h.assertTrue(id.equals("tool_parts"),"Final and cast parts belong only to Tool Parts");
                 if(stack.getItem() instanceof io.github.kpaakeh.smog.copper.ModularToolItem){examples++;h.assertTrue(id.equals("tools"),"Modular tools belong only to Tools");h.assertTrue(io.github.kpaakeh.smog.copper.ModularToolItem.configured(stack),"No empty modular tool shells");}

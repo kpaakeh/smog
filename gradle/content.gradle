@@ -6,11 +6,13 @@ abstract class GenerateSmogContent extends DefaultTask {
     @InputFile abstract RegularFileProperty getCatalogFile()
     @InputDirectory abstract DirectoryProperty getToolMaterialsDirectory()
     @InputFile abstract RegularFileProperty getToolTemplatesFile()
+    @InputFile abstract RegularFileProperty getBronzeCatalogFile()
     @OutputDirectory abstract DirectoryProperty getTargetDirectory()
     @javax.inject.Inject abstract FileSystemOperations getFileSystem()
     @javax.inject.Inject abstract org.gradle.process.ExecOperations getExecOperations()
     @TaskAction void generate() {
         def root = new JsonSlurper().parse(catalogFile.get().asFile)
+        def bronze=new JsonSlurper().parse(bronzeCatalogFile.get().asFile)
         def materialData=[materials:toolMaterialsDirectory.get().asFile.listFiles().findAll { it.isFile()&&it.name.endsWith('.json') }.sort { it.name }.collect { new JsonSlurper().parse(it) }]
         def materialIds=new HashSet<String>()
         materialData.materials.each { material ->
@@ -315,6 +317,10 @@ abstract class GenerateSmogContent extends DefaultTask {
             if (!(entry.registry ==~ /[a-z0-9_\/]+/)) throw new GradleException("Invalid tag registry ${entry.registry}")
             entry.values.each { value -> tag(entry.registry, entry.id, value) }
         }
+        bronze.blocks.each { bronzeBlock ->
+            tag('block','minecraft:mineable/pickaxe',"smog:${bronzeBlock.id}")
+            if(!(bronzeBlock.id in ['bloomery_work_door','bloomery_controller','forge_work_bed','forge_stone_anvil','forge_hearth','bronze_stone_mortar','bronze_grinding_bed','bronze_grinding_runner','bronze_hoist_counterweight']))tag('block','minecraft:mineable/axe',"smog:${bronzeBlock.id}")
+        }
         tags.each { path, values -> write(path,[replace:false,values:values.toList()]) }
         ['machines':['Smog: Machines','Smog: Механизмы'],ores:['Smog: Ores & Materials','Smog: Руды и материалы'],blocks:['Smog: Blocks & Fluids','Smog: Блоки и жидкости']].each { key, text ->
             en["itemGroup.smog.$key"] = text[0]; ru["itemGroup.smog.$key"] = text[1]
@@ -363,6 +369,23 @@ abstract class GenerateSmogContent extends DefaultTask {
                 }
             }
         }
+        bronze.blocks.each { bronzeBlock -> en["block.smog.${bronzeBlock.id}"]=bronzeBlock.en;ru["block.smog.${bronzeBlock.id}"]=bronzeBlock.ru }
+        bronze.items.each { bronzeItem -> en["item.smog.${bronzeItem.id}"]=bronzeItem.en;ru["item.smog.${bronzeItem.id}"]=bronzeItem.ru }
+        bronze.blueprints.each { bronzeDrawing ->
+            def bronzeType=bronze.blocks.find { bronzeCandidate -> bronzeCandidate.id==bronzeDrawing.controller }
+            en["multiblock.smog.bronze_blueprint_${bronzeDrawing.id}"]=bronzeType.en
+            ru["multiblock.smog.bronze_blueprint_${bronzeDrawing.id}"]=bronzeType.ru
+        }
+        en['itemGroup.smog.bronze_age']='Bronze Drive';ru['itemGroup.smog.bronze_age']='Бронзовый привод'
+        en['message.smog.bronze_registered']='Bronze component; production connection is not implemented yet'
+        ru['message.smog.bronze_registered']='Бронзовый узел; подключение производства пока не реализовано'
+        en['message.smog.bronze_assembled']='Structure assembled; production is not connected yet'
+        ru['message.smog.bronze_assembled']='Конструкция собрана; производство пока не подключено'
+        en['message.smog.bronze_missing']='Incomplete structure at %s, %s, %s: %s'
+        ru['message.smog.bronze_missing']='Неполная конструкция в %s, %s, %s: %s'
+        en['message.smog.bronze_unloaded']='Required structure chunk is not loaded'
+        ru['message.smog.bronze_unloaded']='Нужный участок конструкции не загружен'
+        en['message.smog.bronze_floor']='solid walkable floor';ru['message.smog.bronze_floor']='твёрдый пол'
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
     }
@@ -373,6 +396,7 @@ tasks.register('generateContent', GenerateSmogContent) {
     it.catalogFile.set(catalogFile)
     it.toolMaterialsDirectory.set(layout.projectDirectory.dir('src/main/content/tool_materials'))
     it.toolTemplatesFile.set(layout.projectDirectory.file('src/main/content/tool_templates.json'))
+    it.bronzeCatalogFile.set(layout.projectDirectory.file('src/main/resources/smog.bronze.json'))
     it.targetDirectory.set(generatedContent)
 }
 sourceSets.main.resources.srcDir(generatedContent)

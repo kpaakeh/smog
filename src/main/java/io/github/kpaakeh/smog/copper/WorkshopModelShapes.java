@@ -16,7 +16,7 @@ public final class WorkshopModelShapes {
         try(var stream=WorkshopModelShapes.class.getResourceAsStream("/assets/smog/models/block/"+model+".json")){
             if(stream==null)throw new IllegalStateException("Missing collision model "+model);
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();var result=Shapes.empty();
-            for(var entry:root.getAsJsonArray("elements")){
+            for(var entry:root.getAsJsonArray(root.has("smog_collision")?"smog_collision":"elements")){
                 var e=entry.getAsJsonObject();double[] a=vector(e.getAsJsonArray("from")),b=vector(e.getAsJsonArray("to"));var rotation=e.has("rotation")?e.getAsJsonObject("rotation"):null;double angle=rotation==null?0:rotation.get("angle").getAsDouble();
                 if(angle==0){result=Shapes.or(result,Shapes.box(a[0]/16,a[1]/16,a[2]/16,b[0]/16,b[1]/16,b[2]/16));continue;}
                 var origin=vector(rotation.getAsJsonArray("origin"));int axis=switch(rotation.get("axis").getAsString()){case "x"->0;case "y"->1;default->2;};int u=(axis+1)%3,v=(axis+2)%3;double radians=Math.toRadians(angle),sin=Math.sin(radians),cos=Math.cos(radians);double scale=rotation.has("rescale")&&rotation.get("rescale").getAsBoolean()?1/Math.abs(cos):1;

@@ -48,7 +48,8 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
         var minecraft=Minecraft.getInstance();var resolver=new BlockModelResolver(minecraft.getModelManager());
         List<StructurePreviewState.Part> parts=new ArrayList<>();
         var display=BlockDisplayContext.create();
-        boolean normalized=formed&&io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(page.controller()))==null;
+        boolean bronze=page.controller() instanceof io.github.kpaakeh.smog.bronze.BronzeBlock;
+        boolean normalized=formed&&!bronze&&io.github.kpaakeh.smog.multiblock.complex.ComplexMultiblocks.get(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(page.controller()))==null;
         if (normalized) {
             var model=new BlockModelRenderState();resolver.update(model,page.previewState(true),display);
             parts.add(new StructurePreviewState.Part(BlockPos.ZERO,model));
@@ -63,6 +64,7 @@ public final class StructurePreviewWidget implements IRecipeWidget, IJeiInputHan
                 } else block=ingredient.block();
                 if (block.defaultBlockState().isAir()) return;
                 var state=block.defaultBlockState();
+                if(block instanceof io.github.kpaakeh.smog.bronze.BronzeBlock)state=state.setValue(io.github.kpaakeh.smog.bronze.BronzeBlock.ASSEMBLED,true);
                 if(block instanceof io.github.kpaakeh.smog.copper.WorkshopPartBlock){var bounds=page.structure().bounds();net.minecraft.core.Direction facing=pos.getX()==bounds.minX()?Direction.WEST:pos.getX()==bounds.maxX()?Direction.EAST:pos.getZ()==bounds.minZ()?Direction.NORTH:pos.getZ()==bounds.maxZ()?Direction.SOUTH:Direction.NORTH;state=state.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,facing);}
                 var part=new BlockModelRenderState();resolver.update(part,state,display);
                 parts.add(new StructurePreviewState.Part(pos,part));

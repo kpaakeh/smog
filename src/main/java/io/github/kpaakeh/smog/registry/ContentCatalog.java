@@ -78,6 +78,7 @@ public final class ContentCatalog {
                     throw new IllegalArgumentException("Unknown multiblock block: " + ingredient.value());
             }
             DecorBlocks.initialize();
+            io.github.kpaakeh.smog.bronze.BronzeContent.initialize();
             ModCreativeTabs.initialize(root,preexistingItems);
         } catch (IOException e) { throw new IllegalStateException("Unable to read content catalog", e); }
     }

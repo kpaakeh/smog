@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 public final class SmogJeiPlugin implements IModPlugin {
     public record Page(MultiblockDefinition structure, Block controller) {
         public net.minecraft.world.level.block.state.BlockState previewState(boolean formed){
+            if(controller instanceof io.github.kpaakeh.smog.bronze.BronzeBlock)return controller.defaultBlockState().setValue(io.github.kpaakeh.smog.bronze.BronzeBlock.ASSEMBLED,formed);
             var kind=io.github.kpaakeh.smog.machine.GeneratorKind.NONE;
             if(structure.id().getPath().startsWith("generator_"))kind=io.github.kpaakeh.smog.machine.GeneratorKind.valueOf(structure.id().getPath().substring(10).toUpperCase(java.util.Locale.ROOT));
             return controller.defaultBlockState().setValue(io.github.kpaakeh.smog.machine.MachineBlock.ASSEMBLED,formed).setValue(io.github.kpaakeh.smog.machine.MachineBlock.GENERATOR,kind);
@@ -47,6 +48,10 @@ public final class SmogJeiPlugin implements IModPlugin {
             var id = entry.definition().multiblock();
             if (id != null) pages.add(new Page(Multiblocks.get(id), entry.block()));
         }
+        var bronzeDrawings=new LinkedHashMap<String,io.github.kpaakeh.smog.bronze.BronzeBlueprints.Blueprint>();
+        for(var drawing:io.github.kpaakeh.smog.bronze.BronzeBlueprints.all())bronzeDrawings.putIfAbsent(drawing.controller(),drawing);
+        for(String variant:List.of("bronze_bucket_elevator_12","bronze_mine_hoist_24","bronze_casting_carousel_8","bronze_pump_station_2"))bronzeDrawings.put(variant,io.github.kpaakeh.smog.bronze.BronzeBlueprints.get(variant));
+        for(var drawing:bronzeDrawings.values())pages.add(new Page(io.github.kpaakeh.smog.bronze.BronzeBlueprints.preview(drawing),io.github.kpaakeh.smog.bronze.BronzeContent.entry(drawing.controller()).block()));
         registration.addRecipes(TYPE, pages);
         var workshopRecipes=io.github.kpaakeh.smog.copper.CopperWorkshops.recipes();CopperCategory.configureTankScale(workshopRecipes);
         if(Machines.all().stream().anyMatch(m->m.spec().kind()==io.github.kpaakeh.smog.machine.MachineSpec.Kind.COPPER_WORKSHOP))CopperCategory.TYPES.forEach((machine,type)->registration.addRecipes(type,workshopRecipes.stream().filter(recipe->recipe.machine().equals(machine)).toList()));

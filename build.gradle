@@ -129,6 +129,10 @@ if(providers.gradleProperty("catalogVisualTest").isPresent()) { loom.runs.named(
 
 apply from: 'gradle/texture-review.gradle'
 
+if(providers.gradleProperty('bronzeRegistrationTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.bronzeRegistrationTest=true' }
+}
+
 if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureTest=true"}}
 
 if(providers.gradleProperty("closureWorldOnly").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureWorldOnly=true"}}

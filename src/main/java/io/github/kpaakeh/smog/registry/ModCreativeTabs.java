@@ -13,7 +13,7 @@ import net.minecraft.world.level.ItemLike;
 
 /** Functional categories and a curated chapter overview. Late test registrations never enter their snapshots. */
 public final class ModCreativeTabs {
-    public static final List<String> IDS=List.of("copper_age","materials","blocks","mechanisms","controllers","tool_parts","tools");
+    public static final List<String> IDS=List.of("copper_age","bronze_age","materials","blocks","mechanisms","controllers","tool_parts","tools");
     private static final Set<String> MECHANISM_PARTS=Set.of("casting_spout","air_intake","kiln_vent","casting_channel","solid_firebox","casting_faucet","air_nozzle","copper_water_pipe","water_valve","water_outlet","bronze_drive","closed_crucible_insert","smeltery_item_port");
     private static final List<String> EXAMPLE_MATERIALS=List.of("copper","bronze","iron","gold");
     private ModCreativeTabs() {}
@@ -36,6 +36,9 @@ public final class ModCreativeTabs {
         }
         DecorBlocks.all().forEach(block->add.accept("blocks",block));
         ModFluids.all().forEach(fluid->add.accept("materials",fluid.bucket));
+        for(var entry:io.github.kpaakeh.smog.bronze.BronzeContent.blocks())add.accept(switch(entry.group()){case "decor"->"blocks";case "controller"->"controllers";default->"mechanisms";},entry.block());
+        io.github.kpaakeh.smog.bronze.BronzeContent.items().forEach(value->add.accept("materials",value));
+        var bronze=groups.get("bronze_age");io.github.kpaakeh.smog.bronze.BronzeContent.blocks().forEach(entry->bronze.add(entry.block().asItem()));bronze.addAll(io.github.kpaakeh.smog.bronze.BronzeContent.items());
         // Audit the real production registry, not just the hand-maintained catalog lists.
         for(var value:BuiltInRegistries.ITEM){var key=BuiltInRegistries.ITEM.getKey(value);if(!key.getNamespace().equals("smog")||preexistingItems.contains(value)||value instanceof ModularToolItem)continue;
             add.accept(value instanceof ToolPartItem?"tool_parts":value instanceof BlockItem?"blocks":"materials",value);
