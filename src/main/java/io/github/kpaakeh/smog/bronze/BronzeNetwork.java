@@ -9,13 +9,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** First mechanical circuit: reciprocal physical ports, shared finite power, no FE.
- * Ratio-changing transmissions, belts and stored flywheel energy are not relays yet.
+/** Reciprocal shafts and visible gear teeth share finite mechanical power, without FE.
+ * Belts and stored flywheel energy are not relays yet.
  */
 public final class BronzeNetwork {
-    private static final Set<String> NODES=Set.of("bronze_drive","bronze_hand_crank","bronze_shaft","bronze_shaft_support","bronze_angle_gearbox","bronze_splitter","bronze_clutch","bronze_drive_coupler");
+    private static final Set<String> NODES=Set.of("bronze_drive","bronze_hand_crank","bronze_shaft","bronze_shaft_support","bronze_angle_gearbox","bronze_reduction_gearbox","bronze_cogwheel","bronze_splitter","bronze_clutch","bronze_drive_coupler");
     public record Source(int power,RotationRate rate){public Source {if(power<0||!Double.isFinite(rate.value()))throw new IllegalArgumentException("Invalid mechanical source");}}
-    public record Result(int available,int required,String status,Map<BlockPos,Integer> consumers,RotationRate rate,double phase){public boolean running(){return status.equals("ready");}}
+    public record Result(int available,int required,String status,Map<BlockPos,Integer> consumers,RotationRate rate,double phase,ExactFraction availableExact,ExactFraction requiredExact){
+        public Result(int available,int required,String status,Map<BlockPos,Integer> consumers,RotationRate rate,double phase){this(available,required,status,consumers,rate,phase,ExactFraction.of(available),ExactFraction.of(required));}
+        public boolean running(){return status.equals("ready");}
+    }
     private static final class Cache {long tick=Long.MIN_VALUE;final Map<BlockPos,Result> results=new HashMap<>();final Map<BlockPos,RotationTimeline> phases=new HashMap<>();}
     private static final Map<Level,Cache> CACHES=new WeakHashMap<>();
     private static final Map<net.minecraft.world.level.block.Block,java.util.function.BiFunction<Level,BlockPos,Source>> SOURCES=new HashMap<>();
@@ -38,6 +41,7 @@ public final class BronzeNetwork {
         if(state.getBlock() instanceof BronzeSupportBlock&&!BronzeSupportBlock.mounted(state,level,pos))return Set.of();
         if(n.equals("bronze_clutch")&&(!state.getValue(BronzeBlock.OPEN)||level.hasNeighborSignal(pos)))return Set.of();
         if(sourceBlock(state)||n.equals("bronze_drive_coupler"))return Set.of(f.getOpposite());
+        if(state.getBlock() instanceof BronzeGearBlock)return BronzeGearBlock.ports(level,pos,state);
         if(state.getBlock() instanceof BronzeAngleBlock)return Set.of(f.getOpposite(),BronzeAngleBlock.output(state));
         if(n.equals("bronze_splitter"))return f.getAxis()==Direction.Axis.Y?Set.of():Set.of(f,f.getOpposite(),f.getClockWise(),f.getCounterClockWise());
         return Set.of(f,f.getOpposite());
@@ -84,6 +88,7 @@ public final class BronzeNetwork {
                 if(rate!=null&&!rate.equals(signed))problem="direction";
                 rate=signed;power+=source.power();
             }
+            if(state.getBlock() instanceof BronzeGearBlock gear){var clearance=gear.clearance(level,pos,state);if(!clearance.isEmpty())problem=clearance;}
             if(n.equals("bronze_drive")){
                 // Account for old direct loads as well: the second output is not free power.
                 for(int x=-3;x<=3;x++)for(int y=-3;y<=3;y++)for(int z=-3;z<=3;z++){
@@ -102,22 +107,31 @@ public final class BronzeNetwork {
         manual.sort(java.util.Comparator.<Map.Entry<BlockPos,Source>>comparingLong(e->((BronzeEntity)level.getBlockEntity(e.getKey())).crankStarted()).reversed().thenComparingLong(e->e.getKey().asLong()));
         for(var entry:manual){var candidate=entry.getValue().rate().divide(ratios.get(entry.getKey()));if(rate==null)rate=candidate;if(rate.equals(candidate))power+=entry.getValue().power();}
         int required=consumers.values().stream().mapToInt(Integer::intValue).sum();
-        String status=!problem.isEmpty()?problem:power==0?"source":required>power?"overload":"ready";
+        var prospective=new LinkedHashMap<BlockPos,RotationRate>();
+        if(rate!=null)for(var entry:nodes.entrySet()){
+            var value=rate.multiply(ratios.get(entry.getKey()));prospective.put(entry.getKey(),value);
+            for(var side:ports(level,entry.getKey(),entry.getValue())){var portRate=value.multiply(BronzeKinematics.port(entry.getValue(),side));if(portRate.belowMinimum())problem="slow";else if(portRate.aboveMaximum())problem="fast";}
+        }
+        var exactRequired=ExactFraction.ZERO;
+        for(var consumer:consumers.entrySet()){var tempo=ExactFraction.ONE;for(var entry:nodes.entrySet())if(id(entry.getValue()).equals("bronze_drive_coupler")&&entry.getKey().relative(facing(entry.getValue())).equals(consumer.getKey())&&prospective.containsKey(entry.getKey())){tempo=ExactFraction.of(prospective.get(entry.getKey())).abs().divide(ExactFraction.of(16));break;}exactRequired=exactRequired.add(ExactFraction.of(consumer.getValue()).multiply(tempo));}
+        String status=!problem.isEmpty()?problem:power==0?"source":exactRequired.compareTo(ExactFraction.of(power))>0?"overload":"ready";
         var actual=status.equals("ready")&&rate!=null?rate:RotationRate.ZERO;
         var timeline=cache.phases.get(root);
         if(timeline==null){double seed=nodes.keySet().stream().filter(p->level.getBlockEntity(p) instanceof BronzeEntity).mapToDouble(p->((BronzeEntity)level.getBlockEntity(p)).angle(0)/ratios.get(p).value()).findFirst().orElse(0);timeline=new RotationTimeline(level.getGameTime(),seed);cache.phases.put(root,timeline);}
         double phase=timeline.update(level.getGameTime(),actual);
         var immutableConsumers=Map.copyOf(consumers);
-        for(var pos:nodes.keySet()){var ratio=ratios.get(pos);cache.results.put(pos,new Result(power,required,status,immutableConsumers,actual.multiply(ratio),RotationTimeline.wrap(phase*ratio.value())));}
+        for(var pos:nodes.keySet()){var ratio=ratios.get(pos);var available=ExactFraction.of(power);cache.results.put(pos,new Result(available.floorInt(),required,status,immutableConsumers,actual.multiply(ratio),RotationTimeline.wrap(phase*ratio.value()),available,exactRequired));}
         return cache.results.getOrDefault(start,new Result(0,0,"source",Map.of(),RotationRate.ZERO,0));
     }
-    public static boolean powered(MachineEntity machine){
-        var level=machine.getLevel();if(level==null||level.isClientSide())return false;
+    public static boolean powered(MachineEntity machine){return connection(machine)!=null;}
+    public static RotationRate tempo(MachineEntity machine){var result=connection(machine);return result==null?RotationRate.ZERO:result.rate().multiply(RotationRate.of(result.rate().numerator().signum()<0?-1:1,16));}
+    private static Result connection(MachineEntity machine){
+        var level=machine.getLevel();if(level==null||level.isClientSide())return null;
         var roots=new LinkedHashSet<>(BronzeDrive.directSources(machine));
         for(var side:Direction.values()){var pos=machine.getBlockPos().relative(side);if(!level.hasChunkAt(pos))continue;var state=level.getBlockState(pos);if(id(state).equals("bronze_drive_coupler")&&pos.relative(facing(state)).equals(machine.getBlockPos()))roots.add(pos);}
         for(var root:roots){var result=query(level,root);
             if(result.consumers().getOrDefault(machine.getBlockPos(),-1)<demand(machine)){invalidate(level);result=query(level,root);}
-            if(result.running()&&result.consumers().containsKey(machine.getBlockPos()))return true;
-        }return false;
+            if(result.running()&&result.consumers().containsKey(machine.getBlockPos()))return result;
+        }return null;
     }
 }

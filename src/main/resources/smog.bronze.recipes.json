@@ -1853,6 +1853,29 @@
       "output": "smog:iron_billet",
       "count": 1,
       "station": "stonecutting"
+    },
+    {
+      "id": "bronze_cogwheel",
+      "inputs": [
+        "smog:bronze_gear",
+        "smog:bronze_hub",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:bronze_cogwheel",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:stick",
+        "",
+        "minecraft:stick",
+        "",
+        "smog:bronze_gear",
+        "",
+        "",
+        "smog:bronze_hub",
+        ""
+      ]
     }
   ]
 }
