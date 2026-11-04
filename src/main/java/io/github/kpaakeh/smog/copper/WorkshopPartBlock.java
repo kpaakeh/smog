@@ -20,7 +20,7 @@ public class WorkshopPartBlock extends Block {
     private String partName(){return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(this).getPath();}
     private boolean waterControl(){return partName().equals("water_valve")||partName().equals("water_outlet");}
     private void updatePower(BlockState state,Level level,BlockPos pos){if(!level.isClientSide()&&waterControl()){boolean powered=level.hasNeighborSignal(pos);if(state.getValue(POWERED)!=powered)level.setBlock(pos,state.setValue(POWERED,powered),Block.UPDATE_CLIENTS);}}
-    @Override protected void neighborChanged(BlockState state,Level level,BlockPos pos,Block neighbor,net.minecraft.world.level.redstone.Orientation orientation,boolean moved){updatePower(state,level,pos);}
+    @Override protected void neighborChanged(BlockState state,Level level,BlockPos pos,Block neighbor,net.minecraft.world.level.redstone.Orientation orientation,boolean moved){updatePower(state,level,pos);if(!level.isClientSide()&&partName().equals("bronze_drive"))io.github.kpaakeh.smog.bronze.BronzeNetwork.invalidate(level);}
     @Override protected void onPlace(BlockState state,Level level,BlockPos pos,BlockState old,boolean moved){if(!old.is(this))updatePower(state,level,pos);}
     private boolean attachment(){return partName().equals("casting_faucet")||partName().equals("air_nozzle");}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){

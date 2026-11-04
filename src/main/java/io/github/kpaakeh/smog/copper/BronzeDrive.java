@@ -15,11 +15,14 @@ public final class BronzeDrive {
         return water.is(FluidTags.WATER)&&!water.isSource()&&(water.hasProperty(net.minecraft.world.level.material.FlowingFluid.FALLING)&&water.getValue(net.minecraft.world.level.material.FlowingFluid.FALLING)||water.getFlow(level,waterPos).lengthSqr()>.01);
     }
     public static boolean connected(MachineEntity machine){
-        var level=machine.getLevel();if(level==null)return false;
+        return io.github.kpaakeh.smog.bronze.BronzeNetwork.powered(machine);
+    }
+    public static java.util.List<BlockPos> directSources(MachineEntity machine){
+        var result=new java.util.ArrayList<BlockPos>();var level=machine.getLevel();if(level==null)return result;
         if(CopperWorkshops.workshop(machine,"lever_press")){
-            var definition=machine.structure();if(definition==null)return false;
-            for(var offset:definition.parts().keySet())if(working(level,machine.getBlockPos().offset(offset.rotate(machine.rotation()))))return true;
-        }else if((CopperWorkshops.workshop(machine,"hand_bellows")||LoadingCrane.handles(machine)||Ropeway.handles(machine)))for(var side:Direction.values())if(working(level,machine.getBlockPos().relative(side)))return true;
-        return false;
+            var definition=machine.structure();if(definition==null)return result;
+            for(var offset:definition.parts().keySet()){var pos=machine.getBlockPos().offset(offset.rotate(machine.rotation()));if(level.hasChunkAt(pos)&&level.getBlockState(pos).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("bronze_drive"))))result.add(pos);}
+        }else if((CopperWorkshops.workshop(machine,"hand_bellows")||LoadingCrane.handles(machine)||Ropeway.handles(machine)))for(var side:Direction.values()){var pos=machine.getBlockPos().relative(side);if(level.hasChunkAt(pos)&&level.getBlockState(pos).is(BuiltInRegistries.BLOCK.getValue(ModBlocks.id("bronze_drive"))))result.add(pos);}
+        return java.util.List.copyOf(result);
     }
 }

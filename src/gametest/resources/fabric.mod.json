@@ -8,6 +8,7 @@
       "io.github.kpaakeh.smog.test.FoundationTests",
       "io.github.kpaakeh.smog.test.BronzeRegistrationTests",
       "io.github.kpaakeh.smog.test.BronzeManufacturingTests",
+      "io.github.kpaakeh.smog.test.BronzeNetworkTests",
       "io.github.kpaakeh.smog.test.IndustryTests",
       "io.github.kpaakeh.smog.test.EnergyInteropTests",
       "io.github.kpaakeh.smog.test.ResourceGenerationTests",
