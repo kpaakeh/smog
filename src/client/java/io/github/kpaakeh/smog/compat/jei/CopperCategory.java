@@ -21,7 +21,7 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
     @Override public IRecipeType<CopperWorkshops.RecipePreview> getRecipeType(){return TYPES.get(machine);}
     @Override public Component getTitle(){return Component.translatable("block.smog."+machine);}
     @Override public int getWidth(){return 174;}
-    @Override public int getHeight(){return machine.equals("tool_workbench")?Math.max(46,12+20*((io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+3)/4)):40;}
+    @Override public int getHeight(){return machine.equals("tool_workbench")?Math.max(64,12+20*((io.github.kpaakeh.smog.copper.ToolDefinitions.maxParts()+3)/4)):40;}
     @Override public IDrawable getIcon(){return icon;}
     @Override public void setRecipe(IRecipeLayoutBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){
         for(int i=0;i<recipe.inputs().size();i++){
@@ -42,7 +42,8 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
         if(recipe.description().endsWith("alloy"))output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(CopperWorkshops.melt(recipe.result())[0]).getFluid(),9000L*recipe.result().getCount()).setFluidRenderer(tankCapacity(),false,16,30);
         else if(recipe.description().endsWith("melting")){int kind=CopperWorkshops.melt(recipe.inputs().getFirst())[0];output.addFluidStack(io.github.kpaakeh.smog.copper.MoltenMetalStorage.variant(kind).getFluid(),(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount()).setFluidRenderer(tankCapacity(),false,16,30);}
         else output.add(recipe.result());
-        if(machine.equals("tool_workbench")||io.github.kpaakeh.smog.copper.ToolDefinitions.part(recipe.result())!=null)output.addRichTooltipCallback((view,tooltip)->tooltip.add(Component.translatable("jei.smog.example_materials")));
+        if(recipe.description().startsWith("jei.smog.bronze."))output.addRichTooltipCallback((view,tooltip)->tooltip.add(Component.translatable(recipe.description())));
+        else if(machine.equals("tool_workbench")||io.github.kpaakeh.smog.copper.ToolDefinitions.part(recipe.result())!=null)output.addRichTooltipCallback((view,tooltip)->tooltip.add(Component.translatable("jei.smog.example_materials")));
         if(recipe.description().endsWith("alloy"))fluidTooltip(output,9000L*recipe.result().getCount());
         else if(recipe.description().endsWith("melting"))fluidTooltip(output,(long)CopperWorkshops.melt(recipe.inputs().getFirst())[1]*recipe.inputs().getFirst().getCount());
     }
@@ -66,6 +67,6 @@ public final class CopperCategory implements IRecipeCategory<CopperWorkshops.Rec
     @Override public void createRecipeExtras(IRecipeExtrasBuilder builder,CopperWorkshops.RecipePreview recipe,IFocusGroup focuses){
         boolean oil=machine.equals("lever_press")&&!recipe.description().endsWith("fiber_pressing");
         builder.addRecipeArrow().setPosition(machine.equals("tool_workbench")?110:oil?88:108,7);
-        if(machine.equals("tool_workbench"))builder.addText(Component.translatable("jei.smog.example_label"),174,10).setPosition(2,getHeight()-11);
+        if(machine.equals("tool_workbench"))builder.addText(Component.translatable(recipe.description().startsWith("jei.smog.bronze.")?recipe.description():"jei.smog.example_label"),174,20).setPosition(2,getHeight()-22);
     }
 }

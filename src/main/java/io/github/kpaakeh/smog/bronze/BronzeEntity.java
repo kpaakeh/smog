@@ -38,6 +38,7 @@ public final class BronzeEntity extends BlockEntity {
     }
     public void inspect(net.minecraft.world.entity.player.Player player){
         var variants=BronzeBlueprints.forController(id());
+        if(id().equals("bronze_mine_hoist"))variants=BronzeBlueprints.hoistCandidates(level,worldPosition,getBlockState().getValue(BronzeBlock.FACING));
         if(variants.isEmpty()){player.sendOverlayMessage(Component.translatable("message.smog.bronze_registered"));return;}
         BronzeBlueprints.Inspection closest=null;int best=-1;
         for(var candidate:variants){
@@ -55,6 +56,7 @@ public final class BronzeEntity extends BlockEntity {
     }
     private static Component expectedName(String expected){
         if(expected.equals("sturdy floor"))return Component.translatable("message.smog.bronze_floor");
+        if(expected.equals("dimension bounds"))return Component.translatable("message.smog.bronze_bounds");
         var text=Component.empty();for(String id:expected.split(" / ")){if(!text.getSiblings().isEmpty())text.append(" / ");text.append(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(net.minecraft.resources.Identifier.parse(id)).getName());}return text;
     }
     public void crank(){

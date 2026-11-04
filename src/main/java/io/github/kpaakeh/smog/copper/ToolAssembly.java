@@ -13,6 +13,7 @@ public final class ToolAssembly {
     public static boolean handles(MachineEntity m){return CopperWorkshops.workshop(m,"tool_workbench");}
     public static ToolDefinitions.Template schema(Container inventory){return !inventory.getItem(5).isEmpty()?ToolParts.schema(inventory.getItem(5)):inventory instanceof MachineEntity machine?ToolDefinitions.at(machine.copper.selection):ToolDefinitions.at(0);}
     public static boolean accepts(MachineEntity machine,int slot,ItemStack stack){
+        if(io.github.kpaakeh.smog.bronze.BronzeManufacturing.accepts(slot,stack))return true;
         if(slot==0&&CopperWorkshops.is(stack,"smog:molding_sand")||slot==1&&CopperWorkshops.is(machine.getItem(0),"smog:molding_sand")&&MoldMaking.pattern(stack)!=null)return true;
         if(slot==5)return canMount(stack);if(slot==0&&(ToolParts.nativeSource(stack)!=null||ToolDefinitions.parts().stream().anyMatch(p->ToolParts.materialIngredient(stack,p.material()))))return true;
         int role=ToolDefinitions.role(slot);var schema=schema(machine);return role>=0&&role<schema.roles().size()&&schema.roles().get(role).accepts(ToolDefinitions.part(stack));
@@ -26,6 +27,7 @@ public final class ToolAssembly {
     public static ItemStack preview(Container inventory){return preview(inventory,schema(inventory),inventory instanceof MachineEntity machine?activePart(machine):-1);}
     public static ItemStack preview(Container inventory,ToolDefinitions.Template schema){return preview(inventory,schema,-1);}
     public static ItemStack preview(Container inventory,ToolDefinitions.Template schema,int selectedPart){
+        var bronze=io.github.kpaakeh.smog.bronze.BronzeManufacturing.plan(inventory);if(bronze!=null)return bronze.output();
         var imprint=MoldMaking.preview(inventory);if(!imprint.isEmpty())return imprint;
         var mounted=inventory.getItem(5);if(!mounted.isEmpty())schema=ToolParts.schema(mounted);for(int i=schema.roles().size();i<ToolDefinitions.maxParts();i++)if(!inventory.getItem(ToolDefinitions.slot(i)).isEmpty())return ItemStack.EMPTY;var input=inventory.getItem(0);
         if(mounted.isEmpty()&&empty(inventory,0)){var finished=ToolParts.finish(input);if(!finished.isEmpty())return finished;var choices=ToolParts.shapingChoices(input);var shaped=selectedPart>=0&&!choices.isEmpty()?ToolParts.shaping(input,choices.get(Math.floorMod(selectedPart,choices.size()))):ToolParts.shaping(input,schema);if(shaped!=null&&input.getCount()>=shaped.count())return shaped.result();}
@@ -40,6 +42,7 @@ public final class ToolAssembly {
     }
     public static boolean requiresHammer(Container inventory){return requiresHammer(inventory,schema(inventory),inventory instanceof MachineEntity machine?activePart(machine):-1);}
     public static boolean requiresHammer(Container inventory,ToolDefinitions.Template schema,int selectedPart){
+        var bronze=io.github.kpaakeh.smog.bronze.BronzeManufacturing.plan(inventory);if(bronze!=null)return bronze.hammer();
         if(!MoldMaking.preview(inventory).isEmpty())return true;
         var result=preview(inventory,schema,selectedPart);if(result.isEmpty())return true;
         var part=ToolDefinitions.part(result);if(part!=null)return !part.material().molten().isEmpty();
@@ -48,12 +51,15 @@ public final class ToolAssembly {
     }
     private static boolean startWithoutHammer(MachineEntity machine){
         var result=preview(machine);if(machine.copper.queued>0||result.isEmpty()||requiresHammer(machine)||!machine.canOutput(result))return false;
-        machine.copper.queued=1;machine.copper.work=0;machine.sync();return true;
+        machine.copper.queued=1;machine.copper.work=0;machine.copper.workKey=io.github.kpaakeh.smog.bronze.BronzeManufacturing.key(io.github.kpaakeh.smog.bronze.BronzeManufacturing.plan(machine));machine.sync();return true;
     }
     public static boolean button(MachineEntity machine,int id){if(id==22)return startWithoutHammer(machine);if((id!=20&&id!=21)||machine.copper.queued>0||!machine.getItem(5).isEmpty())return false;if(shapingMode(machine)){machine.copper.partSelection=Math.floorMod(activePart(machine)+(id==20?-1:1),ToolParts.shapingChoices(machine.getItem(0)).size());machine.sync();return true;}if(!empty(machine,-1))return false;machine.copper.partSelection=-1;machine.copper.selection=Math.floorMod(machine.copper.selection+(id==20?-1:1),ToolDefinitions.templates().size());machine.sync();return true;}
     public static void tick(ServerLevel level,MachineEntity m){
         if(m.copper.queued==0)return;var schema=schema(m);var result=preview(m);
-        if(result.isEmpty()){m.copper.work=0;m.copper.queued=0;m.sync();return;}if(!m.canOutput(result)){m.copper.status=5;return;}if(++m.copper.work<40){m.setChanged();return;}
+        var bronze=io.github.kpaakeh.smog.bronze.BronzeManufacturing.plan(m);
+        if((bronze!=null||m.copper.workKey.startsWith("bronze:"))&&!m.copper.workKey.equals(io.github.kpaakeh.smog.bronze.BronzeManufacturing.key(bronze))){m.copper.queued=0;m.copper.work=0;m.sync();return;}
+        if(result.isEmpty()){m.copper.work=0;m.copper.queued=0;m.sync();return;}if(!m.canOutput(result)){m.copper.status=5;return;}if(++m.copper.work<(bronze!=null?20:40)){m.setChanged();return;}
+        if(bronze!=null){m.getItem(0).shrink(bronze.first());if(!bronze.retainSecond())m.getItem(1).shrink(bronze.second());if(m.getItem(3).isEmpty())m.setItem(3,result.copy());else m.getItem(3).grow(result.getCount());m.copper.queued--;m.copper.work=0;m.copper.status=0;m.sync();return;}
         var mounted=m.getItem(5);boolean repair=!mounted.isEmpty()&&!m.getItem(0).isEmpty()&&ToolDefinitions.part(m.getItem(0))==null;
         if(!mounted.isEmpty()&&!repair)for(int i=0;i<schema.roles().size();i++){int slot=ToolDefinitions.slot(i);if(!m.getItem(slot).isEmpty()){var old=ToolParts.extract(mounted,slot);if(!old.isEmpty())Containers.dropItemStack(level,m.getBlockPos().getX()+.5,m.getBlockPos().getY()+1,m.getBlockPos().getZ()+.5,old);}}
         boolean imprint=!MoldMaking.preview(m).isEmpty();
@@ -79,7 +85,7 @@ public final class ToolAssembly {
                 batch=Math.min(8,Math.min(input.getCount(),room));
                 if(!player.isCreative()&&held.isDamageableItem())batch=Math.min(batch,Math.max(1,held.getMaxDamage()-held.getDamageValue()));
             }
-            m.copper.queued=batch;m.copper.work=0;if(!player.isCreative()){if(held.getItem() instanceof ModularToolItem)ModularToolItem.wear(held,level,batch);else held.hurtAndBreak(batch,player,hand==InteractionHand.MAIN_HAND?net.minecraft.world.entity.EquipmentSlot.MAINHAND:net.minecraft.world.entity.EquipmentSlot.OFFHAND);}m.sync();return InteractionResult.SUCCESS;
+            m.copper.queued=batch;m.copper.work=0;m.copper.workKey=io.github.kpaakeh.smog.bronze.BronzeManufacturing.key(io.github.kpaakeh.smog.bronze.BronzeManufacturing.plan(m));if(!player.isCreative()){if(held.getItem() instanceof ModularToolItem)ModularToolItem.wear(held,level,batch);else held.hurtAndBreak(batch,player,hand==InteractionHand.MAIN_HAND?net.minecraft.world.entity.EquipmentSlot.MAINHAND:net.minecraft.world.entity.EquipmentSlot.OFFHAND);}m.sync();return InteractionResult.SUCCESS;
         }
         if(player.isShiftKeyDown()&&!held.isEmpty()){player.openMenu(m);return InteractionResult.SUCCESS;}
         if(held.isEmpty()){

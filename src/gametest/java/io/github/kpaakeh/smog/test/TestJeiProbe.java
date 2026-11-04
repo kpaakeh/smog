@@ -18,7 +18,7 @@ public final class TestJeiProbe implements IModPlugin {
         if(machine.equals("tool_workbench")){
             var examples=manager.createRecipeLookup(type).get().toList();
             long assemblies=examples.stream().filter(recipe->io.github.kpaakeh.smog.copper.ModularToolItem.configured(recipe.result())).count();
-            if(assemblies!=10||examples.size()>24)throw new IllegalStateException("JEI tool examples expanded into a material matrix: "+assemblies+" assemblies, "+examples.size()+" pages");
+            if(assemblies!=10||examples.stream().filter(r->!io.github.kpaakeh.smog.bronze.BronzeContent.contains(r.result().getItem())).count()>24)throw new IllegalStateException("JEI tool examples expanded into a material matrix");
         }
         runtime.getRecipesGui().showTypes(List.of(type));
     }
@@ -32,6 +32,12 @@ public final class TestJeiProbe implements IModPlugin {
         if(all.size()!=17)throw new IllegalStateException("Expected 17 concise bronze structure examples, got "+all.size());
         var pages=all.stream().filter(p->p.structure().id().getPath().equals("bronze_blueprint_"+id)).toList();
         if(pages.size()!=1)throw new IllegalStateException("Missing bronze drawing "+id);
+        runtime.getRecipesGui().showRecipes(manager.getRecipeCategory(type),pages,List.of());
+    }
+    public static void showBronzeManufacturing(String machine,String output){
+        var type=io.github.kpaakeh.smog.compat.jei.CopperCategory.TYPES.get(machine);var manager=runtime.getRecipeManager();
+        var pages=manager.createRecipeLookup(type).get().filter(p->net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(p.result().getItem()).toString().equals("smog:"+output)).toList();
+        if(pages.isEmpty())throw new IllegalStateException("Missing actual bronze JEI recipe "+machine+" / "+output);
         runtime.getRecipesGui().showRecipes(manager.getRecipeCategory(type),pages,List.of());
     }
     public static void showCoredCasting(){

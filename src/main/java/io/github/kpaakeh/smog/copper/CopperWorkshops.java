@@ -25,6 +25,7 @@ public final class CopperWorkshops {
     public record RecipePreview(String machine,List<ItemStack> inputs,ItemStack tool,ItemStack result,String description,long fluidUnits){public RecipePreview(String machine,List<ItemStack> inputs,ItemStack tool,ItemStack result,String description){this(machine,inputs,tool,result,description,-1);}}
     public static List<RecipePreview> recipes(){
         List<RecipePreview> result=new ArrayList<>();
+        result.addAll(io.github.kpaakeh.smog.bronze.BronzeManufacturing.previews());
         for(var recipe:WashingRecipes.all())result.add(new RecipePreview("washing_trough",List.of(recipe.ingredients(),new ItemStack(Items.WATER_BUCKET)),ItemStack.EMPTY,recipe.result(),"jei.smog.copper.washing",recipe.water()));
         for(var seed:BuiltInRegistries.ITEM)if(seed.getDefaultInstance().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ModBlocks.id("oil_seeds"))))result.add(new RecipePreview("lever_press",List.of(new ItemStack(seed,8)),ItemStack.EMPTY,new ItemStack(item("smog:seed_cake")),"jei.smog.copper.pressing"));
         // These are teaching examples, not the Cartesian product of every material and part.
@@ -55,7 +56,8 @@ public final class CopperWorkshops {
         for(var alloy:Alloying.recipes()){var inputs=new ArrayList<ItemStack>();for(var input:alloy.ingredients().entrySet()){int metal=Arrays.asList(MoltenMetalStorage.NAMES).indexOf(input.getKey());inputs.add(new ItemStack(item(namespace(metal)+input.getKey()+"_ingot"),input.getValue()));}int metal=Arrays.asList(MoltenMetalStorage.NAMES).indexOf(alloy.output());result.add(new RecipePreview("copper_hearth",inputs,alloy.closed()?new ItemStack(item("smog:closed_crucible_insert")):ItemStack.EMPTY,new ItemStack(item(namespace(metal)+alloy.output()+"_ingot"),alloy.total()),"jei.smog.copper.alloy"));}
         for(int metal=0;metal<MoltenMetalStorage.NAMES.length;metal++){String name=MoltenMetalStorage.NAMES[metal];var block=item(namespace(metal)+name+"_block");if(block!=Items.AIR)result.add(new RecipePreview("casting_basin",List.of(new ItemStack(item(namespace(metal)+name+"_ingot"),9)),ItemStack.EMPTY,new ItemStack(block),"jei.smog.copper.casting"));}
         var patterns=new LinkedHashMap<String,ItemStack>();patterns.put("ingot",new ItemStack(Items.COPPER_INGOT));patterns.put("plate",new ItemStack(item("smog:copper_plate")));patterns.put("fitting",new ItemStack(item("smog:copper_fitting")));patterns.put("pipe",new ItemStack(item("smog:copper_pipe_part")));for(var form:ToolDefinitions.headForms()){var head=ToolDefinitions.find("copper",form.id(),false);if(head!=null)patterns.put(form.id().replaceFirst("_head$",""),new ItemStack(item(head.item().toString())));}
-        patterns.forEach((shape,sample)->{if(shape.equals("ingot")||shape.equals("pickaxe"))result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(item("smog:molding_sand")),sample),ToolParts.example(ToolDefinitions.template("hammer"),"stone"),MoldMaking.sandMold(shape),"jei.smog.copper.imprint"));result.add(new RecipePreview("casting_table",List.of(new ItemStack(Items.GOLD_INGOT,2)),sample,MoldMaking.metalMold(shape),"jei.smog.copper.mold_making"));});
+        io.github.kpaakeh.smog.bronze.BronzeManufacturing.SHAPES.keySet().forEach(shape->patterns.put(shape,io.github.kpaakeh.smog.bronze.BronzeManufacturing.stack(shape+"_pattern")));
+        patterns.forEach((shape,sample)->{if(shape.equals("ingot")||shape.equals("pickaxe")||io.github.kpaakeh.smog.bronze.BronzeManufacturing.SHAPES.containsKey(shape))result.add(new RecipePreview("tool_workbench",List.of(new ItemStack(item("smog:molding_sand")),sample),ToolParts.example(ToolDefinitions.template("hammer"),"stone"),MoldMaking.sandMold(shape),"jei.smog.copper.imprint"));result.add(new RecipePreview("casting_table",List.of(new ItemStack(Items.GOLD_INGOT,2)),sample,MoldMaking.metalMold(shape),"jei.smog.copper.mold_making"));});
         for(int metal=0;metal<1;metal++){
             var part=CastingProcesses.hollowPart(metal);if(part==null)continue;
             for(String style:List.of("")){
@@ -82,6 +84,11 @@ public final class CopperWorkshops {
             Smeltery.initialize(root);Alloying.initialize(root);WashingRecipes.initialize(root);
             if(root.has("casting_forms"))for(var value:root.getAsJsonArray("casting_forms")){var o=value.getAsJsonObject();var outputs=new java.util.LinkedHashMap<String,String>();o.getAsJsonObject("outputs").entrySet().forEach(e->outputs.put(e.getKey(),e.getValue().getAsString()));EXTRA_FORMS.add(new ExtraForm(o.get("item").getAsString(),o.get("units").getAsInt(),o.get("single_use").getAsBoolean(),outputs));}
             if(root.has("items"))for(var value:root.getAsJsonArray("items")){var o=value.getAsJsonObject();if(o.has("kind")&&o.get("kind").getAsString().equals("mold_variant"))MOLD_VARIANTS.put(o.get("name").getAsString(),o.get("base_mold").getAsString());}
+            io.github.kpaakeh.smog.bronze.BronzeManufacturing.SHAPES.forEach((shape,units)->{
+                String mold="metal_"+shape+"_mold";EXTRA_FORMS.add(new ExtraForm("smog:"+mold,units,false,Map.of("bronze","smog:cast_bronze_"+shape)));
+                MOLD_VARIANTS.put(mold,mold);MOLD_VARIANTS.put("sand_"+shape+"_mold",mold);
+                POTTERY.add(new Pottery("minecraft:cobblestone",1,"smog:"+shape+"_pattern",1));
+            });
             MOLDS=java.util.stream.Stream.concat(java.util.Arrays.stream(MOLDS),EXTRA_FORMS.stream().map(f->f.item().replace("smog:",""))).toArray(String[]::new);
             if(root.has("firing"))for(var entry:root.getAsJsonArray("firing")){var o=entry.getAsJsonObject();FIRING.add(new Pottery(o.get("input").getAsString(),1,o.get("output").getAsString(),1));}
             if(root.has("pottery"))for(var entry:root.getAsJsonArray("pottery")){var o=entry.getAsJsonObject();POTTERY.add(new Pottery(o.get("input").getAsString(),o.get("count").getAsInt(),o.get("output").getAsString(),o.has("output_count")?o.get("output_count").getAsInt():1));}
@@ -138,6 +145,7 @@ public final class CopperWorkshops {
     // Metal identity and quarter-ingot amount of one input item. No remelting bonus.
     public static int[] melt(ItemStack stack){
         if(stack.isEmpty())return null;
+        var bronze=io.github.kpaakeh.smog.bronze.BronzeManufacturing.melt(stack);if(bronze!=null)return bronze;
         if(stack.getItem() instanceof ModularToolItem||ToolDefinitions.part(stack)!=null)return ToolParts.melt(stack);
         if(BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("smog")&&MOLD_VARIANTS.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath())&&BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().startsWith("metal_"))return new int[]{Arrays.asList(MoltenMetalStorage.NAMES).indexOf("gold"),2*MoltenMetalStorage.INGOT};
         var concentrate=WashingRecipes.concentrate(stack);if(concentrate!=null)return concentrate;

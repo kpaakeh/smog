@@ -33,6 +33,9 @@ public final class BronzeRegistrationClientScene {
                 for(String id:List.of("bronze_stamper","bronze_casting_carousel_8","bronze_mine_hoist_24")){
                     context.runOnClient(mc->TestJeiProbe.showBronzeBlueprint(id));context.waitTicks(12);context.takeScreenshot("bronze-jei-"+id);context.setScreen(()->null);
                 }
+                for(var recipe:Map.of("casting_table","cast_bronze_gear","tool_workbench","bronze_gear","potter_table","gear_pattern").entrySet()){
+                    context.runOnClient(mc->TestJeiProbe.showBronzeManufacturing(recipe.getKey(),recipe.getValue()));context.waitTicks(12);context.takeScreenshot("bronze-jei-recipe-"+recipe.getValue());context.setScreen(()->null);
+                }
             }
             for(String group:List.of("network","structure","controller","decor")){
                 var blocks=BronzeContent.blocks().stream().filter(b->b.group().equals(group)).toList();

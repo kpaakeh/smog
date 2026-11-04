@@ -7,12 +7,14 @@ abstract class GenerateSmogContent extends DefaultTask {
     @InputDirectory abstract DirectoryProperty getToolMaterialsDirectory()
     @InputFile abstract RegularFileProperty getToolTemplatesFile()
     @InputFile abstract RegularFileProperty getBronzeCatalogFile()
+    @InputFile abstract RegularFileProperty getBronzeRecipesFile()
     @OutputDirectory abstract DirectoryProperty getTargetDirectory()
     @javax.inject.Inject abstract FileSystemOperations getFileSystem()
     @javax.inject.Inject abstract org.gradle.process.ExecOperations getExecOperations()
     @TaskAction void generate() {
         def root = new JsonSlurper().parse(catalogFile.get().asFile)
         def bronze=new JsonSlurper().parse(bronzeCatalogFile.get().asFile)
+        def bronzeRecipes=new JsonSlurper().parse(bronzeRecipesFile.get().asFile)
         def materialData=[materials:toolMaterialsDirectory.get().asFile.listFiles().findAll { it.isFile()&&it.name.endsWith('.json') }.sort { it.name }.collect { new JsonSlurper().parse(it) }]
         def materialIds=new HashSet<String>()
         materialData.materials.each { material ->
@@ -317,6 +319,17 @@ abstract class GenerateSmogContent extends DefaultTask {
             if (!(entry.registry ==~ /[a-z0-9_\/]+/)) throw new GradleException("Invalid tag registry ${entry.registry}")
             entry.values.each { value -> tag(entry.registry, entry.id, value) }
         }
+        bronzeRecipes.crafting.each { bronzeCraft ->
+            def bronzeResult=[id:bronzeCraft.output,count:bronzeCraft.count]
+            if(bronzeCraft.station=='stonecutting')write("data/smog/recipe/bronze/${bronzeCraft.id}.json",[type:'minecraft:stonecutting',ingredient:bronzeCraft.inputs[0],result:bronzeResult])
+            else {
+                def bronzeKeys=[:];bronzeCraft.inputs.unique(false).eachWithIndex { bronzeIngredient,bronzeIndex -> bronzeKeys[((char)(65+bronzeIndex)).toString()]=bronzeIngredient }
+                def occupied=(0..<9).findAll { bronzeCraft.cells[it] }
+                def xMin=occupied.collect { it%3 }.min(),xMax=occupied.collect { it%3 }.max(),yMin=occupied.collect { (int)(it/3) }.min(),yMax=occupied.collect { (int)(it/3) }.max()
+                def bronzePattern=(yMin..yMax).collect { yy -> (xMin..xMax).collect { xx -> def ingredient=bronzeCraft.cells[yy*3+xx];ingredient?bronzeKeys.find { k,v -> v==ingredient }.key:' ' }.join('') }
+                write("data/smog/recipe/bronze/${bronzeCraft.id}.json",[type:'minecraft:crafting_shaped',category:'misc',pattern:bronzePattern,key:bronzeKeys,result:bronzeResult])
+            }
+        }
         bronze.blocks.each { bronzeBlock ->
             tag('block','minecraft:mineable/pickaxe',"smog:${bronzeBlock.id}")
             if(!(bronzeBlock.id in ['bloomery_work_door','bloomery_controller','forge_work_bed','forge_stone_anvil','forge_hearth','bronze_stone_mortar','bronze_grinding_bed','bronze_grinding_runner','bronze_hoist_counterweight']))tag('block','minecraft:mineable/axe',"smog:${bronzeBlock.id}")
@@ -376,7 +389,7 @@ abstract class GenerateSmogContent extends DefaultTask {
             en["multiblock.smog.bronze_blueprint_${bronzeDrawing.id}"]=bronzeType.en
             ru["multiblock.smog.bronze_blueprint_${bronzeDrawing.id}"]=bronzeType.ru
         }
-        en['itemGroup.smog.bronze_age']='Bronze Drive';ru['itemGroup.smog.bronze_age']='Бронзовый привод'
+        en['itemGroup.smog.bronze_age']='Bronze Rotation';ru['itemGroup.smog.bronze_age']='Бронзовое вращение'
         en['message.smog.bronze_registered']='Bronze component; production connection is not implemented yet'
         ru['message.smog.bronze_registered']='Бронзовый узел; подключение производства пока не реализовано'
         en['message.smog.bronze_assembled']='Structure assembled; production is not connected yet'
@@ -386,6 +399,9 @@ abstract class GenerateSmogContent extends DefaultTask {
         en['message.smog.bronze_unloaded']='Required structure chunk is not loaded'
         ru['message.smog.bronze_unloaded']='Нужный участок конструкции не загружен'
         en['message.smog.bronze_floor']='solid walkable floor';ru['message.smog.bronze_floor']='твёрдый пол'
+        en['message.smog.bronze_bounds']='inside the dimension build height';ru['message.smog.bronze_bounds']='в пределах высоты строительства мира'
+        en['jei.smog.bronze.finishing']='Finish with one hammer strike (1 second)';ru['jei.smog.bronze.finishing']='Доводка одним ударом молота (1 секунда)'
+        en['jei.smog.bronze.template']='Copy the template; the sample is retained';ru['jei.smog.bronze.template']='Изготовление шаблона; образец сохраняется'
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
     }
@@ -397,6 +413,7 @@ tasks.register('generateContent', GenerateSmogContent) {
     it.toolMaterialsDirectory.set(layout.projectDirectory.dir('src/main/content/tool_materials'))
     it.toolTemplatesFile.set(layout.projectDirectory.file('src/main/content/tool_templates.json'))
     it.bronzeCatalogFile.set(layout.projectDirectory.file('src/main/resources/smog.bronze.json'))
+    it.bronzeRecipesFile.set(layout.projectDirectory.file('src/main/resources/smog.bronze.recipes.json'))
     it.targetDirectory.set(generatedContent)
 }
 sourceSets.main.resources.srcDir(generatedContent)

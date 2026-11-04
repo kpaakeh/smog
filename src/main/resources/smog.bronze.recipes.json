@@ -1,0 +1,1858 @@
+{
+  "crafting": [
+    {
+      "id": "bronze_shaft",
+      "inputs": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_shaft",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_shaft_support",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_bushing"
+      ],
+      "output": "smog:bronze_shaft_support",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_bushing",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_angle_gearbox",
+      "inputs": [
+        "smog:bronze_gear",
+        "smog:bronze_gear",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_angle_gearbox",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_gear",
+        "smog:bronze_gear",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_reduction_gearbox",
+      "inputs": [
+        "smog:bronze_gear",
+        "smog:bronze_gear",
+        "smog:bronze_bushing",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_reduction_gearbox",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_gear",
+        "smog:bronze_gear",
+        "smog:bronze_bushing",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_splitter",
+      "inputs": [
+        "smog:bronze_gear",
+        "smog:bronze_gear",
+        "smog:bronze_bushing",
+        "smog:bronze_bushing",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_splitter",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_gear",
+        "smog:bronze_gear",
+        "smog:bronze_bushing",
+        "smog:bronze_bushing",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_clutch",
+      "inputs": [
+        "smog:bronze_hub",
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_clutch",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_hub",
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_safety_clutch",
+      "inputs": [
+        "smog:bronze_clutch",
+        "smog:bronze_cam",
+        "smog:bronze_ingot"
+      ],
+      "output": "smog:bronze_safety_clutch",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_clutch",
+        "smog:bronze_cam",
+        "smog:bronze_ingot",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_pulley",
+      "inputs": [
+        "smog:wooden_pulley_rim",
+        "smog:bronze_hub",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_pulley",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:wooden_pulley_rim",
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_flywheel",
+      "inputs": [
+        "smog:wooden_pulley_rim",
+        "smog:wooden_pulley_rim",
+        "smog:bronze_hub",
+        "smog:bronze_hub",
+        "smog:bronze_ingot",
+        "smog:bronze_ingot"
+      ],
+      "output": "smog:bronze_flywheel",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:wooden_pulley_rim",
+        "smog:wooden_pulley_rim",
+        "smog:bronze_hub",
+        "smog:bronze_hub",
+        "smog:bronze_ingot",
+        "smog:bronze_ingot",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_drive_coupler",
+      "inputs": [
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_hub",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_drive_coupler",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_hub",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hand_crank",
+      "inputs": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_hand_crank",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_batch_gate",
+      "inputs": [
+        "smog:bronze_plate",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_batch_gate",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_machine_frame",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_machine_frame",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_fitting",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_bearing_block",
+      "inputs": [
+        "smog:bronze_bushing",
+        "smog:bronze_bushing",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_bearing_block",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_bushing",
+        "smog:bronze_bushing",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_cam_block",
+      "inputs": [
+        "smog:bronze_cam",
+        "smog:bronze_hub",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_cam_block",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_cam",
+        "smog:bronze_hub",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_work_table",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_work_table",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hammer_arm",
+      "inputs": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_hub",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_hammer_arm",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_stone_mortar",
+      "inputs": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_stone_mortar",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_grinding_bed",
+      "inputs": [
+        "smog:stone_milling_disc",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone"
+      ],
+      "output": "smog:bronze_grinding_bed",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:stone_milling_disc",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_grinding_runner",
+      "inputs": [
+        "smog:stone_milling_disc",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_grinding_runner",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:stone_milling_disc",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_spindle_block",
+      "inputs": [
+        "smog:bronze_hub",
+        "smog:bronze_bushing",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:bronze_spindle_block",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_hub",
+        "smog:bronze_bushing",
+        "minecraft:stick",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "wooden_tool_clamp",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:wooden_tool_clamp",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_tool_clamp",
+      "inputs": [
+        "smog:bronze_ingot",
+        "smog:bronze_ingot",
+        "smog:bronze_fitting",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_tool_clamp",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_ingot",
+        "smog:bronze_ingot",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_template_holder",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_template_holder",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_casting_rotor",
+      "inputs": [
+        "smog:bronze_hub",
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_casting_rotor",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_hub",
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_casting_socket",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_casting_socket",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_pump_cylinder",
+      "inputs": [
+        "smog:bronze_pipe_part",
+        "smog:bronze_pipe_part",
+        "smog:bronze_piston",
+        "smog:pump_seal"
+      ],
+      "output": "smog:bronze_pump_cylinder",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_pipe_part",
+        "smog:bronze_pipe_part",
+        "smog:bronze_piston",
+        "smog:pump_seal",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_pump_inlet",
+      "inputs": [
+        "smog:bronze_pipe_part",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_pump_inlet",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_pipe_part",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_pump_outlet",
+      "inputs": [
+        "smog:bronze_pipe_part",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_pump_outlet",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_pipe_part",
+        "",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_bucket_section",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:bronze_bucket_section",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_bucket_top",
+      "inputs": [
+        "smog:wooden_drum",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_bucket_top",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:wooden_drum",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_bucket_bottom",
+      "inputs": [
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_bucket_bottom",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_hub",
+        "smog:bronze_fitting",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hoist_drum",
+      "inputs": [
+        "smog:wooden_drum",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:bronze_hoist_drum",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:wooden_drum",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hoist_guide",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_hoist_guide",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hoist_landing",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_hoist_landing",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hoist_counterweight",
+      "inputs": [
+        "minecraft:cobblestone",
+        "minecraft:cobblestone",
+        "smog:bronze_fitting",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:bronze_hoist_counterweight",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:cobblestone",
+        "minecraft:cobblestone",
+        "smog:bronze_fitting",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_hoist_platform",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_hoist_platform",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_capstan_post",
+      "inputs": [
+        "#minecraft:logs",
+        "#minecraft:logs",
+        "smog:bronze_hub",
+        "smog:bronze_bushing"
+      ],
+      "output": "smog:bronze_capstan_post",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:logs",
+        "#minecraft:logs",
+        "smog:bronze_hub",
+        "smog:bronze_bushing",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_capstan_arm",
+      "inputs": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_capstan_arm",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bloomery_work_door",
+      "inputs": [
+        "smog:bronze_plate",
+        "smog:bronze_plate",
+        "smog:firebrick",
+        "smog:firebrick"
+      ],
+      "output": "smog:bloomery_work_door",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "smog:bronze_plate",
+        "smog:firebrick",
+        "smog:firebrick",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "forge_work_bed",
+      "inputs": [
+        "smog:fine_ceramic_mix",
+        "smog:fine_ceramic_mix",
+        "smog:firebrick",
+        "smog:firebrick",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:forge_work_bed",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:fine_ceramic_mix",
+        "smog:fine_ceramic_mix",
+        "smog:firebrick",
+        "smog:firebrick",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "forge_stone_anvil",
+      "inputs": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_ingot"
+      ],
+      "output": "smog:forge_stone_anvil",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_ingot",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_machine_item_port",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_machine_item_port",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_animal_capstan",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_animal_capstan",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_stamper",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_cam"
+      ],
+      "output": "smog:bronze_stamper",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_cam",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_mill",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_gear"
+      ],
+      "output": "smog:bronze_mill",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_gear",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_spindle_bench",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_spindle_bench",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_copy_bench",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_gear"
+      ],
+      "output": "smog:bronze_copy_bench",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "",
+        "smog:bronze_gear",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_casting_carousel",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_casting_carousel",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "",
+        "smog:bronze_hub",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_pump_station",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_piston"
+      ],
+      "output": "smog:bronze_pump_station",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_piston",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_bucket_elevator",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_bucket_elevator",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_mine_hoist",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_mine_hoist",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "smog:bronze_hub",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bloomery_controller",
+      "inputs": [
+        "smog:firebrick",
+        "smog:firebrick",
+        "smog:bronze_fitting",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bloomery_controller",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:firebrick",
+        "smog:firebrick",
+        "smog:bronze_fitting",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "forge_hearth",
+      "inputs": [
+        "smog:firebrick",
+        "smog:firebrick",
+        "smog:bronze_fitting",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:forge_hearth",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:firebrick",
+        "smog:firebrick",
+        "smog:bronze_fitting",
+        "",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_forge_hammer",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:bronze_cam"
+      ],
+      "output": "smog:bronze_forge_hammer",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "",
+        "smog:bronze_cam",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_finishing_attachment",
+      "inputs": [
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_die",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:bronze_finishing_attachment",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_fitting",
+        "smog:bronze_fitting",
+        "smog:bronze_die",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_beam",
+      "inputs": [
+        "smog:bronze_plate",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:bronze_beam",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "minecraft:stick",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_corner_brace",
+      "inputs": [
+        "smog:bronze_ingot",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:bronze_corner_brace",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_ingot",
+        "minecraft:stick",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_cross_brace",
+      "inputs": [
+        "smog:bronze_ingot",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:bronze_cross_brace",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_ingot",
+        "minecraft:stick",
+        "",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_overhead_bracket",
+      "inputs": [
+        "smog:bronze_plate",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_overhead_bracket",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_floor_bracket",
+      "inputs": [
+        "smog:bronze_plate",
+        "minecraft:cobblestone",
+        "minecraft:cobblestone"
+      ],
+      "output": "smog:bronze_floor_bracket",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "minecraft:cobblestone",
+        "minecraft:cobblestone",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_bearing_cover",
+      "inputs": [
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_bearing_cover",
+      "count": 4,
+      "station": "stonecutting"
+    },
+    {
+      "id": "bronze_gear_plaque",
+      "inputs": [
+        "smog:bronze_plate",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_gear_plaque",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_pulley_cap",
+      "inputs": [
+        "smog:bronze_plate"
+      ],
+      "output": "smog:bronze_pulley_cap",
+      "count": 4,
+      "station": "stonecutting"
+    },
+    {
+      "id": "bronze_machine_cornice",
+      "inputs": [
+        "smog:bronze_plate",
+        "#minecraft:planks",
+        "#minecraft:planks"
+      ],
+      "output": "smog:bronze_machine_cornice",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "#minecraft:planks",
+        "",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_shaft_guard",
+      "inputs": [
+        "smog:bronze_ingot",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:bronze_shaft_guard",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_ingot",
+        "minecraft:stick",
+        "",
+        "",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bronze_inspection_cover",
+      "inputs": [
+        "smog:bronze_plate",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:bronze_inspection_cover",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_plate",
+        "",
+        "smog:bronze_fitting",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "workshop_drive_pedestal",
+      "inputs": [
+        "minecraft:cobblestone",
+        "minecraft:cobblestone",
+        "#minecraft:planks"
+      ],
+      "output": "smog:workshop_drive_pedestal",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "minecraft:cobblestone",
+        "minecraft:cobblestone",
+        "#minecraft:planks",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "workshop_wheel_spoke",
+      "inputs": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:wooden_hub_blank"
+      ],
+      "output": "smog:workshop_wheel_spoke",
+      "count": 4,
+      "station": "crafting",
+      "cells": [
+        "minecraft:stick",
+        "minecraft:stick",
+        "smog:wooden_hub_blank",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "workshop_cable_saddle",
+      "inputs": [
+        "#minecraft:planks",
+        "minecraft:stick"
+      ],
+      "output": "smog:workshop_cable_saddle",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "workshop_hanging_hook",
+      "inputs": [
+        "smog:bronze_fitting",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:workshop_hanging_hook",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "smog:bronze_fitting",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "workshop_loading_chute",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_plate"
+      ],
+      "output": "smog:workshop_loading_chute",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "",
+        "smog:bronze_plate",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "wooden_pulley_rim",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "minecraft:stick",
+        "minecraft:stick"
+      ],
+      "output": "smog:wooden_pulley_rim",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "minecraft:stick",
+        "minecraft:stick",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "wooden_drum",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:wooden_drum",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "drive_belt",
+      "inputs": [
+        "minecraft:leather",
+        "minecraft:leather",
+        "smog:waxed_cord",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:drive_belt",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:leather",
+        "minecraft:leather",
+        "smog:waxed_cord",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "pump_seal",
+      "inputs": [
+        "minecraft:leather",
+        "smog:lubricating_compound"
+      ],
+      "output": "smog:pump_seal",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "minecraft:leather",
+        "smog:lubricating_compound",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "stone_milling_disc",
+      "inputs": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:stone_milling_disc",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "",
+        "smog:bronze_fitting",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "stone_crushing_head",
+      "inputs": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_hub"
+      ],
+      "output": "smog:stone_crushing_head",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "minecraft:smooth_stone",
+        "smog:bronze_hub",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "bracket_template",
+      "inputs": [
+        "#minecraft:planks",
+        "minecraft:stick"
+      ],
+      "output": "smog:bracket_template",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "",
+        "minecraft:stick",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "fine_ceramic_mix",
+      "inputs": [
+        "minecraft:clay_ball",
+        "smog:ceramic_grog",
+        "smog:technical_abrasive"
+      ],
+      "output": "smog:fine_ceramic_mix",
+      "count": 2,
+      "station": "crafting",
+      "cells": [
+        "minecraft:clay_ball",
+        "smog:ceramic_grog",
+        "smog:technical_abrasive",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "animal_harness",
+      "inputs": [
+        "minecraft:leather",
+        "minecraft:leather",
+        "minecraft:leather",
+        "smog:waxed_cord",
+        "smog:waxed_cord",
+        "smog:bronze_fitting"
+      ],
+      "output": "smog:animal_harness",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "minecraft:leather",
+        "minecraft:leather",
+        "minecraft:leather",
+        "smog:waxed_cord",
+        "smog:waxed_cord",
+        "smog:bronze_fitting",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "cart_hitch",
+      "inputs": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:waxed_cord"
+      ],
+      "output": "smog:cart_hitch",
+      "count": 1,
+      "station": "crafting",
+      "cells": [
+        "#minecraft:planks",
+        "#minecraft:planks",
+        "smog:bronze_fitting",
+        "smog:waxed_cord",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "iron_billet",
+      "inputs": [
+        "minecraft:iron_ingot"
+      ],
+      "output": "smog:iron_billet",
+      "count": 1,
+      "station": "stonecutting"
+    }
+  ]
+}

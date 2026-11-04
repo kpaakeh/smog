@@ -14,7 +14,7 @@ public final class WorkshopRecipeTests {
         var assemblies=bench.stream().filter(r->ModularToolItem.configured(r.result())).toList();
         h.assertValueEqual(assemblies.size(),10,"One representative assembly exists for each tool type");
         h.assertValueEqual(assemblies.stream().map(r->ToolParts.schema(r.result()).id()).distinct().count(),10L,"Every tool is represented exactly once");
-        h.assertTrue(bench.size()<=24,"Conversion, shaping, finishing and imprint examples stay bounded independently of material count");
+        h.assertTrue(bench.stream().filter(r->!io.github.kpaakeh.smog.bronze.BronzeContent.contains(r.result().getItem())).count()<=24,"Tool examples stay bounded; real bronze manufacturing recipes are counted separately");
         for(var recipe:assemblies){
             var schema=ToolParts.schema(recipe.result());var rebuilt=ToolParts.assemble(schema,ToolParts.components(recipe.result()));
             h.assertTrue(!rebuilt.isEmpty(),"The displayed example is a real compatible assembly: "+schema.id());
