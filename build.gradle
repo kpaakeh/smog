@@ -132,6 +132,9 @@ apply from: 'gradle/texture-review.gradle'
 if(providers.gradleProperty('bronzeRegistrationTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.bronzeRegistrationTest=true' }
 }
+if(providers.gradleProperty('shaftReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.shaftReviewTest=true' }
+}
 
 if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureTest=true"}}
 

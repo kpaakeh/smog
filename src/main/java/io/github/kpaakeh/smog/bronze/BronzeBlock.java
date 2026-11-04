@@ -25,6 +25,7 @@ public final class BronzeBlock extends Block implements EntityBlock {
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){builder.add(FACING,ASSEMBLED,OPEN);}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){
         var spec=BronzeContent.entry(id);Direction facing=spec.axis()?context.getClickedFace():context.getHorizontalDirection().getOpposite();
+        if(id.equals("bronze_shaft"))facing=BronzeShaft.canonical(facing);
         if(spec.attachment())facing=context.getClickedFace();
         var state=defaultBlockState().setValue(FACING,facing);return canSurvive(state,context.getLevel(),context.getClickedPos())?state:null;
     }
@@ -38,7 +39,7 @@ public final class BronzeBlock extends Block implements EntityBlock {
         if(!level.isClientSide()&&!canSurvive(state,level,pos))level.destroyBlock(pos,true);
     }
     @Override protected VoxelShape getShape(BlockState state,BlockGetter level,BlockPos pos,CollisionContext context){
-        var facing=state.getValue(FACING);var shape=WorkshopModelShapes.get(id+"_inventory",facing.getAxis()==Direction.Axis.Y?Direction.NORTH:facing);
+        var rawFacing=state.getValue(FACING);var facing=id.equals("bronze_shaft")?BronzeShaft.canonical(rawFacing):rawFacing;var shape=WorkshopModelShapes.get(id+"_inventory",facing.getAxis()==Direction.Axis.Y?Direction.NORTH:facing);
         if(facing.getAxis()!=Direction.Axis.Y)return shape;
         var boxes=new java.util.ArrayList<VoxelShape>();
         shape.forAllBoxes((x,y,z,xx,yy,zz)->boxes.add(facing==Direction.UP?Shapes.box(x,z,1-yy,xx,zz,1-y):Shapes.box(x,1-zz,y,xx,1-z,yy)));
@@ -49,7 +50,7 @@ public final class BronzeBlock extends Block implements EntityBlock {
             if(!level.isClientSide()){
                 var entity=level.getBlockEntity(pos) instanceof BronzeEntity bronze?bronze:null;
                 if(player.isShiftKeyDown()){
-                    var face=state.getValue(FACING);var next=BronzeContent.entry(id).axis()?Direction.values()[(face.ordinal()+1)%Direction.values().length]:face.getAxis()==Direction.Axis.Y?Direction.NORTH:face.getClockWise();
+                    var face=state.getValue(FACING);var next=id.equals("bronze_shaft")?BronzeShaft.nextAxis(face):BronzeContent.entry(id).axis()?Direction.values()[(face.ordinal()+1)%Direction.values().length]:face.getAxis()==Direction.Axis.Y?Direction.NORTH:face.getClockWise();
                     var rotated=state.setValue(FACING,next).setValue(ASSEMBLED,false);
                     if(canSurvive(rotated,level,pos)){if(entity!=null)entity.disassemble();level.setBlock(pos,rotated,Block.UPDATE_ALL);}
                 }else if(entity!=null)entity.inspect(player);
@@ -62,7 +63,7 @@ public final class BronzeBlock extends Block implements EntityBlock {
             if(id.equals("bronze_hand_crank"))entity.crank();else entity.inspect(player);
         }return InteractionResult.SUCCESS;
     }
-    @Override protected BlockState rotate(BlockState state,Rotation rotation){return state.setValue(FACING,rotation.rotate(state.getValue(FACING)));}
+    @Override protected BlockState rotate(BlockState state,Rotation rotation){var next=rotation.rotate(state.getValue(FACING));return state.setValue(FACING,id.equals("bronze_shaft")?BronzeShaft.canonical(next):next);}
     @Override protected BlockState mirror(BlockState state,Mirror mirror){return rotate(state,mirror.getRotation(state.getValue(FACING)));}
     @Override public BlockEntity newBlockEntity(BlockPos pos,BlockState state){var entry=BronzeContent.entry(id);return entry.group().equals("controller")||!entry.animation().equals("none")?new BronzeEntity(pos,state):null;}
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,BlockState state,BlockEntityType<T> type){

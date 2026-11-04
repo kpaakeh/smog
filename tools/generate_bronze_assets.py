@@ -93,6 +93,10 @@ def geometry(entry):
         fixed = frame()
     elif n in ('bronze_shaft', 'bronze_shaft_support', 'bronze_bearing_block'):
         moving = [box((6, 6, 0), (10, 10, 16)), box((5.5, 5.5, 0), (10.5, 10.5, 2), 'metal'), box((5.5, 5.5, 14), (10.5, 10.5, 16), 'metal')]
+        if n == 'bronze_shaft':
+            moving = [box((6, 6, 0), (10, 10, 16))]
+            moving += ring(radius=3.5, inner=2, depth=1.5, center=(8, 8, .75))
+            moving += ring(radius=3.5, inner=2, depth=1.5, center=(8, 8, 15.25))
         if n != 'bronze_shaft':
             fixed = [box((1, 0, 3), (15, 3, 13), 'stone'), box((2, 3, 4), (5, 12, 12)), box((11, 3, 4), (14, 12, 12))] + ring(radius=5, inner=3, depth=5)
     elif n in ('bronze_angle_gearbox', 'bronze_reduction_gearbox', 'bronze_splitter', 'bronze_clutch', 'bronze_safety_clutch', 'bronze_drive_coupler'):
@@ -279,16 +283,45 @@ def icon(entry):
     path = ASSETS / 'textures/item' / (n + '.png');path.parent.mkdir(parents=True, exist_ok=True);im.save(path)
 
 
+def shaft_envelope(elements):
+    """Conservative swept collision, authored from the rotating model's cuboids.
+
+    Half-pixel strips preserve a round, narrow envelope; a turning square axle
+    never clips through an entity between its four stationary corner poses.
+    """
+    intervals = {}
+    for e in elements:
+        a, b = e['from'], e['to']
+        radius = max(math.hypot(x-8, y-8) for x in (a[0], b[0]) for y in (a[1], b[1]))
+        intervals[(a[2], b[2])] = max(intervals.get((a[2], b[2]), 0), radius)
+    result = []
+    for (z, zz), radius in intervals.items():
+        start = math.floor(-radius*2)/2
+        x = start
+        while x < radius:
+            xx = min(x+.5, radius)
+            nearest = 0 if x <= 0 <= xx else min(abs(x), abs(xx))
+            if nearest < radius:
+                height = math.ceil(math.sqrt(radius*radius-nearest*nearest)*2)/2
+                result.append({'from': [8+x, 8-height, z], 'to': [8+xx, 8+height, zz]})
+            x += .5
+    return result
+
+
 def main():
+    import argparse
+    parser=argparse.ArgumentParser();parser.add_argument('--only',nargs='+');selected=parser.parse_args().only
     catalog = json.loads(CATALOG.read_text(encoding='utf-8'))
     textures()
     for b in catalog['blocks']:
+        if selected and b['id'] not in selected:continue
         n = b['id']; fixed, moving = geometry(b)
         textures_map = {t: 'smog:block/bronze_workshop_' + t for t in ('wood', 'metal', 'dark', 'stone', 'rope', 'ceramic')}
         textures_map['particle'] = textures_map['wood']
         base = {'parent': 'minecraft:block/block', 'textures': textures_map, 'elements': exterior(fixed)}
         write(ASSETS / 'models/block' / (n + '.json'), base)
-        write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': [{'from': e['from'], 'to': e['to']} for e in fixed + moving]})
+        collision=shaft_envelope(fixed+moving) if n=='bronze_shaft' else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
+        write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': collision})
         # Physical cuboids are metadata on a valid model, not fake unbakeable models.
         old_collision = ASSETS / 'models/block' / (n + '_collision.json')
         if old_collision.exists():old_collision.unlink()
@@ -310,6 +343,7 @@ def main():
         write(ASSETS / 'blockstates' / (n + '.json'), {'variants': variants})
         write(DATA / 'loot_table/blocks' / (n + '.json'), {'type': 'minecraft:block', 'pools': [{'rolls': 1, 'entries': [{'type': 'minecraft:item', 'name': 'smog:' + n}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
     for i in catalog['items']:
+        if selected:continue
         icon(i)
         write(ASSETS / 'models/item' / (i['id'] + '.json'), {'parent': 'minecraft:item/generated', 'textures': {'layer0': 'smog:item/' + i['id']}})
         write(ASSETS / 'items' / (i['id'] + '.json'), {'model': {'type': 'minecraft:model', 'model': 'smog:item/' + i['id']}})

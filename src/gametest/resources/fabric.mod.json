@@ -9,6 +9,7 @@
       "io.github.kpaakeh.smog.test.BronzeRegistrationTests",
       "io.github.kpaakeh.smog.test.BronzeManufacturingTests",
       "io.github.kpaakeh.smog.test.BronzeNetworkTests",
+      "io.github.kpaakeh.smog.test.BronzeShaftTests",
       "io.github.kpaakeh.smog.test.IndustryTests",
       "io.github.kpaakeh.smog.test.EnergyInteropTests",
       "io.github.kpaakeh.smog.test.ResourceGenerationTests",
@@ -42,6 +43,7 @@
       "io.github.kpaakeh.smog.test.TestJeiProbe"
     ],
     "main": [
+      "io.github.kpaakeh.smog.test.ShaftRotationFixture",
       "io.github.kpaakeh.smog.test.TestIndustryContent",
       "io.github.kpaakeh.smog.test.TextureReviewCards"
     ]

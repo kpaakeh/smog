@@ -401,8 +401,14 @@ abstract class GenerateSmogContent extends DefaultTask {
         en['message.smog.bronze_floor']='solid walkable floor';ru['message.smog.bronze_floor']='твёрдый пол'
         en['message.smog.bronze_bounds']='inside the dimension build height';ru['message.smog.bronze_bounds']='в пределах высоты строительства мира'
         en['jei.smog.bronze.finishing']='Finish with one hammer strike (1 second)';ru['jei.smog.bronze.finishing']='Доводка одним ударом молота (1 секунда)'
+        en['message.smog.bronze_network.forward']='forward';ru['message.smog.bronze_network.forward']='прямое вращение'
+        en['message.smog.bronze_network.reverse']='reverse';ru['message.smog.bronze_network.reverse']='обратное вращение'
+        en['message.smog.bronze_network.stopped']='stopped';ru['message.smog.bronze_network.stopped']='остановлен'
+        en['message.smog.bronze_network.slow']='Too slow';ru['message.smog.bronze_network.slow']='Слишком медленно'
+        en['message.smog.bronze_network.fast']='Too fast';ru['message.smog.bronze_network.fast']='Слишком быстро'
+        en['message.smog.bronze_network.details']='Demand %sP; available %sP; speed %s; %s';ru['message.smog.bronze_network.details']='Нужно %sP; доступно %sP; скорость %s; %s'
         en['jei.smog.bronze.template']='Copy the template; the sample is retained';ru['jei.smog.bronze.template']='Изготовление шаблона; образец сохраняется'
-        [ready:['Rotation: demand %sP, available %sP','Вращение: требуется %sP, доступно %sP'],source:['No rotation source','Нет источника вращения'],overload:['Overload: demand %sP, available %sP','Перегрузка: требуется %sP, доступно %sP'],support:['A shaft longer than 8 blocks needs a support','Валу длиннее 8 блоков нужна опора'],direction:['Sources have incompatible directions','Направления источников не согласованы'],unloaded:['Required network section is not loaded','Нужный участок сети не загружен'],large:['Split the network into sections of at most 256 nodes','Разделите сеть на участки до 256 узлов']].each { networkState,networkTexts -> en["message.smog.bronze_network.$networkState"]=networkTexts[0];ru["message.smog.bronze_network.$networkState"]=networkTexts[1] }
+        [ready:['Rotation is transmitted','Вращение передаётся'],source:['No rotation source','Нет источника вращения'],overload:['Not enough power: disengage a load','Не хватает мощности: отключите одну из ветвей'],support:['A shaft longer than 8 blocks needs a support','Валу длиннее 8 блоков нужна опора'],direction:['Sources have incompatible directions','Направления источников не согласованы'],unloaded:['Required network section is not loaded','Нужный участок сети не загружен'],large:['Split the network into sections of at most 256 nodes','Разделите сеть на участки до 256 узлов']].each { networkState,networkTexts -> en["message.smog.bronze_network.$networkState"]=networkTexts[0];ru["message.smog.bronze_network.$networkState"]=networkTexts[1] }
         write('assets/smog/lang/en_us.json',en); write('assets/smog/lang/ru_ru.json',ru)
         write('smog.content.json',root)
     }
