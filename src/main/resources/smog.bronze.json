@@ -26,10 +26,19 @@
     },
     {
       "id": "bronze_reduction_gearbox",
-      "ru": "Понижающая передача",
+      "ru": "Большая шестерня",
       "group": "network",
-      "en": "Bronze Reduction Gearbox",
-      "animation": "rotate_z"
+      "en": "Large Cogwheel",
+      "animation": "rotate_z",
+      "axis": true
+    },
+    {
+      "id": "bronze_cogwheel",
+      "ru": "Шестерня",
+      "group": "network",
+      "en": "Cogwheel",
+      "animation": "rotate_z",
+      "axis": true
     },
     {
       "id": "bronze_splitter",

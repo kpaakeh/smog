@@ -61,8 +61,8 @@ def exterior(elements):
 def ring(axis='z', radius=6, inner=3.5, depth=3, texture='metal', center=(8, 8, 8)):
     """A stepped circular rim, with a genuinely empty centre and no alpha planes."""
     result = []
-    for u in range(-int(radius), int(radius)):
-        for v in range(-int(radius), int(radius)):
+    for u in range(-math.ceil(radius), math.ceil(radius)):
+        for v in range(-math.ceil(radius), math.ceil(radius)):
             r = math.hypot(u + .5, v + .5)
             if inner <= r <= radius:
                 lo, hi = [0., 0., 0.], [0., 0., 0.]
@@ -91,6 +91,16 @@ def geometry(entry):
     box = lambda a, b, t='wood': cuboid(a, b, t)
     if n == 'bronze_machine_frame':
         fixed = frame()
+    elif n in ('bronze_cogwheel','bronze_reduction_gearbox'):
+        large=n=='bronze_reduction_gearbox';pitch=32/3 if large else 16/3;count=24 if large else 12
+        moving=[box((6,6,0),(10,10,16))]
+        moving+=ring(radius=3.5,inner=2,depth=1.5,center=(8,8,.75))+ring(radius=3.5,inner=2,depth=1.5,center=(8,8,15.25))
+        moving+=ring(radius=pitch-.8,inner=max(2,pitch-2.2),depth=2,texture='wood')
+        moving+=[box((8-pitch+1,7.25,7),(8+pitch-1,8.75,9)),box((7.25,8-pitch+1,7),(8.75,8+pitch-1,9))]
+        for index in range(count):
+            angle=2*math.pi*index/count+(0 if large else math.pi/count)
+            x,y=8+pitch*math.cos(angle),8+pitch*math.sin(angle)
+            moving.append(box((x-.8,y-.8,7),(x+.8,y+.8,9),'metal'))
     elif n in ('bronze_shaft', 'bronze_shaft_support', 'bronze_bearing_block'):
         moving = [box((6, 6, 0), (10, 10, 16)), box((5.5, 5.5, 0), (10.5, 10.5, 2), 'metal'), box((5.5, 5.5, 14), (10.5, 10.5, 16), 'metal')]
         if n in ('bronze_shaft', 'bronze_shaft_support'):
@@ -410,7 +420,7 @@ def main():
         textures_map['particle'] = textures_map['wood']
         base = {'parent': 'minecraft:block/block', 'textures': textures_map, 'elements': exterior(fixed)}
         write(ASSETS / 'models/block' / (n + '.json'), base)
-        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
+        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank','bronze_cogwheel','bronze_reduction_gearbox') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
         write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': collision})
         # Physical cuboids are metadata on a valid model, not fake unbakeable models.
         old_collision = ASSETS / 'models/block' / (n + '_collision.json')

@@ -39,9 +39,9 @@ public final class BronzeRegistrationTests {
         var rotation=BronzeBlueprints.rotation(facing);for(var cell:drawing.cells())level.setBlock(origin.offset(cell.offset().rotate(rotation)),Blocks.AIR.defaultBlockState(),Block.UPDATE_CLIENTS);level.setBlock(origin,Blocks.AIR.defaultBlockState(),Block.UPDATE_CLIENTS);
     }
     @GameTest public void chapterRegistersEverySpecifiedBlockAndItemWithoutToolPollution(GameTestHelper h){
-        h.assertValueEqual(BronzeContent.blocks().size(),72,"56 functional and 16 decorative blocks");h.assertValueEqual(BronzeContent.items().size(),50,"Mechanical castings, patterns, molds and supplies");
+        h.assertValueEqual(BronzeContent.blocks().size(),73,"57 functional and 16 decorative blocks");h.assertValueEqual(BronzeContent.items().size(),50,"Mechanical castings, patterns, molds and supplies");
         CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess());
-        var bronze=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("bronze_age")).getDisplayItems();h.assertValueEqual(bronze.size(),122,"Every new entry is visible in its chapter");
+        var bronze=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("bronze_age")).getDisplayItems();h.assertValueEqual(bronze.size(),123,"Every new entry is visible in its chapter");
         var copper=BuiltInRegistries.CREATIVE_MODE_TAB.getValue(ModBlocks.id("copper_age")).getDisplayItems();
         for(var entry:BronzeContent.blocks()){
             h.assertTrue(entry.block().asItem()!=Items.AIR,"Normal block item: "+entry.id());h.assertTrue(bronze.stream().anyMatch(s->s.is(entry.block().asItem())),"Chapter includes "+entry.id());h.assertFalse(copper.stream().anyMatch(s->s.is(entry.block().asItem())),"Bronze does not leak into copper");
