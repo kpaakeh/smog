@@ -40,6 +40,7 @@ public final class SmogJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(ModBlocks.id("bronze_drive")),Component.translatable("jei.smog.guide.finale"));
         registration.addIngredientInfo(io.github.kpaakeh.smog.bronze.BronzeContent.entry("bronze_splitter").block(),Component.translatable("jei.smog.guide.splitter"));
         registration.addIngredientInfo(io.github.kpaakeh.smog.bronze.BronzeContent.entry("bronze_clutch").block(),Component.translatable("jei.smog.guide.clutch"));
+        registration.addIngredientInfo(io.github.kpaakeh.smog.bronze.BronzeContent.entry("bronze_drive_coupler").block(),Component.translatable("jei.smog.guide.coupler"));
         registration.addIngredientInfo(io.github.kpaakeh.smog.bronze.BronzeContent.entry("bronze_safety_clutch").block(),Component.translatable("jei.smog.guide.safety_clutch"));
         var fuelPages=new ArrayList<SmelteryFuelCategory.Page>();
         for(var fuel:io.github.kpaakeh.smog.copper.Smeltery.fuels()){fuelPages.add(new SmelteryFuelCategory.Page(fuel,false));if(fuel.fluid().equals("smog:blazing_fuel"))fuelPages.add(new SmelteryFuelCategory.Page(fuel,true));}

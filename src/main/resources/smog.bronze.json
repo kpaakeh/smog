@@ -77,6 +77,7 @@
     },
     {
       "id": "bronze_drive_coupler",
+      "axis": true,
       "ru": "Приводная насадка",
       "group": "network",
       "en": "Bronze Drive Coupler",

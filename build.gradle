@@ -168,3 +168,7 @@ if(providers.gradleProperty('clutchReviewTest').isPresent()) {
 if(providers.gradleProperty('safetyReviewTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.safetyReviewTest=true' }
 }
+
+if(providers.gradleProperty('couplerReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.couplerReviewTest=true' }
+}

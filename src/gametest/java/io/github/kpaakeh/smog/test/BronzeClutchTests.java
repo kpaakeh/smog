@@ -38,4 +38,14 @@ public final class BronzeClutchTests {
         var player=h.makeMockServerPlayerInLevel();player.gameMode.useItemOn(player,level,net.minecraft.world.item.ItemStack.EMPTY,net.minecraft.world.InteractionHand.MAIN_HAND,new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(p),Direction.UP,p,false));
         h.assertTrue(level.getBlockState(p).getValue(BronzeBlock.OPEN)&&BronzeNetwork.query(level,p).running(),"A real hand click restores the now-safe 4P circuit");h.succeed();
     }
+    @GameTest public void couplerFeedsOnlyItsFrontMachineInEveryOrientation(GameTestHelper h){
+        var level=h.getLevel();var p=h.absolutePos(new BlockPos(4,4,4));
+        for(var face:Direction.values()){
+            level.setBlockAndUpdate(p,BronzeContent.entry("bronze_drive_coupler").block().defaultBlockState().setValue(BronzeBlock.FACING,face));level.setBlockAndUpdate(p.relative(face.getOpposite()),BronzeContent.entry("bronze_hand_crank").block().defaultBlockState().setValue(BronzeBlock.FACING,face.getOpposite()));
+            level.setBlockAndUpdate(p.relative(face),net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(io.github.kpaakeh.smog.registry.ModBlocks.id("hand_bellows")).defaultBlockState());((BronzeEntity)level.getBlockEntity(p.relative(face.getOpposite()))).crank();
+            var clicked=p.relative(face);var coupler=BronzeContent.entry("bronze_drive_coupler").block();var player=h.makeMockServerPlayerInLevel();var context=new net.minecraft.world.item.context.BlockPlaceContext(level,player,net.minecraft.world.InteractionHand.MAIN_HAND,new net.minecraft.world.item.ItemStack(coupler),new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(clicked).relative(face.getOpposite(),.5),face.getOpposite(),clicked,false));h.assertTrue(coupler.getStateForPlacement(context).getValue(BronzeBlock.FACING)==face,"Placement puts the flange against the clicked mechanism on every face");
+            var result=BronzeNetwork.query(level,p);h.assertTrue(result.running()&&result.required()==2&&result.consumers().containsKey(p.relative(face)),"The front accepts a real mechanism at its actual 2P load");h.assertTrue(BronzeNetwork.ports(level,p,level.getBlockState(p)).equals(java.util.Set.of(face.getOpposite())),"Only the rear is a shaft socket");
+            for(var pos:java.util.List.of(p,p.relative(face),p.relative(face.getOpposite())))level.setBlockAndUpdate(pos,Blocks.AIR.defaultBlockState());BronzeNetwork.invalidate(level);
+        }h.succeed();
+    }
 }

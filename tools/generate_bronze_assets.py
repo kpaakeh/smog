@@ -109,6 +109,11 @@ def geometry(entry):
             moving += ring(radius=3.5, inner=2, depth=1.5, center=(8, 8, 15.25))
         if n != 'bronze_shaft':
             fixed = [box((1, 0, 3), (15, 3, 13), 'stone'), box((2, 3, 4), (5, 12, 12)), box((11, 3, 4), (14, 12, 12))] + ring(radius=5, inner=3.75 if n=='bronze_shaft_support' else 3, depth=5)
+    elif n == 'bronze_drive_coupler':
+        fixed=ring(radius=4.5,inner=2.75,depth=2,center=(8,8,1))
+        fixed += [box((x, y, 0),(x+1.5,y+1.5,2.5),'dark') for x,y in ((4,4),(10.5,4),(4,10.5),(10.5,10.5))]
+        moving=[box((6,6,8),(10,10,16)),box((6.5,6.5,0),(9.5,9.5,8),'metal')]
+        moving+=ring(radius=3.5,inner=2,depth=1.5,center=(8,8,15.25))
     elif n in ('bronze_clutch','bronze_safety_clutch'):
         fixed=ring(radius=5,inner=3.75,depth=2,center=(8,8,1))+ring(radius=5,inner=3.75,depth=2,center=(8,8,15))
         fixed += [box((2,2,1),(4,4,15)),box((12,2,1),(14,4,15)),box((2,12,1),(4,14,15)),box((12,12,1),(14,14,15))]
@@ -473,7 +478,7 @@ def main():
         textures_map['particle'] = textures_map['wood']
         base = {'parent': 'minecraft:block/block', 'textures': textures_map, 'elements': exterior(fixed)}
         write(ASSETS / 'models/block' / (n + '.json'), base)
-        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank','bronze_cogwheel','bronze_reduction_gearbox','bronze_clutch','bronze_safety_clutch') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
+        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank','bronze_cogwheel','bronze_reduction_gearbox','bronze_clutch','bronze_safety_clutch','bronze_drive_coupler') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
         write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': collision})
         if n in ('bronze_clutch','bronze_safety_clutch'):
             disengaged=fixed+([cuboid((5,13,5),(11,16,7),'dark')] if n=='bronze_safety_clutch' else [])

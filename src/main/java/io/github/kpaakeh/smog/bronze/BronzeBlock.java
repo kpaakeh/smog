@@ -27,6 +27,7 @@ public class BronzeBlock extends Block implements EntityBlock {
         var spec=BronzeContent.entry(id);Direction facing=spec.axis()?context.getClickedFace():context.getHorizontalDirection().getOpposite();
         if((id.equals("bronze_shaft")||this instanceof BronzeGearBlock||this instanceof BronzeClutchBlock))facing=BronzeShaft.canonical(facing);
         if(spec.attachment())facing=context.getClickedFace();
+        if(id.equals("bronze_drive_coupler"))facing=context.getClickedFace().getOpposite();
         var state=defaultBlockState().setValue(FACING,facing);return canSurvive(state,context.getLevel(),context.getClickedPos())?state:null;
     }
     @Override protected boolean canSurvive(BlockState state,LevelReader level,BlockPos pos){
