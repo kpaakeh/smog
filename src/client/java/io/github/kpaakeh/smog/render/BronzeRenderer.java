@@ -49,8 +49,9 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
         state.splitter=entity.getBlockState().getBlock() instanceof BronzeSplitterBlock;
         if(state.splitter){state.branches[0]=entity.getBlockState().getValue(BronzeSplitterBlock.FRONT);state.branches[1]=entity.getBlockState().getValue(BronzeSplitterBlock.RIGHT);state.branches[2]=entity.getBlockState().getValue(BronzeSplitterBlock.LEFT);}
         if(state.bevel)state.output=BronzeAngleBlock.output(entity.getBlockState());
-        if(entity.id().equals("bronze_shaft")||entity.id().equals("bronze_shaft_support")||entity.getBlockState().getBlock() instanceof BronzeGearBlock)state.facing=BronzeShaft.canonical(state.facing);
+        if(entity.id().equals("bronze_shaft")||entity.id().equals("bronze_shaft_support")||entity.getBlockState().getBlock() instanceof BronzeGearBlock||entity.getBlockState().getBlock() instanceof BronzeClutchBlock)state.facing=BronzeShaft.canonical(state.facing);
         if(entity.getBlockState().getValue(BronzeBlock.ASSEMBLED))state.animation="none";
+        if(entity.getBlockState().getBlock() instanceof BronzeClutchBlock&&!BronzeClutchBlock.engaged(entity.getBlockState()))state.animation="none";
         if(state.animation.equals("none"))return;
         var stack=new ItemStack(entity.getBlockState().getBlock());
         for(int i=0;i<(state.splitter?6:state.bevel?2:1);i++){if(state.parts[i]==null)state.parts[i]=new ItemStackRenderState();stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of(BEVEL_PARTS[i]),List.of()));items.updateForTopItem(state.parts[i],stack,ItemDisplayContext.NONE,entity.getLevel(),null,0);}

@@ -15,6 +15,7 @@
       "io.github.kpaakeh.smog.test.BronzeCrankTests",
       "io.github.kpaakeh.smog.test.BronzeGearTests",
       "io.github.kpaakeh.smog.test.BronzeSplitterTests",
+      "io.github.kpaakeh.smog.test.BronzeClutchTests",
       "io.github.kpaakeh.smog.test.IndustryTests",
       "io.github.kpaakeh.smog.test.EnergyInteropTests",
       "io.github.kpaakeh.smog.test.ResourceGenerationTests",

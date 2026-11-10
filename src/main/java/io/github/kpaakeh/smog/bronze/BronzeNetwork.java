@@ -45,7 +45,6 @@ public final class BronzeNetwork {
         if(state.getBlock() instanceof BronzeSplitterBlock)return BronzeSplitterBlock.ports(state);
         if(state.getBlock() instanceof BronzeGearBlock)return BronzeGearBlock.ports(level,pos,state);
         if(state.getBlock() instanceof BronzeAngleBlock)return Set.of(f.getOpposite(),BronzeAngleBlock.output(state));
-        if(n.equals("bronze_splitter"))return f.getAxis()==Direction.Axis.Y?Set.of():Set.of(f,f.getOpposite(),f.getClockWise(),f.getCounterClockWise());
         return Set.of(f,f.getOpposite());
     }
     private static boolean consumer(MachineEntity m){return CopperWorkshops.workshop(m,"lever_press")||CopperWorkshops.workshop(m,"hand_bellows")||LoadingCrane.handles(m)||Ropeway.handles(m);}

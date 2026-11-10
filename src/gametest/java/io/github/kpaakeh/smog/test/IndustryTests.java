@@ -148,11 +148,18 @@ public class IndustryTests {
             if(kind==GeneratorKind.STEAM)level.setBlockAndUpdate(origin.north(),Blocks.WATER.defaultBlockState());
             if(kind==GeneratorKind.GEOTHERMAL)level.setBlockAndUpdate(origin.below(),Blocks.LAVA.defaultBlockState());
             if(kind==GeneratorKind.FLOW)level.setBlockAndUpdate(origin.north(),Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL,4));
-            if(kind!=GeneratorKind.LIGHTNING){machine.serverTick();h.assertTrue(machine.energy()>0,"Environmental production works for "+kind);}
-            else {h.assertTrue(machine.recordStrike("test-bolt"),"New lightning accepted");h.assertFalse(machine.recordStrike("test-bolt"),"Same lightning not credited twice");}
+            if(kind!=GeneratorKind.LIGHTNING && kind!=GeneratorKind.SOLAR){machine.serverTick();h.assertTrue(machine.energy()>0,"Environmental production works for "+kind);}
+            else if(kind==GeneratorKind.LIGHTNING) {h.assertTrue(machine.recordStrike("test-bolt"),"New lightning accepted");h.assertFalse(machine.recordStrike("test-bolt"),"Same lightning not credited twice");}
             var broken=origin.offset(definition.parts().keySet().iterator().next());level.setBlockAndUpdate(broken,Blocks.AIR.defaultBlockState());machine.serverTick();
             h.assertFalse(machine.assembled(),"Dismantling stops "+kind);
         }
-        h.succeed();
+        // Skylight is asynchronous; production must be checked after lighting catches up.
+        h.setTime(6000);
+        for(int x=-2;x<=2;x++)for(int y=-1;y<=6;y++)for(int z=-1;z<=4;z++)level.setBlockAndUpdate(origin.offset(x,y,z),Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(origin,BuiltInRegistries.BLOCK.getValue(ModBlocks.id("generator_controller")).defaultBlockState());
+        var solar=(MachineEntity)level.getBlockEntity(origin);var definition=io.github.kpaakeh.smog.multiblock.Multiblocks.get(GeneratorKind.SOLAR.structureId());
+        definition.parts().forEach((p,ingredient)->level.setBlockAndUpdate(origin.offset(p),ingredient.block().defaultBlockState()));
+        h.assertTrue(solar.tryAssemble(),"Solar fixture assembles before the lighting check");solar.energy(0);
+        h.succeedWhen(()->{solar.serverTick();h.assertTrue(solar.energy()>0,"Solar production works after skylight propagation");});
     }
 }

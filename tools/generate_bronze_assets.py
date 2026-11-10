@@ -109,6 +109,10 @@ def geometry(entry):
             moving += ring(radius=3.5, inner=2, depth=1.5, center=(8, 8, 15.25))
         if n != 'bronze_shaft':
             fixed = [box((1, 0, 3), (15, 3, 13), 'stone'), box((2, 3, 4), (5, 12, 12)), box((11, 3, 4), (14, 12, 12))] + ring(radius=5, inner=3.75 if n=='bronze_shaft_support' else 3, depth=5)
+    elif n == 'bronze_clutch':
+        fixed=ring(radius=5,inner=3.75,depth=2,center=(8,8,1))+ring(radius=5,inner=3.75,depth=2,center=(8,8,15))
+        fixed += [box((2,2,1),(4,4,15)),box((12,2,1),(14,4,15)),box((2,12,1),(4,14,15)),box((12,12,1),(14,14,15))]
+        moving=[box((6,6,0),(10,10,16))]+ring(radius=3.5,inner=2,depth=2,center=(8,8,7))+ring(radius=3.5,inner=2,depth=2,center=(8,8,9))
     elif n in ('bronze_angle_gearbox', 'bronze_reduction_gearbox', 'bronze_splitter', 'bronze_clutch', 'bronze_safety_clutch', 'bronze_drive_coupler'):
         fixed = [box((1, 0, 1), (15, 3, 15)), box((1, 3, 1), (4, 13, 15)), box((12, 3, 1), (15, 13, 15)), box((1, 13, 1), (15, 15, 15))]
         moving = ring(radius=5, inner=2.5, depth=3) + [box((6, 6, 0), (10, 10, 16), 'metal')]
@@ -469,8 +473,10 @@ def main():
         textures_map['particle'] = textures_map['wood']
         base = {'parent': 'minecraft:block/block', 'textures': textures_map, 'elements': exterior(fixed)}
         write(ASSETS / 'models/block' / (n + '.json'), base)
-        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank','bronze_cogwheel','bronze_reduction_gearbox') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
+        collision=shaft_envelope(moving)+[{'from':e['from'],'to':e['to']} for e in fixed] if n in ('bronze_shaft','bronze_shaft_support','bronze_hand_crank','bronze_cogwheel','bronze_reduction_gearbox','bronze_clutch') else [{'from':e['from'],'to':e['to']} for e in fixed+moving]
         write(ASSETS / 'models/block' / (n + '_inventory.json'), {**base, 'elements': exterior(fixed + moving), 'smog_collision': collision})
+        if n == 'bronze_clutch':
+            write(ASSETS/'models/block'/(n+'_disengaged_inventory.json'),{**base,'smog_collision':[{'from':e['from'],'to':e['to']} for e in fixed]})
         # Physical cuboids are metadata on a valid model, not fake unbakeable models.
         old_collision = ASSETS / 'models/block' / (n + '_collision.json')
         if old_collision.exists():old_collision.unlink()
@@ -489,6 +495,8 @@ def main():
             if face == 'down':model['x'] = 90
             variants['facing=' + face + ',assembled=false'] = model
             variants['facing=' + face + ',assembled=true'] = {**model, 'model': 'smog:block/' + n + '_inventory'}
+        if n == 'bronze_clutch':
+            variants={key+',open='+str(opened).lower()+',powered='+str(powered).lower():{**model,**({'model':'smog:block/'+n+'_disengaged_inventory'} if not opened or powered else {})} for key,model in variants.items() for opened in (True,False) for powered in (True,False)}
         write(ASSETS / 'blockstates' / (n + '.json'), {'variants': variants})
         if n == 'bronze_shaft_support':
             write_support_variants(n, base, fixed, moving, collision)

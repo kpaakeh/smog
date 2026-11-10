@@ -1,49 +1,187 @@
 {
   "variants": {
-    "facing=north,assembled=false": {
+    "facing=north,assembled=false,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory"
+    },
+    "facing=north,assembled=false,open=true,powered=false": {
       "model": "smog:block/bronze_clutch"
     },
-    "facing=north,assembled=true": {
+    "facing=north,assembled=false,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory"
+    },
+    "facing=north,assembled=false,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory"
+    },
+    "facing=north,assembled=true,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory"
+    },
+    "facing=north,assembled=true,open=true,powered=false": {
       "model": "smog:block/bronze_clutch_inventory"
     },
-    "facing=east,assembled=false": {
+    "facing=north,assembled=true,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory"
+    },
+    "facing=north,assembled=true,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory"
+    },
+    "facing=east,assembled=false,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 90
+    },
+    "facing=east,assembled=false,open=true,powered=false": {
       "model": "smog:block/bronze_clutch",
       "y": 90
     },
-    "facing=east,assembled=true": {
+    "facing=east,assembled=false,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 90
+    },
+    "facing=east,assembled=false,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 90
+    },
+    "facing=east,assembled=true,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 90
+    },
+    "facing=east,assembled=true,open=true,powered=false": {
       "model": "smog:block/bronze_clutch_inventory",
       "y": 90
     },
-    "facing=south,assembled=false": {
+    "facing=east,assembled=true,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 90
+    },
+    "facing=east,assembled=true,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 90
+    },
+    "facing=south,assembled=false,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 180
+    },
+    "facing=south,assembled=false,open=true,powered=false": {
       "model": "smog:block/bronze_clutch",
       "y": 180
     },
-    "facing=south,assembled=true": {
+    "facing=south,assembled=false,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 180
+    },
+    "facing=south,assembled=false,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 180
+    },
+    "facing=south,assembled=true,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 180
+    },
+    "facing=south,assembled=true,open=true,powered=false": {
       "model": "smog:block/bronze_clutch_inventory",
       "y": 180
     },
-    "facing=west,assembled=false": {
+    "facing=south,assembled=true,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 180
+    },
+    "facing=south,assembled=true,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 180
+    },
+    "facing=west,assembled=false,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 270
+    },
+    "facing=west,assembled=false,open=true,powered=false": {
       "model": "smog:block/bronze_clutch",
       "y": 270
     },
-    "facing=west,assembled=true": {
+    "facing=west,assembled=false,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 270
+    },
+    "facing=west,assembled=false,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 270
+    },
+    "facing=west,assembled=true,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 270
+    },
+    "facing=west,assembled=true,open=true,powered=false": {
       "model": "smog:block/bronze_clutch_inventory",
       "y": 270
     },
-    "facing=up,assembled=false": {
+    "facing=west,assembled=true,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 270
+    },
+    "facing=west,assembled=true,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "y": 270
+    },
+    "facing=up,assembled=false,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 270
+    },
+    "facing=up,assembled=false,open=true,powered=false": {
       "model": "smog:block/bronze_clutch",
       "x": 270
     },
-    "facing=up,assembled=true": {
+    "facing=up,assembled=false,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 270
+    },
+    "facing=up,assembled=false,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 270
+    },
+    "facing=up,assembled=true,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 270
+    },
+    "facing=up,assembled=true,open=true,powered=false": {
       "model": "smog:block/bronze_clutch_inventory",
       "x": 270
     },
-    "facing=down,assembled=false": {
+    "facing=up,assembled=true,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 270
+    },
+    "facing=up,assembled=true,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 270
+    },
+    "facing=down,assembled=false,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 90
+    },
+    "facing=down,assembled=false,open=true,powered=false": {
       "model": "smog:block/bronze_clutch",
       "x": 90
     },
-    "facing=down,assembled=true": {
+    "facing=down,assembled=false,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 90
+    },
+    "facing=down,assembled=false,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 90
+    },
+    "facing=down,assembled=true,open=true,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 90
+    },
+    "facing=down,assembled=true,open=true,powered=false": {
       "model": "smog:block/bronze_clutch_inventory",
+      "x": 90
+    },
+    "facing=down,assembled=true,open=false,powered=true": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
+      "x": 90
+    },
+    "facing=down,assembled=true,open=false,powered=false": {
+      "model": "smog:block/bronze_clutch_disengaged_inventory",
       "x": 90
     }
   }
