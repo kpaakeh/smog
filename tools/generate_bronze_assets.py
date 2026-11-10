@@ -308,6 +308,7 @@ def shaft_envelope(elements, axis=2):
         intervals[(a[axis], b[axis])] = max(intervals.get((a[axis], b[axis]), 0), radius)
     result = []
     for (z, zz), radius in intervals.items():
+        radius=math.ceil(radius*2)/2
         start = math.floor(-radius*2)/2
         x = start
         while x < radius:
@@ -364,6 +365,15 @@ def orient_boxes(elements,x,y,z):
     return output
 
 
+def bevel_gear(phase=0):
+    result=[]
+    for z,radius in ((9,2),(10,3),(11,4)):result+=ring(radius=radius,inner=0,depth=1,center=(8,8,z+.5))
+    for angle in range(0,360,30):
+        x,y=8+4*math.cos(math.radians(angle+phase)),8+4*math.sin(math.radians(angle+phase))
+        result.append(cuboid((x-.65,y-.65,11),(x+.65,y+.65,12),'metal'))
+    return result
+
+
 def write_angle_assets():
     n='bronze_angle_gearbox'
     fixed=[cuboid((1,0,1),(15,2,15))]
@@ -371,17 +381,8 @@ def write_angle_assets():
         for z in (1,13):fixed.append(cuboid((x,2,z),(x+2,14,z+2)))
     fixed+=ring(radius=5,inner=3.75,depth=1.5,center=(8,8,14.5))
     fixed+=ring('x',radius=5,inner=3.75,depth=1.5,center=(14.5,8,8))
-    rotor=[cuboid((6,6,11.5),(10,10,16))]
-    for z,radius in ((9,2),(10,3),(11,4)):rotor+=ring(radius=radius,inner=0,depth=1,center=(8,8,z+.5))
-    core=list(rotor)
-    def teeth(offset):
-        result=[]
-        for angle in range(0,360,30):
-            x,y=8+4*math.cos(math.radians(angle+offset)),8+4*math.sin(math.radians(angle+offset))
-            result.append(cuboid((x-.65,y-.65,11),(x+.65,y+.65,12),'metal'))
-        return result
-    rotor+=teeth(0)
-    output_rotor=orient_boxes(core+teeth(15),(0,0,-1),(0,1,0),(1,0,0))
+    shaft=[cuboid((6,6,11.5),(10,10,16))];rotor=shaft+bevel_gear()
+    output_rotor=orient_boxes(shaft+bevel_gear(15),(0,0,-1),(0,1,0),(1,0,0))
     collision=[{'from':e['from'],'to':e['to']} for e in fixed]+shaft_envelope(rotor)+shaft_envelope(output_rotor,0)
     textures_map={t:'smog:block/bronze_workshop_'+t for t in ('wood','metal','dark','stone','rope','ceramic')};textures_map['particle']=textures_map['wood']
     base={'parent':'minecraft:block/block','textures':textures_map}
@@ -406,6 +407,52 @@ def write_angle_assets():
     write(ASSETS/'blockstates'/(n+'.json'),{'variants':variants})
 
 
+def write_splitter_assets():
+    n='bronze_splitter'
+    fixed=[cuboid((x,2,z),(x+2,14,z+2)) for x in (1,13) for z in (1,13)]
+    for y in (0,14):fixed += [cuboid((1,y,1),(15,y+2,3)),cuboid((1,y,13),(15,y+2,15)),cuboid((1,y,3),(3,y+2,13)),cuboid((13,y,3),(15,y+2,13))]
+    for z in (1.5,14.5):fixed+=ring(radius=5,inner=3.75,depth=1.5,center=(8,8,z))
+    for x in (1.5,14.5):fixed+=ring('x',radius=5,inner=3.75,depth=1.5,center=(x,8,8))
+    right=lambda es:orient_boxes(es,(0,0,-1),(0,1,0),(1,0,0))
+    left=lambda es:orient_boxes(es,(0,0,1),(0,1,0),(-1,0,0))
+    moving={'moving':[cuboid((6,6,11.5),(10,10,16)),cuboid((7.5,7.5,4.5),(8.5,8.5,11.5),'metal')]+bevel_gear(),
+            'moving_output':right([cuboid((7,7,11.5),(9,9,12.5),'metal')]+bevel_gear(15)),
+            'moving_left':left([cuboid((7,7,11.5),(9,9,12.5),'metal')]+bevel_gear(15)),
+            'shaft_front':[cuboid((6,6,0),(10,10,4.5))],
+            'shaft_right':right([cuboid((6,6,12.5),(10,10,16))]),
+            'shaft_left':left([cuboid((6,6,12.5),(10,10,16))])}
+    caps={'front':[cuboid((5,5,0),(11,11,1.5),'dark')],
+          'right':[cuboid((14.5,5,5),(16,11,11),'dark')],
+          'left':[cuboid((0,5,5),(1.5,11,11),'dark')]}
+    all_moving=sum(moving.values(),[])
+    collision={'core':[{'from':e['from'],'to':e['to']} for e in fixed]+shaft_envelope(moving['moving'])+shaft_envelope(moving['moving_output'],0)+shaft_envelope(moving['moving_left'],0)}
+    for branch in ('front','right','left'):
+        collision['shaft_'+branch]=shaft_envelope(moving['shaft_'+branch],2 if branch=='front' else 0)
+        collision['cap_'+branch]=[{'from':e['from'],'to':e['to']} for e in caps[branch]]
+    textures_map={t:'smog:block/bronze_workshop_'+t for t in ('wood','metal','dark','stone','rope','ceramic')};textures_map['particle']=textures_map['wood'];base={'parent':'minecraft:block/block','textures':textures_map}
+    write(ASSETS/'models/block'/(n+'.json'),{**base,'elements':exterior(fixed)})
+    write(ASSETS/'models/block'/(n+'_inventory.json'),{**base,'elements':exterior(fixed+all_moving),'smog_collision':sum((v for k,v in collision.items() if not k.startswith('cap_')),[])})
+    for name,elements in moving.items():write(ASSETS/'models/block'/(n+'_'+name+'.json'),{**base,'elements':exterior(elements)})
+    cases=[{'when':name,'model':{'type':'minecraft:model','model':'smog:block/'+n+'_'+name}} for name in moving]
+    write(ASSETS/'items'/(n+'.json'),{'model':{'type':'minecraft:select','property':'minecraft:custom_model_data','index':0,'cases':cases,'fallback':{'type':'minecraft:model','model':'smog:block/'+n+'_inventory'}}})
+    directions={'east':(1,0,0),'west':(-1,0,0),'up':(0,1,0),'down':(0,-1,0),'south':(0,0,1),'north':(0,0,-1)};parts=[]
+    for facing,front in directions.items():
+        for output,x in directions.items():
+            if sum(a*b for a,b in zip(front,x)):continue
+            z=tuple(-v for v in front);y=(z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]);name=n+'_'+facing+'_'+output
+            transformed=lambda es:orient_boxes(es,x,y,z)
+            write(ASSETS/'models/block'/(name+'.json'),{**base,'elements':exterior(transformed(fixed))})
+            write(ASSETS/'models/block'/(name+'_inventory.json'),{**base,'elements':exterior(transformed(fixed+moving['moving']+moving['moving_output']+moving['moving_left'])),'smog_collision':transformed(collision['core'])})
+            aliases=[output]+([facing,{'east':'west','west':'east','north':'south','south':'north','up':'down','down':'up'}[facing]] if output==('east' if facing in ('up','down') else {'north':'east','east':'south','south':'west','west':'north'}[facing]) else [])
+            for alias in aliases:
+                when={'facing':facing,'output':alias};parts+=[{'when':{**when,'assembled':'false'},'apply':{'model':'smog:block/'+name}},{'when':{**when,'assembled':'true'},'apply':{'model':'smog:block/'+name+'_inventory'}}]
+            for branch in caps:
+                for prefix,elements in [('cap_',caps[branch]),('shaft_',moving['shaft_'+branch])]:write(ASSETS/'models/block'/(name+'_'+prefix+branch+'.json'),{**base,'elements':exterior(transformed(elements)),'smog_collision':transformed(collision[prefix+branch])})
+                for alias in aliases:
+                    when={'facing':facing,'output':alias};parts+=[{'when':{**when,branch:'false'},'apply':{'model':'smog:block/'+name+'_cap_'+branch}},{'when':{**when,branch:'true','assembled':'true'},'apply':{'model':'smog:block/'+name+'_shaft_'+branch}}]
+    write(ASSETS/'blockstates'/(n+'.json'),{'multipart':parts})
+
+
 def main():
     import argparse
     parser=argparse.ArgumentParser();parser.add_argument('--only',nargs='+');selected=parser.parse_args().only
@@ -415,6 +462,8 @@ def main():
         if selected and b['id'] not in selected:continue
         if b['id']=='bronze_angle_gearbox':
             write_angle_assets();continue
+        if b['id']=='bronze_splitter':
+            write_splitter_assets();continue
         n = b['id']; fixed, moving = geometry(b)
         textures_map = {t: 'smog:block/bronze_workshop_' + t for t in ('wood', 'metal', 'dark', 'stone', 'rope', 'ceramic')}
         textures_map['particle'] = textures_map['wood']

@@ -9,7 +9,7 @@ import net.minecraft.world.phys.shapes.*;
 
 /** Read the artist's cuboids on both sides. Rotated handles use quarter-pixel collision steps. */
 public final class WorkshopModelShapes {
-    private static final Map<String,VoxelShape> CACHE=new HashMap<>();
+    private static final Map<String,VoxelShape> CACHE=new java.util.concurrent.ConcurrentHashMap<>();
     private static double[] vector(JsonArray a){return new double[]{a.get(0).getAsDouble(),a.get(1).getAsDouble(),a.get(2).getAsDouble()};}
     public static VoxelShape get(String model,Direction facing){return CACHE.computeIfAbsent(model+":"+facing,key->rotate(load(model),facing));}
     private static VoxelShape load(String model){

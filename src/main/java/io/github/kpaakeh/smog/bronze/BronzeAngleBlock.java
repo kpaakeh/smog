@@ -15,12 +15,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.*;
 
 /** A pair of perpendicular bevel gears: rear input and one visible side output. */
-public final class BronzeAngleBlock extends BronzeBlock {
+public class BronzeAngleBlock extends BronzeBlock {
     public static final EnumProperty<Direction> OUTPUT=EnumProperty.create("output",Direction.class);
-    public BronzeAngleBlock(Properties properties){super(properties,"bronze_angle_gearbox");registerDefaultState(defaultBlockState().setValue(OUTPUT,Direction.EAST));}
+    public BronzeAngleBlock(Properties properties){this(properties,"bronze_angle_gearbox");}
+    protected BronzeAngleBlock(Properties properties,String id){super(properties,id);registerDefaultState(defaultBlockState().setValue(OUTPUT,Direction.EAST));}
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){super.createBlockStateDefinition(builder);builder.add(OUTPUT);}
     public static Direction output(BlockState state){var facing=state.getValue(FACING);var output=state.getValue(OUTPUT);return output.getAxis()!=facing.getAxis()?output:facing.getAxis()==Direction.Axis.Y?Direction.EAST:facing.getClockWise();}
-    public static String model(BlockState state){return "bronze_angle_gearbox_"+state.getValue(FACING).getName()+"_"+output(state).getName();}
+    public static String model(BlockState state){return ((BronzeBlock)state.getBlock()).id()+"_"+state.getValue(FACING).getName()+"_"+output(state).getName();}
     public static Direction nextOutput(Direction facing,Direction current){var options=java.util.Arrays.stream(Direction.values()).filter(d->d.getAxis()!=facing.getAxis()).toList();return options.get((options.indexOf(current)+1)%options.size());}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){
         var facing=context.getClickedFace();Direction output=null;

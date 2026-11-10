@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 
 /** Moving JSON sub-models share the static model's palette, scale, origin and lighting. */
 public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,BronzeRenderer.State> {
+    private static final String[] BEVEL_PARTS={"moving","moving_output","moving_left","shaft_front","shaft_right","shaft_left"};
     private static final org.joml.Quaternionf[][] BEVEL_ORIENTATIONS=new org.joml.Quaternionf[6][6];
     static {
         for(var facing:Direction.values())for(var output:Direction.values())if(facing.getAxis()!=output.getAxis()){
@@ -26,10 +27,12 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
         }
     }
     public static final class State extends BlockEntityRenderState {
-        public ItemStackRenderState moving=new ItemStackRenderState();
-        public ItemStackRenderState outputMoving=new ItemStackRenderState();
+        public final ItemStackRenderState[] parts=new ItemStackRenderState[6];
+        public final boolean[] branches=new boolean[3];
+        public State(){parts[0]=new ItemStackRenderState();}
         public Direction output=Direction.EAST;
         public boolean bevel;
+        public boolean splitter;
         public String animation="none";
         public Direction facing=Direction.NORTH;
         public float angle;
@@ -43,21 +46,24 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
         BlockEntityRenderer.super.extractRenderState(entity,state,partial,camera,overlay);
         state.animation=BronzeContent.entry(entity.id()).animation();state.facing=entity.getBlockState().getValue(BronzeBlock.FACING);state.angle=entity.angle(partial);
         state.bevel=entity.getBlockState().getBlock() instanceof BronzeAngleBlock;
+        state.splitter=entity.getBlockState().getBlock() instanceof BronzeSplitterBlock;
+        if(state.splitter){state.branches[0]=entity.getBlockState().getValue(BronzeSplitterBlock.FRONT);state.branches[1]=entity.getBlockState().getValue(BronzeSplitterBlock.RIGHT);state.branches[2]=entity.getBlockState().getValue(BronzeSplitterBlock.LEFT);}
         if(state.bevel)state.output=BronzeAngleBlock.output(entity.getBlockState());
         if(entity.id().equals("bronze_shaft")||entity.id().equals("bronze_shaft_support")||entity.getBlockState().getBlock() instanceof BronzeGearBlock)state.facing=BronzeShaft.canonical(state.facing);
         if(entity.getBlockState().getValue(BronzeBlock.ASSEMBLED))state.animation="none";
         if(state.animation.equals("none"))return;
-        var stack=new ItemStack(entity.getBlockState().getBlock());stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of("moving"),List.of()));
-        items.updateForTopItem(state.moving,stack,ItemDisplayContext.NONE,entity.getLevel(),null,0);
-        if(state.bevel){stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of("moving_output"),List.of()));items.updateForTopItem(state.outputMoving,stack,ItemDisplayContext.NONE,entity.getLevel(),null,0);}
+        var stack=new ItemStack(entity.getBlockState().getBlock());
+        for(int i=0;i<(state.splitter?6:state.bevel?2:1);i++){if(state.parts[i]==null)state.parts[i]=new ItemStackRenderState();stack.set(DataComponents.CUSTOM_MODEL_DATA,new CustomModelData(List.of(),List.of(),List.of(BEVEL_PARTS[i]),List.of()));items.updateForTopItem(state.parts[i],stack,ItemDisplayContext.NONE,entity.getLevel(),null,0);}
     }
     @Override public void submit(State state,PoseStack pose,SubmitNodeCollector collector,CameraRenderState camera){
         if(state.animation.equals("none"))return;
         pose.pushPose();pose.translate(.5,.5,.5);
         if(state.bevel){
             pose.rotate(BEVEL_ORIENTATIONS[state.facing.ordinal()][state.output.ordinal()]);
-            pose.pushPose();pose.rotate(Axis.ZP.rotationDegrees(state.angle));state.moving.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();
-            pose.rotate(Axis.XP.rotationDegrees(-state.angle));state.outputMoving.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();return;
+            for(int i=0;i<(state.splitter?6:2);i++){
+                if(i>=3&&!state.branches[i-3])continue;
+                pose.pushPose();pose.rotate((i==0||i==3?Axis.ZP:Axis.XP).rotationDegrees((i==1||i==4?-1:1)*state.angle));state.parts[i].submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();
+            }pose.popPose();return;
         }
         switch(state.facing){case EAST->pose.rotate(Axis.YP.rotationDegrees(-90));case SOUTH->pose.rotate(Axis.YP.rotationDegrees(-180));case WEST->pose.rotate(Axis.YP.rotationDegrees(-270));case UP->pose.rotate(Axis.XP.rotationDegrees(90));case DOWN->pose.rotate(Axis.XP.rotationDegrees(270));default->{}}
         switch(state.animation){
@@ -68,6 +74,6 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
             case "rock_z"->{pose.translate(-.375,.1875,0);pose.rotate(Axis.ZP.rotationDegrees(18*(float)Math.sin(Math.toRadians(state.angle))));pose.translate(.375,-.1875,0);}
             default->{}
         }
-        state.moving.submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();
+        state.parts[0].submit(pose,collector,state.lightCoords,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,0);pose.popPose();
     }
 }

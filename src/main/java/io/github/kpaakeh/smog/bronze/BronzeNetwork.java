@@ -42,6 +42,7 @@ public final class BronzeNetwork {
         if(state.getBlock() instanceof BronzeSupportBlock&&!BronzeSupportBlock.mounted(state,level,pos))return Set.of();
         if(n.equals("bronze_clutch")&&(!state.getValue(BronzeBlock.OPEN)||level.hasNeighborSignal(pos)))return Set.of();
         if(sourceBlock(state)||n.equals("bronze_drive_coupler"))return Set.of(f.getOpposite());
+        if(state.getBlock() instanceof BronzeSplitterBlock)return BronzeSplitterBlock.ports(state);
         if(state.getBlock() instanceof BronzeGearBlock)return BronzeGearBlock.ports(level,pos,state);
         if(state.getBlock() instanceof BronzeAngleBlock)return Set.of(f.getOpposite(),BronzeAngleBlock.output(state));
         if(n.equals("bronze_splitter"))return f.getAxis()==Direction.Axis.Y?Set.of():Set.of(f,f.getOpposite(),f.getClockWise(),f.getCounterClockWise());

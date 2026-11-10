@@ -1,50 +1,2992 @@
 {
-  "variants": {
-    "facing=north,assembled=false": {
-      "model": "smog:block/bronze_splitter"
+  "multipart": [
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up"
+      }
     },
-    "facing=north,assembled=true": {
-      "model": "smog:block/bronze_splitter_inventory"
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_inventory"
+      }
     },
-    "facing=east,assembled=false": {
-      "model": "smog:block/bronze_splitter",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_cap_front"
+      }
     },
-    "facing=east,assembled=true": {
-      "model": "smog:block/bronze_splitter_inventory",
-      "y": 90
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_shaft_front"
+      }
     },
-    "facing=south,assembled=false": {
-      "model": "smog:block/bronze_splitter",
-      "y": 180
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_cap_right"
+      }
     },
-    "facing=south,assembled=true": {
-      "model": "smog:block/bronze_splitter_inventory",
-      "y": 180
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_shaft_right"
+      }
     },
-    "facing=west,assembled=false": {
-      "model": "smog:block/bronze_splitter",
-      "y": 270
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_cap_left"
+      }
     },
-    "facing=west,assembled=true": {
-      "model": "smog:block/bronze_splitter_inventory",
-      "y": 270
+    {
+      "when": {
+        "facing": "east",
+        "output": "up",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_up_shaft_left"
+      }
     },
-    "facing=up,assembled=false": {
-      "model": "smog:block/bronze_splitter",
-      "x": 270
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down"
+      }
     },
-    "facing=up,assembled=true": {
-      "model": "smog:block/bronze_splitter_inventory",
-      "x": 270
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_inventory"
+      }
     },
-    "facing=down,assembled=false": {
-      "model": "smog:block/bronze_splitter",
-      "x": 90
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_cap_front"
+      }
     },
-    "facing=down,assembled=true": {
-      "model": "smog:block/bronze_splitter_inventory",
-      "x": 90
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "down",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_down_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "south",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "east",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "west",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_south_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "output": "north",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_east_north_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "up",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_up_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "down",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_down_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "south",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_south_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "north",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "west",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "output": "east",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_west_north_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "east",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "up",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "down",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "west",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_west_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "south",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_south_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "output": "north",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_up_north_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "east",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "down",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "up",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "west",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_west_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "south",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_south_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "output": "north",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_down_north_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "east",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "west",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "south",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "north",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_west_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "up",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_up_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "output": "down",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_south_down_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "east",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "north",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "south",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_east_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "west",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_west_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "up",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_up_shaft_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "assembled": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_inventory"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "front": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_cap_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "front": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_shaft_front"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "right": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_cap_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "right": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_shaft_right"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "left": "false"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_cap_left"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "output": "down",
+        "left": "true",
+        "assembled": "true"
+      },
+      "apply": {
+        "model": "smog:block/bronze_splitter_north_down_shaft_left"
+      }
     }
-  }
+  ]
 }

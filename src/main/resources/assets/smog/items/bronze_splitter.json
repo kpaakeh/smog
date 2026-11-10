@@ -10,6 +10,41 @@
           "type": "minecraft:model",
           "model": "smog:block/bronze_splitter_moving"
         }
+      },
+      {
+        "when": "moving_output",
+        "model": {
+          "type": "minecraft:model",
+          "model": "smog:block/bronze_splitter_moving_output"
+        }
+      },
+      {
+        "when": "moving_left",
+        "model": {
+          "type": "minecraft:model",
+          "model": "smog:block/bronze_splitter_moving_left"
+        }
+      },
+      {
+        "when": "shaft_front",
+        "model": {
+          "type": "minecraft:model",
+          "model": "smog:block/bronze_splitter_shaft_front"
+        }
+      },
+      {
+        "when": "shaft_right",
+        "model": {
+          "type": "minecraft:model",
+          "model": "smog:block/bronze_splitter_shaft_right"
+        }
+      },
+      {
+        "when": "shaft_left",
+        "model": {
+          "type": "minecraft:model",
+          "model": "smog:block/bronze_splitter_shaft_left"
+        }
       }
     ],
     "fallback": {

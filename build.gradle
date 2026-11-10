@@ -147,6 +147,9 @@ if(providers.gradleProperty('crankReviewTest').isPresent()) {
 if(providers.gradleProperty('gearReviewTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.gearReviewTest=true' }
 }
+if(providers.gradleProperty('splitterReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.splitterReviewTest=true' }
+}
 
 if(providers.gradleProperty("closureTest").isPresent()){loom.runs.named("clientGameTest"){vmArg "-Dsmog.closureTest=true"}}
 

@@ -14,6 +14,7 @@ public final class ConfiguratorItem extends Item {
         var level=context.getLevel();var pos=context.getClickedPos();var player=context.getPlayer();
         if(player==null)return InteractionResult.PASS;
         var clickedState=level.getBlockState(pos);
+        if(clickedState.getBlock() instanceof io.github.kpaakeh.smog.bronze.BronzeBlock)return clickedState.useItemOn(context.getItemInHand(),level,player,context.getHand(),new net.minecraft.world.phys.BlockHitResult(context.getClickLocation(),context.getClickedFace(),pos,context.isInside()));
         if(player.isShiftKeyDown()&&clickedState.getBlock() instanceof io.github.kpaakeh.smog.copper.WorkshopPartBlock){
             if(!level.isClientSide()){level.setBlock(pos,clickedState.setValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING,clickedState.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING).getClockWise()),Block.UPDATE_ALL);player.sendOverlayMessage(Component.translatable("message.smog.configurator_rotated"));}return InteractionResult.SUCCESS;
         }
