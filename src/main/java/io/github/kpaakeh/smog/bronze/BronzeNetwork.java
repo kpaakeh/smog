@@ -27,6 +27,7 @@ public final class BronzeNetwork {
     public static void registerSource(net.minecraft.world.level.block.Block block,java.util.function.BiFunction<Level,BlockPos,Source> source){if(SOURCES.putIfAbsent(block,source)!=null)throw new IllegalArgumentException("Source already registered");}
     private static boolean sourceBlock(BlockState state){return SOURCES.containsKey(state.getBlock())||Set.of("bronze_drive","bronze_hand_crank").contains(id(state));}
     private static boolean node(BlockState state){return sourceBlock(state)||node(id(state));}
+    private static boolean unsupportedAxle(BlockState state){return id(state).equals("bronze_shaft")||state.getBlock() instanceof BronzeGearBlock;}
     private static Source source(Level level,BlockPos pos,BlockState state){
         var external=SOURCES.get(state.getBlock());if(external!=null)return external.apply(level,pos);
         if(id(state).equals("bronze_drive")&&BronzeDrive.working(level,pos))return new Source(16,RotationRate.NOMINAL);
@@ -66,7 +67,7 @@ public final class BronzeNetwork {
         }
         var roots=nodes.entrySet().stream().filter(e->sourceBlock(e.getValue())).map(Map.Entry::getKey).toList();
         var root=(roots.isEmpty()?nodes.keySet():roots).stream().min(java.util.Comparator.comparingLong(BlockPos::asLong)).orElse(start);
-        var ratios=new LinkedHashMap<BlockPos,RotationRate>();ratios.put(root,RotationRate.ONE);queue.add(root);
+        var ratios=new LinkedHashMap<BlockPos,RotationRate>();ratios.put(root,RotationRate.ONE);queue.clear();queue.add(root);
         while(!queue.isEmpty()){
             var pos=queue.removeFirst();var state=nodes.get(pos);if(state==null)continue;
             for(var side:ports(level,pos,state)){
@@ -95,10 +96,10 @@ public final class BronzeNetwork {
                     var target=pos.offset(x,y,z);if(level.hasChunkAt(target)&&level.getBlockEntity(target) instanceof MachineEntity machine&&consumer(machine)&&BronzeDrive.directSources(machine).contains(pos))add(consumers,machine);
                 }
             }
-            if(n.equals("bronze_shaft")){
+            if(unsupportedAxle(state)){
                 int length=1;var axis=facing(state).getAxis();
                 for(var side:List.of(facing(state),facing(state).getOpposite()))for(int step=1;step<=8;step++){
-                    var next=pos.relative(side,step);var other=nodes.get(next);if(other==null||!id(other).equals("bronze_shaft")||facing(other).getAxis()!=axis)break;length++;
+                    var next=pos.relative(side,step);var other=nodes.get(next);if(other==null||!unsupportedAxle(other)||facing(other).getAxis()!=axis)break;length++;
                 }if(length>8)problem="support";
             }
         }
@@ -113,11 +114,19 @@ public final class BronzeNetwork {
             for(var side:ports(level,entry.getKey(),entry.getValue())){var portRate=value.multiply(BronzeKinematics.port(entry.getValue(),side));if(portRate.belowMinimum())problem="slow";else if(portRate.aboveMaximum())problem="fast";}
         }
         var exactRequired=ExactFraction.ZERO;
-        for(var consumer:consumers.entrySet()){var tempo=ExactFraction.ONE;for(var entry:nodes.entrySet())if(id(entry.getValue()).equals("bronze_drive_coupler")&&entry.getKey().relative(facing(entry.getValue())).equals(consumer.getKey())&&prospective.containsKey(entry.getKey())){tempo=ExactFraction.of(prospective.get(entry.getKey())).abs().divide(ExactFraction.of(16));break;}exactRequired=exactRequired.add(ExactFraction.of(consumer.getValue()).multiply(tempo));}
+        for(var consumer:consumers.entrySet()){
+            ExactFraction tempo=null;var machine=level.getBlockEntity(consumer.getKey()) instanceof MachineEntity m?m:null;var direct=machine==null?List.<BlockPos>of():BronzeDrive.directSources(machine);
+            for(var entry:nodes.entrySet())if(prospective.containsKey(entry.getKey())&&(direct.contains(entry.getKey())||id(entry.getValue()).equals("bronze_drive_coupler")&&entry.getKey().relative(facing(entry.getValue())).equals(consumer.getKey()))){
+                var next=ExactFraction.of(prospective.get(entry.getKey())).abs().divide(ExactFraction.of(16));if(tempo!=null&&!tempo.equals(next))problem="direction";tempo=next;
+            }
+            exactRequired=exactRequired.add(ExactFraction.of(consumer.getValue()).multiply(tempo==null?ExactFraction.ONE:tempo));
+        }
         String status=!problem.isEmpty()?problem:power==0?"source":exactRequired.compareTo(ExactFraction.of(power))>0?"overload":"ready";
         var actual=status.equals("ready")&&rate!=null?rate:RotationRate.ZERO;
         var timeline=cache.phases.get(root);
-        if(timeline==null){double seed=nodes.keySet().stream().filter(p->level.getBlockEntity(p) instanceof BronzeEntity).mapToDouble(p->((BronzeEntity)level.getBlockEntity(p)).angle(0)/ratios.get(p).value()).findFirst().orElse(0);timeline=new RotationTimeline(level.getGameTime(),seed);cache.phases.put(root,timeline);}
+        var divisor=java.math.BigInteger.ONE;for(var ratio:ratios.values())divisor=divisor.divide(divisor.gcd(ratio.denominator())).multiply(ratio.denominator());double period=360*divisor.doubleValue();
+        if(timeline==null){var slowest=nodes.keySet().stream().filter(p->level.getBlockEntity(p) instanceof BronzeEntity).max(java.util.Comparator.comparing(p->ratios.get(p).denominator()));double seed=slowest.map(p->((BronzeEntity)level.getBlockEntity(p)).angle(0)/ratios.get(p).value()).orElse(0.);timeline=new RotationTimeline(level.getGameTime(),seed,period);cache.phases.put(root,timeline);}
+        timeline.period(period);
         double phase=timeline.update(level.getGameTime(),actual);
         var immutableConsumers=Map.copyOf(consumers);
         for(var pos:nodes.keySet()){var ratio=ratios.get(pos);var available=ExactFraction.of(power);cache.results.put(pos,new Result(available.floorInt(),required,status,immutableConsumers,actual.multiply(ratio),RotationTimeline.wrap(phase*ratio.value()),available,exactRequired));}

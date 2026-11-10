@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 /** Uses the game's test input layer; does not take over the desktop mouse or keyboard. */
 public final class ClientFoundationTests implements FabricClientGameTest {
     @Override public void runTest(ClientGameTestContext context) {
+        if(Boolean.getBoolean("smog.gearReviewTest")){BronzeGearClientScene.run(context);return;}
         if(Boolean.getBoolean("smog.crankReviewTest")){BronzeCrankClientScene.run(context);return;}
         if(Boolean.getBoolean("smog.angleReviewTest")){BronzeAngleClientScene.run(context);return;}
         if(Boolean.getBoolean("smog.supportReviewTest")){BronzeSupportClientScene.run(context);return;}

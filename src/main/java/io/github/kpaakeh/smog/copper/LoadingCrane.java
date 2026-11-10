@@ -65,6 +65,11 @@ public final class LoadingCrane {
         boolean signal=level.hasNeighborSignal(m.getBlockPos());
         if(signal!=m.copper.craneRedstoneHigh){m.copper.craneRedstoneHigh=signal;m.setChanged();if(signal)queue(m);}
         if(m.copper.queued==0){if(BronzeDrive.connected(m)&&level.getGameTime()%20==0)queue(m);return;}
+        var tempo=io.github.kpaakeh.smog.bronze.BronzeNetwork.tempo(m);
+        int steps=tempo.numerator().signum()==0?(m.copper.workKey.equals("crane:powered")&&m.copper.queued>0?0:1):m.copper.mechanicalSteps(tempo,1);
+        for(int i=0;i<steps&&m.copper.queued>0;i++)advance(level,m);
+    }
+    private static void advance(ServerLevel level,MachineEntity m){
         int duration=duration(m),pickup=duration*3/20,delivery=duration*3/4;
         int problem=readiness(level,m,m.copper.work<=pickup&&m.getItem(1).isEmpty());
         if(problem!=0){if(m.copper.status!=problem){m.copper.status=problem;m.sync();}return;}

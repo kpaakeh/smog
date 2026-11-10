@@ -5,11 +5,14 @@ public final class RotationTimeline {
     public static final double DEGREES_PER_TICK=.25;
     private long tick;
     private double phase;
+    private double period=360;
     private RotationRate rate=RotationRate.ZERO;
-    public RotationTimeline(long tick,double phase){this.tick=tick;this.phase=wrap(phase);}
+    public RotationTimeline(long tick,double phase){this(tick,phase,360);}
+    public RotationTimeline(long tick,double phase,double period){this.tick=tick;this.phase=phase;period(period);}
+    public void period(double period){this.period=period;phase=((phase%period)+period)%period;}
     public double update(long now,RotationRate next){
         // An unobserved/unloaded circuit does not accumulate offline turns.
-        if(now-tick==1)phase=wrap(phase+rate.value()*DEGREES_PER_TICK);
+        if(now-tick==1)phase=((phase+rate.value()*DEGREES_PER_TICK)%period+period)%period;
         tick=now;rate=next;return phase;
     }
     public long tick(){return tick;}

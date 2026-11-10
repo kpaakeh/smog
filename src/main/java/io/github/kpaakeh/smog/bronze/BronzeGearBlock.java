@@ -31,5 +31,12 @@ public final class BronzeGearBlock extends BronzeBlock {
             var obstruction=other.getCollisionShape(level,neighbor).move(dx,dy,dz);if(Shapes.joinIsNotEmpty(shape,obstruction,BooleanOp.AND))return "blocked";
         }return "";
     }
-    @Override public BlockState getStateForPlacement(BlockPlaceContext context){var state=super.getStateForPlacement(context);return state!=null&&clearance(context.getLevel(),context.getClickedPos(),state).isEmpty()?state:null;}
+    @Override public BlockState getStateForPlacement(BlockPlaceContext context){
+        var state=super.getStateForPlacement(context);if(state==null)return null;
+        var sides=new ArrayList<Direction>();sides.add(context.getClickedFace().getOpposite());for(var side:context.getNearestLookingDirections())if(!sides.contains(side))sides.add(side);
+        for(var side:sides){var pos=context.getClickedPos().relative(side);if(!context.getLevel().hasChunkAt(pos))continue;var other=context.getLevel().getBlockState(pos);
+            if(other.getBlock() instanceof BronzeGearBlock neighbor&&neighbor.large!=large&&side.getAxis()!=other.getValue(FACING).getAxis()){state=state.setValue(FACING,BronzeShaft.canonical(other.getValue(FACING)));break;}
+        }
+        return clearance(context.getLevel(),context.getClickedPos(),state).isEmpty()?state:null;
+    }
 }

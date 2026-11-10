@@ -13,6 +13,11 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 
 public final class LogisticsTests {
+    @GameTest public void stoppedPoweredCraneStillTracksRedstoneWithoutMovingCargo(GameTestHelper h){
+        var m=crane(h);m.copper.workKey="crane:powered";m.copper.queued=1;
+        h.getLevel().setBlockAndUpdate(m.getBlockPos().north(),Blocks.REDSTONE_BLOCK.defaultBlockState());h.assertTrue(h.getLevel().hasNeighborSignal(m.getBlockPos()),"A real redstone signal reaches the crane");
+        LoadingCrane.tick(h.getLevel(),m);h.assertTrue(m.copper.craneRedstoneHigh&&m.copper.work==0&&m.copper.queued==1,"Power loss pauses motion without dropping redstone edges or consuming cargo");h.succeed();
+    }
     private static Block block(String id){return BuiltInRegistries.BLOCK.getValue(ModBlocks.id(id));}
     private static MachineEntity crane(GameTestHelper h){var origin=h.absolutePos(new BlockPos(3,5,1));Multiblocks.get(ModBlocks.id("loading_crane")).parts().forEach((offset,part)->h.getLevel().setBlock(origin.offset(offset),part.block().defaultBlockState(),Block.UPDATE_ALL));h.getLevel().setBlock(origin,block("loading_crane").defaultBlockState(),Block.UPDATE_ALL);var m=(MachineEntity)h.getLevel().getBlockEntity(origin);h.assertTrue(m.tryAssemble(),"Fixed gantry assembles");return m;}
     @GameTest public void cartKeepsFiftyFourSlotsAndCanBeLoaded(GameTestHelper h){

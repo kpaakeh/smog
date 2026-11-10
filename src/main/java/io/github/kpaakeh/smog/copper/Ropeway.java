@@ -39,9 +39,9 @@ public final class Ropeway {
     public static void tick(ServerLevel level,MachineEntity m){
         if(RopewayRideEntity.busy(level,m.getBlockPos())){m.copper.status=17;return;}
         var other=destination(level,m);if(other==null){m.copper.status=8;return;}
-        if(m.getItem(1).isEmpty()&&m.copper.queued>0&&!m.getItem(0).isEmpty()){m.setItem(1,m.removeItem(0,64));m.copper.work=0;m.copper.queued=0;m.sync();}
+        if(m.getItem(1).isEmpty()&&m.copper.queued>0&&!m.getItem(0).isEmpty()){m.setItem(1,m.removeItem(0,64));m.copper.work=0;m.copper.queued=0;m.copper.workKey=BronzeDrive.connected(m)?"rope:2":"rope:1";m.copper.workFraction=io.github.kpaakeh.smog.bronze.ExactFraction.ZERO;m.sync();}
         if(m.getItem(1).isEmpty())return;
-        if(m.copper.work<duration(m)){m.copper.status=0;m.copper.workKey=BronzeDrive.connected(m)?"rope:2":"rope:1";m.copper.work+=m.copper.workKey.equals("rope:2")?2:1;m.setChanged();return;}
+        if(m.copper.work<duration(m)){m.copper.status=0;var tempo=io.github.kpaakeh.smog.bronze.BronzeNetwork.tempo(m);if(tempo.numerator().signum()!=0)m.copper.workKey="rope:2";m.copper.work+=m.copper.workKey.equals("rope:2")?m.copper.mechanicalSteps(tempo,2):1;m.setChanged();return;}
         var load=m.getItem(1);if(!other.canOutput(load)){m.copper.status=5;return;}
         if(other.getItem(3).isEmpty())other.setItem(3,load);else other.getItem(3).grow(load.getCount());m.setItem(1,ItemStack.EMPTY);m.copper.work=0;m.copper.status=0;other.sync();m.sync();
     }

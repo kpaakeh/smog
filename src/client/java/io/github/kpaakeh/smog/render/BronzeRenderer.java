@@ -36,6 +36,8 @@ public final class BronzeRenderer implements BlockEntityRenderer<BronzeEntity,Br
     }
     private final ItemModelResolver items;
     public BronzeRenderer(BlockEntityRendererProvider.Context context){items=context.itemModelResolver();}
+    // Large wheels extend beyond their owning cell.
+    @Override public boolean shouldRenderOffScreen(){return true;}
     @Override public State createRenderState(){return new State();}
     @Override public void extractRenderState(BronzeEntity entity,State state,float partial,Vec3 camera,ModelFeatureRenderer.CrumblingOverlay overlay){
         BlockEntityRenderer.super.extractRenderState(entity,state,partial,camera,overlay);
