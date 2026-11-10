@@ -30,7 +30,7 @@ public final class BronzeContent {
             var root=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
             for(var value:root.getAsJsonArray("blocks")){
                 var o=value.getAsJsonObject();String id=o.get("id").getAsString();
-                var block=ModBlocks.register(id,p->switch(id){case "bronze_shaft_support"->new BronzeSupportBlock(p);case "bronze_angle_gearbox"->new BronzeAngleBlock(p);case "bronze_clutch"->new BronzeClutchBlock(p);case "bronze_splitter"->new BronzeSplitterBlock(p);case "bronze_reduction_gearbox","bronze_cogwheel"->new BronzeGearBlock(p,id);default->new BronzeBlock(p,id);},BlockBehaviour.Properties.of().strength(2.5f).sound(SoundType.WOOD).noOcclusion().dynamicShape().requiresCorrectToolForDrops(),true);
+                var block=ModBlocks.register(id,p->switch(id){case "bronze_shaft_support"->new BronzeSupportBlock(p);case "bronze_angle_gearbox"->new BronzeAngleBlock(p);case "bronze_clutch","bronze_safety_clutch"->new BronzeClutchBlock(p,id);case "bronze_splitter"->new BronzeSplitterBlock(p);case "bronze_reduction_gearbox","bronze_cogwheel"->new BronzeGearBlock(p,id);default->new BronzeBlock(p,id);},BlockBehaviour.Properties.of().strength(2.5f).sound(SoundType.WOOD).noOcclusion().dynamicShape().requiresCorrectToolForDrops(),true);
                 var entry=new Entry(id,o.get("group").getAsString(),o.get("animation").getAsString(),o.has("axis")&&o.get("axis").getAsBoolean(),o.has("attachment")&&o.get("attachment").getAsBoolean(),block);
                 if(BLOCKS.putIfAbsent(id,entry)!=null)throw new IllegalStateException("Duplicate bronze block "+id);
             }

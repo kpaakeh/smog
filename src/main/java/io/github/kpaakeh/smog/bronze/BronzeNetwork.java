@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Belts and stored flywheel energy are not relays yet.
  */
 public final class BronzeNetwork {
-    private static final Set<String> NODES=Set.of("bronze_drive","bronze_hand_crank","bronze_shaft","bronze_shaft_support","bronze_angle_gearbox","bronze_reduction_gearbox","bronze_cogwheel","bronze_splitter","bronze_clutch","bronze_drive_coupler");
+    private static final Set<String> NODES=Set.of("bronze_drive","bronze_hand_crank","bronze_shaft","bronze_shaft_support","bronze_angle_gearbox","bronze_reduction_gearbox","bronze_cogwheel","bronze_splitter","bronze_clutch","bronze_safety_clutch","bronze_drive_coupler");
     public record Source(int power,RotationRate rate){public Source {if(power<0||!Double.isFinite(rate.value()))throw new IllegalArgumentException("Invalid mechanical source");}}
     public record Result(int available,int required,String status,Map<BlockPos,Integer> consumers,RotationRate rate,double phase,ExactFraction availableExact,ExactFraction requiredExact){
         public Result(int available,int required,String status,Map<BlockPos,Integer> consumers,RotationRate rate,double phase){this(available,required,status,consumers,rate,phase,ExactFraction.of(available),ExactFraction.of(required));}
@@ -40,7 +40,7 @@ public final class BronzeNetwork {
     public static Set<Direction> ports(Level level,BlockPos pos,BlockState state){
         String n=id(state);if(!node(state))return Set.of();var f=facing(state);
         if(state.getBlock() instanceof BronzeSupportBlock&&!BronzeSupportBlock.mounted(state,level,pos))return Set.of();
-        if(n.equals("bronze_clutch")&&(!state.getValue(BronzeBlock.OPEN)||level.hasNeighborSignal(pos)))return Set.of();
+        if(state.getBlock() instanceof BronzeClutchBlock&&(!state.getValue(BronzeBlock.OPEN)||level.hasNeighborSignal(pos)))return Set.of();
         if(sourceBlock(state)||n.equals("bronze_drive_coupler"))return Set.of(f.getOpposite());
         if(state.getBlock() instanceof BronzeSplitterBlock)return BronzeSplitterBlock.ports(state);
         if(state.getBlock() instanceof BronzeGearBlock)return BronzeGearBlock.ports(level,pos,state);

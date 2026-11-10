@@ -82,7 +82,12 @@ public final class BronzeEntity extends BlockEntity {
     }
     public void tick(){
         if(!simulationAttached){phaseTick=level.getGameTime();speed=0;simulationAttached=true;}
-        if(BronzeNetwork.node(id()))motion(BronzeNetwork.query(level,worldPosition));
+        if(BronzeNetwork.node(id())){
+            var result=BronzeNetwork.query(level,worldPosition);
+            if(id().equals("bronze_safety_clutch")&&getBlockState().getValue(BronzeBlock.OPEN)&&result.status().equals("overload")){
+                level.setBlock(worldPosition,getBlockState().setValue(BronzeBlock.OPEN,false),Block.UPDATE_ALL);BronzeNetwork.invalidate(level);result=BronzeNetwork.query(level,worldPosition);
+            }motion(result);
+        }
         if(level.getGameTime()%20!=Math.floorMod(worldPosition.asLong(),20)||blueprint.isEmpty())return;
         var definition=BronzeBlueprints.get(blueprint);if(definition==null){disassemble();return;}
         var result=BronzeBlueprints.inspect(level,worldPosition,getBlockState().getValue(BronzeBlock.FACING),definition);

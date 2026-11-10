@@ -164,3 +164,7 @@ if(providers.gradleProperty("cartTextureReviewTest").isPresent()){loom.runs.name
 if(providers.gradleProperty('clutchReviewTest').isPresent()) {
     loom.runs.named('clientGameTest') { vmArg '-Dsmog.clutchReviewTest=true' }
 }
+
+if(providers.gradleProperty('safetyReviewTest').isPresent()) {
+    loom.runs.named('clientGameTest') { vmArg '-Dsmog.safetyReviewTest=true' }
+}

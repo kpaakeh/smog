@@ -9,7 +9,7 @@ public final class BronzeKinematics {
     public static RotationRate port(BlockState state,Direction side){
         var facing=state.hasProperty(BronzeBlock.FACING)?state.getValue(BronzeBlock.FACING):state.getValue(io.github.kpaakeh.smog.copper.WorkshopPartBlock.FACING);
         if(state.getBlock() instanceof BronzeAngleBlock)return RotationRate.of(side==facing.getOpposite()?1:-1,1);
-        if(state.getBlock() instanceof BronzeBlock block&&(block.id().equals("bronze_shaft")||block.id().equals("bronze_shaft_support")||block instanceof BronzeGearBlock))facing=BronzeShaft.canonical(facing);
+        if(state.getBlock() instanceof BronzeBlock block&&(block.id().equals("bronze_shaft")||block.id().equals("bronze_shaft_support")||block instanceof BronzeGearBlock||block instanceof BronzeClutchBlock))facing=BronzeShaft.canonical(facing);
         // Non-axial prototype ports have no separate rotor yet.
         if(side.getAxis()!=facing.getAxis())return RotationRate.of(-BronzeShaft.handedness(side),1);
         return RotationRate.of(side==facing.getOpposite()?1:-1,1);

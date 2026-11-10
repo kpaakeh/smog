@@ -10,7 +10,8 @@ import net.minecraft.world.level.block.state.properties.*;
 /** Redstone overrides, but never erases, the player's manual setting. */
 public final class BronzeClutchBlock extends BronzeBlock {
     public static final BooleanProperty POWERED=BlockStateProperties.POWERED;
-    public BronzeClutchBlock(Properties properties){super(properties,"bronze_clutch");registerDefaultState(defaultBlockState().setValue(POWERED,false));}
+    public BronzeClutchBlock(Properties properties){this(properties,"bronze_clutch");}
+    public BronzeClutchBlock(Properties properties,String id){super(properties,id);registerDefaultState(defaultBlockState().setValue(POWERED,false));}
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){super.createBlockStateDefinition(builder);builder.add(POWERED);}
     public static boolean engaged(BlockState state){return state.getValue(OPEN)&&!state.getValue(POWERED);}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){var state=super.getStateForPlacement(context);return state==null?null:state.setValue(POWERED,context.getLevel().hasNeighborSignal(context.getClickedPos()));}

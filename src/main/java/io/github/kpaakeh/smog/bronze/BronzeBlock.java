@@ -60,10 +60,10 @@ public class BronzeBlock extends Block implements EntityBlock {
     }
     @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,net.minecraft.world.entity.player.Player player,BlockHitResult hit){
         if(!level.isClientSide()&&level.getBlockEntity(pos) instanceof BronzeEntity entity){
-            if(id.equals("bronze_clutch")){level.setBlock(pos,state.cycle(OPEN),Block.UPDATE_ALL);BronzeNetwork.invalidate(level);return InteractionResult.SUCCESS;}
+            if(this instanceof BronzeClutchBlock){level.setBlock(pos,state.cycle(OPEN),Block.UPDATE_ALL);BronzeNetwork.invalidate(level);return InteractionResult.SUCCESS;}
             if(id.equals("bronze_hand_crank")){entity.crank(player.isShiftKeyDown());return InteractionResult.SUCCESS;}
             if(BronzeContent.entry(id).group().equals("controller"))entity.inspect(player);
-        }return !BronzeContent.entry(id).group().equals("controller")&&!id.equals("bronze_hand_crank")&&!id.equals("bronze_clutch")?InteractionResult.PASS:InteractionResult.SUCCESS;
+        }return !BronzeContent.entry(id).group().equals("controller")&&!id.equals("bronze_hand_crank")&&!(this instanceof BronzeClutchBlock)?InteractionResult.PASS:InteractionResult.SUCCESS;
     }
     @Override protected BlockState rotate(BlockState state,Rotation rotation){var next=rotation.rotate(state.getValue(FACING));return state.setValue(FACING,(id.equals("bronze_shaft")||this instanceof BronzeGearBlock||this instanceof BronzeClutchBlock)?BronzeShaft.canonical(next):next);}
     @Override protected BlockState mirror(BlockState state,Mirror mirror){return rotate(state,mirror.getRotation(state.getValue(FACING)));}
